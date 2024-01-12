@@ -1,4 +1,4 @@
 plugins {
-    id("wpcleaner.java-conventions")
-    `java-test-fixtures`
+  id("wpcleaner.java-conventions")
+  `java-test-fixtures`
 }

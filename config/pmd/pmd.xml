@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!-- url : https://pmd.github.io/latest/pmd_rules_java.html -->
+<ruleset name="wpcleaner-main"
+         xmlns="http://pmd.sourceforge.net/ruleset/2.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 https://pmd.sourceforge.io/ruleset_2_0_0.xsd">
+
+  <description>WPCleaner rule set</description>
+
+  <rule ref="category/java/bestpractices.xml">
+    <!-- Excluded for re-definition -->
+    <exclude name="GuardLogStatement"/>
+  </rule>
+  <rule ref="category/java/bestpractices.xml/GuardLogStatement">
+    <properties>
+      <!-- Do not request guards for INFO, WARN and ERROR, only TRACE and DEBUG -->
+      <property name="logLevels" value="trace,debug"/>
+      <property name="guardsMethods" value="isTraceEnabled,isDebugEnabled"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/codestyle.xml">
+    <!-- No obligation to define one constructor for each class -->
+    <exclude name="AtLeastOneConstructor"/>
+    <!-- Parent constructor is called implicitly, avoid
+     a religion war and just ignore this. -->
+    <exclude name="CallSuperInConstructor"/>
+    <!-- Ability to do fail fast -->
+    <exclude name="OnlyOneReturn"/>
+    <!-- Ability to use catch (Exception e) -->
+    <exclude name="ShortVariable"/>
+    <!-- Ability to use long variable names -->
+    <exclude name="LongVariable"/>
+    <!-- Ability to use default scoping (package private) without any comment -->
+    <exclude name="DefaultPackage"/>
+    <exclude name="CommentDefaultAccessModifier"/>
+    <!-- Ability to avoid Utils suffix for utility class -->
+    <exclude name="ClassNamingConventions"/>
+    <!-- Ability to have method names like 'of' -->
+    <exclude name="ShortMethodName"/>
+    <!-- Excluded for re-definition -->
+    <exclude name="TooManyStaticImports"/>
+  </rule>
+  <rule ref="category/java/codestyle.xml/TooManyStaticImports">
+    <properties>
+      <property name="maximumStaticImports" value="0"/>
+    </properties>
+  </rule>
+
+  <rule ref="category/java/design.xml">
+    <!-- No obligation to follow the Law of Demeter (only talk to friends) -->
+    <exclude name="LawOfDemeter"/>
+    <!-- Relaxed rule -->
+    <exclude name="UseUtilityClass"/>
+    <!-- Rule is incorrectly configured -->
+    <exclude name="LoosePackageCoupling"/>
+    <!-- Excluded for re-definition -->
+    <exclude name="ExcessiveImports"/>
+    <!-- Excluded for re-definition -->
+    <exclude name="TooManyMethods"/>
+  </rule>
+  <rule ref="category/java/design.xml/ExcessiveImports">
+    <properties>
+      <!-- Error at 35 rather than the default 30 -->
+      <property name="minimum" value="35"/>
+    </properties>
+  </rule>
+  <rule ref="category/java/design.xml/TooManyMethods">
+    <properties>
+      <!-- The default value 10 is too restrictive as our best practice is to use small methods -->
+      <property name="maxmethods" value="30" />
+    </properties>
+  </rule>
+
+  <rule ref="category/java/documentation.xml">
+    <!-- No limitation on the size of a comment -->
+    <exclude name="CommentSize"/>
+    <!-- Comments are not required for every single field, class... -->
+    <exclude name="CommentRequired"/>
+  </rule>
+  <rule ref="category/java/errorprone.xml">
+    <!-- Too many occurrences because of Objects.requireNonNull(object, message) -->
+    <exclude name="AvoidDuplicateLiterals"/>
+    <!-- Relaxed rule for marking fields as transient -->
+    <exclude name="NonSerializableClass"/>
+  </rule>
+  <rule ref="category/java/multithreading.xml">
+    <!-- Ability to deal with concurrency in a different way -->
+    <exclude name="UseConcurrentHashMap"/>
+    <!-- Manage our own executor service to run some tasks in parallel -->
+    <exclude name="DoNotUseThreads"/>
+  </rule>
+  <rule ref="category/java/performance.xml">
+    <!-- This rule is debatable and easily defeated by moving
+     object instantiation to a method called in the loop -->
+    <exclude name="AvoidInstantiatingObjectsInLoops"/>
+  </rule>
+  <rule ref="category/java/security.xml"/>
+
+</ruleset>
