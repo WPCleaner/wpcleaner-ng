@@ -63,6 +63,9 @@ public final class SwingLoginWindow extends JFrame {
         new WikiInput(actionService, componentService, imageService, knownDefinitions);
     addLine(panel, constraints, wiki.label, wiki.icon, wiki.comboBox, wiki.toolBar);
 
+    final LanguageInput language = new LanguageInput(actionService, componentService, imageService);
+    addLine(panel, constraints, language.label, language.icon, language.comboBox, language.toolBar);
+
     layoutService.addFillingPanelBelow(panel);
     getContentPane().add(panel);
     pack();
@@ -82,7 +85,7 @@ public final class SwingLoginWindow extends JFrame {
     panel.add(icon, constraints);
     constraints.gridx++;
     constraints.weightx = 1;
-    panel.add(selector);
+    panel.add(selector, constraints);
     constraints.gridx++;
     constraints.weightx = 0;
     panel.add(toolBar, constraints);
