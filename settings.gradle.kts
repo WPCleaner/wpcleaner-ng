@@ -15,4 +15,9 @@ fun includeInSubFolder(folder: String, moduleName: String) {
 }
 
 include("wpcleaner-dependencies")
+includeInSubFolder("wpcleaner-api", "wpcleaner-api-wiki")
+includeInSubFolder("wpcleaner-application", "wpcleaner-application-gui")
+includeInSubFolder("wpcleaner-gui", "wpcleaner-gui-core")
+includeInSubFolder("wpcleaner-gui/wpcleaner-gui-swing", "wpcleaner-gui-swing-core")
+includeInSubFolder("wpcleaner-gui/wpcleaner-gui-swing", "wpcleaner-gui-swing-login")
 includeInSubFolder("wpcleaner-lib", "wpcleaner-lib-image")
