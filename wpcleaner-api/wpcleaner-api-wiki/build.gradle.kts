@@ -5,4 +5,6 @@ dependencies {
 
   implementation(project(":wpcleaner-lib-image"))
   implementation("org.springframework.boot:spring-boot-starter")
+
+  testFixturesApi("org.springframework.boot:spring-boot-starter-test")
 }
