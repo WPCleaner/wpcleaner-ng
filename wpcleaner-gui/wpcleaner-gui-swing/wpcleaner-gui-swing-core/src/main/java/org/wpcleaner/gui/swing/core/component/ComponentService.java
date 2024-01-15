@@ -8,5 +8,8 @@ package org.wpcleaner.gui.swing.core.component;
 import org.springframework.stereotype.Service;
 
 @Service
-public record ComponentServices(
-    ButtonService buttons, LabelService labels, ToolBarService toolBars) {}
+public record ComponentService(
+    ButtonService buttons,
+    LabelService labels,
+    MenuItemService menuItems,
+    ToolBarService toolBars) {}

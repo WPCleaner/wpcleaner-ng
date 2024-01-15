@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import org.wpcleaner.gui.core.action.ActionService;
-import org.wpcleaner.gui.swing.core.component.ComponentServices;
+import org.wpcleaner.gui.swing.core.component.ComponentService;
 import org.wpcleaner.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -24,10 +24,10 @@ public class LanguageInput {
 
   LanguageInput(
       final ActionService actionService,
-      final ComponentServices componentServices,
+      final ComponentService componentService,
       final ImageIconLoader imageService) {
     icon =
-        componentServices
+        componentService
             .labels()
             .builder("Language", false)
             .withIcon(ImageCollection.LANGUAGE, ImageSize.LABEL)
@@ -35,20 +35,20 @@ public class LanguageInput {
     comboBox = new LanguageComboBox();
     comboBox.setRenderer(new LanguageListCellRenderer(imageService));
     label =
-        componentServices
+        componentService
             .labels()
             .builder("Language", true)
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(comboBox)
             .build();
     final JButton addLanguageButton =
-        componentServices
+        componentService
             .buttons()
             .builder("Add language", false)
             .withIcon(ImageCollection.LANGUAGE_ADD, ImageSize.TOOLBAR)
             .withAction(
                 actionService.openUrl("https://translatewiki.net/wiki/Translating:WPCleaner"))
             .build();
-    toolBar = componentServices.toolBars().builder().withComponent(addLanguageButton).build();
+    toolBar = componentService.toolBars().builder().withComponent(addLanguageButton).build();
   }
 }

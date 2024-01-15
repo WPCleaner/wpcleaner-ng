@@ -21,7 +21,7 @@ import org.wpcleaner.gui.core.action.SimpleAction;
 import org.wpcleaner.gui.swing.core.action.ComponentActionListener;
 import org.wpcleaner.gui.swing.core.action.ShowMessageAction;
 import org.wpcleaner.gui.swing.core.action.SimpleToComponentAction;
-import org.wpcleaner.gui.swing.core.component.ComponentServices;
+import org.wpcleaner.gui.swing.core.component.ComponentService;
 import org.wpcleaner.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -35,11 +35,11 @@ public class WikiInput {
 
   WikiInput(
       final ActionService actionService,
-      final ComponentServices componentServices,
+      final ComponentService componentService,
       final ImageIconLoader imageService,
       final KnownDefinitions knownDefinitions) {
     icon =
-        componentServices
+        componentService
             .labels()
             .builder("Wiki", false)
             .withIcon(ImageCollection.LOGO_MEDIAWIKI, ImageSize.LABEL)
@@ -47,21 +47,21 @@ public class WikiInput {
     comboBox = new WikiComboBox(knownDefinitions);
     comboBox.setRenderer(new WikiListCellRenderer(imageService));
     label =
-        componentServices
+        componentService
             .labels()
             .builder("Wiki", true)
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(comboBox)
             .build();
     final JButton warning =
-        componentServices
+        componentService
             .buttons()
             .builder("No warning", false)
             .withIcon(ImageCollection.WARNING, ImageSize.TOOLBAR)
             .build();
     warning.setEnabled(false);
     final JButton otherWiki =
-        componentServices
+        componentService
             .buttons()
             .builder("Other wiki", false)
             .withIcon(ImageCollection.HELP, ImageSize.TOOLBAR)
@@ -69,21 +69,21 @@ public class WikiInput {
                 actionService.openUrl("https://en.wikipedia.org/wiki/Wikipedia:WPCleaner/Wikis"))
             .build();
     final JButton addWiki =
-        componentServices
+        componentService
             .buttons()
             .builder("Add wiki", false)
             .withIcon(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
             .withAction(actionService.notImplemented())
             .build();
     final JButton removeWiki =
-        componentServices
+        componentService
             .buttons()
             .builder("Remove wiki", false)
             .withIcon(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
             .withAction(actionService.notImplemented())
             .build();
     toolBar =
-        componentServices
+        componentService
             .toolBars()
             .builder()
             .withComponent(warning)
