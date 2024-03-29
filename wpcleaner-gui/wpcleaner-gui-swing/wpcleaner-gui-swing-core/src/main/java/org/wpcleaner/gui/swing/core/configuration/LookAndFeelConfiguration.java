@@ -13,8 +13,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.wpcleaner.settings.local.graphical.GraphicalSettingsManager;
+import org.wpcleaner.settings.local.graphical.LookAndFeelSettings;
 
 @AutoConfiguration
 public class LookAndFeelConfiguration {
@@ -23,17 +24,17 @@ public class LookAndFeelConfiguration {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public LookAndFeelConfiguration(
-      @Value("${wpcleaner.graphical.lookandfeel.type:WPCleaner}") final LookAndFeelType type,
-      @Value("${wpcleaner.graphical.lookandfeel.name:}") final String name) {
+  public LookAndFeelConfiguration(final GraphicalSettingsManager graphicalSettingsManager) {
+    final LookAndFeelSettings lookAndFeelSettings =
+        graphicalSettingsManager.getCurrentSettings().lookAndFeel();
     final Optional<String> lookAndFeelClassName =
-        switch (type) {
+        switch (lookAndFeelSettings.type()) {
           case SYSTEM ->
               USE_SYSTEM_LF
                   ? Optional.of(UIManager.getSystemLookAndFeelClassName())
                   : Optional.empty();
-          case USER -> getLookAndFeelClassName(name.isBlank() ? "Nimbus" : name);
-          case WPCLEANER -> getLookAndFeelClassName("Nimbus");
+          case USER -> getLookAndFeelClassName(lookAndFeelSettings.name());
+          case WPCLEANER -> getLookAndFeelClassName(LookAndFeelSettings.DEFAULT_NAME);
         };
     lookAndFeelClassName.ifPresent(this::setLookAndFeel);
   }

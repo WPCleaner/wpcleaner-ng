@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import org.springframework.beans.factory.annotation.Value;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.settings.local.general.GeneralSettingsManager;
 
 @Service
 public class KnownDefinitions {
@@ -20,8 +20,7 @@ public class KnownDefinitions {
   private final WikiDefinition preferredWiki;
 
   public KnownDefinitions(
-      final List<WikiDefinitions> wikiDefinitions,
-      @Value("${wpcleaner.wiki.preferred:}") final String preferredCode) {
+      final List<WikiDefinitions> wikiDefinitions, final GeneralSettingsManager generalSettings) {
     definitions =
         wikiDefinitions.stream()
             .map(WikiDefinitions::getDefinitions)
@@ -30,9 +29,8 @@ public class KnownDefinitions {
             .flatMap(Collection::stream)
             .toList();
     preferredWiki =
-        definitions.stream()
-            .filter(definition -> Objects.equals(preferredCode, definition.code()))
-            .findFirst()
+        Optional.ofNullable(generalSettings.getCurrentSettings().preferredWiki())
+            .flatMap(preferred -> WikiDefinitionHelper.findByCode(definitions, preferred))
             .orElse(WikipediaDefinitions.EN);
   }
 

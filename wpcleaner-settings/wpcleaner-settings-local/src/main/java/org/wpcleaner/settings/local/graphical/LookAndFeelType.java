@@ -1,4 +1,4 @@
-package org.wpcleaner.gui.swing.core.configuration;
+package org.wpcleaner.settings.local.graphical;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>

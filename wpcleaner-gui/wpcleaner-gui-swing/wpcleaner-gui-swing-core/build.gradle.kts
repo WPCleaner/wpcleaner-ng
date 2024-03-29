@@ -5,5 +5,6 @@ dependencies {
   api(project(":wpcleaner-gui-core"))
 
   implementation(project(":wpcleaner-lib-image"))
+  implementation(project(":wpcleaner-settings-local"))
   implementation("org.springframework.boot:spring-boot-starter")
 }
