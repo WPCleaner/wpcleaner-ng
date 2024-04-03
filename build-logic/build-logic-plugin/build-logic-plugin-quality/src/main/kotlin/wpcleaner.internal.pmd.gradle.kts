@@ -5,7 +5,7 @@ plugins { id("pmd") }
 val qualityExtension: QualityExtension = QualityExtension.create(project)
 
 pmd {
-    toolVersion = "6.55.0"
+    toolVersion = "7.0.0"
     isConsoleOutput = true
     ruleSetFiles = project.rootProject.files("config/pmd/pmd-test.xml")
     ruleSets = listOf()

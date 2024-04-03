@@ -10,7 +10,7 @@ import javax.swing.JComboBox;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
-public class WikiComboBox extends JComboBox<WikiDefinition> {
+public final class WikiComboBox extends JComboBox<WikiDefinition> {
 
   @Serial private static final long serialVersionUID = -9002570238040204181L;
 

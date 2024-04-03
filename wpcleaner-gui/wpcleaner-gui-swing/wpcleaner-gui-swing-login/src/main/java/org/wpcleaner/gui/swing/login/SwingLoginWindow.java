@@ -53,7 +53,7 @@ public final class SwingLoginWindow extends JFrame {
   }
 
   private void initialize() {
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
     imageService
         .getImage(ImageCollection.LOGO_WPCLEANER, ImageSize.ICON)
         .map(ImageIcon::getImage)

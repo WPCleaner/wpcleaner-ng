@@ -7,6 +7,7 @@ package org.wpcleaner.api.wiki.definition;
 
 import jakarta.annotation.Nullable;
 
+@SuppressWarnings("PMD.DataClass")
 public record WikiWarning(String text) {
 
   public static final WikiWarning BENGALI = new WikiWarning(languageWarning("Bengali", null));
@@ -26,7 +27,7 @@ public record WikiWarning(String text) {
   private static String languageWarning(
       final String language, @Nullable final String extraWarning) {
     final String baseMessage =
-        """
+            """
                 %s language usually requires a dedicated font to be displayed, instead of square boxes.
                 Don't forget to install such a font, and configure WPCleaner to use it.
                 Even with such a font, rendering may still be incorrect, due to Java limitations.

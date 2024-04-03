@@ -10,6 +10,7 @@ import org.wpcleaner.api.wiki.builder.WikiBuilder;
 import org.wpcleaner.api.wiki.builder.WikipediaBuilder;
 
 @Service
+@SuppressWarnings("PMD.DataClass")
 public class OtherDefinitions implements WikiDefinitions {
   public static final WikiDefinition WAZE =
       WikiBuilder.ltr("en", "Waze")

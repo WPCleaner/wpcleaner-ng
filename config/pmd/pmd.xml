@@ -31,8 +31,6 @@
     <exclude name="ShortVariable"/>
     <!-- Ability to use long variable names -->
     <exclude name="LongVariable"/>
-    <!-- Ability to use default scoping (package private) without any comment -->
-    <exclude name="DefaultPackage"/>
     <exclude name="CommentDefaultAccessModifier"/>
     <!-- Ability to avoid Utils suffix for utility class -->
     <exclude name="ClassNamingConventions"/>

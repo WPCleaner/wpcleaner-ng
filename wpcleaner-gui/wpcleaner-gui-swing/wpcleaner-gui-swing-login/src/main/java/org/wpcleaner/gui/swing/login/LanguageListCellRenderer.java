@@ -16,7 +16,7 @@ import org.wpcleaner.api.language.Language;
 import org.wpcleaner.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageSize;
 
-public class LanguageListCellRenderer extends JLabel implements ListCellRenderer<Language> {
+public final class LanguageListCellRenderer extends JLabel implements ListCellRenderer<Language> {
 
   @Serial private static final long serialVersionUID = 1737892581461933296L;
 

@@ -16,7 +16,7 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageSize;
 
-public class WikiListCellRenderer extends JLabel implements ListCellRenderer<WikiDefinition> {
+public final class WikiListCellRenderer extends JLabel implements ListCellRenderer<WikiDefinition> {
 
   @Serial private static final long serialVersionUID = 124692843637346127L;
 

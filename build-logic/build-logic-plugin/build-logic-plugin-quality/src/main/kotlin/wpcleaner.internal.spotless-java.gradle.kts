@@ -6,7 +6,7 @@ val qualityExtension: QualityExtension = QualityExtension.create(project)
 
 spotless {
     java {
-        googleJavaFormat("1.19.2")
+        googleJavaFormat("1.21.0")
         val disabledSourceSet: Iterable<SourceSet> = qualityExtension.getDisabledSourceSet(project)
         val sourceSets: List<SourceDirectorySet> = disabledSourceSet.map { it.allJava }
         if (sourceSets.isNotEmpty()) {

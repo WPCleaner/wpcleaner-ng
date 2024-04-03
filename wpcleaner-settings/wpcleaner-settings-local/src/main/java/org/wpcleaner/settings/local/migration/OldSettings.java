@@ -18,7 +18,7 @@ public final class OldSettings {
 
   @Nullable private final Preferences rootPreferences;
 
-  private OldSettings() {
+  OldSettings() {
     this.rootPreferences = initRootPreferences();
   }
 
