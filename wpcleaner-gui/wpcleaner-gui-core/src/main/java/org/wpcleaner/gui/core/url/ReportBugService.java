@@ -14,7 +14,7 @@ public class ReportBugService {
 
   public String url() {
     final String description =
-            """
+        """
                 **Steps to replicate the issue** (include links if applicable):
 
                 *
