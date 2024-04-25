@@ -29,6 +29,7 @@ tasks.withType<JavaCompile>().configureEach {
     options.errorprone {
       check("NullAway", CheckSeverity.ERROR)
       option("NullAway:AnnotatedPackages", "org.wpcleaner")
+      option("NullAway:AcknowledgeRestrictiveAnnotations", "true")
     }
   }
 }
