@@ -11,7 +11,7 @@ import org.wpcleaner.api.wiki.builder.WikiquoteBuilder;
 
 @Service
 @Order(0)
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class WikiquoteDefinitions implements WikiDefinitions {
   public static final WikiDefinition CA = WikiquoteBuilder.ltr("ca", "Viquidites");
   public static final WikiDefinition FR = WikiquoteBuilder.ltr("fr", "Wikiquote en français");

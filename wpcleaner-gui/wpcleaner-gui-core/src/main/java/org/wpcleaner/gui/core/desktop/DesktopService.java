@@ -104,11 +104,7 @@ public class DesktopService {
             .getDeclaredMethod("openURL", new Class<?>[] {String.class})
             .invoke(null, uri.toString());
       } catch (Throwable t) {
-        LOGGER.error(
-            "Throwable on {} for browseUrl(): {} - {}",
-            osName,
-            t.getClass().getName(),
-            t.getMessage());
+        logErrorForOS(osName, t);
       }
       return true;
     }
@@ -117,16 +113,17 @@ public class DesktopService {
       try {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + uri.toString());
       } catch (Throwable t) {
-        LOGGER.error(
-            "Throwable on {} for browseUrl(): {} - {}",
-            osName,
-            t.getClass().getName(),
-            t.getMessage());
+        logErrorForOS(osName, t);
       }
       return true;
     }
 
     return false;
+  }
+
+  private void logErrorForOS(final String osName, final Throwable t) {
+    LOGGER.error(
+        "Throwable on {} for browseUrl(): {} - {}", osName, t.getClass().getName(), t.getMessage());
   }
 
   @SuppressWarnings("PMD.AvoidCatchingThrowable")

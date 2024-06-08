@@ -84,7 +84,7 @@
   <rule ref="category/java/documentation.xml">
     <!-- No limitation on the size of a comment -->
     <exclude name="CommentSize"/>
-    <!-- Comments are not required for every single field, class.. -->
+    <!-- Comments are not required for every single field, class... -->
     <exclude name="CommentRequired"/>
   </rule>
   <rule ref="category/java/errorprone.xml">

@@ -11,7 +11,7 @@ import org.wpcleaner.api.wiki.builder.WikivoyageBuilder;
 
 @Service
 @Order(0)
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public class WikivoyageDefinitions implements WikiDefinitions {
   public static final WikiDefinition BN =
       WikivoyageBuilder.ltr("bn", "Bengali Wikivoyage", WikiWarning.BENGALI);

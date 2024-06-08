@@ -13,6 +13,7 @@ import org.wpcleaner.lib.image.ImageCollection;
 
 @Service
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
+@SuppressWarnings("unused")
 public class WikimediaDefinitions implements WikiDefinitions {
   public static final WikiDefinition COMMONS =
       WikiBuilder.ltr("en", "Commons")
