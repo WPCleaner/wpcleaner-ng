@@ -5,6 +5,7 @@ package org.wpcleaner.api.wiki.definition;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import java.awt.ComponentOrientation;
 import java.util.Set;
@@ -24,6 +25,7 @@ public record WikiDefinition(
     @Nullable WikiWarning warning) {
 
   @Override
+  @Nonnull
   public String toString() {
     return "%s - %s".formatted(code, name);
   }
