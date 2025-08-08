@@ -80,6 +80,7 @@ public final class SwingLoginWindow extends JFrame {
     layoutService.addFillingPanelBelow(panel);
     getContentPane().add(panel);
     pack();
+    setLocationRelativeTo(null);
     setVisible(true);
   }
 
