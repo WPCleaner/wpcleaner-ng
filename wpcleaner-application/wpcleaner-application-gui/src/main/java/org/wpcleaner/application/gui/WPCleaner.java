@@ -8,7 +8,7 @@ package org.wpcleaner.application.gui;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.wpcleaner.gui.core.factory.LoginWindowFactory;
+import org.wpcleaner.application.gui.core.factory.LoginWindowFactory;
 
 @SpringBootApplication(scanBasePackages = "org.wpcleaner")
 public class WPCleaner {

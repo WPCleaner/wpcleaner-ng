@@ -1,0 +1,4 @@
+org.wpcleaner.application.gui.swing.core.configuration.CheckThreadConfiguration
+org.wpcleaner.application.gui.swing.core.configuration.JFrameConfiguration
+org.wpcleaner.application.gui.swing.core.configuration.LookAndFeelConfiguration
+org.wpcleaner.application.gui.swing.core.configuration.ShortcutsConfiguration
