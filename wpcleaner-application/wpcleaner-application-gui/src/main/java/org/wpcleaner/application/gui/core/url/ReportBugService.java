@@ -15,26 +15,26 @@ public class ReportBugService {
   public String url() {
     final String description =
         """
-                **Steps to replicate the issue** (include links if applicable):
+        **Steps to replicate the issue** (include links if applicable):
 
-                *
-                *
-                *
+        *
+        *
+        *
 
-                **What happens?**:
-
-
-                **What should have happened instead?**:
+        **What happens?**:
 
 
-                **Other information** (browser name/version, screenshots, etc.):
+        **What should have happened instead?**:
 
 
-                **Information provided by WPCleaner**:
-                * Java version: %s
-                * Java vendor: %s
-                * Operating system: %s
-                """
+        **Other information** (browser name/version, screenshots, etc.):
+
+
+        **Information provided by WPCleaner**:
+        * Java version: %s
+        * Java vendor: %s
+        * Operating system: %s
+        """
             .formatted(
                 System.getProperty("java.version"),
                 System.getProperty("java.vendor"),

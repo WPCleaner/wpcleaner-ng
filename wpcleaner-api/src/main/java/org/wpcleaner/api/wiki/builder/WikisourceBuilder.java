@@ -37,7 +37,7 @@ public class WikisourceBuilder {
         .withGroup(WikiGroup.WIKIMEDIA)
         .withHost("%s.wikisource.org".formatted(language))
         .withCode("s:%s".formatted(language))
-        .withCheckWikiCode("%swikisource".formatted(language))
+        .withCheckWikiCode("%s%S".formatted(language, "wikisource"))
         .withWarning(warning)
         .build();
   }

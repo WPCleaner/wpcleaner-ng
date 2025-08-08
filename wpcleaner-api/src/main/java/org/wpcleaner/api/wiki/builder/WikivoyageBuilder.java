@@ -37,7 +37,7 @@ public class WikivoyageBuilder {
         .withGroup(WikiGroup.WIKIMEDIA)
         .withHost("%s.wikivoyage.org".formatted(language))
         .withCode("voy:%s".formatted(language))
-        .withCheckWikiCode("%swikivoyage".formatted(language))
+        .withCheckWikiCode("%s%s".formatted(language, "wikivoyage"))
         .withWarning(warning)
         .build();
   }

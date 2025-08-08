@@ -38,7 +38,7 @@ public class WikipediaBuilder {
         .withHost("%s.wikipedia.org".formatted(language))
         .withHost("%s.m.wikipedia.org".formatted(language))
         .withCode(language)
-        .withCheckWikiCode("%swiki".formatted(language))
+        .withCheckWikiCode("%s%s".formatted(language, "wiki"))
         .withWarning(warning)
         .build();
   }

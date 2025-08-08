@@ -11,7 +11,6 @@ import org.wpcleaner.api.wiki.builder.WikibooksBuilder;
 
 @Service
 @Order(0)
-@SuppressWarnings("SpellCheckingInspection")
 public class WikibooksDefinitions implements WikiDefinitions {
   public static final WikiDefinition BN =
       WikibooksBuilder.ltr("bn", "Bengali Wikibooks", WikiWarning.BENGALI);

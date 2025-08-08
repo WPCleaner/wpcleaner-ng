@@ -27,7 +27,7 @@ public class WikiquoteBuilder {
         .withGroup(WikiGroup.WIKIMEDIA)
         .withHost("%s.wikiquote.org".formatted(language))
         .withCode("q:%s".formatted(language))
-        .withCheckWikiCode("%swikiquote".formatted(language))
+        .withCheckWikiCode("%s%s".formatted(language, "wikiquote"))
         .build();
   }
 }

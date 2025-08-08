@@ -5,6 +5,7 @@ package org.wpcleaner.lib.image;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+@SuppressWarnings("SpellCheckingInspection")
 public enum ImageCollection {
   HELP("commons/help-browser.png"),
   HELP_ABOUT("commons/breathe-help-about.png"),

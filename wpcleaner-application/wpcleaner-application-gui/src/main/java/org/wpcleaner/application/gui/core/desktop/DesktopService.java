@@ -21,6 +21,7 @@ public class DesktopService {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  @SuppressWarnings("SpellCheckingInspection")
   private static final List<String> BROWSERS =
       List.of(
           "x-www-browser",

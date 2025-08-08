@@ -35,9 +35,9 @@ public class WiktionaryBuilder {
     return new WikiBuilder(language, name, orientation)
         .withIcon(ImageCollection.LOGO_WIKTIONARY)
         .withGroup(WikiGroup.WIKIMEDIA)
-        .withHost("%swiktionary.org".formatted(language))
+        .withHost("%s%s.org".formatted(language, "wiktionary"))
         .withCode("wikt:%s".formatted(language))
-        .withCheckWikiCode("%swiktionary".formatted(language))
+        .withCheckWikiCode("%s%s".formatted(language, "wiktionary"))
         .withWarning(warning)
         .build();
   }

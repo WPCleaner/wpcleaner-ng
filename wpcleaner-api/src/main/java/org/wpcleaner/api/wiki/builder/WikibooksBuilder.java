@@ -37,7 +37,7 @@ public class WikibooksBuilder {
         .withGroup(WikiGroup.WIKIMEDIA)
         .withHost("%s.wikibooks.org".formatted(language))
         .withCode("b:%s".formatted(language))
-        .withCheckWikiCode("%swikibooks".formatted(language))
+        .withCheckWikiCode("%s%s".formatted(language, "wikibooks"))
         .withWarning(warning)
         .build();
   }

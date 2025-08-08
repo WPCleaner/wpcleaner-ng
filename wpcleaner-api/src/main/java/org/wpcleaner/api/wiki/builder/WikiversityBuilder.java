@@ -27,7 +27,7 @@ public class WikiversityBuilder {
         .withGroup(WikiGroup.WIKIMEDIA)
         .withHost("%s.wikiversity.org".formatted(language))
         .withCode("v:%s".formatted(language))
-        .withCheckWikiCode("%swikiversity".formatted(language))
+        .withCheckWikiCode("%s%s".formatted(language, "wikiversity"))
         .build();
   }
 }

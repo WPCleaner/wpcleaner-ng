@@ -5,7 +5,6 @@ package org.wpcleaner.settings.local.graphical;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@SuppressWarnings("SpellCheckingInspection")
 public enum LookAndFeelType {
   SYSTEM,
   USER,
