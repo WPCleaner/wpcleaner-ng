@@ -22,6 +22,7 @@ import org.wpcleaner.application.gui.core.action.ActionService;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
+import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagLayoutService;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -91,17 +92,13 @@ public final class SwingLoginWindow extends JFrame {
       final JLabel icon,
       final JComponent selector,
       final JToolBar toolBar) {
-    constraints.gridx = 0;
-    panel.add(label, constraints);
-    constraints.gridx++;
-    panel.add(icon, constraints);
-    constraints.gridx++;
-    constraints.weightx = 1;
-    panel.add(selector, constraints);
-    constraints.gridx++;
-    constraints.weightx = 0;
-    panel.add(toolBar, constraints);
-    constraints.gridy++;
+    layoutService.addRow(
+        panel,
+        constraints,
+        GridBagComponent.of(label),
+        GridBagComponent.of(icon),
+        GridBagComponent.of(selector, cellConstraints -> cellConstraints.weightx = 1),
+        GridBagComponent.of(toolBar));
   }
 
   private void addButtons(
@@ -125,10 +122,12 @@ public final class SwingLoginWindow extends JFrame {
             .withAction(actionService.notImplemented())
             .build();
     buttons.add(demoButton);
-    constraints.gridx = 0;
-    constraints.gridwidth = layoutService.getColumnsCount(panel);
-    panel.add(buttons, constraints);
-    constraints.gridy++;
+    layoutService.addRow(
+        panel,
+        constraints,
+        GridBagComponent.of(
+            buttons,
+            cellConstraints -> cellConstraints.gridwidth = layoutService.getColumnsCount(panel)));
 
     final JButton feedbackButton =
         componentService
@@ -145,9 +144,11 @@ public final class SwingLoginWindow extends JFrame {
             .withComponent(componentService.buttons().options())
             .withComponent(componentService.buttons().about())
             .build();
-    constraints.gridx = 0;
-    constraints.gridwidth = layoutService.getColumnsCount(panel);
-    panel.add(buttonTooBar, constraints);
-    constraints.gridy++;
+    layoutService.addRow(
+        panel,
+        constraints,
+        GridBagComponent.of(
+            buttonTooBar,
+            cellConstraints -> cellConstraints.gridwidth = layoutService.getColumnsCount(panel)));
   }
 }

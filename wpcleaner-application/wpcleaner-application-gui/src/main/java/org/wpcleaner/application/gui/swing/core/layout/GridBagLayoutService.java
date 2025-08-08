@@ -53,6 +53,23 @@ public class GridBagLayoutService {
         .orElse(0);
   }
 
+  public void addRow(
+      final JPanel panel,
+      final GridBagConstraints constraints,
+      final GridBagComponent... components) {
+    constraints.gridx = 0;
+    Arrays.stream(components).forEach(component -> addSimpleCell(panel, constraints, component));
+    constraints.gridy++;
+  }
+
+  private void addSimpleCell(
+      final JPanel panel, final GridBagConstraints constraints, final GridBagComponent component) {
+    final GridBagConstraints cellConstraints = (GridBagConstraints) constraints.clone();
+    component.adapter().accept(cellConstraints);
+    panel.add(component.component(), cellConstraints);
+    constraints.gridx += cellConstraints.gridwidth;
+  }
+
   public void addFillingPanelBelow(final JPanel panel) {
     if (!(panel.getLayout() instanceof GridBagLayout)) {
       return;
