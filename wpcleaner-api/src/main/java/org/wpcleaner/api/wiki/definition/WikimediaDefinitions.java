@@ -22,6 +22,13 @@ public class WikimediaDefinitions implements WikiDefinitions {
           .withCode("commons")
           .withCheckWikiCode("commons")
           .build();
+  public static final WikiDefinition MEDIAWIKI =
+      WikiBuilder.ltr("en", "MediaWiki", "mediawiki.org")
+          .withIcon(ImageCollection.LOGO_WIKIMEDIA)
+          .withGroup(WikiGroup.WIKIMEDIA)
+          .withCode("mw")
+          .withCheckWikiCode("mw")
+          .build();
   public static final WikiDefinition META =
       WikiBuilder.ltr("en", "Meta", "meta.wikimedia.org")
           .withIcon(ImageCollection.LOGO_WIKIMEDIA)
