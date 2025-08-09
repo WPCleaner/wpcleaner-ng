@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.application.gui.core.action.ActionService;
+import org.wpcleaner.application.gui.core.url.UrlService;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
@@ -36,21 +37,28 @@ public final class SwingLoginWindow extends JFrame {
   private final ComponentService componentService;
   private final ImageIconLoader imageService;
   private final GridBagLayoutService layoutService;
+  private final UrlService urlService;
 
   public static void create(
-      final KnownDefinitions knownDefinitions, final SwingCoreServices swingCoreServices) {
-    final SwingLoginWindow window = new SwingLoginWindow(knownDefinitions, swingCoreServices);
+      final KnownDefinitions knownDefinitions,
+      final SwingCoreServices swingCoreServices,
+      final UrlService urlService) {
+    final SwingLoginWindow window =
+        new SwingLoginWindow(knownDefinitions, swingCoreServices, urlService);
     window.initialize();
   }
 
   private SwingLoginWindow(
-      final KnownDefinitions knownDefinitions, final SwingCoreServices swingCoreServices) {
+      final KnownDefinitions knownDefinitions,
+      final SwingCoreServices swingCoreServices,
+      final UrlService urlService) {
     super("WPCleaner");
     this.knownDefinitions = knownDefinitions;
     this.actionService = swingCoreServices.action().action();
     this.componentService = swingCoreServices.component();
     this.imageService = swingCoreServices.image();
     this.layoutService = swingCoreServices.layout();
+    this.urlService = urlService;
   }
 
   private void initialize() {
@@ -73,7 +81,7 @@ public final class SwingLoginWindow extends JFrame {
     final UserInput user = new UserInput(actionService, componentService);
     addLine(panel, constraints, user.label, user.icon, user.comboBox, user.toolBar);
 
-    final PasswordInput password = new PasswordInput(actionService, componentService);
+    final PasswordInput password = new PasswordInput(actionService, componentService, urlService);
     addLine(panel, constraints, password.label, password.icon, password.field, password.toolBar);
 
     addButtons(panel, constraints, user, password);

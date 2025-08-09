@@ -32,4 +32,8 @@ public class UrlService {
     return "https://phabricator.wikimedia.org/maniphest/task/edit/form/102/?projects=%s&subscribers=%s"
         .formatted("wpcleaner", "NicoV");
   }
+
+  public String specialBotPasswords() {
+    return "https://www.mediawiki.org/wiki/Special:BotPasswords";
+  }
 }

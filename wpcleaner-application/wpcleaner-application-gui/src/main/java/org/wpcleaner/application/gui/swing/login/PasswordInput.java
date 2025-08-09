@@ -11,6 +11,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import org.wpcleaner.application.gui.core.action.ActionService;
+import org.wpcleaner.application.gui.core.url.UrlService;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -22,7 +23,10 @@ public class PasswordInput {
   final JLabel label;
   final JToolBar toolBar;
 
-  PasswordInput(final ActionService actionService, final ComponentService componentService) {
+  PasswordInput(
+      final ActionService actionService,
+      final ComponentService componentService,
+      final UrlService urlService) {
     icon =
         componentService
             .labels()
@@ -36,6 +40,13 @@ public class PasswordInput {
             .builder("Password", true)
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(field)
+            .build();
+    final JButton specialBotPasswords =
+        componentService
+            .buttons()
+            .builder("Bot passwords", false)
+            .withIcon(ImageCollection.HELP, ImageSize.TOOLBAR)
+            .withAction(actionService.openUrl(urlService.specialBotPasswords()))
             .build();
     final JButton addPassword =
         componentService
@@ -55,6 +66,7 @@ public class PasswordInput {
         componentService
             .toolBars()
             .builder()
+            .withComponent(specialBotPasswords)
             .withComponent(addPassword)
             .withComponent(removePassword)
             .build();
