@@ -32,10 +32,10 @@ public class WiktionaryBuilder {
       final String name,
       final ComponentOrientation orientation,
       @Nullable final WikiWarning warning) {
-    return new WikiBuilder(language, name, orientation)
+    return new WikiBuilder(
+            language, name, "%s%s.org".formatted(language, "wiktionary"), orientation)
         .withIcon(ImageCollection.LOGO_WIKTIONARY)
         .withGroup(WikiGroup.WIKIMEDIA)
-        .withHost("%s%s.org".formatted(language, "wiktionary"))
         .withCode("wikt:%s".formatted(language))
         .withCheckWikiCode("%s%s".formatted(language, "wiktionary"))
         .withWarning(warning)

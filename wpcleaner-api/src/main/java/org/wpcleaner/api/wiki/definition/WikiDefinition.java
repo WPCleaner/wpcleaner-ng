@@ -16,6 +16,7 @@ public record WikiDefinition(
     String name,
     ImageCollection image,
     WikiGroup group,
+    String mainHost,
     Set<String> hosts,
     String apiPath,
     String indexPath,
@@ -23,6 +24,10 @@ public record WikiDefinition(
     @Nullable String checkWikiCode,
     ComponentOrientation orientation,
     @Nullable WikiWarning warning) {
+
+  public String apiUrl() {
+    return "https://%s/%s".formatted(mainHost, apiPath);
+  }
 
   @Override
   @Nonnull

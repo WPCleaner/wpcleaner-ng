@@ -16,18 +16,16 @@ import org.wpcleaner.lib.image.ImageCollection;
 @SuppressWarnings("unused")
 public class WikimediaDefinitions implements WikiDefinitions {
   public static final WikiDefinition COMMONS =
-      WikiBuilder.ltr("en", "Commons")
+      WikiBuilder.ltr("en", "Commons", "commons.wikimedia.org")
           .withIcon(ImageCollection.LOGO_COMMONS)
           .withGroup(WikiGroup.WIKIMEDIA)
-          .withHost("commons.wikimedia.org")
           .withCode("commons")
           .withCheckWikiCode("commons")
           .build();
   public static final WikiDefinition META =
-      WikiBuilder.ltr("en", "Meta")
+      WikiBuilder.ltr("en", "Meta", "meta.wikimedia.org")
           .withIcon(ImageCollection.LOGO_WIKIMEDIA)
           .withGroup(WikiGroup.WIKIMEDIA)
-          .withHost("meta.wikimedia.org")
           .withCode("meta")
           .withCheckWikiCode("meta")
           .build();

@@ -22,10 +22,9 @@ public class WikiquoteBuilder {
 
   private static WikiDefinition build(
       final String language, final String name, final ComponentOrientation orientation) {
-    return new WikiBuilder(language, name, orientation)
+    return new WikiBuilder(language, name, "%s.wikiquote.org".formatted(language), orientation)
         .withIcon(ImageCollection.LOGO_WIKIQUOTE)
         .withGroup(WikiGroup.WIKIMEDIA)
-        .withHost("%s.wikiquote.org".formatted(language))
         .withCode("q:%s".formatted(language))
         .withCheckWikiCode("%s%s".formatted(language, "wikiquote"))
         .build();

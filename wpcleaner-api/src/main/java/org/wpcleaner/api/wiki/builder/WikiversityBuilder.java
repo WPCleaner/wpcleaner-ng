@@ -22,10 +22,9 @@ public class WikiversityBuilder {
 
   private static WikiDefinition build(
       final String language, final String name, final ComponentOrientation orientation) {
-    return new WikiBuilder(language, name, orientation)
+    return new WikiBuilder(language, name, "%s.wikiversity.org".formatted(language), orientation)
         .withIcon(ImageCollection.LOGO_WIKIVERSITY)
         .withGroup(WikiGroup.WIKIMEDIA)
-        .withHost("%s.wikiversity.org".formatted(language))
         .withCode("v:%s".formatted(language))
         .withCheckWikiCode("%s%s".formatted(language, "wikiversity"))
         .build();

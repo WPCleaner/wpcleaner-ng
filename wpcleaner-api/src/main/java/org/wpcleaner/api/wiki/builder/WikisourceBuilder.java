@@ -32,10 +32,9 @@ public class WikisourceBuilder {
       final String name,
       final ComponentOrientation orientation,
       @Nullable final WikiWarning warning) {
-    return new WikiBuilder(language, name, orientation)
+    return new WikiBuilder(language, name, "%s.wikisource.org".formatted(language), orientation)
         .withIcon(ImageCollection.LOGO_WIKISOURCE)
         .withGroup(WikiGroup.WIKIMEDIA)
-        .withHost("%s.wikisource.org".formatted(language))
         .withCode("s:%s".formatted(language))
         .withCheckWikiCode("%s%S".formatted(language, "wikisource"))
         .withWarning(warning)

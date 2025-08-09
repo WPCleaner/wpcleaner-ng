@@ -21,6 +21,7 @@ public class WikiBuilder {
   private final ComponentOrientation orientation;
   private ImageCollection icon;
   private WikiGroup group;
+  private final String mainHost;
   private final Set<String> hosts;
   private String apiPath;
   private String indexPath;
@@ -28,21 +29,27 @@ public class WikiBuilder {
   @Nullable private String checkWikiCode;
   @Nullable private WikiWarning warning;
 
-  public static WikiBuilder ltr(final String language, final String name) {
-    return new WikiBuilder(language, name, ComponentOrientation.LEFT_TO_RIGHT);
+  public static WikiBuilder ltr(final String language, final String name, final String mainHost) {
+    return new WikiBuilder(language, name, mainHost, ComponentOrientation.LEFT_TO_RIGHT);
   }
 
-  public static WikiBuilder rtl(final String language, final String name) {
-    return new WikiBuilder(language, name, ComponentOrientation.RIGHT_TO_LEFT);
+  public static WikiBuilder rtl(final String language, final String name, final String mainHost) {
+    return new WikiBuilder(language, name, mainHost, ComponentOrientation.RIGHT_TO_LEFT);
   }
 
-  WikiBuilder(final String language, final String name, final ComponentOrientation orientation) {
+  WikiBuilder(
+      final String language,
+      final String name,
+      final String mainHost,
+      final ComponentOrientation orientation) {
     this.language = language;
     this.name = name;
     this.orientation = orientation;
     this.icon = ImageCollection.LOGO_MEDIAWIKI;
     this.group = WikiGroup.OTHER;
+    this.mainHost = mainHost;
     this.hosts = new HashSet<>();
+    this.hosts.add(mainHost);
     this.apiPath = "/w/api.php";
     this.indexPath = "/w/index.php";
     this.code = "other:" + language;
@@ -94,6 +101,7 @@ public class WikiBuilder {
         name,
         icon,
         group,
+        mainHost,
         hosts,
         apiPath,
         indexPath,
