@@ -1,0 +1,2 @@
+wpcleaner.api:
+  log-interceptor.body: true

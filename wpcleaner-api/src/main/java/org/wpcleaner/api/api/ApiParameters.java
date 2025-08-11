@@ -16,6 +16,7 @@ public enum ApiParameters {
   ERROR_LANG("errorlang"),
   ERRORS_USE_LOCAL("errorsuselocal"),
   FORMAT("format"),
+  FORMAT_VERSION("formatversion"),
   MAX_AGE("maxage"),
   MAX_LAG("maxlag"),
   ORIGIN("origin"),
@@ -25,6 +26,8 @@ public enum ApiParameters {
   SERVED_BY("servedby"),
   USE_LANG("uselang"),
   VARIANT("variant");
+
+  public static final int FORMAT_VERSION_VALUE = 2;
 
   public final String value;
 
@@ -39,6 +42,21 @@ public enum ApiParameters {
     public final String value;
 
     Action(final String value) {
+      this.value = value;
+    }
+  }
+
+  public enum ErrorFormat {
+    BACKWARD_COMPATIBILITY("bc"),
+    HTML("html"),
+    NONE("none"),
+    PLAIN_TEXT("plaintext"),
+    RAW("raw"),
+    WIKI_TEXT("wikitext");
+
+    public final String value;
+
+    ErrorFormat(final String value) {
       this.value = value;
     }
   }

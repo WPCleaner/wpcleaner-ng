@@ -15,10 +15,12 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @Service
 public class ApiRestClient {
 
+  private final ApiLogInterceptor logInterceptor;
   private final RestClient.Builder clientBuilder;
   private final Map<WikiDefinition, RestClient> restClients;
 
-  public ApiRestClient() {
+  public ApiRestClient(final ApiLogInterceptor logInterceptor) {
+    this.logInterceptor = logInterceptor;
     this.clientBuilder = RestClient.builder();
     this.restClients = new ConcurrentHashMap<>();
   }
@@ -35,6 +37,7 @@ public class ApiRestClient {
         .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
         .defaultHeader(HttpHeaders.USER_AGENT, "WPCleaner")
         // TODO: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+        .requestInterceptor(logInterceptor)
         .build();
   }
 }

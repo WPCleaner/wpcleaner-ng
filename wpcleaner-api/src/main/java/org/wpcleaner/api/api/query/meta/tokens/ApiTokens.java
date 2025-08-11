@@ -6,11 +6,15 @@ package org.wpcleaner.api.api.query.meta.tokens;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.annotation.Nullable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.query.QueryParameters;
@@ -43,7 +47,12 @@ public class ApiTokens {
             uriBuilder ->
                 uriBuilder
                     .queryParam(ApiParameters.ACTION.value, ApiParameters.Action.QUERY.value)
+                    .queryParam(
+                        ApiParameters.ERROR_FORMAT.value,
+                        ApiParameters.ErrorFormat.PLAIN_TEXT.value)
                     .queryParam(ApiParameters.FORMAT.value, ApiParameters.Format.JSON.value)
+                    .queryParam(
+                        ApiParameters.FORMAT_VERSION.value, ApiParameters.FORMAT_VERSION_VALUE)
                     .queryParam(QueryParameters.META.value, QueryParameters.Meta.TOKENS.value)
                     .queryParam(
                         TokensParameters.TYPE.value,
@@ -57,5 +66,9 @@ public class ApiTokens {
       @JsonProperty("batchcomplete") boolean batchComplete,
       @JsonProperty("query") ResponseQuery query) {}
 
-  private record ResponseQuery(@JsonProperty("tokens") Tokens tokens) {}
+  private record ResponseQuery(
+      @JsonProperty("errors") @JsonSetter(nulls = Nulls.AS_EMPTY) List<ApiError> errors,
+      @JsonProperty("warnings") @JsonSetter(nulls = Nulls.AS_EMPTY) List<ApiError> warnings,
+      @JsonProperty("docref") @Nullable String docref,
+      @JsonProperty("tokens") Tokens tokens) {}
 }
