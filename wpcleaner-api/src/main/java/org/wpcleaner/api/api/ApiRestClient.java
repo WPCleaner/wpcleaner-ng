@@ -35,7 +35,9 @@ public class ApiRestClient {
         .defaultHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8")
         .defaultHeader(HttpHeaders.ACCEPT_ENCODING, "gzip")
         .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-        .defaultHeader(HttpHeaders.USER_AGENT, "WPCleaner")
+        .defaultHeader(
+            HttpHeaders.USER_AGENT,
+            "WikiCleanerBot (https://fr.wikipedia.org/wiki/Utilisateur:NicoV) WPCleanerNG/0.0")
         // TODO: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
         .requestInterceptor(logInterceptor)
         .build();

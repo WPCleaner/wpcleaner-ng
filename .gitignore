@@ -1,7 +1,11 @@
+# Build
 .gradle
 **/build/
 !src/**/build/
 /build-logic/.kotlin/
+
+# Security
+**/credentials.json
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -23,3 +27,4 @@ gradle-app.setting
 
 # IntelliJ
 .idea
+

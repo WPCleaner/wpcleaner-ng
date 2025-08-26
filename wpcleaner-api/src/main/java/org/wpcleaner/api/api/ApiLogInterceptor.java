@@ -27,6 +27,7 @@ public class ApiLogInterceptor implements ClientHttpRequestInterceptor {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  // TODO: Handle sensitive parameters properly (a repository, each api adds its own set)
   private static final Set<String> SENSITIVE_QUERY_PARAMS = Set.of();
 
   private final boolean logBody;

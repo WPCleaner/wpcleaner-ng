@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.settings.local.general.GeneralSettingsManager;
@@ -40,5 +41,11 @@ public class KnownDefinitions {
 
   public WikiDefinition getPreferred() {
     return preferredWiki;
+  }
+
+  public Optional<WikiDefinition> getDefinition(final String code) {
+    return definitions.stream()
+        .filter(definition -> Objects.equals(code, definition.code()))
+        .findFirst();
   }
 }

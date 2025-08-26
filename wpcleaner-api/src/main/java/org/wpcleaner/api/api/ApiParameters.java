@@ -36,6 +36,7 @@ public enum ApiParameters {
   }
 
   public enum Action {
+    LOGIN("login"),
     QUERY("query"),
     ;
 
