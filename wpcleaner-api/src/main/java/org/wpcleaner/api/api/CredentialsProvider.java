@@ -15,24 +15,24 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @Component
 public class CredentialsProvider {
 
-  private final List<Credentials> credentials;
+  private final List<Credential> credentials;
 
   public CredentialsProvider(final List<CredentialsReader> readers) {
     credentials = new ArrayList<>();
     readers.stream().map(CredentialsReader::getCredentials).forEach(credentials::addAll);
   }
 
-  public Optional<Credentials> getCredentials(final WikiDefinition wiki) {
-    return getCredentialsForWiki(wiki).or(() -> getCredentialsForGroup(wiki));
+  public Optional<Credential> getCredential(final WikiDefinition wiki) {
+    return getCredentialForWiki(wiki).or(() -> getCredentialForGroup(wiki));
   }
 
-  private Optional<Credentials> getCredentialsForWiki(final WikiDefinition wiki) {
+  private Optional<Credential> getCredentialForWiki(final WikiDefinition wiki) {
     return credentials.stream()
         .filter(credential -> Objects.equals(credential.wiki(), wiki))
         .findFirst();
   }
 
-  private Optional<Credentials> getCredentialsForGroup(final WikiDefinition wiki) {
+  private Optional<Credential> getCredentialForGroup(final WikiDefinition wiki) {
     if (!wiki.group().isAuthenticationShared()) {
       return Optional.empty();
     }

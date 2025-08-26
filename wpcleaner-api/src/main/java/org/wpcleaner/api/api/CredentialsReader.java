@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface CredentialsReader {
 
-  List<Credentials> getCredentials();
+  List<Credential> getCredentials();
 }

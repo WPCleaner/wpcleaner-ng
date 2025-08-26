@@ -26,30 +26,30 @@ public class CredentialsJsonReader implements CredentialsReader {
   }
 
   @Override
-  public List<Credentials> getCredentials() {
+  public List<Credential> getCredentials() {
     final Resource resource = new ClassPathResource("credentials.json");
     if (!resource.exists() || !resource.isReadable()) {
       return List.of();
     }
-    return Arrays.stream(JsonUtil.readValue(resource, JsonCredentials[].class))
-        .map(credentials -> credentials.toCredentials(knownDefinitions))
+    return Arrays.stream(JsonUtil.readValue(resource, JsonCredential[].class))
+        .map(credentials -> credentials.toCredential(knownDefinitions))
         .filter(Objects::nonNull)
         .toList();
   }
 
-  private record JsonCredentials(
+  private record JsonCredential(
       @JsonProperty(value = "username", required = true) String username,
       @JsonProperty(value = "password", required = true) String password,
       @JsonProperty("wiki") @Nullable String wiki) {
 
     @Nullable
-    public Credentials toCredentials(final KnownDefinitions knownDefinitions) {
+    public Credential toCredential(final KnownDefinitions knownDefinitions) {
       if (wiki == null) {
-        return new Credentials(username, password, null);
+        return new Credential(username, password, null);
       }
       return knownDefinitions
           .getDefinition(wiki)
-          .map(definition -> new Credentials(username, password, definition))
+          .map(definition -> new Credential(username, password, definition))
           .orElseThrow(() -> new IllegalArgumentException("No definition found for " + wiki));
     }
   }

@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.wpcleaner.api.TestCallingMWApi;
-import org.wpcleaner.api.api.Credentials;
+import org.wpcleaner.api.api.Credential;
 import org.wpcleaner.api.api.CredentialsProvider;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.Tokens;
@@ -40,26 +40,26 @@ class ApiLoginTest {
     // GIVEN
     final WikiDefinition wiki = WikimediaDefinitions.META;
     final Tokens tokens = apiTokens.requestTokens(wiki, List.of(TokensParameters.Type.LOGIN));
-    final Credentials credentials =
+    final Credential credential =
         credentialsProvider
-            .getCredentials(wiki)
+            .getCredential(wiki)
             .orElseThrow(
                 () ->
                     new IllegalStateException(
                         """
-                        No credentials provided for wiki %s.
-                        Please provide a credentials.json file with usable credentials.
+                        No credential provided for wiki %s.
+                        Please provide a credentials.yaml or credentials.json file with usable credential.
                         """
                             .formatted(wiki.code())));
 
     // WHEN
     final Login login =
-        apiLogin.login(wiki, credentials.username(), credentials.password(), tokens.login());
+        apiLogin.login(wiki, credential.username(), credential.password(), tokens.login());
 
     // THEN
     Assertions.assertThat(login).as("login").isNotNull();
     Assertions.assertThat(login.result()).as("result").isEqualTo("Success");
-    Assertions.assertThat(login.username()).as("username").isEqualTo(credentials.username());
+    Assertions.assertThat(login.username()).as("username").isEqualTo(credential.username());
     Assertions.assertThat(login.userId()).as("userId").isNotNull();
   }
 }

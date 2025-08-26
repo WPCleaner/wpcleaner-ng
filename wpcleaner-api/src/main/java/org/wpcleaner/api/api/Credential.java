@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
-public record Credentials(
+public record Credential(
     @JsonProperty(value = "username", required = true) String username,
     @JsonProperty(value = "password", required = true) String password,
     @JsonProperty("wiki") @Nullable WikiDefinition wiki) {}

@@ -6,6 +6,7 @@
 
 # Security
 **/credentials.json
+**/credentials.yaml
 
 # Ignore Gradle GUI config
 gradle-app.setting
