@@ -11,7 +11,7 @@ import java.util.List;
 public class ApiException extends RuntimeException {
   @Serial private static final long serialVersionUID = -6009714247794453133L;
 
-  private final List<ApiError> errors;
+  private final transient List<ApiError> errors;
 
   public ApiException(final String message, final List<ApiError> errors) {
     super(message);

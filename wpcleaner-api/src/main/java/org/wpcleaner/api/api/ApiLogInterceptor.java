@@ -45,7 +45,7 @@ public class ApiLogInterceptor implements ClientHttpRequestInterceptor {
       @Nonnull final ClientHttpRequestExecution execution)
       throws IOException {
     LOGGER.info("Start outbound request {} {}", request.getMethod(), cleanUri(request.getURI()));
-    if (logBody && body.length > 0) {
+    if (logBody && body.length > 0 && LOGGER.isInfoEnabled()) {
       LOGGER.info("  Request body: {}", new String(body, StandardCharsets.UTF_8));
     }
     return execution.execute(request, body);

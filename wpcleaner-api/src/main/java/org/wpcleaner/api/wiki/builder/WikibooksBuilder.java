@@ -12,7 +12,11 @@ import org.wpcleaner.api.wiki.definition.WikiGroup;
 import org.wpcleaner.api.wiki.definition.WikiWarning;
 import org.wpcleaner.lib.image.ImageCollection;
 
-public class WikibooksBuilder {
+public final class WikibooksBuilder {
+
+  private WikibooksBuilder() {
+    // Utility class
+  }
 
   public static WikiDefinition ltr(final String language, final String name) {
     return build(language, name, ComponentOrientation.LEFT_TO_RIGHT, null);

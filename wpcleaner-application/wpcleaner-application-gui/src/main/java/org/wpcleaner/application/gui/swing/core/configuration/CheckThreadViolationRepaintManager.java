@@ -91,6 +91,9 @@ public class CheckThreadViolationRepaintManager extends RepaintManager {
   }
 
   private void reportViolation(final StackTraceElement[] stackTrace, final JComponent c) {
+    if (!LOGGER.isErrorEnabled()) {
+      return;
+    }
     lastComponent = new WeakReference<>(c);
     final StringBuilder builder = new StringBuilder("EDT violation detected on ").append(c);
     Arrays.stream(stackTrace).forEachOrdered(ste -> builder.append("\n\tat ").append(ste));

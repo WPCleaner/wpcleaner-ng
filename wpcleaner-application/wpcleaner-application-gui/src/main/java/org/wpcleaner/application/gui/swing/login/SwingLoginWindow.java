@@ -32,12 +32,12 @@ public final class SwingLoginWindow extends JFrame {
 
   @Serial private static final long serialVersionUID = 3951316694154990744L;
 
-  private final KnownDefinitions knownDefinitions;
-  private final ActionService actionService;
-  private final ComponentService componentService;
-  private final ImageIconLoader imageService;
-  private final GridBagLayoutService layoutService;
-  private final UrlService urlService;
+  private final transient KnownDefinitions knownDefinitions;
+  private final transient ActionService actionService;
+  private final transient ComponentService componentService;
+  private final transient ImageIconLoader imageService;
+  private final transient GridBagLayoutService layoutService;
+  private final transient UrlService urlService;
 
   public static void create(
       final KnownDefinitions knownDefinitions,

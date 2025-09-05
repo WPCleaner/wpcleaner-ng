@@ -20,7 +20,7 @@ public final class LanguageListCellRenderer extends JLabel implements ListCellRe
 
   @Serial private static final long serialVersionUID = 1737892581461933296L;
 
-  private final ImageIconLoader imageService;
+  private final transient ImageIconLoader imageService;
 
   public LanguageListCellRenderer(final ImageIconLoader imageService) {
     this.imageService = imageService;

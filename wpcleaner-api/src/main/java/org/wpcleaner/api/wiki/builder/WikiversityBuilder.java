@@ -10,7 +10,11 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikiGroup;
 import org.wpcleaner.lib.image.ImageCollection;
 
-public class WikiversityBuilder {
+public final class WikiversityBuilder {
+
+  private WikiversityBuilder() {
+    // Utility class
+  }
 
   public static WikiDefinition ltr(final String language, final String name) {
     return build(language, name, ComponentOrientation.LEFT_TO_RIGHT);

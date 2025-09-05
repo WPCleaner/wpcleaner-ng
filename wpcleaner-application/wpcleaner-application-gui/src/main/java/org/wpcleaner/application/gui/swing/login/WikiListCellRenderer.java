@@ -20,7 +20,7 @@ public final class WikiListCellRenderer extends JLabel implements ListCellRender
 
   @Serial private static final long serialVersionUID = 124692843637346127L;
 
-  private final ImageIconLoader imageService;
+  private final transient ImageIconLoader imageService;
 
   public WikiListCellRenderer(final ImageIconLoader imageService) {
     this.imageService = imageService;

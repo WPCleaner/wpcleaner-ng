@@ -6,14 +6,18 @@ package org.wpcleaner.api.wiki.definition;
  */
 
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.wpcleaner.api.wiki.builder.WikivoyageBuilder;
 
-@Service
+@Component
 @Order(0)
 @SuppressWarnings("unused")
-public class WikivoyageDefinitions implements WikiDefinitions {
+final class WikivoyageDefinitions implements WikiDefinitions {
   public static final WikiDefinition BN =
       WikivoyageBuilder.ltr("bn", "Bengali Wikivoyage", WikiWarning.BENGALI);
   public static final WikiDefinition FR = WikivoyageBuilder.ltr("fr", "Wikivoyage en français");
+
+  private WikivoyageDefinitions() {
+    // Class defining only constants discovered by introspection
+  }
 }

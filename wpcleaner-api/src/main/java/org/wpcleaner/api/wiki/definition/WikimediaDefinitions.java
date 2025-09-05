@@ -7,14 +7,14 @@ package org.wpcleaner.api.wiki.definition;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.wpcleaner.api.wiki.builder.WikiBuilder;
 import org.wpcleaner.lib.image.ImageCollection;
 
-@Service
+@Component
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @SuppressWarnings("unused")
-public class WikimediaDefinitions implements WikiDefinitions {
+public final class WikimediaDefinitions implements WikiDefinitions {
   public static final WikiDefinition COMMONS =
       WikiBuilder.ltr("en", "Commons", "commons.wikimedia.org")
           .withIcon(ImageCollection.LOGO_COMMONS)
@@ -36,4 +36,8 @@ public class WikimediaDefinitions implements WikiDefinitions {
           .withCode("meta")
           .withCheckWikiCode("meta")
           .build();
+
+  private WikimediaDefinitions() {
+    // Class defining only constants discovered by introspection
+  }
 }

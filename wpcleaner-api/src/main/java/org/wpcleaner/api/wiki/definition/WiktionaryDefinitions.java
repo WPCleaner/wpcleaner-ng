@@ -6,16 +6,21 @@ package org.wpcleaner.api.wiki.definition;
  */
 
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.wpcleaner.api.wiki.builder.WiktionaryBuilder;
 
-@Service
+@Component
 @Order(0)
 @SuppressWarnings({"PMD.DataClass", "SpellCheckingInspection", "unused"})
-public class WiktionaryDefinitions implements WikiDefinitions {
+final class WiktionaryDefinitions implements WikiDefinitions {
+
   public static final WikiDefinition BN =
       WiktionaryBuilder.ltr("bn", "Bengali Wiktionary", WikiWarning.BENGALI);
   public static final WikiDefinition EN = WiktionaryBuilder.ltr("en", "English Wiktionary");
   public static final WikiDefinition FR = WiktionaryBuilder.ltr("fr", "Wiktionnaire en français");
   public static final WikiDefinition SV = WiktionaryBuilder.ltr("sv", "Swedish Wiktionary");
+
+  private WiktionaryDefinitions() {
+    // Class defining only constants discovered by introspection
+  }
 }

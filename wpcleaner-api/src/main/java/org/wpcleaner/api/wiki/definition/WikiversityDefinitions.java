@@ -6,13 +6,17 @@ package org.wpcleaner.api.wiki.definition;
  */
 
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.wpcleaner.api.wiki.builder.WikiversityBuilder;
 
-@Service
+@Component
 @Order(0)
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
-public class WikiversityDefinitions implements WikiDefinitions {
+final class WikiversityDefinitions implements WikiDefinitions {
   public static final WikiDefinition FR = WikiversityBuilder.ltr("fr", "Wikiversité en Français");
   public static final WikiDefinition IT = WikiversityBuilder.ltr("it", "Wikiversità");
+
+  private WikiversityDefinitions() {
+    // Class defining only constants discovered by introspection
+  }
 }

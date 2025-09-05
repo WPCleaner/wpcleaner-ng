@@ -5,13 +5,13 @@ package org.wpcleaner.api.wiki.definition;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.wpcleaner.api.wiki.builder.WikiBuilder;
 import org.wpcleaner.api.wiki.builder.WikipediaBuilder;
 
-@Service
+@Component
 @SuppressWarnings({"PMD.DataClass", "unused"})
-public class OtherDefinitions implements WikiDefinitions {
+final class OtherDefinitions implements WikiDefinitions {
   public static final WikiDefinition WAZE =
       WikiBuilder.ltr("en", "Waze", "wiki.waze.com")
           .withApiPath("/wiki/api.php")
@@ -32,4 +32,8 @@ public class OtherDefinitions implements WikiDefinitions {
           .build();
 
   public static final WikiDefinition TEST = WikipediaBuilder.ltr("test", "Test wikipedia");
+
+  private OtherDefinitions() {
+    // Class defining only constants discovered by introspection
+  }
 }

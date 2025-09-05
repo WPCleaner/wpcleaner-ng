@@ -7,13 +7,13 @@ package org.wpcleaner.api.wiki.definition;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.wpcleaner.api.wiki.builder.WikipediaBuilder;
 
-@Service
+@Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @SuppressWarnings({"PMD.DataClass", "SpellCheckingInspection", "unused"})
-public class WikipediaDefinitions implements WikiDefinitions {
+final class WikipediaDefinitions implements WikiDefinitions {
   public static final WikiDefinition AF = ltr("af", "Afrikaans Wikipedia");
   public static final WikiDefinition ALS = ltr("als", "Alemannisch Wikipedia");
   public static final WikiDefinition AR = rtl("ar", "Arabic Wikipedia");
@@ -99,5 +99,9 @@ public class WikipediaDefinitions implements WikiDefinitions {
 
   private static WikiDefinition rtl(final String language, final String name) {
     return WikipediaBuilder.rtl(language, name);
+  }
+
+  private WikipediaDefinitions() {
+    // Class defining only constants discovered by introspection
   }
 }

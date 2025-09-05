@@ -35,17 +35,17 @@ public class DesktopService {
           "kazehakase",
           "mozilla");
 
-  @SuppressWarnings("PMD.AvoidCatchingThrowable")
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   public boolean isDesktopSupported() {
     try {
       final Class<?> desktopClass = Class.forName("java.awt.Desktop");
       final Method method = desktopClass.getMethod("isDesktopSupported", (Class<?>[]) null);
       return (Boolean) method.invoke(null, (Object[]) null);
-    } catch (Throwable t) {
+    } catch (Exception e) {
       LOGGER.error(
-          "Throwable using Desktop.isDesktopSupported(): {} - {}",
-          t.getClass().getName(),
-          t.getMessage());
+          "Exception using Desktop.isDesktopSupported(): {} - {}",
+          e.getClass().getName(),
+          e.getMessage());
     }
     return false;
   }
@@ -78,7 +78,7 @@ public class DesktopService {
     defaultAction.accept(uri);
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingThrowable")
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private boolean browseWithDesktop(final URI uri) {
     if (isDesktopSupported()) {
       try {
@@ -88,24 +88,24 @@ public class DesktopService {
         final Method browseMethod = desktopClass.getMethod("browse", URI.class);
         browseMethod.invoke(desktop, uri);
         return true;
-      } catch (Throwable t) {
+      } catch (Exception e) {
         LOGGER.error(
-            "Throwable using Desktop.browse(): {} - {}", t.getClass().getName(), t.getMessage());
+            "Exception using Desktop.browse(): {} - {}", e.getClass().getName(), e.getMessage());
       }
     }
     return false;
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingThrowable")
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private boolean browseByOS(final URI uri, final String osName) {
     // Fallback on OS dependent method, see https://centerkey.com/java/browser/
     if (osName.startsWith("Mac OS")) {
       try {
         Class.forName("com.apple.eio.FileManager")
-            .getDeclaredMethod("openURL", new Class<?>[] {String.class})
+            .getDeclaredMethod("openURL", String.class)
             .invoke(null, uri.toString());
-      } catch (Throwable t) {
-        logErrorForOS(osName, t);
+      } catch (Exception e) {
+        logErrorForOS(osName, e);
       }
       return true;
     }
@@ -113,8 +113,8 @@ public class DesktopService {
     if (osName.startsWith("Windows")) {
       try {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + uri.toString());
-      } catch (Throwable t) {
-        logErrorForOS(osName, t);
+      } catch (Exception e) {
+        logErrorForOS(osName, e);
       }
       return true;
     }
@@ -122,12 +122,12 @@ public class DesktopService {
     return false;
   }
 
-  private void logErrorForOS(final String osName, final Throwable t) {
+  private void logErrorForOS(final String osName, final Exception e) {
     LOGGER.error(
-        "Throwable on {} for browseUrl(): {} - {}", osName, t.getClass().getName(), t.getMessage());
+        "Exception on {} for browseUrl(): {} - {}", osName, e.getClass().getName(), e.getMessage());
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingThrowable")
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private boolean browseWithBrowser(final URI uri, final String browser, final String osName) {
     try {
       if (Runtime.getRuntime().exec(new String[] {"which", browser}).getInputStream().read()
@@ -135,13 +135,13 @@ public class DesktopService {
         Runtime.getRuntime().exec(new String[] {browser, uri.toString()});
         return true;
       }
-    } catch (Throwable t) {
+    } catch (Exception e) {
       LOGGER.error(
-          "Throwable on {} for browseUrl() with browser {}: {} - {}",
+          "Exception on {} for browseUrl() with browser {}: {} - {}",
           osName,
           browser,
-          t.getClass().getName(),
-          t.getMessage());
+          e.getClass().getName(),
+          e.getMessage());
     }
     LOGGER.error("Unable to find an alternative browser for browseURL() among {}", BROWSERS);
     return false;

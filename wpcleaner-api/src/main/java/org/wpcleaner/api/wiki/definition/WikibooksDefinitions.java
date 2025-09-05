@@ -6,12 +6,16 @@ package org.wpcleaner.api.wiki.definition;
  */
 
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.wpcleaner.api.wiki.builder.WikibooksBuilder;
 
-@Service
+@Component
 @Order(0)
-public class WikibooksDefinitions implements WikiDefinitions {
+final class WikibooksDefinitions implements WikiDefinitions {
   public static final WikiDefinition BN =
       WikibooksBuilder.ltr("bn", "Bengali Wikibooks", WikiWarning.BENGALI);
+
+  private WikibooksDefinitions() {
+    // Class defining only constants discovered by introspection
+  }
 }
