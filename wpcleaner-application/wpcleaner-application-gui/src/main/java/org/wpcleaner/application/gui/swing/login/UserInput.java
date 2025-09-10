@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.swing.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.Objects;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -59,5 +60,9 @@ public class UserInput {
             .withComponent(addUser)
             .withComponent(removeUser)
             .build();
+  }
+
+  public String getUser() {
+    return Objects.requireNonNullElse(comboBox.getSelectedItem(), "").toString();
   }
 }

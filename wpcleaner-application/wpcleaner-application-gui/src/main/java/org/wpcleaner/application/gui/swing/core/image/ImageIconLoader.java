@@ -10,6 +10,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
@@ -30,6 +31,12 @@ public class ImageIconLoader {
     return imageIconsCache
         .computeIfAbsent(size, key -> new EnumMap<>(ImageCollection.class))
         .computeIfAbsent(image, key -> loadImage(image, size));
+  }
+
+  public void setIconImage(final JFrame frame) {
+    getImage(ImageCollection.LOGO_WPCLEANER, ImageSize.ICON)
+        .map(ImageIcon::getImage)
+        .ifPresent(frame::setIconImage);
   }
 
   private Optional<ImageIcon> loadImage(final ImageCollection image, final ImageSize size) {

@@ -71,4 +71,8 @@ public class PasswordInput {
             .withComponent(removePassword)
             .build();
   }
+
+  public char[] getPassword() {
+    return field.getPassword();
+  }
 }

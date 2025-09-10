@@ -6,19 +6,35 @@ package org.wpcleaner.application.gui.swing.login;
  */
 
 import java.awt.Component;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import javax.swing.JOptionPane;
 import org.springframework.util.StringUtils;
-import org.wpcleaner.application.gui.core.action.SimpleAction;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.swing.core.action.ComponentAction;
 
 public record LoginAction(
-    SimpleAction action, Supplier<String> userSupplier, Supplier<char[]> passwordSupplier)
+    Supplier<Optional<WikiDefinition>> wikiSupplier,
+    Supplier<String> userSupplier,
+    Supplier<char[]> passwordSupplier,
+    BiConsumer<String, WikiDefinition> postLoginAction)
     implements ComponentAction {
 
   @Override
   public void execute(final Component component) {
-    if (!StringUtils.hasText(userSupplier().get())) {
+    final Optional<WikiDefinition> selectedWiki = wikiSupplier.get();
+    if (selectedWiki.isEmpty()) {
+      JOptionPane.showMessageDialog(
+          null,
+          "You must select a wiki before login!",
+          "Missing wiki",
+          JOptionPane.WARNING_MESSAGE);
+      return;
+    }
+
+    final String user = userSupplier().get();
+    if (!StringUtils.hasText(user)) {
       JOptionPane.showMessageDialog(
           null,
           "You must input your username before login!",
@@ -37,6 +53,8 @@ public record LoginAction(
       return;
     }
 
-    action.execute();
+    // TODO: Login
+
+    postLoginAction.accept(user, selectedWiki.get());
   }
 }

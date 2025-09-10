@@ -96,6 +96,14 @@ public class WikiInput {
             new SimpleToComponentAction(new WikiComboBoxAction(comboBox, warning)), comboBox));
   }
 
+  public Optional<WikiDefinition> getSelectedWiki() {
+    final int selectedIndex = comboBox.getSelectedIndex();
+    if (selectedIndex < 0) {
+      return Optional.empty();
+    }
+    return Optional.of(comboBox.getItemAt(selectedIndex));
+  }
+
   private static final class WikiComboBoxAction implements SimpleAction {
 
     private final JButton warningButton;
