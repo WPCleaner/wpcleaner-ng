@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.settings.local.general.GeneralSettingsManager;
 
@@ -25,8 +26,7 @@ public class KnownDefinitions {
     definitions =
         wikiDefinitions.stream()
             .map(WikiDefinitions::getDefinitions)
-            .map(ArrayList::new)
-            .peek(list -> list.sort(Comparator.comparing(WikiDefinition::code)))
+            .map(this::convertSetToOrderedList)
             .flatMap(Collection::stream)
             .toList();
     preferredWiki =
@@ -47,5 +47,11 @@ public class KnownDefinitions {
     return definitions.stream()
         .filter(definition -> Objects.equals(code, definition.code()))
         .findFirst();
+  }
+
+  private List<WikiDefinition> convertSetToOrderedList(final Set<WikiDefinition> set) {
+    final List<WikiDefinition> result = new ArrayList<>(set);
+    result.sort(Comparator.comparing(WikiDefinition::code));
+    return result;
   }
 }
