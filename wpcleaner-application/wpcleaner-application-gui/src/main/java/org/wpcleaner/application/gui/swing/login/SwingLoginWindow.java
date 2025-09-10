@@ -137,26 +137,11 @@ public final class SwingLoginWindow extends JFrame {
             buttons,
             cellConstraints -> cellConstraints.gridwidth = layoutService.getColumnsCount(panel)));
 
-    final JButton feedbackButton =
-        componentService
-            .buttons()
-            .builder("Feedback", false)
-            .withIcon(ImageCollection.HELP_FAQ, ImageSize.BUTTON)
-            .withAction(new FeedbackAction(componentService.menuItems()))
-            .build();
-    final JToolBar buttonTooBar =
-        componentService
-            .toolBars()
-            .builder()
-            .withComponent(feedbackButton)
-            .withComponent(componentService.buttons().options())
-            .withComponent(componentService.buttons().about())
-            .build();
     layoutService.addRow(
         panel,
         constraints,
         GridBagComponent.of(
-            buttonTooBar,
+            componentService.toolBars().feedbacks(),
             cellConstraints -> cellConstraints.gridwidth = layoutService.getColumnsCount(panel)));
   }
 }
