@@ -5,7 +5,7 @@ plugins {
 javaPlatform { allowDependencies() }
 
 dependencies {
-    api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:3.5.6"))
+    api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:3.5.7"))
 
     constraints {
         api("com.google.code.findbugs:jsr305:3.0.2")
