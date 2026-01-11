@@ -110,7 +110,7 @@ public class WikiInput {
     private final WikiComboBox comboBox;
     @Nullable private ActionListener showMessageAction;
 
-    public WikiComboBoxAction(final WikiComboBox comboBox, final JButton warningButton) {
+    private WikiComboBoxAction(final WikiComboBox comboBox, final JButton warningButton) {
       this.comboBox = comboBox;
       this.warningButton = warningButton;
       execute();

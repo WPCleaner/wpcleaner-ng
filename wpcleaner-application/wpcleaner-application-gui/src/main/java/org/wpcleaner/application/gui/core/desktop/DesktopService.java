@@ -112,7 +112,8 @@ public class DesktopService {
 
     if (osName.startsWith("Windows")) {
       try {
-        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + uri.toString());
+        Runtime.getRuntime()
+            .exec(new String[] {"rundll32", "url.dll,FileProtocolHandler ", uri.toString()});
       } catch (Exception e) {
         logErrorForOS(osName, e);
       }

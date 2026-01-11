@@ -10,6 +10,7 @@
   <rule ref="category/java/bestpractices.xml">
     <!-- Excluded for re-definition -->
     <exclude name="GuardLogStatement"/>
+    <exclude name="ImplicitFunctionalInterface"/>
   </rule>
   <rule ref="category/java/bestpractices.xml/GuardLogStatement">
     <properties>
@@ -81,6 +82,8 @@
     <exclude name="AvoidDuplicateLiterals"/>
     <!-- Relaxed rule for marking fields as transient -->
     <exclude name="NonSerializableClass"/>
+    <!-- Too many false positive (in lambda and enhanced switch) -->
+    <exclude name="AssignmentInOperand"/>
   </rule>
   <rule ref="category/java/multithreading.xml">
     <!-- Ability to deal with concurrency in a different way -->

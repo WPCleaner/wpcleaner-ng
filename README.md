@@ -3,7 +3,7 @@
 WPCleaner Next Generation is a tool designed to help with various maintenance tasks on wikis run with MediaWiki software.
 It is a full rewrite of the original [WPCleaner](https://github.com/WPCleaner/wpcleaner) to modernize it.
 
-It's written in Java (currently version 17)
+It's written in Java (currently version 21)
 and uses the [Spring framework](https://spring.io/)
 and [Spring Boot](https://spring.io/projects/spring-boot/).
 

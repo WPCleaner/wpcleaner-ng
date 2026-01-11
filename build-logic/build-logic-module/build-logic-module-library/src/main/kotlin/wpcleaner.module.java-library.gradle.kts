@@ -12,7 +12,7 @@ plugins {
 }
 
 val javaVersion: String =
-    System.getProperty("build.java-version", JavaVersion.VERSION_17.toString())
+    System.getProperty("build.java-version", JavaVersion.VERSION_21.toString())
 
 java { toolchain { languageVersion.set(JavaLanguageVersion.of(javaVersion)) } }
 

@@ -21,6 +21,7 @@ public record LookAndFeelSettings(LookAndFeelType type, String name) {
     this(null, null);
   }
 
+  @Override
   public String name() {
     return name.isBlank() ? DEFAULT_NAME : name;
   }

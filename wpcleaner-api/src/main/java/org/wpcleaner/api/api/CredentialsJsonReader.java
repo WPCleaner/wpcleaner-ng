@@ -43,7 +43,7 @@ public class CredentialsJsonReader implements CredentialsReader {
       @JsonProperty("wiki") @Nullable String wiki) {
 
     @Nullable
-    public Credential toCredential(final KnownDefinitions knownDefinitions) {
+    private Credential toCredential(final KnownDefinitions knownDefinitions) {
       if (wiki == null) {
         return new Credential(username, password, null);
       }

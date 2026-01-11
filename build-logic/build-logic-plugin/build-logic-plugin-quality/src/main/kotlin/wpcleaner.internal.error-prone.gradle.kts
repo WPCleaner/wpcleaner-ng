@@ -9,8 +9,8 @@ plugins {
 val qualityExtension: QualityExtension = QualityExtension.create(project)
 
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.26.1")
-    annotationProcessor("com.uber.nullaway:nullaway:0.10.25")
+    errorprone("com.google.errorprone:error_prone_core:2.45.0")
+    annotationProcessor("com.uber.nullaway:nullaway:0.12.15")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -26,8 +26,9 @@ tasks.withType<JavaCompile>().configureEach {
         disable("CanIgnoreReturnValueSuggester")
         // error-prone doesn't know BDDMockito
         disable("DirectInvocationOnMock")
-        options.errorprone { // Predefined errorprone configuration to avoid failing in case of
-            // non-overloading
+        options.errorprone {
+            option("NullAway:AcknowledgeRestrictiveAnnotations", "true")
+            // Predefined errorprone configuration to avoid failing in case of non-overloading
             option("NullAway:AnnotatedPackages", "")
         }
     }

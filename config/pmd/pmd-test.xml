@@ -13,12 +13,12 @@
     <!-- Excluded for re-definition -->
     <exclude name="GuardLogStatement"/>
     <!-- Ignores 'Assertions.assertThat' and very debatable -->
-    <exclude name="JUnitTestContainsTooManyAsserts"/>
+    <exclude name="UnitTestContainsTooManyAsserts"/>
     <!-- Exclude for now: https://github.com/pmd/pmd/issues/1455#issuecomment-851667408 -->
-    <exclude name="JUnitTestsShouldIncludeAssert"/>
+    <exclude name="UnitTestShouldIncludeAssert"/>
     <!-- Flags private static methods used by @MethodSource -->
     <exclude name="UnusedPrivateMethod"/>
-    <exclude name="JUnitAssertionsShouldIncludeMessage"/>
+    <exclude name="UnitTestAssertionsShouldIncludeMessage"/>
   </rule>
   <rule ref="category/java/bestpractices.xml/GuardLogStatement">
     <properties>
@@ -47,8 +47,10 @@
     <exclude name="ShortMethodName"/>
     <!-- Excluded for re-definition -->
     <exclude name="TooManyStaticImports"/>
+    <!-- We want to explicitly add the name for static import -->
+    <exclude name="UnnecessaryFullyQualifiedName"/>
     <!-- SELF is a reasonable generic name, especially for Assertions -->
-    <exclude name="GenericsNaming"/>
+    <exclude name="TypeParameterNamingConventions"/>
     <!-- Linguistic rules prevent from calling an HTTP GET test 'get*' -->
     <exclude name="LinguisticNaming"/>
     <exclude name="MethodNamingConventions"/>
