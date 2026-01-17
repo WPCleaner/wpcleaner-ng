@@ -13,6 +13,7 @@ import org.wpcleaner.api.wiki.builder.WikivoyageBuilder;
 @Order(0)
 @SuppressWarnings("unused")
 final class WikivoyageDefinitions implements WikiDefinitions {
+
   public static final WikiDefinition BN =
       WikivoyageBuilder.ltr("bn", "Bengali Wikivoyage", WikiWarning.BENGALI);
   public static final WikiDefinition FR = WikivoyageBuilder.ltr("fr", "Wikivoyage en français");

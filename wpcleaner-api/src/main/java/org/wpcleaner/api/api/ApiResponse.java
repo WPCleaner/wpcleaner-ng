@@ -9,6 +9,7 @@ import jakarta.annotation.Nullable;
 import java.util.List;
 
 public interface ApiResponse {
+
   List<ApiError> errors();
 
   List<ApiError> warnings();

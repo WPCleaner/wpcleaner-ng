@@ -20,12 +20,12 @@ class ImageLoaderTest {
 
   @Autowired private ImageLoader imageLoader;
 
-  @EnableAutoConfiguration
   @ComponentScan(basePackageClasses = ImageLoader.class)
+  @EnableAutoConfiguration
   static class TestConfig {}
 
-  @Test
   @DisplayName("Load an existing image")
+  @Test
   void loadExistingImage() {
     // WHEN
     final Optional<Resource> resource =
@@ -35,8 +35,8 @@ class ImageLoaderTest {
     Assertions.assertThat(resource).isNotEmpty();
   }
 
-  @Test
   @DisplayName("Load an unknown image")
+  @Test
   void loadUnknownImage() {
     // WHEN
     final Optional<Resource> resource =

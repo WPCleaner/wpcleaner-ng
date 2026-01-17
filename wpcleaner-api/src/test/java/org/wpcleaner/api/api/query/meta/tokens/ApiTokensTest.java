@@ -22,12 +22,12 @@ class ApiTokensTest {
 
   @Autowired private ApiTokens apiTokens;
 
-  @Configuration
   @ComponentScan(basePackages = "org.wpcleaner")
+  @Configuration
   static class SpringBootTestConfig {}
 
-  @Test
   @DisplayName("Ask for tokens")
+  @Test
   void requestTokens() {
     // WHEN
     final Tokens tokens =
@@ -48,8 +48,8 @@ class ApiTokensTest {
     Assertions.assertThat(tokens.watch()).as("watch").isNull();
   }
 
-  @Test
   @DisplayName("Ask for zero tokens")
+  @Test
   void requestZeroTokens() {
     // WHEN
     final Tokens tokens = apiTokens.requestTokens(WikimediaDefinitions.META, List.of());

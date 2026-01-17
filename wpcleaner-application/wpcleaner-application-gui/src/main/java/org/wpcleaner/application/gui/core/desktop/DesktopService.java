@@ -59,7 +59,6 @@ public class DesktopService {
   }
 
   public void browse(final URI uri, final Consumer<URI> defaultAction) {
-
     if (browseWithDesktop(uri)) {
       return;
     }
@@ -119,7 +118,6 @@ public class DesktopService {
       }
       return true;
     }
-
     return false;
   }
 

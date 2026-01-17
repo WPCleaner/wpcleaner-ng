@@ -15,6 +15,7 @@ import org.wpcleaner.lib.image.ImageCollection;
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
 @SuppressWarnings("unused")
 public final class WikimediaDefinitions implements WikiDefinitions {
+
   public static final WikiDefinition COMMONS =
       WikiBuilder.ltr("en", "Commons", "commons.wikimedia.org")
           .withIcon(ImageCollection.LOGO_COMMONS)

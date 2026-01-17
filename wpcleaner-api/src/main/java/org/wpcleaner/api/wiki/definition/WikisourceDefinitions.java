@@ -13,6 +13,7 @@ import org.wpcleaner.api.wiki.builder.WikisourceBuilder;
 @Order(0)
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 final class WikisourceDefinitions implements WikiDefinitions {
+
   public static final WikiDefinition BN =
       WikisourceBuilder.ltr("bn", "Bengali Wikisource", WikiWarning.BENGALI);
   public static final WikiDefinition ES = WikisourceBuilder.ltr("es", "Wikisource en español");

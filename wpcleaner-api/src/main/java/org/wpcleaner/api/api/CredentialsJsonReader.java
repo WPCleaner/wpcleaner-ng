@@ -41,7 +41,6 @@ public class CredentialsJsonReader implements CredentialsReader {
       @JsonProperty(value = "username", required = true) String username,
       @JsonProperty(value = "password", required = true) String password,
       @JsonProperty("wiki") @Nullable String wiki) {
-
     @Nullable
     private Credential toCredential(final KnownDefinitions knownDefinitions) {
       if (wiki == null) {

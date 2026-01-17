@@ -30,12 +30,12 @@ class ApiLoginTest {
   @Autowired private ApiTokens apiTokens;
   @Autowired private CredentialsProvider credentialsProvider;
 
-  @Configuration
   @ComponentScan(basePackages = "org.wpcleaner")
+  @Configuration
   static class SpringBootTestConfig {}
 
-  @Test
   @DisplayName("Login")
+  @Test
   void login() {
     // GIVEN
     final WikiDefinition wiki = WikimediaDefinitions.META;

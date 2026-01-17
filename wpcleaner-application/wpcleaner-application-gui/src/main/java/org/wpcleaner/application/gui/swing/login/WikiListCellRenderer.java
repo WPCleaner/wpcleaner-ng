@@ -38,7 +38,6 @@ public final class WikiListCellRenderer extends JLabel implements ListCellRender
       final int index,
       final boolean isSelected,
       final boolean cellHasFocus) {
-
     if (value == null) {
       setText("");
       setIcon(null);
@@ -47,7 +46,6 @@ public final class WikiListCellRenderer extends JLabel implements ListCellRender
 
     setText("%s - %s".formatted(value.code(), value.name()));
     imageService.getImage(value.image(), ImageSize.MENU).ifPresent(this::setIcon);
-
     return this;
   }
 }

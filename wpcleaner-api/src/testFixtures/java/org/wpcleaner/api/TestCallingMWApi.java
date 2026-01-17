@@ -11,7 +11,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.junit.jupiter.api.Tag;
 
-@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Tag("call_api")
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface TestCallingMWApi {}

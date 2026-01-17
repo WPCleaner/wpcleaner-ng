@@ -10,6 +10,7 @@ import java.awt.GridBagConstraints;
 import java.util.function.Consumer;
 
 public record GridBagComponent(Component component, Consumer<GridBagConstraints> adapter) {
+
   public static GridBagComponent of(final Component component) {
     return of(component, constraints -> {});
   }

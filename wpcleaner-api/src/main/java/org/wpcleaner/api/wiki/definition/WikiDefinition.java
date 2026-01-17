@@ -29,8 +29,8 @@ public record WikiDefinition(
     return "https://%s/%s".formatted(mainHost, apiPath);
   }
 
-  @Override
   @Nonnull
+  @Override
   public String toString() {
     return "%s - %s".formatted(code, name);
   }

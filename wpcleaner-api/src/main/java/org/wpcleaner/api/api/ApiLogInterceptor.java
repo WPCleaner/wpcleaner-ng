@@ -37,8 +37,8 @@ public class ApiLogInterceptor implements ClientHttpRequestInterceptor {
     this.logBody = logBody;
   }
 
-  @Override
   @Nonnull
+  @Override
   public ClientHttpResponse intercept(
       @Nonnull final HttpRequest request,
       @Nonnull final byte[] body,

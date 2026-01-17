@@ -8,5 +8,6 @@ package org.wpcleaner.application.gui.core.factory;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 public interface MainWindowFactory {
+
   void displayMainWindow(String user, WikiDefinition wiki);
 }

@@ -12,6 +12,7 @@ import org.wpcleaner.api.wiki.builder.WikipediaBuilder;
 @Component
 @SuppressWarnings({"PMD.DataClass", "unused"})
 final class OtherDefinitions implements WikiDefinitions {
+
   public static final WikiDefinition WAZE =
       WikiBuilder.ltr("en", "Waze", "wiki.waze.com")
           .withApiPath("/wiki/api.php")

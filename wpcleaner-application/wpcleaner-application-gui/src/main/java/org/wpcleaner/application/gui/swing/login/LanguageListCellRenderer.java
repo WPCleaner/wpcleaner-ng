@@ -39,7 +39,6 @@ public final class LanguageListCellRenderer extends JLabel implements ListCellRe
       final int index,
       final boolean isSelected,
       final boolean cellHasFocus) {
-
     if (value == null) {
       setText("");
       setIcon(null);
@@ -48,7 +47,6 @@ public final class LanguageListCellRenderer extends JLabel implements ListCellRe
 
     setText("%s - %s".formatted(value.getCode(), value.getDescription()));
     imageService.getImage(value.getImage(), ImageSize.MENU).ifPresent(this::setIcon);
-
     return this;
   }
 }

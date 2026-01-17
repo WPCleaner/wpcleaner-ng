@@ -2,7 +2,6 @@ plugins { id("wpcleaner.module.java-application") }
 
 dependencies {
   api(enforcedPlatform(project(":wpcleaner-dependencies")))
-
   implementation(project(":wpcleaner-api"))
   implementation(project(":wpcleaner-lib-image"))
   implementation(project(":wpcleaner-settings-local"))

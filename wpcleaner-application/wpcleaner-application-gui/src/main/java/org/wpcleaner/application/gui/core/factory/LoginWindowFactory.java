@@ -6,5 +6,6 @@ package org.wpcleaner.application.gui.core.factory;
  */
 
 public interface LoginWindowFactory {
+
   void displayLoginWindow();
 }

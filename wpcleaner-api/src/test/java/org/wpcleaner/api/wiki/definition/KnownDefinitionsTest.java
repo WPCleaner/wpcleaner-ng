@@ -22,12 +22,12 @@ class KnownDefinitionsTest {
 
   @Autowired private KnownDefinitions knownDefinitions;
 
-  @EnableAutoConfiguration
   @ComponentScan(basePackages = "org.wpcleaner")
+  @EnableAutoConfiguration
   static class TestConfig {}
 
-  @Test
   @DisplayName("Verify that known definitions contain various types")
+  @Test
   void variousTypesOfKnowDefinitions() {
     // WHEN
     final List<WikiDefinition> definitions = knownDefinitions.getDefinitions();
@@ -44,8 +44,8 @@ class KnownDefinitionsTest {
         .contains(WiktionaryDefinitions.FR);
   }
 
-  @Test
   @DisplayName("Verify that wiki definition code is unique")
+  @Test
   void uniqueCode() {
     // WHEN
     final List<WikiDefinition> definitions = knownDefinitions.getDefinitions();
@@ -59,8 +59,8 @@ class KnownDefinitionsTest {
                 .isEmpty());
   }
 
-  @Test
   @DisplayName("Verify that wiki definition check wiki code is unique")
+  @Test
   void uniqueCheckWikiCode() {
     // WHEN
     final List<WikiDefinition> definitions = knownDefinitions.getDefinitions();
@@ -76,8 +76,8 @@ class KnownDefinitionsTest {
                     .isEmpty());
   }
 
-  @Test
   @DisplayName("Verify that first wiki definition is for Wikipedia")
+  @Test
   void wikipediaIsFirst() {
     // WHEN
     final List<WikiDefinition> definitions = knownDefinitions.getDefinitions();

@@ -13,6 +13,7 @@ import org.wpcleaner.api.wiki.builder.WikiversityBuilder;
 @Order(0)
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 final class WikiversityDefinitions implements WikiDefinitions {
+
   public static final WikiDefinition FR = WikiversityBuilder.ltr("fr", "Wikiversité en Français");
   public static final WikiDefinition IT = WikiversityBuilder.ltr("it", "Wikiversità");
 
