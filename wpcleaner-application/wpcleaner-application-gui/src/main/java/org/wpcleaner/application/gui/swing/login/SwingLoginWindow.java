@@ -135,15 +135,14 @@ public final class SwingLoginWindow extends JFrame {
         panel,
         constraints,
         GridBagComponent.of(
-            buttons,
-            cellConstraints -> cellConstraints.gridwidth = layoutService.getColumnsCount(panel)));
+            buttons, cellConstraints -> layoutService.spanAllColumns(panel, cellConstraints)));
 
     layoutService.addRow(
         panel,
         constraints,
         GridBagComponent.of(
             componentService.toolBars().feedbacks(),
-            cellConstraints -> cellConstraints.gridwidth = layoutService.getColumnsCount(panel)));
+            cellConstraints -> layoutService.spanAllColumns(panel, cellConstraints)));
   }
 
   private void displayMainWindow(final String user, final WikiDefinition wiki) {

@@ -85,6 +85,6 @@ public final class SwingMainWindow extends JFrame {
         constraints,
         GridBagComponent.of(
             componentService.toolBars().feedbacks(),
-            cellConstraints -> cellConstraints.gridwidth = layoutService.getColumnsCount(panel)));
+            cellConstraints -> layoutService.spanAllColumns(panel, cellConstraints)));
   }
 }

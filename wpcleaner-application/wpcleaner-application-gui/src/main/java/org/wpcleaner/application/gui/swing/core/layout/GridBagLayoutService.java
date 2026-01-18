@@ -86,4 +86,8 @@ public class GridBagLayoutService {
     constraints.weighty = 1;
     panel.add(emptyPanel, constraints);
   }
+
+  public void spanAllColumns(final JPanel panel, final GridBagConstraints constraints) {
+    constraints.gridwidth = getColumnsCount(panel);
+  }
 }
