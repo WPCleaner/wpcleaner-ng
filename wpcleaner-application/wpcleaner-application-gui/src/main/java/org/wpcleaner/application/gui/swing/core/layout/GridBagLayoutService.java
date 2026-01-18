@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.swing.core.layout;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -62,6 +63,15 @@ public class GridBagLayoutService {
     constraints.gridy++;
   }
 
+  public void addRowSpanningAllColumns(
+      final JPanel panel, final GridBagConstraints constraints, final Component component) {
+    addRow(
+        panel,
+        constraints,
+        GridBagComponent.of(
+            component, cellConstraint -> cellConstraint.gridwidth = getColumnsCount(panel)));
+  }
+
   private void addSimpleCell(
       final JPanel panel, final GridBagConstraints constraints, final GridBagComponent component) {
     final GridBagConstraints cellConstraints = (GridBagConstraints) constraints.clone();
@@ -85,9 +95,5 @@ public class GridBagLayoutService {
     constraints.weightx = 1;
     constraints.weighty = 1;
     panel.add(emptyPanel, constraints);
-  }
-
-  public void spanAllColumns(final JPanel panel, final GridBagConstraints constraints) {
-    constraints.gridwidth = getColumnsCount(panel);
   }
 }

@@ -80,11 +80,7 @@ public final class SwingMainWindow extends JFrame {
   }
 
   private void addButtons(final JPanel panel, final GridBagConstraints constraints) {
-    layoutService.addRow(
-        panel,
-        constraints,
-        GridBagComponent.of(
-            componentService.toolBars().feedbacks(),
-            cellConstraints -> layoutService.spanAllColumns(panel, cellConstraints)));
+    layoutService.addRowSpanningAllColumns(
+        panel, constraints, componentService.toolBars().feedbacks());
   }
 }

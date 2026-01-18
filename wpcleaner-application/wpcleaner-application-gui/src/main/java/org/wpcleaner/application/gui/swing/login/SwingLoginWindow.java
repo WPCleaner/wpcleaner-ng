@@ -131,18 +131,10 @@ public final class SwingLoginWindow extends JFrame {
             .withAction(actionService.notImplemented())
             .build();
     buttons.add(demoButton);
-    layoutService.addRow(
-        panel,
-        constraints,
-        GridBagComponent.of(
-            buttons, cellConstraints -> layoutService.spanAllColumns(panel, cellConstraints)));
+    layoutService.addRowSpanningAllColumns(panel, constraints, buttons);
 
-    layoutService.addRow(
-        panel,
-        constraints,
-        GridBagComponent.of(
-            componentService.toolBars().feedbacks(),
-            cellConstraints -> layoutService.spanAllColumns(panel, cellConstraints)));
+    layoutService.addRowSpanningAllColumns(
+        panel, constraints, componentService.toolBars().feedbacks());
   }
 
   private void displayMainWindow(final String user, final WikiDefinition wiki) {
