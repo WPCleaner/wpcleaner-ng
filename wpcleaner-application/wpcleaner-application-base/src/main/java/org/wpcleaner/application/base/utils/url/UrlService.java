@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.core.url;
+package org.wpcleaner.application.base.utils.url;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UrlService {
 
+  private static final String WIKIPEDIA_EN = "https://en.wikipedia.org/wiki";
+
   private final ReportBugService reportBugService;
 
   public UrlService(final ReportBugService reportBugService) {
@@ -17,11 +19,11 @@ public class UrlService {
   }
 
   public String askQuestion() {
-    return "https://en.wikipedia.org/wiki/Wikipedia_talk:WPCleaner/Next_Generation";
+    return "%s/Wikipedia_talk:WPCleaner/Next_Generation".formatted(WIKIPEDIA_EN);
   }
 
   public String help() {
-    return "https://en.wikipedia.org/wiki/Wikipedia:WPCleaner/Help";
+    return "%s/Wikipedia:WPCleaner/Help".formatted(WIKIPEDIA_EN);
   }
 
   public String reportBug() {

@@ -8,9 +8,9 @@ package org.wpcleaner.application.gui.swing.login;
 import java.awt.EventQueue;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
+import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.factory.LoginWindowFactory;
 import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
-import org.wpcleaner.application.gui.core.url.UrlService;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 
 @Service

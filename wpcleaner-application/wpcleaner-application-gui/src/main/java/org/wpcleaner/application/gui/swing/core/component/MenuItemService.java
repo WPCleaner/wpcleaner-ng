@@ -7,8 +7,8 @@ package org.wpcleaner.application.gui.swing.core.component;
 
 import javax.swing.JMenuItem;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.action.ActionService;
-import org.wpcleaner.application.gui.core.url.UrlService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;

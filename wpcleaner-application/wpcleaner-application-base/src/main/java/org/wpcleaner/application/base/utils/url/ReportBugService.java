@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.core.url;
+package org.wpcleaner.application.base.utils.url;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
