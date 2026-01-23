@@ -30,37 +30,42 @@ public final class SwingLoginWindow extends JFrame {
 
   @Serial private static final long serialVersionUID = 3951316694154990744L;
 
-  private final transient KnownDefinitions knownDefinitions;
   private final transient ActionService actionService;
   private final transient ComponentService componentService;
-  private final transient ImageIconLoader imageService;
   private final transient GridBagLayoutService layoutService;
-  private final transient UrlService urlService;
+  private final transient ImageIconLoader imageService;
+  private final transient KnownDefinitions knownDefinitions;
+  private final transient LoginAction loginAction;
   private final transient MainWindowFactory mainWindowFactory;
+  private final transient UrlService urlService;
 
   public static void create(
       final KnownDefinitions knownDefinitions,
+      final LoginAction loginAction,
+      final MainWindowFactory mainWindowFactory,
       final SwingCoreServices swingCoreServices,
-      final UrlService urlService,
-      final MainWindowFactory mainWindowFactory) {
+      final UrlService urlService) {
     final SwingLoginWindow window =
-        new SwingLoginWindow(knownDefinitions, swingCoreServices, urlService, mainWindowFactory);
+        new SwingLoginWindow(
+            knownDefinitions, loginAction, mainWindowFactory, swingCoreServices, urlService);
     window.initialize();
   }
 
   private SwingLoginWindow(
       final KnownDefinitions knownDefinitions,
+      final LoginAction loginAction,
+      final MainWindowFactory mainWindowFactory,
       final SwingCoreServices swingCoreServices,
-      final UrlService urlService,
-      final MainWindowFactory mainWindowFactory) {
+      final UrlService urlService) {
     super("WPCleaner");
-    this.knownDefinitions = knownDefinitions;
     this.actionService = swingCoreServices.action().action();
     this.componentService = swingCoreServices.component();
     this.imageService = swingCoreServices.image();
+    this.knownDefinitions = knownDefinitions;
     this.layoutService = swingCoreServices.layout();
-    this.urlService = urlService;
+    this.loginAction = loginAction;
     this.mainWindowFactory = mainWindowFactory;
+    this.urlService = urlService;
   }
 
   private void initialize() {
@@ -115,14 +120,19 @@ public final class SwingLoginWindow extends JFrame {
       final UserInput userInput,
       final PasswordInput passwordInput) {
     final JPanel buttons = new JPanel(new GridLayout(1, 0));
-    final LoginAction loginAction =
-        new LoginAction(
-            wikiInput::getSelectedWiki,
-            userInput::getUser,
-            passwordInput::getPassword,
-            this::displayMainWindow);
     final JButton loginButton =
-        componentService.buttons().builder("Login", true).withAction(loginAction).build();
+        componentService
+            .buttons()
+            .builder("Login", true)
+            .withAction(
+                component ->
+                    loginAction.execute(
+                        component,
+                        wikiInput.getSelectedWiki().orElse(null),
+                        userInput.getUser(),
+                        passwordInput.getPassword(),
+                        this::displayMainWindow))
+            .build();
     buttons.add(loginButton);
     final JButton demoButton =
         componentService

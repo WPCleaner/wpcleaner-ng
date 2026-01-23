@@ -1,18 +1,18 @@
 package org.wpcleaner.application.gui.swing.login;
 
 /*
- * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
+ * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import java.awt.Component;
 import javax.swing.JPopupMenu;
-import org.wpcleaner.application.gui.swing.core.action.ComponentAction;
+import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.swing.core.component.MenuItemService;
 
-public record FeedbackAction(MenuItemService menuItemService) implements ComponentAction {
+@Service
+public record FeedbackAction(MenuItemService menuItemService) {
 
-  @Override
   public void execute(final Component component) {
     final JPopupMenu menu = new JPopupMenu();
     menu.add(menuItemService.help());

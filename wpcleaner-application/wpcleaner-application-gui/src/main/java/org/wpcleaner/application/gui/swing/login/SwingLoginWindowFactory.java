@@ -17,19 +17,22 @@ import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 public class SwingLoginWindowFactory implements LoginWindowFactory {
 
   private final KnownDefinitions knownDefinitions;
+  private final LoginAction loginAction;
+  private final MainWindowFactory mainWindowFactory;
   private final SwingCoreServices swingCoreServices;
   private final UrlService urlService;
-  private final MainWindowFactory mainWindowFactory;
 
   public SwingLoginWindowFactory(
       final KnownDefinitions knownDefinitions,
+      final LoginAction loginAction,
+      final MainWindowFactory mainWindowFactory,
       final SwingCoreServices swingCoreServices,
-      final UrlService urlService,
-      final MainWindowFactory mainWindowFactory) {
+      final UrlService urlService) {
     this.knownDefinitions = knownDefinitions;
+    this.loginAction = loginAction;
+    this.mainWindowFactory = mainWindowFactory;
     this.swingCoreServices = swingCoreServices;
     this.urlService = urlService;
-    this.mainWindowFactory = mainWindowFactory;
   }
 
   @Override
@@ -37,6 +40,6 @@ public class SwingLoginWindowFactory implements LoginWindowFactory {
     EventQueue.invokeLater(
         () ->
             SwingLoginWindow.create(
-                knownDefinitions, swingCoreServices, urlService, mainWindowFactory));
+                knownDefinitions, loginAction, mainWindowFactory, swingCoreServices, urlService));
   }
 }

@@ -18,15 +18,15 @@ public class ToolBarService {
 
   private final ActionService actionService;
   private final ButtonService buttonService;
-  private final MenuItemService menuItemService;
+  private final FeedbackAction feedbackAction;
 
   public ToolBarService(
       final ActionService actionService,
       final ButtonService buttonService,
-      final MenuItemService menuItemService) {
+      final FeedbackAction feedbackAction) {
     this.actionService = actionService;
     this.buttonService = buttonService;
-    this.menuItemService = menuItemService;
+    this.feedbackAction = feedbackAction;
   }
 
   public JToolBarBuilder builder() {
@@ -38,7 +38,7 @@ public class ToolBarService {
         buttonService
             .builder("Feedback", false)
             .withIcon(ImageCollection.HELP_FAQ, ImageSize.BUTTON)
-            .withAction(new FeedbackAction(menuItemService))
+            .withAction(feedbackAction::execute)
             .build();
     final JButton optionsButton =
         buttonService
