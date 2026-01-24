@@ -7,37 +7,43 @@ package org.wpcleaner.application.gui.swing.core.worker;
 
 import jakarta.annotation.Nullable;
 import java.awt.Component;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.application.base.processor.Processor;
+import org.wpcleaner.application.base.processor.ProgressTracker;
 
 @Service
 public class SwingWorkerProcessor {
 
-  public <R> void process(
+  public <I, R> void process(
       final Component component,
-      final Callable<R> process,
+      final I input,
+      final Processor<I, R> processer,
       final Consumer<R> onSuccess,
       final Consumer<Throwable> onFailure) {
-    new InternalSwingWorker<>(SwingUtilities.getRootPane(component), process, onSuccess, onFailure)
+    new InternalSwingWorker<>(
+            SwingUtilities.getRootPane(component), input, processer, onSuccess, onFailure)
         .execute();
   }
 
-  private static final class InternalSwingWorker<R> extends SwingWorker<R, String> {
+  private static final class InternalSwingWorker<I, R> extends SwingWorker<R, List<String>> {
 
     @Nullable private final JRootPane rootPane;
     @Nullable private final Component previousGlassPane;
     private final ProgressPanel progressPanel;
-    private final Callable<R> process;
+    private final Callable<R> callable;
     private final Consumer<R> onSuccess;
     private final Consumer<Throwable> onFailure;
 
     private InternalSwingWorker(
         @Nullable final JRootPane rootPane,
-        final Callable<R> process,
+        final I input,
+        final Processor<I, R> processor,
         final Consumer<R> onSuccess,
         final Consumer<Throwable> onFailure) {
       this.rootPane = rootPane;
@@ -54,14 +60,22 @@ public class SwingWorkerProcessor {
         progressPanel.setVisible(true);
         progressPanel.repaint();
       }
-      this.process = process;
+      final ProgressTracker tracker = new ProgressTracker(this::publish);
+      this.callable = () -> processor.execute(input, tracker);
       this.onSuccess = onSuccess;
       this.onFailure = onFailure;
     }
 
     @Override
     protected R doInBackground() throws Exception {
-      return process.call();
+      return callable.call();
+    }
+
+    @Override
+    protected void process(final List<List<String>> chunks) {
+      if (!chunks.isEmpty()) {
+        progressPanel.setSteps(chunks.getLast());
+      }
     }
 
     @Override

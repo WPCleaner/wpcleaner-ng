@@ -15,7 +15,7 @@ import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
-public class LoginProcessor {
+public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResult> {
 
   private final ApiLogin apiLogin;
   private final ApiTokens apiTokens;
@@ -25,13 +25,21 @@ public class LoginProcessor {
     this.apiTokens = apiTokens;
   }
 
-  public LoginResult execute(final Input input) {
-    final Tokens tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
-    apiLogin.login(
-        input.wiki,
-        input.username,
-        new String(input.password),
-        Objects.requireNonNull(tokens.login(), "Login token is null"));
+  @Override
+  @SuppressWarnings("try")
+  public LoginResult execute(final Input input, final ProgressTracker tracker) {
+    final Tokens tokens;
+    try (ProgressTracker.ProgressStep ignored = tracker.start("Retrieving login token")) {
+      tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
+    }
+    try (ProgressTracker.ProgressStep ignored =
+        tracker.start("Login for user %s".formatted(input.username))) {
+      apiLogin.login(
+          input.wiki,
+          input.username,
+          new String(input.password),
+          Objects.requireNonNull(tokens.login(), "Login token is null"));
+    }
     final String compactUsername = compactUsername(input.username);
     return new LoginResult(input.wiki, compactUsername);
   }

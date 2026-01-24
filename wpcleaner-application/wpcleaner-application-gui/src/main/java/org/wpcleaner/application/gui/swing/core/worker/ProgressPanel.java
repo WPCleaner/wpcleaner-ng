@@ -17,7 +17,10 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
@@ -30,6 +33,8 @@ public class ProgressPanel extends JComponent {
   private final transient Map<Object, Object> hints;
   private final Color background;
   private final Color textBackground;
+  private final transient List<String> texts = new ArrayList<>();
+  private final ReentrantLock lock = new ReentrantLock();
 
   @Nullable private transient Component recentFocusOwner;
 
@@ -70,6 +75,17 @@ public class ProgressPanel extends JComponent {
     }
   }
 
+  public void setSteps(final List<String> steps) {
+    lock.lock();
+    try {
+      this.texts.clear();
+      this.texts.addAll(steps);
+    } finally {
+      lock.unlock();
+    }
+    repaint();
+  }
+
   @Override
   public void paintComponent(final Graphics g) {
     drawLayeredPane(g);
@@ -96,15 +112,7 @@ public class ProgressPanel extends JComponent {
   }
 
   private void drawText(final Graphics g) {
-    // Positions
-    float xMin = Float.MAX_VALUE;
-    float xMax = Float.MIN_VALUE;
-    float yMin = Float.MAX_VALUE;
-    float yMax = Float.MIN_VALUE;
-    final float xSpace = 10F;
-    final float ySpace = 5F;
-
-    // Compute bonds
+    // Compute bounds
     final Graphics2D g2d = (Graphics2D) g;
     final int width = getWidth();
     final int height = getHeight();
@@ -114,10 +122,25 @@ public class ProgressPanel extends JComponent {
     final float xApplication = (float) (width - boundsApplication.getWidth()) / 2;
     final float yApplication =
         Math.max((float) ((float) height / 2 - 2 * boundsApplication.getHeight()), 0);
-    xMin = Math.min(xMin, (float) (xApplication + boundsApplication.getMinX() - xSpace));
-    xMax = Math.max(xMax, (float) (xApplication + boundsApplication.getMaxX() + xSpace));
-    yMin = Math.min(yMin, (float) (yApplication + boundsApplication.getMinY() - ySpace));
-    yMax = Math.max(yMax, (float) (yApplication + boundsApplication.getMaxY() + ySpace));
+    final float xSpace = 10F;
+    final float ySpace = 5F;
+    float xMin = (float) (xApplication + boundsApplication.getMinX() - xSpace);
+    float xMax = (float) (xApplication + boundsApplication.getMaxX() + xSpace);
+    final float yMin = (float) (yApplication + boundsApplication.getMinY() - ySpace);
+    float yMax = (float) (yApplication + boundsApplication.getMaxY() + ySpace);
+    float currentY = (float) height / 2;
+    final List<TextLine> textLines = new ArrayList<>();
+    for (final String text : texts) {
+      final TextLayout layoutText = new TextLayout(text, getFont(), context);
+      final Rectangle2D boundsText = layoutText.getBounds();
+      final float xText = (float) (width - boundsText.getWidth()) / 2;
+      final float yText = currentY;
+      currentY += (float) (boundsText.getMaxY() + ySpace);
+      xMin = Math.min(xMin, (float) (xText + boundsText.getMinX() - xSpace));
+      xMax = Math.max(xMax, (float) (xText + boundsText.getMaxX() + xSpace));
+      yMax = currentY;
+      textLines.add(new TextLine(layoutText, xText, yText));
+    }
 
     // Draw border
     if ((xMin < xMax) && (yMin < yMax)) {
@@ -130,5 +153,8 @@ public class ProgressPanel extends JComponent {
     // Draw text
     g2d.setColor(getForeground());
     layoutApplication.draw(g2d, xApplication, yApplication);
+    textLines.forEach(textLine -> textLine.layout.draw(g2d, textLine.x, textLine.y));
   }
+
+  private record TextLine(TextLayout layout, float x, float y) {}
 }

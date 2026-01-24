@@ -61,7 +61,8 @@ public class LoginAction {
     }
     workerProcessor.process(
         component,
-        () -> loginProcessor.execute(new LoginProcessor.Input(wiki, user, password)),
+        new LoginProcessor.Input(wiki, user, password),
+        loginProcessor,
         result -> onSuccess.accept(result.username(), result.wiki()),
         onFailure);
   }
