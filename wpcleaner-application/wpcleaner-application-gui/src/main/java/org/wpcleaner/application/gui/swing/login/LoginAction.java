@@ -14,14 +14,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
+import org.wpcleaner.application.gui.swing.core.worker.SwingWorkerProcessor;
 
 @Service
 public class LoginAction {
 
   private final LoginProcessor loginProcessor;
+  private final SwingWorkerProcessor workerProcessor;
 
-  public LoginAction(final LoginProcessor loginProcessor) {
+  public LoginAction(
+      final LoginProcessor loginProcessor, final SwingWorkerProcessor workerProcessor) {
     this.loginProcessor = loginProcessor;
+    this.workerProcessor = workerProcessor;
   }
 
   public void execute(
@@ -30,7 +34,7 @@ public class LoginAction {
       final String user,
       final char[] password,
       final BiConsumer<String, WikiDefinition> onSuccess,
-      final Consumer<RuntimeException> onFailure) {
+      final Consumer<Throwable> onFailure) {
     if (wiki == null) {
       JOptionPane.showMessageDialog(
           component,
@@ -55,10 +59,9 @@ public class LoginAction {
           JOptionPane.WARNING_MESSAGE);
       return;
     }
-    loginProcessor.process(
-        wiki,
-        user,
-        password,
+    workerProcessor.process(
+        component,
+        () -> loginProcessor.execute(new LoginProcessor.Input(wiki, user, password)),
         result -> onSuccess.accept(result.username(), result.wiki()),
         onFailure);
   }

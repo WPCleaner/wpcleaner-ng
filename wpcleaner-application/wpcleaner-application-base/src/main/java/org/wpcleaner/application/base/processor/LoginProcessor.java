@@ -7,7 +7,6 @@ package org.wpcleaner.application.base.processor;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.login.ApiLogin;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
@@ -26,34 +25,15 @@ public class LoginProcessor {
     this.apiTokens = apiTokens;
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  public void process(
-      final WikiDefinition wiki,
-      final String username,
-      final char[] password,
-      final Consumer<LoginResult> onSuccess,
-      final Consumer<RuntimeException> onFailure) {
-    final LoginResult loginResult;
-    try {
-      loginResult = internalProcess(wiki, username, password);
-    } catch (RuntimeException e) {
-      onFailure.accept(e);
-      return;
-    }
-    onSuccess.accept(loginResult);
-  }
-
-  @SuppressWarnings("PMD.UseVarargs")
-  private LoginResult internalProcess(
-      final WikiDefinition wiki, final String username, final char[] password) {
-    final Tokens tokens = apiTokens.requestTokens(wiki, List.of(TokensParameters.Type.LOGIN));
+  public LoginResult execute(final Input input) {
+    final Tokens tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
     apiLogin.login(
-        wiki,
-        username,
-        new String(password),
+        input.wiki,
+        input.username,
+        new String(input.password),
         Objects.requireNonNull(tokens.login(), "Login token is null"));
-    final String compactUsername = compactUsername(username);
-    return new LoginResult(wiki, compactUsername);
+    final String compactUsername = compactUsername(input.username);
+    return new LoginResult(input.wiki, compactUsername);
   }
 
   private String compactUsername(final String username) {
@@ -63,4 +43,9 @@ public class LoginProcessor {
     }
     return username.substring(0, atSignIndex);
   }
+
+  public record Input(
+      WikiDefinition wiki,
+      String username,
+      @SuppressWarnings("ArrayRecordComponent") char[] password) {}
 }

@@ -10,6 +10,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -30,12 +31,18 @@ public class ErrorDialogService {
     this.desktopService = Objects.requireNonNull(desktopService);
   }
 
-  public void showErrorMessage(final Component parent, final Exception e) {
-    if (!(e instanceof ApiException apiException)) {
+  public void showErrorMessage(final Component parent, final Throwable e) {
+    Throwable current = e;
+    if (current instanceof ExecutionException executionException) {
+      current = Objects.requireNonNullElse(executionException.getCause(), executionException);
+    }
+    if (!(current instanceof ApiException apiException)) {
       JOptionPane.showMessageDialog(
           parent,
-          Objects.requireNonNullElseGet(
-              e.getMessage(), () -> "Unknown error %s".formatted(e.getClass().getSimpleName())),
+          "%s: %s"
+              .formatted(
+                  current.getClass().getSimpleName(),
+                  Objects.requireNonNullElse(current.getMessage(), "Unknown error")),
           TITLE,
           JOptionPane.ERROR_MESSAGE);
       return;
