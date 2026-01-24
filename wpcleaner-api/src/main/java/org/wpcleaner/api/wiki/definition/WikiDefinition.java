@@ -20,6 +20,7 @@ public record WikiDefinition(
     Set<String> hosts,
     String apiPath,
     String indexPath,
+    String wikiPath,
     String code,
     @Nullable String checkWikiCode,
     ComponentOrientation orientation,
@@ -27,6 +28,10 @@ public record WikiDefinition(
 
   public String apiUrl() {
     return "https://%s/%s".formatted(mainHost, apiPath);
+  }
+
+  public String pageUrl(final String title) {
+    return "https://%s/%s/%s".formatted(mainHost, wikiPath, title);
   }
 
   @Nonnull

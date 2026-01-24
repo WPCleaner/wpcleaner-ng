@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import org.wpcleaner.application.gui.core.action.ActionService;
+import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -22,10 +23,10 @@ public class LanguageInput {
   final JLabel label;
   final JToolBar toolBar;
 
-  LanguageInput(
-      final ActionService actionService,
-      final ComponentService componentService,
-      final ImageIconLoader imageService) {
+  LanguageInput(final SwingCoreServices swingCoreServices) {
+    final ActionService actionService = swingCoreServices.action().action();
+    final ComponentService componentService = swingCoreServices.component();
+    final ImageIconLoader imageService = swingCoreServices.image();
     icon =
         componentService
             .labels()

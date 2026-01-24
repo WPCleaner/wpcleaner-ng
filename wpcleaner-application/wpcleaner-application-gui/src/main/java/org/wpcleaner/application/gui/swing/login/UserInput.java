@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import org.wpcleaner.application.gui.core.action.ActionService;
+import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -23,7 +24,9 @@ public class UserInput {
   final JLabel label;
   final JToolBar toolBar;
 
-  UserInput(final ActionService actionService, final ComponentService componentService) {
+  UserInput(final SwingCoreServices swingCoreServices) {
+    final ActionService actionService = swingCoreServices.action().action();
+    final ComponentService componentService = swingCoreServices.component();
     icon =
         componentService
             .labels()

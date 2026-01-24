@@ -18,6 +18,7 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikiWarning;
 import org.wpcleaner.application.gui.core.action.ActionService;
 import org.wpcleaner.application.gui.core.action.SimpleAction;
+import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.action.ComponentActionListener;
 import org.wpcleaner.application.gui.swing.core.action.ShowMessageAction;
 import org.wpcleaner.application.gui.swing.core.action.SimpleToComponentAction;
@@ -33,11 +34,10 @@ public class WikiInput {
   final JLabel label;
   final JToolBar toolBar;
 
-  WikiInput(
-      final ActionService actionService,
-      final ComponentService componentService,
-      final ImageIconLoader imageService,
-      final KnownDefinitions knownDefinitions) {
+  WikiInput(final SwingCoreServices swingCoreServices, final KnownDefinitions knownDefinitions) {
+    final ActionService actionService = swingCoreServices.action().action();
+    final ComponentService componentService = swingCoreServices.component();
+    final ImageIconLoader imageService = swingCoreServices.image();
     icon =
         componentService
             .labels()

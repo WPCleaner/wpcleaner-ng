@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.swing.core;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.swing.core.action.SwingActionService;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
+import org.wpcleaner.application.gui.swing.core.dialog.ErrorDialogService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagLayoutService;
 
@@ -15,5 +16,6 @@ import org.wpcleaner.application.gui.swing.core.layout.GridBagLayoutService;
 public record SwingCoreServices(
     SwingActionService action,
     ComponentService component,
+    ErrorDialogService errorDialog,
     ImageIconLoader image,
     GridBagLayoutService layout) {}

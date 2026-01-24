@@ -8,20 +8,29 @@ package org.wpcleaner.application.gui.swing.login;
 import jakarta.annotation.Nullable;
 import java.awt.Component;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.application.base.processor.LoginProcessor;
 
 @Service
 public class LoginAction {
+
+  private final LoginProcessor loginProcessor;
+
+  public LoginAction(final LoginProcessor loginProcessor) {
+    this.loginProcessor = loginProcessor;
+  }
 
   public void execute(
       final Component component,
       @Nullable final WikiDefinition wiki,
       final String user,
       final char[] password,
-      final BiConsumer<String, WikiDefinition> postLoginAction) {
+      final BiConsumer<String, WikiDefinition> onSuccess,
+      final Consumer<RuntimeException> onFailure) {
     if (wiki == null) {
       JOptionPane.showMessageDialog(
           component,
@@ -46,7 +55,11 @@ public class LoginAction {
           JOptionPane.WARNING_MESSAGE);
       return;
     }
-    // TODO: Login
-    postLoginAction.accept(user, wiki);
+    loginProcessor.process(
+        wiki,
+        user,
+        password,
+        result -> onSuccess.accept(result.username(), result.wiki()),
+        onFailure);
   }
 }

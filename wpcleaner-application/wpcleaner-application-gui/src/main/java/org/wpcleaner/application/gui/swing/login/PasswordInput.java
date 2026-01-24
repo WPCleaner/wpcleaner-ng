@@ -12,6 +12,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.action.ActionService;
+import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -23,10 +24,9 @@ public class PasswordInput {
   final JLabel label;
   final JToolBar toolBar;
 
-  PasswordInput(
-      final ActionService actionService,
-      final ComponentService componentService,
-      final UrlService urlService) {
+  PasswordInput(final SwingCoreServices swingCoreServices, final UrlService urlService) {
+    final ActionService actionService = swingCoreServices.action().action();
+    final ComponentService componentService = swingCoreServices.component();
     icon =
         componentService
             .labels()

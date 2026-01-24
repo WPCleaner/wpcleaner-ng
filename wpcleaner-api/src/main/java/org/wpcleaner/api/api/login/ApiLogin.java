@@ -10,11 +10,13 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.wpcleaner.api.api.ApiError;
+import org.wpcleaner.api.api.ApiException;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiResponse;
 import org.wpcleaner.api.api.ApiRestClient;
@@ -32,8 +34,31 @@ public class ApiLogin {
 
   public Login login(
       final WikiDefinition wiki, final String username, final String password, final String token) {
-    return ApiUtils.processApiResponse(
-        internalLogin(wiki, username, password, token), Response::login);
+    final Login login =
+        ApiUtils.processApiResponse(
+            internalLogin(wiki, username, password, token), Response::login);
+    if (Objects.equals(login.result(), Login.RESULT_ABORTED)) {
+      throw new ApiException(
+          "Login has been aborted",
+          """
+          You're probably trying to login using your main account password instead of a bot password.<br/>
+          You should create a bot password and use it instead of your main account password.<br/>
+          See <a href="%s">Special:Botpasswords</a> for creating your bot password.
+          """
+              .formatted(wiki.pageUrl("Special:Botpasswords")));
+    }
+    if (Objects.equals(login.result(), Login.RESULT_FAILED)) {
+      throw new ApiException(
+          "Login failed",
+          """
+          You've probably used an incorrect username or password.<br/>
+          Please try again.
+          """);
+    }
+    if (!Objects.equals(login.result(), Login.RESULT_SUCCESS)) {
+      throw new ApiException("Login failed", "Result returned was %s".formatted(login.result()));
+    }
+    return login;
   }
 
   @Nullable

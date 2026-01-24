@@ -25,6 +25,7 @@ public class WikiBuilder {
   private final Set<String> hosts;
   private String apiPath;
   private String indexPath;
+  private String wikiPath;
   private String code;
   @Nullable private String checkWikiCode;
   @Nullable private WikiWarning warning;
@@ -52,6 +53,7 @@ public class WikiBuilder {
     this.hosts.add(mainHost);
     this.apiPath = "/w/api.php";
     this.indexPath = "/w/index.php";
+    this.wikiPath = "/wiki";
     this.code = "other:" + language;
   }
 
@@ -80,6 +82,11 @@ public class WikiBuilder {
     return this;
   }
 
+  public WikiBuilder withWikiPath(final String path) {
+    this.wikiPath = path;
+    return this;
+  }
+
   public WikiBuilder withCode(final String code) {
     this.code = code;
     return this;
@@ -105,6 +112,7 @@ public class WikiBuilder {
         hosts,
         apiPath,
         indexPath,
+        wikiPath,
         code,
         checkWikiCode,
         orientation,

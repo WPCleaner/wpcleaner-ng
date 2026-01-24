@@ -10,4 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record ApiError(
     @JsonProperty("code") String code,
     @JsonProperty("module") String module,
-    @JsonProperty("text") String text) {}
+    @JsonProperty("text") String text) {
+
+  public String toSimpleString() {
+    return String.format("%s: %s", code, text);
+  }
+}

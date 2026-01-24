@@ -7,7 +7,6 @@ package org.wpcleaner.api.api;
 
 import jakarta.annotation.Nullable;
 import java.lang.invoke.MethodHandles;
-import java.util.List;
 import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public final class ApiUtils {
   public static <I extends ApiResponse, T> T processApiResponse(
       @Nullable final I response, final Function<I, T> extractor) {
     if (response == null) {
-      throw new ApiException("No response retrieved", List.of());
+      throw new ApiException("No response retrieved", "Unknown details");
     }
     if (!response.errors().isEmpty()) {
       LOGGER.error("Errors in API response: {}", response.errors());

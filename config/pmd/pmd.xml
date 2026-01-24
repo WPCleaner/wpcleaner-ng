@@ -12,7 +12,12 @@
     <exclude name="GuardLogStatement"/>
     <exclude name="ImplicitFunctionalInterface"/>
   </rule>
-  <rule ref="category/java/bestpractices.xml/GuardLogStatement">
+  <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
+    <properties>
+      <property name="ignoreMagicNumbers" value="-1,0,1" />
+      <property name="ignoreExpressions" value="true" />
+    </properties>
+  </rule>  <rule ref="category/java/bestpractices.xml/GuardLogStatement">
     <properties>
       <!-- Do not request guards for INFO, WARN and ERROR, only TRACE and DEBUG -->
       <property name="logLevels" value="trace,debug"/>
