@@ -17,12 +17,12 @@ import org.wpcleaner.application.base.processor.LoginProcessor;
 import org.wpcleaner.application.gui.swing.core.worker.SwingWorkerProcessor;
 
 @Service
-public class LoginAction {
+public class DemoAction {
 
   private final LoginProcessor loginProcessor;
   private final SwingWorkerProcessor workerProcessor;
 
-  public LoginAction(
+  public DemoAction(
       final LoginProcessor loginProcessor, final SwingWorkerProcessor workerProcessor) {
     this.loginProcessor = loginProcessor;
     this.workerProcessor = workerProcessor;
@@ -32,13 +32,12 @@ public class LoginAction {
       final Component component,
       @Nullable final WikiDefinition wiki,
       final String user,
-      final char[] password,
       final BiConsumer<String, WikiDefinition> onSuccess,
       final Consumer<Throwable> onFailure) {
     if (wiki == null) {
       JOptionPane.showMessageDialog(
           component,
-          "You must select a wiki before login!",
+          "You must select a wiki before starting demo mode!",
           "Missing wiki",
           JOptionPane.WARNING_MESSAGE);
       return;
@@ -46,25 +45,14 @@ public class LoginAction {
     if (!StringUtils.hasText(user)) {
       JOptionPane.showMessageDialog(
           component,
-          "You must input your username before login!",
+          "You must input your username before starting demo mode!",
           "Missing username",
-          JOptionPane.WARNING_MESSAGE);
-      return;
-    }
-    if (password.length == 0) {
-      JOptionPane.showMessageDialog(
-          component,
-          """
-          You must input your password before login!
-          If you prefer to test WPCleaner first, you can use the Demo mode.
-          """,
-          "Missing password",
           JOptionPane.WARNING_MESSAGE);
       return;
     }
     workerProcessor.process(
         component,
-        LoginProcessor.Input.forLogin(wiki, user, password),
+        LoginProcessor.Input.forDemo(wiki, user),
         loginProcessor,
         result -> onSuccess.accept(result.username(), result.wiki()),
         onFailure);

@@ -28,17 +28,19 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
   @Override
   @SuppressWarnings("try")
   public LoginResult execute(final Input input, final ProgressTracker tracker) {
-    final Tokens tokens;
-    try (ProgressTracker.ProgressStep ignored = tracker.start("Retrieving login token")) {
-      tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
-    }
-    try (ProgressTracker.ProgressStep ignored =
-        tracker.start("Login for user %s".formatted(input.username))) {
-      apiLogin.login(
-          input.wiki,
-          input.username,
-          new String(input.password),
-          Objects.requireNonNull(tokens.login(), "Login token is null"));
+    if (!input.demo()) {
+      final Tokens tokens;
+      try (ProgressTracker.ProgressStep ignored = tracker.start("Retrieving login token")) {
+        tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
+      }
+      try (ProgressTracker.ProgressStep ignored =
+          tracker.start("Login for user %s".formatted(input.username))) {
+        apiLogin.login(
+            input.wiki,
+            input.username,
+            new String(input.password),
+            Objects.requireNonNull(tokens.login(), "Login token is null"));
+      }
     }
     final String compactUsername = compactUsername(input.username);
     return new LoginResult(input.wiki, compactUsername);
@@ -55,5 +57,16 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
   public record Input(
       WikiDefinition wiki,
       String username,
-      @SuppressWarnings("ArrayRecordComponent") char[] password) {}
+      @SuppressWarnings("ArrayRecordComponent") char[] password,
+      boolean demo) {
+    @SuppressWarnings("PMD.UseVarargs")
+    public static Input forLogin(
+        final WikiDefinition wiki, final String username, final char[] password) {
+      return new Input(wiki, username, password, false);
+    }
+
+    public static Input forDemo(final WikiDefinition wiki, final String username) {
+      return new Input(wiki, username, new char[] {}, true);
+    }
+  }
 }

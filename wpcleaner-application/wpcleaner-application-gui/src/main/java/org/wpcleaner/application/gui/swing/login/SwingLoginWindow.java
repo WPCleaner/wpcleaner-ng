@@ -26,6 +26,7 @@ public final class SwingLoginWindow extends JFrame {
 
   @Serial private static final long serialVersionUID = 3951316694154990744L;
 
+  private final transient DemoAction demoAction;
   private final transient KnownDefinitions knownDefinitions;
   private final transient LoginAction loginAction;
   private final transient MainWindowFactory mainWindowFactory;
@@ -33,6 +34,7 @@ public final class SwingLoginWindow extends JFrame {
   private final transient UrlService urlService;
 
   public static void create(
+      final DemoAction demoAction,
       final KnownDefinitions knownDefinitions,
       final LoginAction loginAction,
       final MainWindowFactory mainWindowFactory,
@@ -40,17 +42,24 @@ public final class SwingLoginWindow extends JFrame {
       final UrlService urlService) {
     final SwingLoginWindow window =
         new SwingLoginWindow(
-            knownDefinitions, loginAction, mainWindowFactory, swingCoreServices, urlService);
+            demoAction,
+            knownDefinitions,
+            loginAction,
+            mainWindowFactory,
+            swingCoreServices,
+            urlService);
     window.initialize();
   }
 
   private SwingLoginWindow(
+      final DemoAction demoAction,
       final KnownDefinitions knownDefinitions,
       final LoginAction loginAction,
       final MainWindowFactory mainWindowFactory,
       final SwingCoreServices swingCoreServices,
       final UrlService urlService) {
     super("WPCleaner");
+    this.demoAction = demoAction;
     this.knownDefinitions = knownDefinitions;
     this.loginAction = loginAction;
     this.mainWindowFactory = mainWindowFactory;
@@ -132,7 +141,14 @@ public final class SwingLoginWindow extends JFrame {
             .component()
             .buttons()
             .builder("Demo", true)
-            .withAction(swingCoreServices.action().action().notImplemented())
+            .withAction(
+                component ->
+                    demoAction.execute(
+                        component,
+                        wikiInput.getSelectedWiki().orElse(null),
+                        userInput.getUser(),
+                        this::displayMainWindow,
+                        e -> swingCoreServices.errorDialog().showErrorMessage(this, e)))
             .build();
     buttons.add(demoButton);
     swingCoreServices.layout().addRowSpanningAllColumns(panel, constraints, buttons);
