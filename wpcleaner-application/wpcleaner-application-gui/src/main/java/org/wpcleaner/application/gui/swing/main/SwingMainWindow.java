@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.swing.main;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serial;
+import java.util.stream.Collectors;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -82,6 +83,22 @@ public final class SwingMainWindow extends JFrame {
                   "You are currently in demo mode, you won't be able to save your modifications",
                   SwingConstants.CENTER)));
     }
+    layoutService.addRow(
+        panel,
+        constraints,
+        GridBagComponent.of(
+            new JLabel(
+                "Your groups: %s"
+                    .formatted(user.groups().stream().limit(3).collect(Collectors.joining(", "))),
+                SwingConstants.CENTER)));
+    layoutService.addRow(
+        panel,
+        constraints,
+        GridBagComponent.of(
+            new JLabel(
+                "Your rights: %s"
+                    .formatted(user.rights().stream().limit(3).collect(Collectors.joining(", "))),
+                SwingConstants.CENTER)));
   }
 
   private void addButtons(final JPanel panel, final GridBagConstraints constraints) {

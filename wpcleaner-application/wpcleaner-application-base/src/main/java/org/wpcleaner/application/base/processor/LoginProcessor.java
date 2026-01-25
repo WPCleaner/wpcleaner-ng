@@ -10,6 +10,8 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.login.ApiLogin;
+import org.wpcleaner.api.api.query.list.users.ApiUsers;
+import org.wpcleaner.api.api.query.list.users.User;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.Tokens;
 import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
@@ -20,14 +22,17 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
 
   private final ApiLogin apiLogin;
   private final ApiTokens apiTokens;
+  private final ApiUsers apiUsers;
   private final CurrentUserService currentUserService;
 
   public LoginProcessor(
       final ApiLogin apiLogin,
       final ApiTokens apiTokens,
+      final ApiUsers apiUsers,
       final CurrentUserService currentUserService) {
     this.apiLogin = apiLogin;
     this.apiTokens = apiTokens;
+    this.apiUsers = apiUsers;
     this.currentUserService = currentUserService;
   }
 
@@ -51,6 +56,12 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
     }
     final String compactUsername = compactUsername(input.username);
     currentUserService.login(input.wiki(), compactUsername, input.demo());
+    try (ProgressTracker.ProgressStep ignored =
+        tracker.start("Retrieving information about user %s".formatted(input.username))) {
+      final User user = apiUsers.retrieveUser(input.wiki, compactUsername);
+      currentUserService.withGroups(user.groups());
+      currentUserService.withRights(user.rights());
+    }
     return new LoginResult(input.wiki, compactUsername);
   }
 

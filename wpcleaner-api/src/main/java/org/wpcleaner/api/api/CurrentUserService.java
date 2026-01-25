@@ -5,6 +5,7 @@ package org.wpcleaner.api.api;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -26,6 +27,14 @@ public class CurrentUserService {
 
   public void login(final WikiDefinition wiki, final String username, final boolean demo) {
     currentUser = currentUser.withLogin(wiki, username, demo);
+  }
+
+  public void withGroups(final List<String> groups) {
+    currentUser = currentUser.withGroups(groups);
+  }
+
+  public void withRights(final List<String> rights) {
+    currentUser = currentUser.withRights(rights);
   }
 
   public void logout() {

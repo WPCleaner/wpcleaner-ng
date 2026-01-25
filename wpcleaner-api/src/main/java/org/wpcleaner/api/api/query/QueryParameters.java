@@ -29,6 +29,16 @@ public enum QueryParameters {
     this.value = value;
   }
 
+  public enum List {
+    USERS("users");
+
+    public final String value;
+
+    List(final String value) {
+      this.value = value;
+    }
+  }
+
   public enum Meta {
     TOKENS("tokens");
 
