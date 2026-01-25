@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
@@ -26,23 +26,19 @@ public final class SwingMainWindow extends JFrame {
   private final transient ComponentService componentService;
   private final transient ImageIconLoader imageService;
   private final transient GridBagLayoutService layoutService;
-  private final transient String user;
-  private final transient WikiDefinition wiki;
+  private final transient ConnectedUser user;
 
-  public static void create(
-      final SwingCoreServices swingCoreServices, final String user, final WikiDefinition wiki) {
-    final SwingMainWindow window = new SwingMainWindow(swingCoreServices, user, wiki);
+  public static void create(final SwingCoreServices swingCoreServices, final ConnectedUser user) {
+    final SwingMainWindow window = new SwingMainWindow(swingCoreServices, user);
     window.initialize();
   }
 
-  private SwingMainWindow(
-      final SwingCoreServices swingCoreServices, final String user, final WikiDefinition wiki) {
+  private SwingMainWindow(final SwingCoreServices swingCoreServices, final ConnectedUser user) {
     super("WPCleaner");
     this.componentService = swingCoreServices.component();
     this.imageService = swingCoreServices.image();
     this.layoutService = swingCoreServices.layout();
     this.user = user;
-    this.wiki = wiki;
   }
 
   private void initialize() {
@@ -68,15 +64,24 @@ public final class SwingMainWindow extends JFrame {
         constraints,
         GridBagComponent.of(
             new JLabel(
-                "Welcome %s on WPCleaner Next Generation!".formatted(user),
+                "Welcome %s on WPCleaner Next Generation!".formatted(user.username()),
                 SwingConstants.CENTER)));
     layoutService.addRow(
         panel,
         constraints,
         GridBagComponent.of(
             new JLabel(
-                "You are currently connected to %s-%s".formatted(wiki.code(), wiki.name()),
+                "You are currently connected to %s".formatted(user.wiki()),
                 SwingConstants.CENTER)));
+    if (user.demo()) {
+      layoutService.addRow(
+          panel,
+          constraints,
+          GridBagComponent.of(
+              new JLabel(
+                  "You are currently in demo mode, you won't be able to save your modifications",
+                  SwingConstants.CENTER)));
+    }
   }
 
   private void addButtons(final JPanel panel, final GridBagConstraints constraints) {

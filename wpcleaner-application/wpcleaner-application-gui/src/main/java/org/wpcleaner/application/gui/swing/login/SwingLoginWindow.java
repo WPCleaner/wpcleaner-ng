@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
-import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
@@ -159,8 +158,8 @@ public final class SwingLoginWindow extends JFrame {
             panel, constraints, swingCoreServices.component().toolBars().feedbacks());
   }
 
-  private void displayMainWindow(final String user, final WikiDefinition wiki) {
-    mainWindowFactory.displayMainWindow(user, wiki);
+  private void displayMainWindow() {
+    mainWindowFactory.displayMainWindow();
     this.dispose();
   }
 }

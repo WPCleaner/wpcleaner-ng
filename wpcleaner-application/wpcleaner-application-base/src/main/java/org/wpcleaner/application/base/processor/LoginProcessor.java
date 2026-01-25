@@ -8,6 +8,7 @@ package org.wpcleaner.application.base.processor;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.login.ApiLogin;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.Tokens;
@@ -19,15 +20,21 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
 
   private final ApiLogin apiLogin;
   private final ApiTokens apiTokens;
+  private final CurrentUserService currentUserService;
 
-  public LoginProcessor(final ApiLogin apiLogin, final ApiTokens apiTokens) {
+  public LoginProcessor(
+      final ApiLogin apiLogin,
+      final ApiTokens apiTokens,
+      final CurrentUserService currentUserService) {
     this.apiLogin = apiLogin;
     this.apiTokens = apiTokens;
+    this.currentUserService = currentUserService;
   }
 
   @Override
   @SuppressWarnings("try")
   public LoginResult execute(final Input input, final ProgressTracker tracker) {
+    currentUserService.logout();
     if (!input.demo()) {
       final Tokens tokens;
       try (ProgressTracker.ProgressStep ignored = tracker.start("Retrieving login token")) {
@@ -43,6 +50,7 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
       }
     }
     final String compactUsername = compactUsername(input.username);
+    currentUserService.login(input.wiki(), compactUsername, input.demo());
     return new LoginResult(input.wiki, compactUsername);
   }
 

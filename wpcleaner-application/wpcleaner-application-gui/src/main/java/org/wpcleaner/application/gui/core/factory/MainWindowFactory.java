@@ -5,9 +5,7 @@ package org.wpcleaner.application.gui.core.factory;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import org.wpcleaner.api.wiki.definition.WikiDefinition;
-
 public interface MainWindowFactory {
 
-  void displayMainWindow(String user, WikiDefinition wiki);
+  void displayMainWindow();
 }

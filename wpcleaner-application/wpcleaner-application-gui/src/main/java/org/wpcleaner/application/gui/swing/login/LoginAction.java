@@ -7,7 +7,6 @@ package org.wpcleaner.application.gui.swing.login;
 
 import jakarta.annotation.Nullable;
 import java.awt.Component;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.swing.JOptionPane;
 import org.springframework.stereotype.Service;
@@ -33,7 +32,7 @@ public class LoginAction {
       @Nullable final WikiDefinition wiki,
       final String user,
       final char[] password,
-      final BiConsumer<String, WikiDefinition> onSuccess,
+      final Runnable onSuccess,
       final Consumer<Throwable> onFailure) {
     if (wiki == null) {
       JOptionPane.showMessageDialog(
@@ -66,7 +65,7 @@ public class LoginAction {
         component,
         LoginProcessor.Input.forLogin(wiki, user, password),
         loginProcessor,
-        result -> onSuccess.accept(result.username(), result.wiki()),
+        result -> onSuccess.run(),
         onFailure);
   }
 }

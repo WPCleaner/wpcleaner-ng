@@ -7,21 +7,25 @@ package org.wpcleaner.application.gui.swing.main;
 
 import java.awt.EventQueue;
 import org.springframework.stereotype.Service;
-import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 
 @Service
 public class SwingMainWindowFactory implements MainWindowFactory {
 
+  private final CurrentUserService currentUserService;
   private final SwingCoreServices swingCoreServices;
 
-  public SwingMainWindowFactory(final SwingCoreServices swingCoreServices) {
+  public SwingMainWindowFactory(
+      final CurrentUserService currentUserService, final SwingCoreServices swingCoreServices) {
+    this.currentUserService = currentUserService;
     this.swingCoreServices = swingCoreServices;
   }
 
   @Override
-  public void displayMainWindow(final String user, final WikiDefinition wiki) {
-    EventQueue.invokeLater(() -> SwingMainWindow.create(swingCoreServices, user, wiki));
+  public void displayMainWindow() {
+    EventQueue.invokeLater(
+        () -> SwingMainWindow.create(swingCoreServices, currentUserService.getCurrentUser()));
   }
 }
