@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
+import org.wpcleaner.api.api.ApiUtils;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -45,14 +46,7 @@ public class ApiTokens {
         .get()
         .uri(
             uriBuilder ->
-                uriBuilder
-                    .queryParam(ApiParameters.ACTION.value, ApiParameters.Action.QUERY.value)
-                    .queryParam(
-                        ApiParameters.ERROR_FORMAT.value,
-                        ApiParameters.ErrorFormat.PLAIN_TEXT.value)
-                    .queryParam(ApiParameters.FORMAT.value, ApiParameters.Format.JSON.value)
-                    .queryParam(
-                        ApiParameters.FORMAT_VERSION.value, ApiParameters.FORMAT_VERSION_VALUE)
+                ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
                     .queryParam(QueryParameters.META.value, QueryParameters.Meta.TOKENS.value)
                     .queryParam(
                         TokensParameters.TYPE.value,

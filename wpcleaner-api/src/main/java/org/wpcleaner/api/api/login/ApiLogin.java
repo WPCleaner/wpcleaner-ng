@@ -71,17 +71,7 @@ public class ApiLogin {
     return restClient
         .getRestClient(wiki)
         .post()
-        .uri(
-            uriBuilder ->
-                uriBuilder
-                    .queryParam(ApiParameters.ACTION.value, ApiParameters.Action.LOGIN.value)
-                    .queryParam(ApiParameters.FORMAT.value, ApiParameters.Format.JSON.value)
-                    .queryParam(
-                        ApiParameters.FORMAT_VERSION.value, ApiParameters.FORMAT_VERSION_VALUE)
-                    .queryParam(
-                        ApiParameters.ERROR_FORMAT.value,
-                        ApiParameters.ErrorFormat.PLAIN_TEXT.value)
-                    .build())
+        .uri(uriBuilder -> ApiUtils.configure(uriBuilder, ApiParameters.Action.LOGIN).build())
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         .body(body)
         .retrieve()
