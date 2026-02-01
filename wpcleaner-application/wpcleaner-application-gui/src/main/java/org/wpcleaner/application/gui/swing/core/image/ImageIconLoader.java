@@ -5,13 +5,13 @@ package org.wpcleaner.application.gui.swing.core.image;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.utils.AutoCatch;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
 import org.wpcleaner.lib.image.ImageSize;
@@ -42,14 +42,7 @@ public class ImageIconLoader {
   private Optional<ImageIcon> loadImage(final ImageCollection image, final ImageSize size) {
     return imageLoader
         .getImageResource(image, size)
-        .map(
-            resource -> {
-              try {
-                return resource.getURL();
-              } catch (IOException e) {
-                return null;
-              }
-            })
+        .map(resource -> AutoCatch.runOrNull(resource::getURL))
         .map(ImageIcon::new);
   }
 }

@@ -9,20 +9,14 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.wpcleaner.api.utils.AutoCatch;
 
 public interface WikiDefinitions {
 
   default Set<WikiDefinition> getDefinitions() {
     return Arrays.stream(getClass().getDeclaredFields())
         .filter(field -> Modifier.isStatic(field.getModifiers()))
-        .map(
-            field -> {
-              try {
-                return field.get(this);
-              } catch (IllegalAccessException e) {
-                return null;
-              }
-            })
+        .map(field -> AutoCatch.runOrNull(() -> field.get(this)))
         .filter(WikiDefinition.class::isInstance)
         .map(WikiDefinition.class::cast)
         .collect(Collectors.toUnmodifiableSet());

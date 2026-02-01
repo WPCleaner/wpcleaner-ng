@@ -6,13 +6,13 @@ package org.wpcleaner.api.api;
  */
 
 import jakarta.annotation.Nullable;
-import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.StreamSupport;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.wpcleaner.api.utils.AutoCatch;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -28,22 +28,19 @@ public class CredentialsYamlReader implements CredentialsReader {
   }
 
   @Override
-  @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
   public List<Credential> getCredentials() {
     final Resource resource = new ClassPathResource("credentials.yaml");
     if (!resource.exists() || !resource.isReadable()) {
       return List.of();
     }
     final Yaml yaml = new Yaml(new Constructor(YamlCredential.class, new LoaderOptions()));
-    try {
-      return StreamSupport.stream(yaml.loadAll(resource.getInputStream()).spliterator(), false)
-          .map(YamlCredential.class::cast)
-          .map(credentials -> credentials.toCredential(knownDefinitions))
-          .filter(Objects::nonNull)
-          .toList();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return AutoCatch.run(
+        () ->
+            StreamSupport.stream(yaml.loadAll(resource.getInputStream()).spliterator(), false)
+                .map(YamlCredential.class::cast)
+                .map(credentials -> credentials.toCredential(knownDefinitions))
+                .filter(Objects::nonNull)
+                .toList());
   }
 
   public static final class YamlCredential {
