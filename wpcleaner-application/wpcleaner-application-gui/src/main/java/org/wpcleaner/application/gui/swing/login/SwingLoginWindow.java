@@ -14,58 +14,20 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
-import org.wpcleaner.api.wiki.definition.KnownDefinitions;
-import org.wpcleaner.application.base.utils.url.UrlService;
-import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
-import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
-import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindow;
 
-public final class SwingLoginWindow extends WPCleanerWindow {
+public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServices> {
 
   @Serial private static final long serialVersionUID = 3951316694154990744L;
 
-  private final transient DemoAction demoAction;
-  private final transient KnownDefinitions knownDefinitions;
-  private final transient LoginAction loginAction;
-  private final transient MainWindowFactory mainWindowFactory;
-  private final transient UrlService urlService;
-
-  public static void create(
-      final DemoAction demoAction,
-      final GraphicalSettingsManager settingsManager,
-      final KnownDefinitions knownDefinitions,
-      final LoginAction loginAction,
-      final MainWindowFactory mainWindowFactory,
-      final SwingCoreServices swingCoreServices,
-      final UrlService urlService) {
-    final SwingLoginWindow window =
-        new SwingLoginWindow(
-            demoAction,
-            settingsManager,
-            knownDefinitions,
-            loginAction,
-            mainWindowFactory,
-            swingCoreServices,
-            urlService);
+  public static void create(final SwingLoginWindowServices services) {
+    final SwingLoginWindow window = new SwingLoginWindow(services);
     window.initialize();
   }
 
-  private SwingLoginWindow(
-      final DemoAction demoAction,
-      final GraphicalSettingsManager settingsManager,
-      final KnownDefinitions knownDefinitions,
-      final LoginAction loginAction,
-      final MainWindowFactory mainWindowFactory,
-      final SwingCoreServices swingCoreServices,
-      final UrlService urlService) {
-    super(settingsManager, swingCoreServices);
-    this.demoAction = demoAction;
-    this.knownDefinitions = knownDefinitions;
-    this.loginAction = loginAction;
-    this.mainWindowFactory = mainWindowFactory;
-    this.urlService = urlService;
+  private SwingLoginWindow(final SwingLoginWindowServices services) {
+    super(services);
   }
 
   @Override
@@ -73,24 +35,24 @@ public final class SwingLoginWindow extends WPCleanerWindow {
     super.initialize();
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     final JPanel panel = new JPanel(new GridBagLayout());
-    final GridBagConstraints constraints = swingCore.layout().initializeConstraints();
+    final GridBagConstraints constraints = services.swing().layout().initializeConstraints();
     constraints.fill = GridBagConstraints.BOTH;
 
-    final WikiInput wiki = new WikiInput(swingCore, knownDefinitions);
+    final WikiInput wiki = new WikiInput(services.swing(), services.knownDefinitions());
     addLine(panel, constraints, wiki.label, wiki.icon, wiki.comboBox, wiki.toolBar);
 
-    final LanguageInput language = new LanguageInput(swingCore);
+    final LanguageInput language = new LanguageInput(services.swing());
     addLine(panel, constraints, language.label, language.icon, language.comboBox, language.toolBar);
 
-    final UserInput user = new UserInput(swingCore);
+    final UserInput user = new UserInput(services.swing());
     addLine(panel, constraints, user.label, user.icon, user.comboBox, user.toolBar);
 
-    final PasswordInput password = new PasswordInput(swingCore, urlService);
+    final PasswordInput password = new PasswordInput(services.swing(), services.url());
     addLine(panel, constraints, password.label, password.icon, password.field, password.toolBar);
 
     addButtons(panel, constraints, wiki, user, password);
 
-    swingCore.layout().addFillingPanelBelow(panel);
+    services.swing().layout().addFillingPanelBelow(panel);
     getContentPane().add(panel);
     pack();
     setVisible(true);
@@ -103,7 +65,8 @@ public final class SwingLoginWindow extends WPCleanerWindow {
       final JLabel icon,
       final JComponent selector,
       final JToolBar toolBar) {
-    swingCore
+    services
+        .swing()
         .layout()
         .addRow(
             panel,
@@ -122,45 +85,53 @@ public final class SwingLoginWindow extends WPCleanerWindow {
       final PasswordInput passwordInput) {
     final JPanel buttons = new JPanel(new GridLayout(1, 0));
     final JButton loginButton =
-        swingCore
+        services
+            .swing()
             .component()
             .buttons()
             .builder("Login", true)
             .withAction(
                 component ->
-                    loginAction.execute(
-                        component,
-                        wikiInput.getSelectedWiki().orElse(null),
-                        userInput.getUser(),
-                        passwordInput.getPassword(),
-                        this::displayMainWindow,
-                        e -> swingCore.errorDialog().showErrorMessage(this, e)))
+                    services
+                        .login()
+                        .execute(
+                            component,
+                            wikiInput.getSelectedWiki().orElse(null),
+                            userInput.getUser(),
+                            passwordInput.getPassword(),
+                            this::displayMainWindow,
+                            e -> services.swing().errorDialog().showErrorMessage(this, e)))
             .build();
     buttons.add(loginButton);
     final JButton demoButton =
-        swingCore
+        services
+            .swing()
             .component()
             .buttons()
             .builder("Demo", true)
             .withAction(
                 component ->
-                    demoAction.execute(
-                        component,
-                        wikiInput.getSelectedWiki().orElse(null),
-                        userInput.getUser(),
-                        this::displayMainWindow,
-                        e -> swingCore.errorDialog().showErrorMessage(this, e)))
+                    services
+                        .demo()
+                        .execute(
+                            component,
+                            wikiInput.getSelectedWiki().orElse(null),
+                            userInput.getUser(),
+                            this::displayMainWindow,
+                            e -> services.swing().errorDialog().showErrorMessage(this, e)))
             .build();
     buttons.add(demoButton);
-    swingCore.layout().addRowSpanningAllColumns(panel, constraints, buttons);
+    services.swing().layout().addRowSpanningAllColumns(panel, constraints, buttons);
 
-    swingCore
+    services
+        .swing()
         .layout()
-        .addRowSpanningAllColumns(panel, constraints, swingCore.component().toolBars().feedbacks());
+        .addRowSpanningAllColumns(
+            panel, constraints, services.swing().component().toolBars().feedbacks());
   }
 
   private void displayMainWindow() {
-    mainWindowFactory.displayMainWindow();
+    services.main().displayMainWindow();
     this.dispose();
   }
 }
