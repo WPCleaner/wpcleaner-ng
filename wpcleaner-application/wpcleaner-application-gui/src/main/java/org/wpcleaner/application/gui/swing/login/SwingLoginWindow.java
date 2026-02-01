@@ -17,6 +17,7 @@ import javax.swing.JToolBar;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
+import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindow;
@@ -33,6 +34,7 @@ public final class SwingLoginWindow extends WPCleanerWindow {
 
   public static void create(
       final DemoAction demoAction,
+      final GraphicalSettingsManager settingsManager,
       final KnownDefinitions knownDefinitions,
       final LoginAction loginAction,
       final MainWindowFactory mainWindowFactory,
@@ -41,6 +43,7 @@ public final class SwingLoginWindow extends WPCleanerWindow {
     final SwingLoginWindow window =
         new SwingLoginWindow(
             demoAction,
+            settingsManager,
             knownDefinitions,
             loginAction,
             mainWindowFactory,
@@ -51,12 +54,13 @@ public final class SwingLoginWindow extends WPCleanerWindow {
 
   private SwingLoginWindow(
       final DemoAction demoAction,
+      final GraphicalSettingsManager settingsManager,
       final KnownDefinitions knownDefinitions,
       final LoginAction loginAction,
       final MainWindowFactory mainWindowFactory,
       final SwingCoreServices swingCoreServices,
       final UrlService urlService) {
-    super(swingCoreServices);
+    super(settingsManager, swingCoreServices);
     this.demoAction = demoAction;
     this.knownDefinitions = knownDefinitions;
     this.loginAction = loginAction;
@@ -89,7 +93,6 @@ public final class SwingLoginWindow extends WPCleanerWindow {
     swingCore.layout().addFillingPanelBelow(panel);
     getContentPane().add(panel);
     pack();
-    setLocationRelativeTo(null);
     setVisible(true);
   }
 

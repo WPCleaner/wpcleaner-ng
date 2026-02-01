@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.utils.JsonUtils;
 
@@ -19,13 +20,23 @@ public class SettingsPersistence {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public boolean arePersisted(final VersionedSettings settings) {
-    return getFolder().resolve("%s.json".formatted(settings.name())).toFile().isFile();
+  public <T extends VersionedSettings> boolean arePersisted(final Class<T> clazz) {
+    return getFolder()
+        .resolve("%s.json".formatted(VersionedSettings.name(clazz)))
+        .toFile()
+        .isFile();
+  }
+
+  public <T extends VersionedSettings> T load(final Class<T> clazz) {
+    return JsonUtils.readValue(new FileSystemResource(getFile(clazz)), clazz);
   }
 
   public void save(final VersionedSettings settings) {
-    final Path file = getFolder().resolve("%s.json".formatted(settings.name()));
-    JsonUtils.writeValue(file.toFile(), settings);
+    JsonUtils.writeValue(getFile(settings.getClass()).toFile(), settings);
+  }
+
+  private <T extends VersionedSettings> Path getFile(final Class<T> clazz) {
+    return getFolder().resolve("%s.json".formatted(VersionedSettings.name(clazz)));
   }
 
   private Path getFolder() {

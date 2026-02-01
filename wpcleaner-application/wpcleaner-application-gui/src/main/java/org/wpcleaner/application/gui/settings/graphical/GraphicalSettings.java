@@ -9,6 +9,7 @@ import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.wpcleaner.api.settings.VersionedSettings;
 
 public record GraphicalSettings(
@@ -28,6 +29,10 @@ public record GraphicalSettings(
 
   public GraphicalSettings() {
     this(0, Map.of(), null);
+  }
+
+  public Optional<WindowSettings> getWindowSettings(final String name) {
+    return Optional.ofNullable(windows.get(name));
   }
 
   public GraphicalSettings withWindowSettings(

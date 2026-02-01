@@ -18,8 +18,12 @@ public class GraphicalSettingsManager {
   public GraphicalSettingsManager(
       final SettingsPersistence persistence, final OldSettings oldSettings) {
     this.persistence = persistence;
-    this.currentSettings =
-        GraphicalSettingsImporter.convert(oldSettings).orElseGet(GraphicalSettings::new);
+    if (persistence.arePersisted(GraphicalSettings.class)) {
+      this.currentSettings = persistence.load(GraphicalSettings.class);
+    } else {
+      this.currentSettings =
+          GraphicalSettingsImporter.convert(oldSettings).orElseGet(GraphicalSettings::new);
+    }
   }
 
   public GraphicalSettings getCurrentSettings() {

@@ -14,8 +14,7 @@ public interface VersionedSettings extends SettingsElement {
 
   int lastVersion();
 
-  default String name() {
-    return StringUtils.removeSuffix(getClass().getSimpleName(), "Settings")
-        .toLowerCase(Locale.ROOT);
+  static <T extends VersionedSettings> String name(final Class<T> clazz) {
+    return StringUtils.removeSuffix(clazz.getSimpleName(), "Settings").toLowerCase(Locale.ROOT);
   }
 }

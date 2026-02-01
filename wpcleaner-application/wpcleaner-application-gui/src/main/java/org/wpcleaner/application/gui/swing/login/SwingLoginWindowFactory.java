@@ -11,12 +11,14 @@ import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.factory.LoginWindowFactory;
 import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
+import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 
 @Service
 public class SwingLoginWindowFactory implements LoginWindowFactory {
 
   private final DemoAction demoAction;
+  private final GraphicalSettingsManager settingsManager;
   private final KnownDefinitions knownDefinitions;
   private final LoginAction loginAction;
   private final MainWindowFactory mainWindowFactory;
@@ -25,12 +27,14 @@ public class SwingLoginWindowFactory implements LoginWindowFactory {
 
   public SwingLoginWindowFactory(
       final DemoAction demoAction,
+      final GraphicalSettingsManager settingsManager,
       final KnownDefinitions knownDefinitions,
       final LoginAction loginAction,
       final MainWindowFactory mainWindowFactory,
       final SwingCoreServices swingCoreServices,
       final UrlService urlService) {
     this.demoAction = demoAction;
+    this.settingsManager = settingsManager;
     this.knownDefinitions = knownDefinitions;
     this.loginAction = loginAction;
     this.mainWindowFactory = mainWindowFactory;
@@ -44,6 +48,7 @@ public class SwingLoginWindowFactory implements LoginWindowFactory {
         () ->
             SwingLoginWindow.create(
                 demoAction,
+                settingsManager,
                 knownDefinitions,
                 loginAction,
                 mainWindowFactory,

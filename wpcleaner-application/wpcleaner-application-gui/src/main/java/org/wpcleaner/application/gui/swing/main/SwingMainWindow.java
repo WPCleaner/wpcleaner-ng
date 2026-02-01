@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.utils.StringUtils;
+import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagLayoutService;
@@ -24,13 +25,19 @@ public final class SwingMainWindow extends WPCleanerWindow {
 
   private final transient ConnectedUser user;
 
-  public static void create(final SwingCoreServices swingCoreServices, final ConnectedUser user) {
-    final SwingMainWindow window = new SwingMainWindow(swingCoreServices, user);
+  public static void create(
+      final GraphicalSettingsManager settingsManager,
+      final SwingCoreServices swingCoreServices,
+      final ConnectedUser user) {
+    final SwingMainWindow window = new SwingMainWindow(settingsManager, swingCoreServices, user);
     window.initialize();
   }
 
-  private SwingMainWindow(final SwingCoreServices swingCoreServices, final ConnectedUser user) {
-    super(swingCoreServices);
+  private SwingMainWindow(
+      final GraphicalSettingsManager settingsManager,
+      final SwingCoreServices swingCoreServices,
+      final ConnectedUser user) {
+    super(settingsManager, swingCoreServices);
     this.user = user;
   }
 
@@ -48,7 +55,6 @@ public final class SwingMainWindow extends WPCleanerWindow {
     swingCore.layout().addFillingPanelBelow(panel);
     getContentPane().add(panel);
     pack();
-    setLocationRelativeTo(null);
     setVisible(true);
   }
 
