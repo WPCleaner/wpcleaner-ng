@@ -7,9 +7,9 @@ package org.wpcleaner.application.gui.swing.core.window;
 
 import java.awt.Window;
 import org.springframework.stereotype.Service;
-import org.wpcleaner.settings.local.graphical.GraphicalSettings;
-import org.wpcleaner.settings.local.graphical.GraphicalSettingsManager;
-import org.wpcleaner.settings.local.graphical.WindowSettings;
+import org.wpcleaner.application.gui.settings.graphical.GraphicalSettings;
+import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
+import org.wpcleaner.application.gui.settings.graphical.WindowSettings;
 
 @Service
 public class WindowService {

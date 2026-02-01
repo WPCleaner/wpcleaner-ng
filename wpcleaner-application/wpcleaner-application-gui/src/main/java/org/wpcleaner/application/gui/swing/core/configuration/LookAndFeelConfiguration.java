@@ -14,8 +14,8 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.wpcleaner.settings.local.graphical.GraphicalSettingsManager;
-import org.wpcleaner.settings.local.graphical.LookAndFeelSettings;
+import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
+import org.wpcleaner.application.gui.settings.graphical.LookAndFeelSettings;
 
 @AutoConfiguration
 public class LookAndFeelConfiguration {

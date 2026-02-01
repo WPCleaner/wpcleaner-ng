@@ -1,4 +1,4 @@
-package org.wpcleaner.settings.local.general;
+package org.wpcleaner.api.settings.general;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -7,7 +7,7 @@ package org.wpcleaner.settings.local.general;
 
 import jakarta.annotation.Nullable;
 import java.util.Optional;
-import org.wpcleaner.settings.local.migration.OldSettings;
+import org.wpcleaner.api.settings.migration.OldSettings;
 
 final class GeneralSettingsImporter {
 

@@ -1,12 +1,13 @@
-package org.wpcleaner.settings.local.graphical;
+package org.wpcleaner.api.settings;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public enum LookAndFeelType {
-  SYSTEM,
-  USER,
-  WPCLEANER
+public interface VersionedSettings {
+
+  int version();
+
+  int lastVersion();
 }

@@ -1,4 +1,4 @@
-package org.wpcleaner.settings.local.graphical;
+package org.wpcleaner.application.gui.settings.graphical;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -6,7 +6,7 @@ package org.wpcleaner.settings.local.graphical;
  */
 
 import org.springframework.stereotype.Service;
-import org.wpcleaner.settings.local.migration.OldSettings;
+import org.wpcleaner.api.settings.migration.OldSettings;
 
 @Service
 public class GraphicalSettingsManager {

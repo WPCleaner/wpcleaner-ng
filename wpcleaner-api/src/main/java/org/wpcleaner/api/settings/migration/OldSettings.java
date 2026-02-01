@@ -1,4 +1,4 @@
-package org.wpcleaner.settings.local.migration;
+package org.wpcleaner.api.settings.migration;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>

@@ -4,7 +4,6 @@ dependencies {
   api(enforcedPlatform(project(":wpcleaner-dependencies")))
   api("com.fasterxml.jackson.core:jackson-annotations")
   implementation(project(":wpcleaner-lib-image"))
-  implementation(project(":wpcleaner-settings-local"))
   implementation("com.fasterxml.jackson.core:jackson-databind")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("org.springframework.boot:spring-boot-starter")

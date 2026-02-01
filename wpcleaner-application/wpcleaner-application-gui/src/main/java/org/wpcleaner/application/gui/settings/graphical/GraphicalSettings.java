@@ -1,4 +1,4 @@
-package org.wpcleaner.settings.local.graphical;
+package org.wpcleaner.application.gui.settings.graphical;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -9,7 +9,7 @@ import jakarta.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import org.wpcleaner.settings.local.VersionedSettings;
+import org.wpcleaner.api.settings.VersionedSettings;
 
 public record GraphicalSettings(
     int version, Map<String, WindowSettings> windows, LookAndFeelSettings lookAndFeel)
