@@ -8,7 +8,7 @@ package org.wpcleaner.application.gui.settings.graphical;
 import jakarta.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
-import org.wpcleaner.api.settings.migration.OldSettings;
+import org.wpcleaner.api.settings.OldSettings;
 
 final class GraphicalSettingsImporter {
 

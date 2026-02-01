@@ -6,14 +6,18 @@ package org.wpcleaner.application.gui.settings.graphical;
  */
 
 import org.springframework.stereotype.Service;
-import org.wpcleaner.api.settings.migration.OldSettings;
+import org.wpcleaner.api.settings.OldSettings;
+import org.wpcleaner.api.settings.SettingsPersistence;
 
 @Service
 public class GraphicalSettingsManager {
 
+  private final SettingsPersistence persistence;
   private GraphicalSettings currentSettings;
 
-  public GraphicalSettingsManager(final OldSettings oldSettings) {
+  public GraphicalSettingsManager(
+      final SettingsPersistence persistence, final OldSettings oldSettings) {
+    this.persistence = persistence;
     this.currentSettings =
         GraphicalSettingsImporter.convert(oldSettings).orElseGet(GraphicalSettings::new);
   }
@@ -24,5 +28,6 @@ public class GraphicalSettingsManager {
 
   public void updateSettings(final GraphicalSettings settings) {
     this.currentSettings = settings;
+    persistence.save(settings);
   }
 }

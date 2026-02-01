@@ -1,4 +1,4 @@
-package org.wpcleaner.api.settings.general;
+package org.wpcleaner.api.settings;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -6,7 +6,6 @@ package org.wpcleaner.api.settings.general;
  */
 
 import org.springframework.stereotype.Service;
-import org.wpcleaner.api.settings.migration.OldSettings;
 
 @Service
 public class GeneralSettingsManager {

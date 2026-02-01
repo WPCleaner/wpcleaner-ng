@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import org.wpcleaner.api.api.ConnectedUser;
-import org.wpcleaner.application.base.utils.string.StringUtils;
+import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagLayoutService;

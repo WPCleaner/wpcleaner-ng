@@ -5,9 +5,17 @@ package org.wpcleaner.api.settings;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public interface VersionedSettings {
+import java.util.Locale;
+import org.wpcleaner.api.utils.StringUtils;
+
+public interface VersionedSettings extends SettingsElement {
 
   int version();
 
   int lastVersion();
+
+  default String name() {
+    return StringUtils.removeSuffix(getClass().getSimpleName(), "Settings")
+        .toLowerCase(Locale.ROOT);
+  }
 }

@@ -7,7 +7,7 @@ package org.wpcleaner.application.gui.swing.core.window;
 
 import java.io.Serial;
 import javax.swing.JFrame;
-import org.wpcleaner.application.base.utils.string.StringUtils;
+import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 
 public abstract class WPCleanerWindow extends JFrame {
@@ -22,10 +22,14 @@ public abstract class WPCleanerWindow extends JFrame {
   }
 
   protected void initialize() {
-    setName(
-        StringUtils.removeSuffix(
-            StringUtils.removePrefix(getClass().getSimpleName(), "Swing"), "Window"));
+    setName(computeName());
     swingCore.windows().register(this);
     swingCore.image().setIconImage(this);
+  }
+
+  private String computeName() {
+    return StringUtils.firstLetterLowerCase(
+        StringUtils.removeSuffix(
+            StringUtils.removePrefix(getClass().getSimpleName(), "Swing"), "Window"));
   }
 }

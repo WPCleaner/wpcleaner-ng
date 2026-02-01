@@ -5,4 +5,6 @@ package org.wpcleaner.application.gui.settings.graphical;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public record WindowSettings(int x, int y, int width, int height) {}
+import org.wpcleaner.api.settings.SettingsElement;
+
+public record WindowSettings(int x, int y, int width, int height) implements SettingsElement {}

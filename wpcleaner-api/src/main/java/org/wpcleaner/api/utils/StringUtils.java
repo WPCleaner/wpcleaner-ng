@@ -1,4 +1,4 @@
-package org.wpcleaner.application.base.utils.string;
+package org.wpcleaner.api.utils;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -6,6 +6,7 @@ package org.wpcleaner.application.base.utils.string;
  */
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -13,6 +14,13 @@ public final class StringUtils {
 
   private StringUtils() {
     // Utility class
+  }
+
+  public static String firstLetterLowerCase(final String str) {
+    if (str.isEmpty()) {
+      return str;
+    }
+    return str.substring(0, 1).toLowerCase(Locale.ROOT) + str.substring(1);
   }
 
   public static String joinWithEllipsis(final Collection<String> items, final int maxItems) {

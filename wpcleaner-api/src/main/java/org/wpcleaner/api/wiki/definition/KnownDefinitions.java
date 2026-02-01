@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
-import org.wpcleaner.api.settings.general.GeneralSettingsManager;
+import org.wpcleaner.api.settings.GeneralSettingsManager;
 
 @Service
 public class KnownDefinitions {

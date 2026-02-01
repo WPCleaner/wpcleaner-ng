@@ -9,11 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.wpcleaner.api.util.JsonUtil;
+import org.wpcleaner.api.utils.JsonUtils;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 
 @Component
@@ -31,9 +30,8 @@ public class CredentialsJsonReader implements CredentialsReader {
     if (!resource.exists() || !resource.isReadable()) {
       return List.of();
     }
-    return Arrays.stream(JsonUtil.readValue(resource, JsonCredential[].class))
+    return Arrays.stream(JsonUtils.readValue(resource, JsonCredential[].class))
         .map(credentials -> credentials.toCredential(knownDefinitions))
-        .filter(Objects::nonNull)
         .toList();
   }
 
@@ -41,7 +39,7 @@ public class CredentialsJsonReader implements CredentialsReader {
       @JsonProperty(value = "username", required = true) String username,
       @JsonProperty(value = "password", required = true) String password,
       @JsonProperty("wiki") @Nullable String wiki) {
-    @Nullable
+
     private Credential toCredential(final KnownDefinitions knownDefinitions) {
       if (wiki == null) {
         return new Credential(username, password, null);

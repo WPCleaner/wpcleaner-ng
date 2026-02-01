@@ -30,7 +30,7 @@ public class WindowService {
           settings.withWindowSettings(
               window.getName(),
               new WindowSettings(
-                  window.getX(), window.getX(), window.getWidth(), window.getHeight()));
+                  window.getX(), window.getY(), window.getWidth(), window.getHeight()));
     }
     settingsManager.updateSettings(settings);
   }

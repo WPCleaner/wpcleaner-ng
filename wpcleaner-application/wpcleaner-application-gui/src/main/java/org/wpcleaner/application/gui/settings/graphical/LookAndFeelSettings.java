@@ -7,8 +7,9 @@ package org.wpcleaner.application.gui.settings.graphical;
 
 import jakarta.annotation.Nullable;
 import java.util.Objects;
+import org.wpcleaner.api.settings.SettingsElement;
 
-public record LookAndFeelSettings(LookAndFeelType type, String name) {
+public record LookAndFeelSettings(LookAndFeelType type, String name) implements SettingsElement {
 
   public static final String DEFAULT_NAME = "Nimbus";
 

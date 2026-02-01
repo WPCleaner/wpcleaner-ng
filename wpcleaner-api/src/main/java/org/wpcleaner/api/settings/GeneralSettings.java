@@ -1,4 +1,4 @@
-package org.wpcleaner.api.settings.general;
+package org.wpcleaner.api.settings;
 
 /*
  * SPDX-FileCopyrightText: © 2024 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -6,7 +6,6 @@ package org.wpcleaner.api.settings.general;
  */
 
 import jakarta.annotation.Nullable;
-import org.wpcleaner.api.settings.VersionedSettings;
 
 public record GeneralSettings(int version, @Nullable String preferredWiki)
     implements VersionedSettings {
