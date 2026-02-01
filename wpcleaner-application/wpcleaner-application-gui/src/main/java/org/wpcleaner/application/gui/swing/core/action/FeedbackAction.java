@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.swing.login;
+package org.wpcleaner.application.gui.swing.core.action;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>

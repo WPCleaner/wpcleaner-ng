@@ -7,6 +7,7 @@ package org.wpcleaner.lib.image;
 
 @SuppressWarnings("SpellCheckingInspection")
 public enum ImageCollection {
+  DOCUMENT_SAVE("commons/gnome-document-save.png"),
   HELP("commons/help-browser.png"),
   HELP_ABOUT("commons/breathe-help-about.png"),
   HELP_FAQ("commons/gnome-help-faq.png"),

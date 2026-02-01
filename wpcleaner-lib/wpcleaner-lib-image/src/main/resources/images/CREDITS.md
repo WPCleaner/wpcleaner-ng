@@ -4,7 +4,7 @@ The files in the images directory and its subdirectories are from :
 
 - Commons:
   [Wikimedia Commons](http://commons.wikimedia.org).
-  Licence depends on the image.
+  License depends on the image.
   Images have been stored in `commons/` folders.
 - Gnome:
   The [Gnome Icon Theme](http://git.gnome.org/browse/gnome-icon-theme/tree/).

@@ -11,7 +11,7 @@ import org.wpcleaner.settings.local.migration.OldSettings;
 @Service
 public class GraphicalSettingsManager {
 
-  private final GraphicalSettings currentSettings;
+  private GraphicalSettings currentSettings;
 
   public GraphicalSettingsManager(final OldSettings oldSettings) {
     this.currentSettings =
@@ -20,5 +20,9 @@ public class GraphicalSettingsManager {
 
   public GraphicalSettings getCurrentSettings() {
     return currentSettings;
+  }
+
+  public void updateSettings(final GraphicalSettings settings) {
+    this.currentSettings = settings;
   }
 }

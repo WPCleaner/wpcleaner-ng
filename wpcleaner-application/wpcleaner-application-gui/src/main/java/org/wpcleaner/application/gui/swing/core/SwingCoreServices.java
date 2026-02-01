@@ -11,6 +11,7 @@ import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.application.gui.swing.core.dialog.ErrorDialogService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagLayoutService;
+import org.wpcleaner.application.gui.swing.core.window.WindowsRegistry;
 
 @Service
 public record SwingCoreServices(
@@ -18,4 +19,5 @@ public record SwingCoreServices(
     ComponentService component,
     ErrorDialogService errorDialog,
     ImageIconLoader image,
-    GridBagLayoutService layout) {}
+    GridBagLayoutService layout,
+    WindowsRegistry windows) {}

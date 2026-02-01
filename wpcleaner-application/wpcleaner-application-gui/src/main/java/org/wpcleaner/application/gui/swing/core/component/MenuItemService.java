@@ -8,20 +8,21 @@ package org.wpcleaner.application.gui.swing.core.component;
 import javax.swing.JMenuItem;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.base.utils.url.UrlService;
-import org.wpcleaner.application.gui.core.action.ActionService;
+import org.wpcleaner.application.gui.swing.core.action.SwingActionService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
+import org.wpcleaner.application.gui.swing.core.window.SaveWindowsPositionAction;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
 @Service
 public class MenuItemService {
 
-  private final ActionService actionService;
+  private final SwingActionService actionService;
   private final ImageIconLoader imageService;
   private final UrlService urlService;
 
   MenuItemService(
-      final ActionService actionService,
+      final SwingActionService actionService,
       final ImageIconLoader imageService,
       final UrlService urlService) {
     this.actionService = actionService;
@@ -36,28 +37,36 @@ public class MenuItemService {
   public JMenuItem askQuestion() {
     return builder("Ask a question")
         .withIcon(ImageCollection.HELP, ImageSize.MENU)
-        .withAction(actionService.openUrl(urlService.askQuestion()))
+        .withAction(actionService.action().openUrl(urlService.askQuestion()))
         .build();
   }
 
   public JMenuItem help() {
     return builder("Help")
         .withIcon(ImageCollection.HELP, ImageSize.MENU)
-        .withAction(actionService.openUrl(urlService.help()))
+        .withAction(actionService.action().openUrl(urlService.help()))
         .build();
   }
 
   public JMenuItem reportBug() {
     return builder("Report bug")
         .withIcon(ImageCollection.LOGO_PHABRICATOR, ImageSize.MENU)
-        .withAction(actionService.openUrl(urlService.reportBug()))
+        .withAction(actionService.action().openUrl(urlService.reportBug()))
         .build();
   }
 
   public JMenuItem requestFeature() {
     return builder("Request new feature")
         .withIcon(ImageCollection.LOGO_PHABRICATOR, ImageSize.MENU)
-        .withAction(actionService.openUrl(urlService.requestFeature()))
+        .withAction(actionService.action().openUrl(urlService.requestFeature()))
+        .build();
+  }
+
+  public JMenuItem saveWindowsPosition() {
+    final SaveWindowsPositionAction action = actionService.saveWindowsPosition();
+    return builder("Save windows position")
+        .withIcon(ImageCollection.DOCUMENT_SAVE, ImageSize.MENU)
+        .withAction(action::execute)
         .build();
   }
 }

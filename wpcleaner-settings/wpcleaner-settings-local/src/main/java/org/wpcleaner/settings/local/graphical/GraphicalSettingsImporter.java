@@ -6,6 +6,7 @@ package org.wpcleaner.settings.local.graphical;
  */
 
 import jakarta.annotation.Nullable;
+import java.util.Map;
 import java.util.Optional;
 import org.wpcleaner.settings.local.migration.OldSettings;
 
@@ -20,7 +21,8 @@ final class GraphicalSettingsImporter {
       return Optional.empty();
     }
     return Optional.of(
-        new GraphicalSettings(GraphicalSettings.LAST_VERSION, convertLookAndFeel(oldSettings)));
+        new GraphicalSettings(
+            GraphicalSettings.LAST_VERSION, Map.of(), convertLookAndFeel(oldSettings)));
   }
 
   private static LookAndFeelSettings convertLookAndFeel(final OldSettings oldSettings) {

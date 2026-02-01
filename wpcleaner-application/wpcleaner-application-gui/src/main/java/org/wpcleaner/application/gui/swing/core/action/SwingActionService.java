@@ -7,6 +7,8 @@ package org.wpcleaner.application.gui.swing.core.action;
 
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.action.ActionService;
+import org.wpcleaner.application.gui.swing.core.window.SaveWindowsPositionAction;
 
 @Service
-public record SwingActionService(ActionService action) {}
+public record SwingActionService(
+    ActionService action, SaveWindowsPositionAction saveWindowsPosition) {}

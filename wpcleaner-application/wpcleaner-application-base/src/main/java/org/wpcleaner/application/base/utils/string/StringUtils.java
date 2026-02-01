@@ -22,4 +22,18 @@ public final class StringUtils {
     }
     return String.join(", ", items);
   }
+
+  public static String removePrefix(final String str, final String prefix) {
+    if (str.startsWith(prefix)) {
+      return str.substring(prefix.length());
+    }
+    return str;
+  }
+
+  public static String removeSuffix(final String str, final String suffix) {
+    if (str.endsWith(suffix)) {
+      return str.substring(0, str.length() - suffix.length());
+    }
+    return str;
+  }
 }

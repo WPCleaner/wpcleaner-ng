@@ -9,7 +9,8 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.action.ActionService;
-import org.wpcleaner.application.gui.swing.login.FeedbackAction;
+import org.wpcleaner.application.gui.swing.core.action.FeedbackAction;
+import org.wpcleaner.application.gui.swing.core.action.OptionsAction;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -19,14 +20,17 @@ public class ToolBarService {
   private final ActionService actionService;
   private final ButtonService buttonService;
   private final FeedbackAction feedbackAction;
+  private final OptionsAction optionsAction;
 
   public ToolBarService(
       final ActionService actionService,
       final ButtonService buttonService,
-      final FeedbackAction feedbackAction) {
+      final FeedbackAction feedbackAction,
+      final OptionsAction optionsAction) {
     this.actionService = actionService;
     this.buttonService = buttonService;
     this.feedbackAction = feedbackAction;
+    this.optionsAction = optionsAction;
   }
 
   public JToolBarBuilder builder() {
@@ -44,7 +48,7 @@ public class ToolBarService {
         buttonService
             .builder("Options", false)
             .withIcon(ImageCollection.OPTIONS, ImageSize.BUTTON)
-            .withAction(actionService.notImplemented())
+            .withAction(optionsAction::execute)
             .build();
     final JButton aboutButton =
         buttonService
