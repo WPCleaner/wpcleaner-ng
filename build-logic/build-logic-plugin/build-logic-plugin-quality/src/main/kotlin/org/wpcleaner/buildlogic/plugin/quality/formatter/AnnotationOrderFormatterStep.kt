@@ -17,56 +17,142 @@ class AnnotationOrderFormatterStep : FormatterStep {
     @Serial
     private const val serialVersionUID: Long = -5703078450016482427L
 
-    /**
-     * This regexp should catch
-     * <pre>
-     *   @Ano2 @Ano1 private final String toto;
-     * </pre>
-     */
-    private val twoAnnotationsWithoutParamOnOneLine =
-      Regex("""(@[a-zA-Z0-9]+) (@[a-zA-Z0-9]+)([\n ])""")
-
-    /**
-     * This regexp should catch
-     * <pre>
-     *   @Ano2("sample")
-     *   @Custom(2)
-     *   @Ano1(toto = "one")
-     *   String myFunction() {
-     *     return "one"
-     *   }
-     * </pre>
-     */
-    private val annotationWithParamOnSeveralLines =
-      Regex("""(\n *)((@[a-zA-Z0-9_.]+(\([^)\n]*\))?)(\n *)){2,}""")
+    private val annotationName = Regex("""@([a-zA-Z0-9]++)""")
   }
 
   override fun getName(): String = this.javaClass.simpleName
 
-  override fun format(rawUnix: String, file: File): String =
-    rawUnix.orderAnnotationWithParamOnSeveralLines().orderTwoAnnotationsWithoutParamOnOneLine()
+  override fun format(rawUnix: String, file: File): String = rawUnix.formatStartingAt(0, file)
 
-  private fun String.orderAnnotationWithParamOnSeveralLines(): String {
-    return this.replace(annotationWithParamOnSeveralLines) { match ->
-      val fullBlock = match.value
-      val lines = fullBlock.lines()
-      val annotations = lines.drop(1).dropLast(1).sortedBy { it.trim() }.joinToString("\n")
-      val final = lines.first() + "\n" + annotations + "\n" + lines.last()
-      final
+  private fun String.formatStartingAt(position: Int, file: File): String {
+    val nextAtSign = indexOf('@', position)
+    if (nextAtSign < 0 || nextAtSign >= length - 1) {
+      return this
     }
+    val annotations = mutableListOf<String>()
+    var currentBlock = nextAtSign
+    var currentPosition = currentBlock
+    do {
+      val nextAnnotation = extractAnnotation(currentPosition)
+      if (nextAnnotation != "") {
+        currentBlock = currentPosition + nextAnnotation.length
+        annotations.add(nextAnnotation)
+        currentPosition = ignoreWhitespace(currentBlock)
+      } else {
+        val sortedAnnotations = annotations.sorted()
+        if (annotations == sortedAnnotations) return formatStartingAt(nextAtSign + 1, file)
+        var lineBegin = nextAtSign
+        while (lineBegin > 0 && this[lineBegin - 1] == ' ') lineBegin--
+        val newRaw =
+          substring(0, nextAtSign) +
+                  sortedAnnotations.joinToString("\n${" ".repeat(nextAtSign - lineBegin)}") +
+                  substring(currentBlock)
+        return newRaw.formatStartingAt(nextAtSign + 1, file)
+      }
+    } while (true)
   }
 
-  private fun String.orderTwoAnnotationsWithoutParamOnOneLine(): String {
-    return this.replace(twoAnnotationsWithoutParamOnOneLine) { match ->
-      val annotation1 = match.groupValues[1]
-      val annotation2 = match.groupValues[2]
-      val endOfExpression = match.groupValues[3]
-      if (annotation1 < annotation2) {
-        "$annotation1 $annotation2$endOfExpression"
-      } else {
-        "$annotation2 $annotation1$endOfExpression"
+  private fun String.extractAnnotation(position: Int): String {
+    if (position !in 0 until length || this[position] != '@') return ""
+    val nameMatch = annotationName.matchAt(this, position) ?: return ""
+    val nameEnd = nameMatch.range.last + 1
+    var currentPosition = nameEnd
+    currentPosition = ignoreWhitespace(currentPosition)
+    if (currentPosition >= length || this[currentPosition] != '(')
+      return substring(position, nameEnd)
+    currentPosition++
+    var firstParam = true
+    do {
+      currentPosition = ignoreWhitespace(currentPosition)
+      if (currentPosition < length && this[currentPosition] == ')') {
+        if (firstParam) return substring(position, currentPosition + 1)
+        return ""
       }
+      firstParam = false
+      val nextParameter = extractParameter(currentPosition)
+      if (nextParameter.isBlank()) return ""
+      currentPosition += nextParameter.length
+      currentPosition = ignoreWhitespace(currentPosition)
+      if (currentPosition >= length) return ""
+      if (this[currentPosition] == ')') return substring(position, currentPosition + 1)
+      if (this[currentPosition] != ',') return ""
+      currentPosition++
+    } while (true)
+  }
+
+  private fun String.extractParameter(position: Int): String {
+    var currentPosition = ignoreWhitespace(position)
+    if (currentPosition < length && "\"{".indexOf(this[currentPosition]) >= 0) {
+      val value = extractValue(currentPosition)
+      if (value == "") return ""
+      return substring(position, currentPosition + value.length)
     }
+    val paramStart = currentPosition
+    while (
+      currentPosition < length && "=\"{},) ".indexOf(this[currentPosition]) < 0
+    ) currentPosition++
+    if (currentPosition == paramStart) return ""
+    currentPosition = ignoreWhitespace(currentPosition)
+    if (currentPosition >= length) return ""
+    if (this[currentPosition] == '=') {
+      currentPosition = ignoreWhitespace(currentPosition + 1)
+      val value = extractValue(currentPosition)
+      if (value == "") return ""
+      return substring(position, currentPosition + value.length)
+    }
+    if (",)".indexOf(this[currentPosition]) >= 0) {
+      val value = substring(position, currentPosition)
+      if (value.isBlank()) return ""
+      return value
+    }
+    return ""
+  }
+
+  private fun String.extractArray(position: Int): String {
+    var currentPosition = position
+    if (currentPosition > length || this[currentPosition] != '{') return ""
+    currentPosition = ignoreWhitespace(currentPosition + 1)
+    while (currentPosition < length && this[currentPosition] != '}') {
+      val value = extractValue(currentPosition)
+      if (value.isBlank()) return ""
+      currentPosition += value.length
+      currentPosition = ignoreWhitespace(currentPosition)
+      if (currentPosition >= length) return ""
+      if (this[currentPosition] == ',') currentPosition = ignoreWhitespace(currentPosition + 1)
+      else if (this[currentPosition] != '}') return ""
+    }
+    if (currentPosition >= length || this[currentPosition] != '}') return ""
+    return substring(position, currentPosition + 1)
+  }
+
+  private fun String.extractValue(position: Int): String {
+    var currentPosition = position
+    if (currentPosition > length) return ""
+    if (this[currentPosition] == '"') return extractString(currentPosition)
+    if (this[currentPosition] == '{') return extractArray(currentPosition)
+    while (currentPosition < length && " ,)\n".indexOf(this[currentPosition]) < 0) currentPosition++
+    return substring(position, currentPosition)
+  }
+
+  private fun String.extractString(position: Int): String {
+    var currentPosition = position
+    if (currentPosition > length || this[currentPosition] != '"') return ""
+    if (startsWith("\"\"\"", currentPosition)) {
+      currentPosition += 3
+      val nextQuotes = indexOf("\"\"\"", currentPosition)
+      if (nextQuotes < 0) return ""
+      return substring(position, nextQuotes + 3)
+    }
+    currentPosition++
+    while (currentPosition < length && "\"\n".indexOf(this[currentPosition]) < 0) currentPosition++
+    if (currentPosition >= length || this[currentPosition] != '"') return ""
+    return substring(position, currentPosition + 1)
+  }
+
+  private fun String.ignoreWhitespace(position: Int): Int {
+    var currentPosition = position
+    while (currentPosition < length && this[currentPosition].isWhitespace()) currentPosition++
+    return currentPosition
   }
 
   override fun close() {}
