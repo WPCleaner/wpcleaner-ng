@@ -5,12 +5,12 @@ package org.wpcleaner.application.gui.swing.core.window;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
+import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 
 public interface WPCleanerWindowServices {
 
-  GraphicalSettingsManager graphicalSettings();
+  WindowsSettingsManager windowsSettings();
 
   SwingCoreServices swing();
 }

@@ -8,6 +8,7 @@ package org.wpcleaner.api.settings;
 import java.lang.invoke.MethodHandles;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
@@ -20,15 +21,12 @@ public class SettingsPersistence {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public <T extends VersionedSettings> boolean arePersisted(final Class<T> clazz) {
-    return getFolder()
-        .resolve("%s.json".formatted(VersionedSettings.name(clazz)))
-        .toFile()
-        .isFile();
-  }
-
-  public <T extends VersionedSettings> T load(final Class<T> clazz) {
-    return JsonUtils.readValue(new FileSystemResource(getFile(clazz)), clazz);
+  public <T extends VersionedSettings> Optional<T> load(final Class<T> clazz) {
+    final FileSystemResource file = new FileSystemResource(getFile(clazz));
+    if (!file.exists() || !file.isReadable()) {
+      return Optional.empty();
+    }
+    return Optional.of(JsonUtils.readValue(new FileSystemResource(getFile(clazz)), clazz));
   }
 
   public void save(final VersionedSettings settings) {

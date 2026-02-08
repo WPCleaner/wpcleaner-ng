@@ -7,24 +7,24 @@ package org.wpcleaner.application.gui.swing.core.window;
 
 import java.awt.Window;
 import org.springframework.stereotype.Service;
-import org.wpcleaner.application.gui.settings.graphical.GraphicalSettings;
-import org.wpcleaner.application.gui.settings.graphical.GraphicalSettingsManager;
-import org.wpcleaner.application.gui.settings.graphical.WindowSettings;
+import org.wpcleaner.application.gui.settings.windows.WindowSettings;
+import org.wpcleaner.application.gui.settings.windows.WindowsSettings;
+import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 
 @Service
 public class WindowService {
 
-  private final GraphicalSettingsManager settingsManager;
+  private final WindowsSettingsManager settingsManager;
   private final WindowsRegistry registry;
 
   public WindowService(
-      final GraphicalSettingsManager settingsManager, final WindowsRegistry registry) {
+      final WindowsSettingsManager settingsManager, final WindowsRegistry registry) {
     this.settingsManager = settingsManager;
     this.registry = registry;
   }
 
   public void saveAllWindowsPosition() {
-    GraphicalSettings settings = settingsManager.getCurrentSettings();
+    WindowsSettings settings = settingsManager.getCurrentSettings();
     for (final Window window : registry.getVisibleWindows()) {
       settings =
           settings.withWindowSettings(

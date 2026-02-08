@@ -29,7 +29,7 @@ public abstract class WPCleanerWindow<S extends WPCleanerWindowServices> extends
 
   private void position() {
     services
-        .graphicalSettings()
+        .windowsSettings()
         .getCurrentSettings()
         .getWindowSettings(getName())
         .ifPresentOrElse(

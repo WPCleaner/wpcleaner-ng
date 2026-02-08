@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.settings.graphical;
+package org.wpcleaner.application.gui.settings.windows;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
