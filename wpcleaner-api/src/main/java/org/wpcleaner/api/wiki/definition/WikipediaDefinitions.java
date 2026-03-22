@@ -81,6 +81,7 @@ final class WikipediaDefinitions implements WikiDefinitions {
   public static final WikiDefinition TA = ltr("ta", "தமிழ் விக்கிப்பீடியா", WikiWarning.TAMIL);
   public static final WikiDefinition TE = ltr("te", "తెలుగు వికీపీడియా", WikiWarning.TELUGU);
   public static final WikiDefinition TR = ltr("tr", "Turkish Wikipedia");
+  public static final WikiDefinition TT = ltr("tt", "Татар Википедиясе");
   public static final WikiDefinition UK = ltr("uk", "Ukrainian Wikipedia");
   public static final WikiDefinition UR = rtl("ur", "Urdu Wikipedia");
   public static final WikiDefinition UZ = ltr("uz", "Uzbek Wikipedia");
