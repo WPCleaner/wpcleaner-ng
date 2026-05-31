@@ -38,7 +38,7 @@ afterEvaluate {
     qualityExtension.getDisabledSourceSet(project).forEach { sourceSet ->
         project.logger.info("Disable error-prone for {}:{}", project.name, sourceSet.name)
         project.tasks.named<JavaCompile>(sourceSet.compileJavaTaskName) {
-            options.errorprone.isEnabled.set(false)
+            options.errorprone.enabled.set(false)
         }
     }
 }
