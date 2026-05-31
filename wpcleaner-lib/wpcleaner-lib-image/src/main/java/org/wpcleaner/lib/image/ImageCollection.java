@@ -30,6 +30,7 @@ public enum ImageCollection {
   LOGO_WIKTIONARY("commons/wiktionary-logo.png"),
   LOGO_WPCLEANER("commons/nuvola-web-broom.png"),
   OPTIONS("commons/gnome-preferences-other.png"),
+  PAGE("commons/gnome-text-x-generic.png"),
   PASSWORD("commons/gnome-dialog-password.png"),
   SYSTEM_OPTIONS("commons/gnome-preferences-system.png"),
   USER("commons/gnome-face-cool.png"),

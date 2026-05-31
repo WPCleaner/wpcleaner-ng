@@ -10,12 +10,15 @@ import java.awt.GridBagLayout;
 import java.io.Serial;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagLayoutService;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindow;
+import org.wpcleaner.lib.image.ImageCollection;
+import org.wpcleaner.lib.image.ImageSize;
 
 public final class SwingMainWindow extends WPCleanerWindow<SwingMainWindowServices> {
 
@@ -89,6 +92,12 @@ public final class SwingMainWindow extends WPCleanerWindow<SwingMainWindowServic
             new JLabel(
                 "Your rights: %s".formatted(StringUtils.joinWithEllipsis(user.rights(), 3)),
                 SwingConstants.CENTER)));
+    final JTabbedPane tabs = new JTabbedPane(SwingConstants.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+    tabs.addTab(
+        "By page",
+        services.swing().image().getImage(ImageCollection.PAGE, ImageSize.BUTTON).orElse(null),
+        new ByPagePanel(services));
+    layout.addRow(panel, constraints, GridBagComponent.of(tabs));
   }
 
   private void addButtons(final JPanel panel, final GridBagConstraints constraints) {

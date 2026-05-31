@@ -5,7 +5,9 @@ package org.wpcleaner.api.settings;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -39,8 +41,11 @@ public class SettingsPersistence {
 
   private Path getFolder() {
     final Path path = Paths.get(System.getProperty("user.home")).resolve(".wpcleaner");
-    if (!path.toFile().mkdirs()) {
-      LOGGER.error("Unable to create folder {}", path);
+    try {
+      Files.createDirectories(path);
+    } catch (IOException e) {
+      LOGGER.error(
+          "Unable to create folder {}: {} ({})", path, e.getMessage(), e.getClass().getName());
     }
     return path;
   }
