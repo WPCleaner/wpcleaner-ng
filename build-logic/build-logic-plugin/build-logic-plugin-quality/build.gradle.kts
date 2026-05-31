@@ -4,6 +4,6 @@ plugins {
 }
 
 dependencies {
-  api("com.diffplug.spotless:spotless-plugin-gradle:8.1.0")
+  api("com.diffplug.spotless:spotless-plugin-gradle:8.5.1")
   api("net.ltgt.errorprone:net.ltgt.errorprone.gradle.plugin:5.1.0")
 }
