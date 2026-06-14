@@ -31,8 +31,8 @@ public class ProgressPanel extends JComponent {
   private static final String TITLE = "WPCleaner is working";
 
   private final transient Map<Object, Object> hints;
-  private final Color background;
-  private final Color textBackground;
+  private final Color backgroundColor;
+  private final Color textBackgroundColor;
   private final transient List<String> texts = new ArrayList<>();
   private final ReentrantLock lock = new ReentrantLock();
 
@@ -45,8 +45,8 @@ public class ProgressPanel extends JComponent {
 
     final int alphaLevel = 255;
     final float shield = 0.7F;
-    background = new Color(255, 255, 255, (int) (alphaLevel * shield));
-    textBackground = new Color(0, 255, 255, (int) (alphaLevel * shield));
+    backgroundColor = new Color(255, 255, 255, (int) (alphaLevel * shield));
+    textBackgroundColor = new Color(0, 255, 255, (int) (alphaLevel * shield));
   }
 
   @Override
@@ -107,7 +107,7 @@ public class ProgressPanel extends JComponent {
     final int height = getHeight();
     final Graphics2D g2d = (Graphics2D) g;
     g2d.setRenderingHints(hints);
-    g2d.setColor(background);
+    g2d.setColor(backgroundColor);
     g2d.fillRect(0, 0, width, height);
   }
 
@@ -144,7 +144,7 @@ public class ProgressPanel extends JComponent {
 
     // Draw border
     if ((xMin < xMax) && (yMin < yMax)) {
-      g2d.setColor(textBackground);
+      g2d.setColor(textBackgroundColor);
       g2d.fillRoundRect((int) xMin, (int) yMin, (int) (xMax - xMin), (int) (yMax - yMin), 10, 10);
       g2d.setColor(Color.BLUE);
       g2d.drawRoundRect((int) xMin, (int) yMin, (int) (xMax - xMin), (int) (yMax - yMin), 10, 10);

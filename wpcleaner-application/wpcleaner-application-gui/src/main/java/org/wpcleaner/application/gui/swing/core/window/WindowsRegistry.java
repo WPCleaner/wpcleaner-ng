@@ -27,17 +27,13 @@ public class WindowsRegistry {
     return windows.stream().filter(Window::isVisible).toList();
   }
 
-  private void unregister(final Window window) {
-    windows.remove(window);
-    window.removeWindowListener(remover);
-  }
-
   private final class Remover extends WindowAdapter {
 
     @Override
     public void windowClosing(final WindowEvent e) {
       super.windowClosing(e);
-      unregister(e.getWindow());
+      windows.remove(e.getWindow());
+      e.getWindow().removeWindowListener(remover);
     }
   }
 }

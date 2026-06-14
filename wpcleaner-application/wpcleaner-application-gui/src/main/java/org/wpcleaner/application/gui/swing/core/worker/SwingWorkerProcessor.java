@@ -79,7 +79,7 @@ public class SwingWorkerProcessor {
     }
 
     @Override
-    @SuppressWarnings("PMD.AvoidCatchingThrowable")
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     protected void done() {
       if (isCancelled() || !isDone()) {
         return;
@@ -91,7 +91,11 @@ public class SwingWorkerProcessor {
       final R result;
       try {
         result = get();
-      } catch (Throwable e) {
+      } catch (final InterruptedException e) {
+        onFailure.accept(e);
+        Thread.currentThread().interrupt();
+        return;
+      } catch (final Exception e) {
         onFailure.accept(e);
         return;
       }

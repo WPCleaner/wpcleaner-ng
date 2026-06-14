@@ -35,7 +35,7 @@ public final class AutoCatch {
 
     try {
       return callable.call();
-    } catch (final Exception e) {
+    } catch (final Exception _) {
       return null;
     }
   }

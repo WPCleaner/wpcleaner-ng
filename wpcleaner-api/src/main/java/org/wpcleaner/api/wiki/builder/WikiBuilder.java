@@ -16,6 +16,10 @@ import org.wpcleaner.lib.image.ImageCollection;
 
 public class WikiBuilder {
 
+  private static final String DEFAULT_API_PATH = "/w/api.php";
+  private static final String DEFAULT_INDEX_PATH = "/w/index.php";
+  private static final String DEFAULT_WIKI_PATH = "/wiki";
+
   private final String language;
   private final String name;
   private final ComponentOrientation orientation;
@@ -51,9 +55,9 @@ public class WikiBuilder {
     this.mainHost = mainHost;
     this.hosts = new HashSet<>();
     this.hosts.add(mainHost);
-    this.apiPath = "/w/api.php";
-    this.indexPath = "/w/index.php";
-    this.wikiPath = "/wiki";
+    this.apiPath = DEFAULT_API_PATH;
+    this.indexPath = DEFAULT_INDEX_PATH;
+    this.wikiPath = DEFAULT_WIKI_PATH;
     this.code = "other:" + language;
   }
 

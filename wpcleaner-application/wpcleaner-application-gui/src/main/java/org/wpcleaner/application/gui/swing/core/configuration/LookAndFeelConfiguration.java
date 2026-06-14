@@ -52,7 +52,7 @@ public class LookAndFeelConfiguration {
     } catch (UnsupportedLookAndFeelException
         | ClassNotFoundException
         | InstantiationException
-        | IllegalAccessException e) {
+        | IllegalAccessException _) {
       LOGGER.info("Unable to set look and feel {}", className);
     }
   }

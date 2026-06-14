@@ -29,6 +29,9 @@ import org.wpcleaner.lib.image.ImageSize;
 
 public class WikiInput {
 
+  private static final String NO_WARNING = "No warning";
+  private static final String WARNING = "Warning";
+
   final WikiComboBox comboBox;
   final JLabel icon;
   final JLabel label;
@@ -56,7 +59,7 @@ public class WikiInput {
     final JButton warning =
         componentService
             .buttons()
-            .builder("No warning", false)
+            .builder(NO_WARNING, false)
             .withIcon(ImageCollection.WARNING, ImageSize.TOOLBAR)
             .build();
     warning.setEnabled(false);
@@ -125,12 +128,11 @@ public class WikiInput {
               .map(WikiDefinition::warning)
               .map(WikiWarning::text);
       warningButton.setEnabled(text.isPresent());
-      warningButton.setToolTipText(text.isPresent() ? "Warning" : "No warning");
+      warningButton.setToolTipText(text.isPresent() ? WARNING : NO_WARNING);
       warningButton.removeActionListener(showMessageAction);
       showMessageAction =
           new ComponentActionListener(
-              new ShowMessageAction(
-                  text.orElse("No warning"), "Warning", JOptionPane.WARNING_MESSAGE),
+              new ShowMessageAction(text.orElse(NO_WARNING), WARNING, JOptionPane.WARNING_MESSAGE),
               warningButton);
       warningButton.addActionListener(showMessageAction);
     }

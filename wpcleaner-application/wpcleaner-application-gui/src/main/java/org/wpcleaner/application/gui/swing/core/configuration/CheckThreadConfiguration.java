@@ -15,7 +15,11 @@ public class CheckThreadConfiguration {
 
   public CheckThreadConfiguration() {
     if (CHECK_EDT) {
-      RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(true));
+      setupManager();
     }
+  }
+
+  public final void setupManager() {
+    RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager(true));
   }
 }

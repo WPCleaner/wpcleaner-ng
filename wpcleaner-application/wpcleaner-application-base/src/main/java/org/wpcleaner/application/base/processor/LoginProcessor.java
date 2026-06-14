@@ -5,6 +5,8 @@ package org.wpcleaner.application.base.processor;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import jakarta.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.stereotype.Service;
@@ -42,10 +44,10 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
     currentUserService.logout();
     if (!input.demo()) {
       final Tokens tokens;
-      try (ProgressTracker.ProgressStep ignored = tracker.start("Retrieving login token")) {
+      try (ProgressTracker.ProgressStep _ = tracker.start("Retrieving login token")) {
         tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
       }
-      try (ProgressTracker.ProgressStep ignored =
+      try (ProgressTracker.ProgressStep _ =
           tracker.start("Login for user %s".formatted(input.username))) {
         apiLogin.login(
             input.wiki,
@@ -56,7 +58,7 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
     }
     final String compactUsername = compactUsername(input.username);
     currentUserService.login(input.wiki(), compactUsername, input.demo());
-    try (ProgressTracker.ProgressStep ignored =
+    try (ProgressTracker.ProgressStep _ =
         tracker.start("Retrieving information about user %s".formatted(input.username))) {
       final User user = apiUsers.retrieveUser(input.wiki, compactUsername);
       currentUserService.withGroups(user.groups());
@@ -86,6 +88,39 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
 
     public static Input forDemo(final WikiDefinition wiki, final String username) {
       return new Input(wiki, username, new char[] {}, true);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (!(obj
+          instanceof
+          Input(
+              WikiDefinition otherWiki,
+              String otherUsername,
+              char[] otherPassword,
+              boolean otherDemo))) {
+        return false;
+      }
+      return Objects.equals(wiki, otherWiki)
+          && Objects.equals(username, otherUsername)
+          && demo == otherDemo
+          && Arrays.equals(password, otherPassword);
+    }
+
+    @Override
+    public int hashCode() {
+      int result = Objects.hash(wiki, username, demo);
+      result = 31 * result + Arrays.hashCode(password);
+      return result;
+    }
+
+    @Nonnull
+    @Override
+    public String toString() {
+      return "LoginProcessor.Input{wiki=%s, username=%s, demo=%b}".formatted(wiki, username, demo);
     }
   }
 }

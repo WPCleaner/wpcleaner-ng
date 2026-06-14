@@ -33,7 +33,7 @@ public final class OldSettings {
         return null;
       }
       return Preferences.userRoot().node(ROOT_PATH);
-    } catch (BackingStoreException e) {
+    } catch (final BackingStoreException _) {
       return null;
     }
   }
@@ -67,6 +67,6 @@ public final class OldSettings {
 
   @Nullable
   private Preferences node(final Preferences root, final String name) {
-    return AutoCatch.run(() -> root.nodeExists(name)) ? root.node(name) : null;
+    return Boolean.TRUE.equals(AutoCatch.run(() -> root.nodeExists(name))) ? root.node(name) : null;
   }
 }

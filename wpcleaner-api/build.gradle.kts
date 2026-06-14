@@ -15,6 +15,8 @@ dependencies {
 tasks.test { useJUnitPlatform { excludeTags = setOf("call_api") } }
 
 tasks.register<Test>("apiTest") {
+  description = "Runs tests that are actually calling MediaWiki API on a real server"
+  group = JavaBasePlugin.VERIFICATION_GROUP
   useJUnitPlatform { includeTags("call_api") }
   testClassesDirs = sourceSets.test.get().output.classesDirs
   classpath = sourceSets.test.get().runtimeClasspath

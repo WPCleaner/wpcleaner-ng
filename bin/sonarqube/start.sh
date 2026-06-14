@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    echo "Error: This script must be sourced to export environment variables into your current shell session."
+    echo "Please run: source bin/sonarqube/start.sh"
+    exit 1
+fi
+
 echo "Restarting sonarqube"
 docker stop sonarqube > /dev/null
 docker rm sonarqube > /dev/null
