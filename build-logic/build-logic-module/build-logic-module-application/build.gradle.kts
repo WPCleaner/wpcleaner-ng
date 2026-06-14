@@ -7,5 +7,5 @@ dependencies {
   api(project(":build-logic-module-library"))
   api(project(":build-logic-plugin-quality"))
 
-  implementation("org.springframework.boot:spring-boot-gradle-plugin:3.2.1")
+  implementation("org.springframework.boot:spring-boot-gradle-plugin:4.0.6")
 }
