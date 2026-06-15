@@ -9,23 +9,12 @@ plugins {
 val qualityExtension: QualityExtension = QualityExtension.create(project)
 
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.46.0")
-    annotationProcessor("com.uber.nullaway:nullaway:0.12.15")
+    errorprone("com.google.errorprone:error_prone_core:2.50.0")
+    annotationProcessor("com.uber.nullaway:nullaway:0.13.6")
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.errorprone {
-        // Our old dependencies still use java.util.Date
-        //disable("JdkObsolete")
-        // Unable to understand jupiter private @MethodSource. In 'main' source set this check will be
-        // performed by pmd.
-        //disable("UnusedMethod")
-        // Some legacy library still use java.util.Date
-        //disable("JavaUtilDate")
-        // We don't want to annotate all "return this" method with @CanIgnoreReturnValue
-        //disable("CanIgnoreReturnValueSuggester")
-        // error-prone doesn't know BDDMockito
-        //disable("DirectInvocationOnMock")
         options.errorprone {
             option("NullAway:AcknowledgeRestrictiveAnnotations", "true")
             // Predefined errorprone configuration to avoid failing in case of non-overloading
