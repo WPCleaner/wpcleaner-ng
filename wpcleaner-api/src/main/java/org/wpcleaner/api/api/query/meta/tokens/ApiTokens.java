@@ -9,11 +9,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.annotation.Nullable;
+import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
@@ -44,16 +46,19 @@ public class ApiTokens {
     return restClient
         .getRestClient(wiki)
         .get()
-        .uri(
-            uriBuilder ->
-                ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
-                    .queryParam(QueryParameters.META.value, QueryParameters.Meta.TOKENS.value)
-                    .queryParam(
-                        TokensParameters.TYPE.value,
-                        tokens.stream().map(type -> type.value).collect(Collectors.joining("|")))
-                    .build())
+        .uri(uriBuilder -> computeUri(uriBuilder, tokens))
         .retrieve()
         .body(Response.class);
+  }
+
+  private URI computeUri(
+      final UriBuilder uriBuilder, final Collection<TokensParameters.Type> tokens) {
+    return ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
+        .queryParam(QueryParameters.META.value, QueryParameters.Meta.TOKENS.value)
+        .queryParam(
+            TokensParameters.TYPE.value,
+            tokens.stream().map(type -> type.value).collect(Collectors.joining("|")))
+        .build();
   }
 
   private record Response(

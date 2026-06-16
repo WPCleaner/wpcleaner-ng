@@ -9,9 +9,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.annotation.Nullable;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
@@ -41,20 +43,22 @@ public class ApiUsers {
     return restClient
         .getRestClient(wiki)
         .get()
-        .uri(
-            uriBuilder ->
-                ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
-                    .queryParam(QueryParameters.LIST.value, QueryParameters.List.USERS.value)
-                    .queryParam(
-                        UsersParameters.PROPERTIES.value,
-                        "%s|%s"
-                            .formatted(
-                                UsersParameters.Properties.GROUPS.value,
-                                UsersParameters.Properties.RIGHTS.value))
-                    .queryParam(UsersParameters.USERS.value, name)
-                    .build())
+        .uri(uriBuilder -> computeUri(uriBuilder, name))
         .retrieve()
         .body(Response.class);
+  }
+
+  private URI computeUri(final UriBuilder uriBuilder, final String name) {
+    return ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
+        .queryParam(QueryParameters.LIST.value, QueryParameters.List.USERS.value)
+        .queryParam(
+            UsersParameters.PROPERTIES.value,
+            "%s|%s"
+                .formatted(
+                    UsersParameters.Properties.GROUPS.value,
+                    UsersParameters.Properties.RIGHTS.value))
+        .queryParam(UsersParameters.USERS.value, name)
+        .build();
   }
 
   private record Response(

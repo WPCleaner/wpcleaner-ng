@@ -30,6 +30,7 @@ public enum QueryParameters {
   }
 
   public enum List {
+    RECENT_CHANGES("recentchanges"),
     USERS("users");
 
     public final String value;
