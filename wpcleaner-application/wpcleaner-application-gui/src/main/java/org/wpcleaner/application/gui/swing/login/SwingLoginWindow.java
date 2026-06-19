@@ -21,7 +21,7 @@ public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServ
 
   @Serial private static final long serialVersionUID = 3951316694154990744L;
 
-  public static void create(final SwingLoginWindowServices services) {
+  static void create(final SwingLoginWindowServices services) {
     final SwingLoginWindow window = new SwingLoginWindow(services);
     window.initialize();
   }

@@ -7,4 +7,5 @@ dependencies {
   implementation(project(":wpcleaner-lib-image"))
   implementation("org.springframework.boot:spring-boot-starter")
   compileOnly("org.jetbrains:annotations:13.0")
+  testImplementation(testFixtures(project(":wpcleaner-api")))
 }

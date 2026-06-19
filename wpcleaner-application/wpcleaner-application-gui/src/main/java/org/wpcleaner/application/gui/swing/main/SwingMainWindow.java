@@ -26,7 +26,7 @@ public final class SwingMainWindow extends WPCleanerWindow<SwingMainWindowServic
 
   private final transient ConnectedUser user;
 
-  public static void create(final SwingMainWindowServices services) {
+  static void create(final SwingMainWindowServices services) {
     final SwingMainWindow window = new SwingMainWindow(services);
     window.initialize();
   }
@@ -97,6 +97,7 @@ public final class SwingMainWindow extends WPCleanerWindow<SwingMainWindowServic
         "By page",
         services.swing().image().getImage(ImageCollection.PAGE, ImageSize.BUTTON).orElse(null),
         new ByPagePanel(services));
+    tabs.addTab("Projects", null, new ProjectsPanel(services));
     layout.addRow(panel, constraints, GridBagComponent.of(tabs));
   }
 

@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.swing.main;
+package org.wpcleaner.application.gui.swing.recentechanges;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -7,17 +7,15 @@ package org.wpcleaner.application.gui.swing.main;
 
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CurrentUserService;
-import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
+import org.wpcleaner.api.api.query.list.recentchanges.ApiRecentChanges;
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindowServices;
-import org.wpcleaner.application.gui.swing.recentechanges.SwingRecentChangesWindowFactory;
 
 @Service
-public record SwingMainWindowServices(
-    SwingCoreServices swing,
+public record SwingRecentChangesWindowServices(
+    ApiRecentChanges apiRecentChanges,
     CurrentUserService user,
-    WindowsSettingsManager windowsSettings,
-    InterestingSettingsManager interestingSettings,
-    SwingRecentChangesWindowFactory recentChangesWindowFactory)
+    SwingCoreServices swing,
+    WindowsSettingsManager windowsSettings)
     implements WPCleanerWindowServices {}
