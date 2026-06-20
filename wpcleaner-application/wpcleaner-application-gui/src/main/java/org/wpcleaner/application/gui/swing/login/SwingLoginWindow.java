@@ -8,16 +8,24 @@ package org.wpcleaner.application.gui.swing.login;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
 import java.io.Serial;
+import java.lang.invoke.MethodHandles;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindow;
 
 public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServices> {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   @Serial private static final long serialVersionUID = 3951316694154990744L;
 
@@ -54,6 +62,9 @@ public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServ
 
     services.swing().layout().addFillingPanelBelow(panel);
     getContentPane().add(panel);
+
+    wiki.addItemListener(event -> selectedWikiChanged(event, user, password));
+
     pack();
     setVisible(true);
   }
@@ -133,5 +144,20 @@ public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServ
   private void displayMainWindow() {
     services.main().displayMainWindow();
     this.dispose();
+  }
+
+  private void selectedWikiChanged(
+      final ItemEvent event, final UserInput user, final PasswordInput password) {
+    LOGGER.error("Received event {}", event);
+    if (event.getItem() instanceof WikiDefinition wikiDefinition) {
+      services
+          .credentialsProvider()
+          .getCredential(wikiDefinition)
+          .ifPresent(
+              credential -> {
+                user.setUser(credential.username());
+                password.setPassword(credential.password());
+              });
+    }
   }
 }

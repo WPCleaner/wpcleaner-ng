@@ -68,4 +68,8 @@ public class UserInput {
   public String getUser() {
     return Objects.requireNonNullElse(comboBox.getSelectedItem(), "").toString();
   }
+
+  public void setUser(final String user) {
+    comboBox.setSelectedItem(user);
+  }
 }

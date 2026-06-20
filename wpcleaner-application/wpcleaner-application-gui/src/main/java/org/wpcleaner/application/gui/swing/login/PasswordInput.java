@@ -75,4 +75,8 @@ public class PasswordInput {
   public char[] getPassword() {
     return field.getPassword();
   }
+
+  public void setPassword(final String password) {
+    field.setText(password);
+  }
 }

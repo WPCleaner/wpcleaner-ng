@@ -6,6 +6,7 @@ package org.wpcleaner.application.gui.swing.login;
  */
 
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.api.CredentialsProvider;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
@@ -15,6 +16,7 @@ import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindowServices;
 
 @Service
 public record SwingLoginWindowServices(
+    CredentialsProvider credentialsProvider,
     DemoAction demo,
     KnownDefinitions knownDefinitions,
     LoginAction login,

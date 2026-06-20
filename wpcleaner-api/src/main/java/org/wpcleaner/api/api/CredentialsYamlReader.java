@@ -6,20 +6,27 @@ package org.wpcleaner.api.api;
  */
 
 import jakarta.annotation.Nullable;
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
-import org.springframework.core.io.ClassPathResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.wpcleaner.api.utils.AutoCatch;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.error.YAMLException;
 
 @Component
 public class CredentialsYamlReader implements CredentialsReader {
+
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private final KnownDefinitions knownDefinitions;
 
@@ -29,18 +36,26 @@ public class CredentialsYamlReader implements CredentialsReader {
 
   @Override
   public List<Credential> getCredentials() {
-    final Resource resource = new ClassPathResource("credentials.yaml");
-    if (!resource.exists() || !resource.isReadable()) {
+    final Optional<Resource> resource = findResource("credentials.yaml");
+    if (resource.isEmpty()) {
       return List.of();
     }
     final Yaml yaml = new Yaml(new Constructor(YamlCredential.class, new LoaderOptions()));
-    return AutoCatch.run(
-        () ->
-            StreamSupport.stream(yaml.loadAll(resource.getInputStream()).spliterator(), false)
-                .map(YamlCredential.class::cast)
-                .map(credentials -> credentials.toCredential(knownDefinitions))
-                .filter(Objects::nonNull)
-                .toList());
+    try {
+      return StreamSupport.stream(
+              yaml.loadAll(resource.get().getInputStream()).spliterator(), false)
+          .map(YamlCredential.class::cast)
+          .map(credentials -> credentials.toCredential(knownDefinitions))
+          .filter(Objects::nonNull)
+          .toList();
+    } catch (IOException | YAMLException e) {
+      LOGGER.warn(
+          "Error reading credentials from {}: {}/{}",
+          resource.get().getFilename(),
+          e.getClass().getSimpleName(),
+          e.getMessage());
+    }
+    return List.of();
   }
 
   public static final class YamlCredential {

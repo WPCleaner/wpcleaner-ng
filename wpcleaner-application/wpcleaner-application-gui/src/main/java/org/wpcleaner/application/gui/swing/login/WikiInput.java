@@ -7,6 +7,8 @@ package org.wpcleaner.application.gui.swing.login;
 
 import jakarta.annotation.Nullable;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -105,6 +107,15 @@ public class WikiInput {
       return Optional.empty();
     }
     return Optional.of(comboBox.getItemAt(selectedIndex));
+  }
+
+  public void addItemListener(final ItemListener itemListener) {
+    comboBox.addItemListener(itemListener);
+    final Object selectedObject = comboBox.getSelectedItem();
+    if (selectedObject != null) {
+      itemListener.itemStateChanged(
+          new ItemEvent(comboBox, ItemEvent.ITEM_FIRST, selectedObject, ItemEvent.SELECTED));
+    }
   }
 
   private static final class WikiComboBoxAction implements SimpleAction {
