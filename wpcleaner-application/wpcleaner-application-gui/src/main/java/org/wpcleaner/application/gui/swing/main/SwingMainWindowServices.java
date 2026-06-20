@@ -11,7 +11,7 @@ import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsMan
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindowServices;
-import org.wpcleaner.application.gui.swing.recentechanges.SwingRecentChangesWindowFactory;
+import org.wpcleaner.application.gui.swing.recentchanges.SwingRecentChangesWindowFactory;
 
 @Service
 public record SwingMainWindowServices(

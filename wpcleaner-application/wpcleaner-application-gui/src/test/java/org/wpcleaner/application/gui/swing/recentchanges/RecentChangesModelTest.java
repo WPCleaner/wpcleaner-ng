@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.swing.recentechanges;
+package org.wpcleaner.application.gui.swing.recentchanges;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
