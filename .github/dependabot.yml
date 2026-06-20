@@ -11,3 +11,14 @@ updates:
       include: scope
     reviewers:
       - WPCleaner
+  - package-ecosystem: gradle
+    directory: "/build-logic"
+    schedule:
+      interval: weekly
+    assignees:
+      - WPCleaner
+    commit-message:
+      prefix: Dependabot
+      include: scope
+    reviewers:
+      - WPCleaner
