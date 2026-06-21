@@ -22,3 +22,14 @@ updates:
       include: scope
     reviewers:
       - WPCleaner
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: weekly
+    assignees:
+      - WPCleaner
+    commit-message:
+      prefix: Dependabot
+      include: scope
+    reviewers:
+      - WPCleaner
