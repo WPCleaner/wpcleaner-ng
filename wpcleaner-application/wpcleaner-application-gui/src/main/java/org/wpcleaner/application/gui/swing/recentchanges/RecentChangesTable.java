@@ -14,5 +14,6 @@ public final class RecentChangesTable extends JTable {
 
   public RecentChangesTable(final RecentChangesModel model) {
     super(model);
+    model.configureColumns(this);
   }
 }

@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
+import org.wpcleaner.application.gui.swing.core.component.table.ColumnConfigurerFactory;
 
 class RecentChangesModelTest {
 
@@ -46,20 +47,32 @@ class RecentChangesModelTest {
             "User 1",
             101);
 
-    final RecentChangesModel model = new RecentChangesModel(List.of(change1));
+    final RecentChangesModel model =
+        new RecentChangesModel(List.of(change1), new ColumnConfigurerFactory(null));
 
     // THEN
     Assertions.assertThat(model.getRowCount()).isEqualTo(1);
-    Assertions.assertThat(model.getColumnCount()).isEqualTo(4);
+    Assertions.assertThat(model.getColumnCount()).isEqualTo(5);
 
-    Assertions.assertThat(model.getColumnName(0)).isEqualTo("Timestamp");
+    Assertions.assertThat(model.getColumnName(0)).isEqualTo("Time");
     Assertions.assertThat(model.getColumnName(1)).isEqualTo("Title");
     Assertions.assertThat(model.getColumnName(2)).isEqualTo("User");
-    Assertions.assertThat(model.getColumnName(3)).isEqualTo("Tags");
+    Assertions.assertThat(model.getColumnName(3)).isEqualTo("Comment");
+    Assertions.assertThat(model.getColumnName(4)).isEqualTo("Tags");
 
     Assertions.assertThat(model.getValueAt(0, 0)).isNotNull().isNotEqualTo("");
     Assertions.assertThat(model.getValueAt(0, 1)).isEqualTo("Title 1");
     Assertions.assertThat(model.getValueAt(0, 2)).isEqualTo("User 1");
-    Assertions.assertThat(model.getValueAt(0, 3)).isEqualTo("tag1, tag2");
+    Assertions.assertThat(model.getValueAt(0, 3)).isEqualTo("edit comment");
+    Assertions.assertThat(model.getValueAt(0, 4))
+        .isInstanceOf(String.class)
+        .isEqualTo(
+            """
+            <html>
+            Tags:<br>
+            * tag1<br>
+            * tag2<br>
+            </html>"""
+                .stripIndent());
   }
 }

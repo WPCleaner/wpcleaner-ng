@@ -9,6 +9,7 @@ import jakarta.annotation.Nullable;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Objects;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 @SuppressWarnings("PMD.AvoidCatchingGenericException")
 public final class AutoCatch {
@@ -37,6 +38,23 @@ public final class AutoCatch {
       return callable.call();
     } catch (final Exception _) {
       return null;
+    }
+  }
+
+  @SuppressWarnings("PMD.EmptyCatchBlock")
+  public static <T> T runOrDefault(
+      final Callable<T> callable, final T defaultValue, final Consumer<Exception> consumer) {
+    Objects.requireNonNull(callable, "callable cannot be null");
+
+    try {
+      return callable.call();
+    } catch (final Exception e) {
+      try {
+        consumer.accept(e);
+      } catch (final Exception _) {
+        // Nothing to do
+      }
+      return defaultValue;
     }
   }
 

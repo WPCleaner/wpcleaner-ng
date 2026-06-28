@@ -10,11 +10,13 @@ import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.query.list.recentchanges.ApiRecentChanges;
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
+import org.wpcleaner.application.gui.swing.core.component.table.ColumnConfigurerFactory;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindowServices;
 
 @Service
 public record SwingRecentChangesWindowServices(
     ApiRecentChanges apiRecentChanges,
+    ColumnConfigurerFactory columnFactory,
     CurrentUserService user,
     SwingCoreServices swing,
     WindowsSettingsManager windowsSettings)

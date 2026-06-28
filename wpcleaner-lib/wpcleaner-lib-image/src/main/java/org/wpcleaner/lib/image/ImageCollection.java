@@ -33,6 +33,7 @@ public enum ImageCollection {
   PAGE("commons/gnome-text-x-generic.png"),
   PASSWORD("commons/gnome-dialog-password.png"),
   SYSTEM_OPTIONS("commons/gnome-preferences-system.png"),
+  TAG("commons/codex-icon-tag-color-progressive.png"),
   USER("commons/gnome-face-cool.png"),
   WARNING("commons/gnome-dialog-warning.png");
 
