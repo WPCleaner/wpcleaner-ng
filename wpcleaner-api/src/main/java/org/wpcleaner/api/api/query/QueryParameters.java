@@ -41,6 +41,7 @@ public enum QueryParameters {
   }
 
   public enum Meta {
+    SITE_INFO("siteinfo"),
     TOKENS("tokens");
 
     public final String value;
