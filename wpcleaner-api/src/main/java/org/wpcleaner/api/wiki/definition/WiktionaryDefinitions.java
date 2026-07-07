@@ -18,6 +18,7 @@ final class WiktionaryDefinitions implements WikiDefinitions {
       WiktionaryBuilder.ltr("bn", "Bengali Wiktionary", WikiWarning.BENGALI);
   public static final WikiDefinition EN = WiktionaryBuilder.ltr("en", "English Wiktionary");
   public static final WikiDefinition FR = WiktionaryBuilder.ltr("fr", "Wiktionnaire en français");
+  public static final WikiDefinition PT = WiktionaryBuilder.ltr("pt", "Portuguese Wiktionary");
   public static final WikiDefinition SV = WiktionaryBuilder.ltr("sv", "Swedish Wiktionary");
 
   private WiktionaryDefinitions() {
