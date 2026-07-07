@@ -14,4 +14,5 @@ public record Namespace(
     @JsonProperty("content") @Nullable Boolean content,
     @JsonProperty("id") int id,
     @JsonProperty("*") @Nullable String local,
+    @JsonProperty("name") @Nullable String name,
     @JsonProperty("subpages") @Nullable Boolean subpages) {}

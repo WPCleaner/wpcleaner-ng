@@ -21,15 +21,18 @@ import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiResponse;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUtils;
+import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
 public class ApiLogin {
 
   private final ApiRestClient restClient;
+  private final LoginHook loginHook;
 
-  public ApiLogin(final ApiRestClient restClient) {
+  public ApiLogin(final ApiRestClient restClient, final LoginHook loginHook) {
     this.restClient = restClient;
+    this.loginHook = loginHook;
   }
 
   public Login login(
@@ -58,6 +61,7 @@ public class ApiLogin {
     if (!Objects.equals(login.result(), Login.RESULT_SUCCESS)) {
       throw new ApiException("Login failed", "Result returned was %s".formatted(login.result()));
     }
+    loginHook.executeHook(wiki);
     return login;
   }
 

@@ -7,4 +7,5 @@ package org.wpcleaner.api.api.query.meta.siteinfo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record DbReplicationLag(@JsonProperty("host") String host, @JsonProperty("lag") double lag) {}
+public record DbReplicationLag(
+    @JsonProperty("host") String host, @JsonProperty("lag") double lag) {}

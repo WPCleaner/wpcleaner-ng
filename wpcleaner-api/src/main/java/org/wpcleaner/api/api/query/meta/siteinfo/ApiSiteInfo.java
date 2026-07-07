@@ -129,7 +129,8 @@ public class ApiSiteInfo {
       @JsonProperty("errors") @JsonSetter(nulls = Nulls.AS_EMPTY) List<ApiError> errors,
       @JsonProperty("warnings") @JsonSetter(nulls = Nulls.AS_EMPTY) List<ApiError> warnings,
       @JsonProperty("docref") @Nullable String docref,
-      @JsonProperty("dbrepllag") @JsonSetter(nulls = Nulls.AS_EMPTY) List<DbReplicationLag> dbReplicationLag,
+      @JsonProperty("dbrepllag") @JsonSetter(nulls = Nulls.AS_EMPTY)
+          List<DbReplicationLag> dbReplicationLag,
       @JsonProperty("defaultoptions") @JsonSetter(nulls = Nulls.AS_EMPTY)
           Map<String, Object> defaultOptions,
       @JsonProperty("extensions") @JsonSetter(nulls = Nulls.AS_EMPTY) List<Extension> extensions,

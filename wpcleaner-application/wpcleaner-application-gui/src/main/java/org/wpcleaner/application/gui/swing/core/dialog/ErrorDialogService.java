@@ -9,8 +9,10 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Insets;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -39,10 +41,13 @@ public class ErrorDialogService {
     if (!(current instanceof ApiException apiException)) {
       JOptionPane.showMessageDialog(
           parent,
-          "%s: %s"
+          "%s: %s\n%s"
               .formatted(
                   current.getClass().getSimpleName(),
-                  Objects.requireNonNullElse(current.getMessage(), "Unknown error")),
+                  Objects.requireNonNullElse(current.getMessage(), "Unknown error"),
+                  Arrays.stream(current.getStackTrace())
+                      .map(StackTraceElement::toString)
+                      .collect(Collectors.joining("\n"))),
           TITLE,
           JOptionPane.ERROR_MESSAGE);
       return;

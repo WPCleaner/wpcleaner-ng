@@ -62,6 +62,7 @@ class ApiSiteInfoTest {
 
     Assertions.assertThat(siteInfo.namespaces()).as("namespaces").isNotEmpty();
     Assertions.assertThat(siteInfo.namespaces().get("0")).as("namespace 0").isNotNull();
+    Assertions.assertThat(siteInfo.namespaces().get("0").name()).as("namespace 0 name").isNotNull();
 
     Assertions.assertThat(siteInfo.protocols()).as("protocols").isNotEmpty();
     Assertions.assertThat(siteInfo.restrictions()).as("restrictions").isNotNull();

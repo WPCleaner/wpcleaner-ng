@@ -13,7 +13,8 @@ import java.util.List;
 import java.util.Map;
 
 public record SiteInfo(
-    @JsonProperty("dbrepllag") @JsonSetter(nulls = Nulls.AS_EMPTY) List<DbReplicationLag> dbReplicationLag,
+    @JsonProperty("dbrepllag") @JsonSetter(nulls = Nulls.AS_EMPTY)
+        List<DbReplicationLag> dbReplicationLag,
     @JsonProperty("defaultoptions") @JsonSetter(nulls = Nulls.AS_EMPTY)
         Map<String, Object> defaultOptions,
     @JsonProperty("extensions") @JsonSetter(nulls = Nulls.AS_EMPTY) List<Extension> extensions,
