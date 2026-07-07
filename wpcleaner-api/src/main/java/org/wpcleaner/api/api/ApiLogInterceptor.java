@@ -5,7 +5,6 @@ package org.wpcleaner.api.api;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nonnull;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -37,12 +36,9 @@ public class ApiLogInterceptor implements ClientHttpRequestInterceptor {
     this.logBody = logBody;
   }
 
-  @Nonnull
   @Override
   public ClientHttpResponse intercept(
-      @Nonnull final HttpRequest request,
-      @Nonnull final byte[] body,
-      @Nonnull final ClientHttpRequestExecution execution)
+      final HttpRequest request, final byte[] body, final ClientHttpRequestExecution execution)
       throws IOException {
     LOGGER.info("Start outbound request {} {}", request.getMethod(), cleanUri(request.getURI()));
     if (logBody && body.length > 0 && LOGGER.isInfoEnabled()) {

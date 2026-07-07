@@ -6,7 +6,7 @@ package org.wpcleaner.api.api;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 public record Credential(

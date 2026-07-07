@@ -7,17 +7,18 @@ package org.wpcleaner.application.gui.swing.core.component.table;
 
 import java.lang.invoke.MethodHandles;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import javax.swing.JTable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wpcleaner.api.utils.AutoCatch;
 
 public record ColumnInformation<C, T>(
     String title,
-    Function<C, T> extractor,
+    Function<C, @Nullable T> extractor,
     Function<T, Object> formatter,
     List<BiConsumer<JTable, Integer>> configurers) {
 
@@ -27,7 +28,7 @@ public record ColumnInformation<C, T>(
   public Object format(final C value) {
     final T field = extractor.apply(value);
     return AutoCatch.runOrDefault(
-        () -> Objects.requireNonNullElse(formatter.apply(field), ""),
+        () -> Optional.ofNullable(field).map(formatter).orElse(""),
         "",
         e ->
             LOGGER.error(

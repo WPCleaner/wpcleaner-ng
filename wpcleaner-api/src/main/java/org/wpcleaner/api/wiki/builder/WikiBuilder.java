@@ -5,10 +5,10 @@ package org.wpcleaner.api.wiki.builder;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.awt.ComponentOrientation;
 import java.util.HashSet;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikiGroup;
 import org.wpcleaner.api.wiki.definition.WikiWarning;

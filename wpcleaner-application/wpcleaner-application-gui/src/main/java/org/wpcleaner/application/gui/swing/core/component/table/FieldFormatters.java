@@ -5,10 +5,10 @@ package org.wpcleaner.application.gui.swing.core.component.table;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import org.jspecify.annotations.Nullable;
 
 public final class FieldFormatters {
 

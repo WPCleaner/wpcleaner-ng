@@ -5,7 +5,7 @@ package org.wpcleaner.api.wiki.definition;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("PMD.DataClass")
 public record WikiWarning(String text) {

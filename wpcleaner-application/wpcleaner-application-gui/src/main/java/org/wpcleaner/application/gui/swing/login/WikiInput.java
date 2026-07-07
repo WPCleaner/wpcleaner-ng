@@ -5,7 +5,6 @@ package org.wpcleaner.application.gui.swing.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -15,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikiWarning;

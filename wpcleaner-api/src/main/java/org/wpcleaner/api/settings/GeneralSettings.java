@@ -5,7 +5,7 @@ package org.wpcleaner.api.settings;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public record GeneralSettings(int version, @Nullable String preferredWiki)
     implements VersionedSettings {

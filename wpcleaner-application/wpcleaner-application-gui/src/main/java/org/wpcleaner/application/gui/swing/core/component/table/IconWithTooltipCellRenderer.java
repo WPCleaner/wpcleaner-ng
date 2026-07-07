@@ -5,13 +5,13 @@ package org.wpcleaner.application.gui.swing.core.component.table;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.awt.Component;
 import java.io.Serial;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.jspecify.annotations.Nullable;
 
 public class IconWithTooltipCellRenderer extends DefaultTableCellRenderer {
 
@@ -29,7 +29,7 @@ public class IconWithTooltipCellRenderer extends DefaultTableCellRenderer {
   @Override
   public Component getTableCellRendererComponent(
       final JTable table,
-      final Object value,
+      @Nullable final Object value,
       final boolean isSelected,
       final boolean hasFocus,
       final int row,

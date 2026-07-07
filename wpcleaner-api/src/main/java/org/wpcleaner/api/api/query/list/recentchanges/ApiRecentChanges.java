@@ -8,10 +8,10 @@ package org.wpcleaner.api.api.query.list.recentchanges;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
@@ -33,7 +33,7 @@ public class ApiRecentChanges {
   public List<RecentChange> retrieveRecentChanges(
       final WikiDefinition wiki, @Nullable final RecentChangesQuery options) {
     final Response response = internalRetrieveRecentChanges(wiki, options);
-    if (response == null || response.query() == null) {
+    if (response == null) {
       return List.of();
     }
     return response.query().recentChanges();

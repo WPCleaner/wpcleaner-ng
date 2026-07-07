@@ -1,6 +1,5 @@
 package org.wpcleaner.application.gui.swing.core.configuration;
 
-import jakarta.annotation.Nullable;
 import java.lang.invoke.MethodHandles;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -8,6 +7,7 @@ import java.util.Objects;
 import javax.swing.JComponent;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

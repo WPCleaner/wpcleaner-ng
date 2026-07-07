@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import javax.swing.JTable;
+import org.jspecify.annotations.Nullable;
 
 public class ColumnBuilder<C, T> {
 
@@ -18,7 +19,7 @@ public class ColumnBuilder<C, T> {
   private Function<T, Object> fieldFormatter;
   private final List<BiConsumer<JTable, Integer>> configurers;
 
-  public ColumnBuilder(final String title, final Function<C, T> fieldExtractor) {
+  public ColumnBuilder(final String title, final Function<C, @Nullable T> fieldExtractor) {
     this.title = title;
     this.fieldExtractor = fieldExtractor;
     this.fieldFormatter = value -> (Object) value;

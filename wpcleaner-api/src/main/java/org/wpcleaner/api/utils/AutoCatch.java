@@ -5,11 +5,11 @@ package org.wpcleaner.api.utils;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("PMD.AvoidCatchingGenericException")
 public final class AutoCatch {

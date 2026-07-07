@@ -5,8 +5,8 @@ package org.wpcleaner.api.settings;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 final class GeneralSettingsImporter {
 

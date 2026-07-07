@@ -5,13 +5,14 @@ package org.wpcleaner.api.api.query.list.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.time.Instant;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Direction;
 
 @SuppressWarnings({"PMD.TooManyFields", "PMD.AvoidFieldNameMatchingMethodName"})
 public record RecentChangesQuery(
-    @Nullable RecentChangesParameters.Direction direction,
+    @Nullable Direction direction,
     @Nullable Instant end,
     @Nullable String excludeUser,
     @Nullable Boolean generateRevisions,
@@ -34,7 +35,7 @@ public record RecentChangesQuery(
 
   public static class Builder {
 
-    @Nullable private RecentChangesParameters.Direction direction;
+    @Nullable private Direction direction;
     @Nullable private Instant end;
     @Nullable private String excludeUser;
     @Nullable private Boolean generateRevisions;

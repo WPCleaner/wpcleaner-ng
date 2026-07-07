@@ -5,7 +5,6 @@ package org.wpcleaner.application.gui.swing.core.worker;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -24,6 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javax.swing.JComponent;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
+import org.jspecify.annotations.Nullable;
 
 public class ProgressPanel extends JComponent {
 

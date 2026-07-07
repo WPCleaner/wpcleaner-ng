@@ -5,7 +5,6 @@ package org.wpcleaner.application.gui.swing.core.worker;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.awt.Component;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -13,6 +12,7 @@ import java.util.function.Consumer;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.base.processor.Processor;
 import org.wpcleaner.application.base.processor.ProgressTracker;

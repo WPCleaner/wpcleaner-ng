@@ -5,8 +5,8 @@ package org.wpcleaner.api.api;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 public interface ApiResponse {
 
@@ -14,6 +14,5 @@ public interface ApiResponse {
 
   List<ApiError> warnings();
 
-  @Nullable
-  String docref();
+  @Nullable String docref();
 }

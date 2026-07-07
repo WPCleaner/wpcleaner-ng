@@ -5,10 +5,9 @@ package org.wpcleaner.api.wiki.definition;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import java.awt.ComponentOrientation;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.lib.image.ImageCollection;
 
 public record WikiDefinition(
@@ -34,7 +33,6 @@ public record WikiDefinition(
     return "https://%s/%s/%s".formatted(mainHost, wikiPath, title);
   }
 
-  @Nonnull
   @Override
   public String toString() {
     return "%s - %s".formatted(code, name);

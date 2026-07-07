@@ -17,6 +17,7 @@ val javaVersion: String =
 java { toolchain { languageVersion.set(JavaLanguageVersion.of(javaVersion)) } }
 
 dependencies {
+  api("org.jspecify:jspecify")
   testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 

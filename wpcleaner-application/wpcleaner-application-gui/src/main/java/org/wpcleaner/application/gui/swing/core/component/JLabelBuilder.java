@@ -5,11 +5,11 @@ package org.wpcleaner.application.gui.swing.core.component;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.awt.Component;
 import java.util.Optional;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;

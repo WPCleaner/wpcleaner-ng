@@ -8,6 +8,6 @@ dependencies {
     api(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:4.1.0"))
 
     constraints {
-        api("com.google.code.findbugs:jsr305:3.0.2")
+        api("org.jspecify:jspecify:1.0.0")
     }
 }

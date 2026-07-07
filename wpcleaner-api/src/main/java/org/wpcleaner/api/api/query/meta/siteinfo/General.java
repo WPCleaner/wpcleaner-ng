@@ -6,7 +6,7 @@ package org.wpcleaner.api.api.query.meta.siteinfo;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public record General(
     @JsonProperty("articlepath") @Nullable String articlePath,

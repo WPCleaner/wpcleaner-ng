@@ -8,13 +8,13 @@ package org.wpcleaner.api.api.query.meta.siteinfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import jakarta.annotation.Nullable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
@@ -22,6 +22,7 @@ import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUtils;
 import org.wpcleaner.api.api.query.QueryParameters;
+import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters.FilterInterwiki;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
@@ -36,7 +37,7 @@ public class ApiSiteInfo {
   public SiteInfo requestSiteInfo(
       final WikiDefinition wiki,
       final Collection<SiteInfoParameters.Properties> properties,
-      @Nullable final SiteInfoParameters.FilterInterwiki filterInterwiki,
+      @Nullable final FilterInterwiki filterInterwiki,
       @Nullable final Boolean showImageList,
       @Nullable final Boolean numberInGroup) {
     return Optional.ofNullable(
@@ -77,7 +78,7 @@ public class ApiSiteInfo {
   private Response internalRequestSiteInfo(
       final WikiDefinition wiki,
       final Collection<SiteInfoParameters.Properties> properties,
-      @Nullable final SiteInfoParameters.FilterInterwiki filterInterwiki,
+      @Nullable final FilterInterwiki filterInterwiki,
       @Nullable final Boolean showImageList,
       @Nullable final Boolean numberInGroup) {
     return restClient
@@ -93,14 +94,14 @@ public class ApiSiteInfo {
   private URI computeUri(
       final UriBuilder uriBuilder,
       final Collection<SiteInfoParameters.Properties> properties,
-      @Nullable final SiteInfoParameters.FilterInterwiki filterInterwiki,
+      @Nullable final FilterInterwiki filterInterwiki,
       @Nullable final Boolean showImageList,
       @Nullable final Boolean numberInGroup) {
     UriBuilder builder =
         ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
             .queryParam(QueryParameters.META.value, QueryParameters.Meta.SITE_INFO.value);
 
-    if (properties != null && !properties.isEmpty()) {
+    if (!properties.isEmpty()) {
       builder =
           builder.queryParam(
               SiteInfoParameters.PROPERTIES.value,

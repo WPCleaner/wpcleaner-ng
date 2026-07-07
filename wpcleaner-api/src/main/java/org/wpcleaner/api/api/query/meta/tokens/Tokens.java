@@ -6,7 +6,7 @@ package org.wpcleaner.api.api.query.meta.tokens;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.annotation.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public record Tokens(
     @JsonProperty("createaccounttoken") @Nullable String createAccount,

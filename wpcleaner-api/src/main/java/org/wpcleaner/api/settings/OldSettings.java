@@ -5,12 +5,12 @@ package org.wpcleaner.api.settings;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.utils.AutoCatch;
 
@@ -67,6 +67,6 @@ public final class OldSettings {
 
   @Nullable
   private Preferences node(final Preferences root, final String name) {
-    return Boolean.TRUE.equals(AutoCatch.run(() -> root.nodeExists(name))) ? root.node(name) : null;
+    return AutoCatch.run(() -> root.nodeExists(name)) ? root.node(name) : null;
   }
 }

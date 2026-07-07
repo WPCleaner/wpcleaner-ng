@@ -5,9 +5,9 @@ package org.wpcleaner.application.gui.swing.core.component;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.util.Optional;
 import javax.swing.JMenuItem;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.application.gui.core.action.SimpleAction;
 import org.wpcleaner.application.gui.swing.core.action.ComponentAction;
 import org.wpcleaner.application.gui.swing.core.action.ComponentActionListener;

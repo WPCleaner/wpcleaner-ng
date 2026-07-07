@@ -8,9 +8,9 @@ package org.wpcleaner.api.api.query.list.users;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import jakarta.annotation.Nullable;
 import java.time.Instant;
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 public record User(
     @JsonProperty("attachedlocal") @Nullable AttachedLocal attachedLocal,

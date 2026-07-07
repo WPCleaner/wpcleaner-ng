@@ -5,8 +5,8 @@ package org.wpcleaner.application.gui.settings.graphical;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.util.Objects;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.settings.SettingsElement;
 
 public record LookAndFeelSettings(LookAndFeelType type, String name) implements SettingsElement {

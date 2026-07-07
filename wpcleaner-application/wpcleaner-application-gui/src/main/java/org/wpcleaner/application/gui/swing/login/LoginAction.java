@@ -5,10 +5,10 @@ package org.wpcleaner.application.gui.swing.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nullable;
 import java.awt.Component;
 import java.util.function.Consumer;
 import javax.swing.JOptionPane;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -65,7 +65,7 @@ public class LoginAction {
         component,
         LoginProcessor.Input.forLogin(wiki, user, password),
         loginProcessor,
-        result -> onSuccess.run(),
+        _ -> onSuccess.run(),
         onFailure);
   }
 }

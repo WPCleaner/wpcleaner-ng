@@ -5,7 +5,6 @@ package org.wpcleaner.application.base.processor;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import jakarta.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -117,7 +116,6 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
       return result;
     }
 
-    @Nonnull
     @Override
     public String toString() {
       return "LoginProcessor.Input{wiki=%s, username=%s, demo=%b}".formatted(wiki, username, demo);

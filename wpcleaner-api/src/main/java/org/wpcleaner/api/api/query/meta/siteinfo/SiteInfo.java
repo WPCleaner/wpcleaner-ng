@@ -8,9 +8,9 @@ package org.wpcleaner.api.api.query.meta.siteinfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import jakarta.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
+import org.jspecify.annotations.Nullable;
 
 public record SiteInfo(
     @JsonProperty("dbrepllag") @JsonSetter(nulls = Nulls.AS_EMPTY)
