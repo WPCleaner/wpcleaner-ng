@@ -5,10 +5,7 @@ package org.wpcleaner.api.hook.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -24,8 +21,9 @@ public class NamespaceExtractor {
   }
 
   public void extract(final SiteInfo siteInfo) {
-    Optional.ofNullable(siteInfo.namespaces()).map(Map::values).stream()
-        .flatMap(Collection::stream)
+    siteInfo
+        .namespaces()
+        .values()
         .forEach(
             namespace -> {
               final String name =

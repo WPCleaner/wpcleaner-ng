@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageSize;
@@ -34,7 +35,7 @@ public final class WikiListCellRenderer extends JLabel implements ListCellRender
   @Override
   public Component getListCellRendererComponent(
       final JList<? extends WikiDefinition> list,
-      final WikiDefinition value,
+      @Nullable final WikiDefinition value,
       final int index,
       final boolean isSelected,
       final boolean cellHasFocus) {

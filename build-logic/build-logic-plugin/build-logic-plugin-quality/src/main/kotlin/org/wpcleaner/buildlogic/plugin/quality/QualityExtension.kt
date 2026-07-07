@@ -33,7 +33,7 @@ interface QualityExtension : NamedDomainObjectContainer<QualityConfiguration> {
       }
 
       sourceSet?.whenObjectAdded {
-        project.logger.info("Add quality configuration for {}:{}", project.name, this.name)
+        project.logger.info("Add quality configuration for {}:{} when object added", project.name, this.name)
         qualityExtension.register(this.name)
       }
 

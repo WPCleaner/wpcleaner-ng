@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 public class ColumnBuilder<C, T> {
 
   private final String title;
-  private final Function<C, T> fieldExtractor;
+  private final Function<C, @Nullable T> fieldExtractor;
   private Function<T, Object> fieldFormatter;
   private final List<BiConsumer<JTable, Integer>> configurers;
 

@@ -53,7 +53,7 @@ class AnnotationOrderFormatterStep : FormatterStep {
   }
 
   private fun String.extractAnnotation(position: Int): String {
-    if (position !in 0 until length || this[position] != '@') return ""
+    if (position !in indices || this[position] != '@') return ""
     val nameMatch = annotationName.matchAt(this, position) ?: return ""
     val nameEnd = nameMatch.range.last + 1
     var currentPosition = nameEnd

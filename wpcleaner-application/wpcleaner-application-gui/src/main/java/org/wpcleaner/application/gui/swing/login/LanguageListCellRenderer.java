@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.language.Language;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageSize;
@@ -35,7 +36,7 @@ public final class LanguageListCellRenderer extends JLabel implements ListCellRe
   @SuppressWarnings("CanIgnoreReturnValueSuggester")
   public Component getListCellRendererComponent(
       final JList<? extends Language> list,
-      final Language value,
+      @Nullable final Language value,
       final int index,
       final boolean isSelected,
       final boolean cellHasFocus) {

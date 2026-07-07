@@ -25,6 +25,7 @@ fun aggregateSubModuleTask(taskName: String) {
     task.dependsOn(subprojects.map { "${it.name}:$taskName" })
   } else {
     tasks.register(taskName) {
+      description = "Aggregated task for $taskName"
       dependsOn(subprojects.map { "${it.name}:$taskName" })
     }
   }

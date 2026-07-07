@@ -13,7 +13,7 @@ import org.wpcleaner.application.gui.core.factory.LoginWindowFactory;
 @SpringBootApplication(scanBasePackages = "org.wpcleaner")
 public class WPCleaner {
 
-  public static void main(final String[] args) {
+  static void main(final String... args) {
     try (ConfigurableApplicationContext ctx =
         new SpringApplicationBuilder(WPCleaner.class).headless(false).run(args)) {
       ctx.getBean(LoginWindowFactory.class).displayLoginWindow();
