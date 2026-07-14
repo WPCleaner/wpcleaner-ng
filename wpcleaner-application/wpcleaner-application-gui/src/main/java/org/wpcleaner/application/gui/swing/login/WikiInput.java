@@ -5,7 +5,6 @@ package org.wpcleaner.application.gui.swing.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Optional;
@@ -14,16 +13,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikiWarning;
 import org.wpcleaner.application.gui.core.action.ActionService;
-import org.wpcleaner.application.gui.core.action.SimpleAction;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
-import org.wpcleaner.application.gui.swing.core.action.ComponentActionListener;
-import org.wpcleaner.application.gui.swing.core.action.ShowMessageAction;
-import org.wpcleaner.application.gui.swing.core.action.SimpleToComponentAction;
 import org.wpcleaner.application.gui.swing.core.component.ComponentService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -96,9 +90,8 @@ public class WikiInput {
             .withComponent(addWiki)
             .withComponent(removeWiki)
             .build();
-    comboBox.addActionListener(
-        new ComponentActionListener(
-            new SimpleToComponentAction(new WikiComboBoxAction(comboBox, warning)), comboBox));
+    final WikiComboBoxAction action = new WikiComboBoxAction(comboBox, warning);
+    comboBox.addActionListener(_ -> action.updateWarningButton());
   }
 
   public Optional<WikiDefinition> getSelectedWiki() {
@@ -118,34 +111,35 @@ public class WikiInput {
     }
   }
 
-  private static final class WikiComboBoxAction implements SimpleAction {
-
-    private final JButton warningButton;
-    private final WikiComboBox comboBox;
-    @Nullable private ActionListener showMessageAction;
+  private record WikiComboBoxAction(WikiComboBox comboBox, JButton warningButton) {
 
     private WikiComboBoxAction(final WikiComboBox comboBox, final JButton warningButton) {
       this.comboBox = comboBox;
       this.warningButton = warningButton;
-      execute();
+      this.warningButton.addActionListener(_ -> displayWarning());
+      updateWarningButton();
     }
 
-    @Override
-    public void execute() {
-      final Optional<String> text =
-          Optional.ofNullable(comboBox.getSelectedItem())
-              .filter(WikiDefinition.class::isInstance)
-              .map(WikiDefinition.class::cast)
-              .map(WikiDefinition::warning)
-              .map(WikiWarning::text);
-      warningButton.setEnabled(text.isPresent());
-      warningButton.setToolTipText(text.isPresent() ? WARNING : NO_WARNING);
-      warningButton.removeActionListener(showMessageAction);
-      showMessageAction =
-          new ComponentActionListener(
-              new ShowMessageAction(text.orElse(NO_WARNING), WARNING, JOptionPane.WARNING_MESSAGE),
-              warningButton);
-      warningButton.addActionListener(showMessageAction);
+    void updateWarningButton() {
+      final boolean text = getText().isPresent();
+      warningButton.setEnabled(text);
+      warningButton.setToolTipText(text ? WARNING : NO_WARNING);
+    }
+
+    private void displayWarning() {
+      getText()
+          .ifPresent(
+              text ->
+                  JOptionPane.showMessageDialog(
+                      warningButton, text, WARNING, JOptionPane.WARNING_MESSAGE));
+    }
+
+    private Optional<String> getText() {
+      return Optional.ofNullable(comboBox.getSelectedItem())
+          .filter(WikiDefinition.class::isInstance)
+          .map(WikiDefinition.class::cast)
+          .map(WikiDefinition::warning)
+          .map(WikiWarning::text);
     }
   }
 }
