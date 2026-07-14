@@ -13,7 +13,7 @@ import org.wpcleaner.application.gui.core.action.NotImplementedAction;
 public class NotImplementedSwingAction implements NotImplementedAction {
 
   @Override
-  public void execute() {
+  public void run() {
     JOptionPane.showMessageDialog(
         null,
         "This feature is not implemented yet. Try again later!",

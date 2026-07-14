@@ -7,10 +7,10 @@ package org.wpcleaner.application.gui.core.action;
 
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 
-public record OpenUrlAction(DesktopService desktopService, String url) implements SimpleAction {
+public record OpenUrlAction(DesktopService desktopService, String url) implements Runnable {
 
   @Override
-  public void execute() {
+  public void run() {
     desktopService.browse(url);
   }
 }

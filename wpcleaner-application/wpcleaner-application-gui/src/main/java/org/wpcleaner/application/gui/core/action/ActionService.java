@@ -20,11 +20,11 @@ public class ActionService {
     this.notImplementedAction = notImplementedAction;
   }
 
-  public SimpleAction openUrl(final String url) {
+  public Runnable openUrl(final String url) {
     return new OpenUrlAction(desktopService, url);
   }
 
-  public SimpleAction notImplemented() {
+  public Runnable notImplemented() {
     return notImplementedAction;
   }
 }

@@ -8,10 +8,8 @@ package org.wpcleaner.application.gui.swing.core.component;
 import java.util.Optional;
 import javax.swing.JButton;
 import org.jspecify.annotations.Nullable;
-import org.wpcleaner.application.gui.core.action.SimpleAction;
 import org.wpcleaner.application.gui.swing.core.action.ComponentAction;
 import org.wpcleaner.application.gui.swing.core.action.ComponentActionListener;
-import org.wpcleaner.application.gui.swing.core.action.SimpleToComponentAction;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -38,8 +36,8 @@ public class JButtonBuilder {
     return this;
   }
 
-  public JButtonBuilder withAction(final SimpleAction action) {
-    this.componentAction = new SimpleToComponentAction(action);
+  public JButtonBuilder withAction(final Runnable action) {
+    this.componentAction = _ -> action.run();
     return this;
   }
 

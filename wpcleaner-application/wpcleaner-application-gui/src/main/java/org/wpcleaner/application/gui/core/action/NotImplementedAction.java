@@ -5,4 +5,4 @@ package org.wpcleaner.application.gui.core.action;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public interface NotImplementedAction extends SimpleAction {}
+public interface NotImplementedAction extends Runnable {}
