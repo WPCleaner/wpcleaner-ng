@@ -4,13 +4,15 @@ plugins {
 }
 
 project.plugins.withId("java") {
-  apply(plugin = "wpcleaner.internal.error-prone")
-  apply(plugin = "wpcleaner.internal.java-warning")
-  apply(plugin = "wpcleaner.internal.pmd")
-  apply(plugin = "wpcleaner.internal.spotless-java")
-  apply(plugin = "wpcleaner.internal.spotless-json")
-  apply(plugin = "wpcleaner.internal.spotless-kotlin")
-  apply(plugin = "wpcleaner.internal.spotless-yaml")
+  plugins {
+    id("wpcleaner.internal.error-prone")
+    id("wpcleaner.internal.java-warning")
+    id("wpcleaner.internal.pmd")
+    id("wpcleaner.internal.spotless-java")
+    id("wpcleaner.internal.spotless-json")
+    id("wpcleaner.internal.spotless-kotlin")
+    id("wpcleaner.internal.spotless-yaml")
+  }
 }
 
 project.plugins.withId("java-library") { }

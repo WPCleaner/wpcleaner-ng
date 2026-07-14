@@ -37,14 +37,14 @@ public class MenuItemService {
   public JMenuItem askQuestion() {
     return builder("Ask a question")
         .withIcon(ImageCollection.HELP, ImageSize.MENU)
-        .withAction(actionService.action().openUrl(urlService.askQuestion()))
+        .withAction(actionService.action().openUrl(UrlService.ASK_QUESTION))
         .build();
   }
 
   public JMenuItem help() {
     return builder("Help")
         .withIcon(ImageCollection.HELP, ImageSize.MENU)
-        .withAction(actionService.action().openUrl(urlService.help()))
+        .withAction(actionService.action().openUrl(UrlService.HELP))
         .build();
   }
 
@@ -58,7 +58,7 @@ public class MenuItemService {
   public JMenuItem requestFeature() {
     return builder("Request new feature")
         .withIcon(ImageCollection.LOGO_PHABRICATOR, ImageSize.MENU)
-        .withAction(actionService.action().openUrl(urlService.requestFeature()))
+        .withAction(actionService.action().openUrl(UrlService.REQUEST_FEATURE))
         .build();
   }
 

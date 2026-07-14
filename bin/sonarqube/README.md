@@ -1,4 +1,4 @@
-# Sonarqube
+# SonarQube
 
 This document explains how to locally run a SonarQube analysis of the project.
 

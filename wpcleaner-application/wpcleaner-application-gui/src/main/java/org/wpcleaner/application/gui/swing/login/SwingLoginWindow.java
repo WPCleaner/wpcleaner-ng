@@ -49,7 +49,7 @@ public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServ
     final UserInput user = new UserInput(services.swing());
     addLine(panel, constraints, user.label, user.icon, user.comboBox, user.toolBar);
 
-    final PasswordInput password = new PasswordInput(services.swing(), services.url());
+    final PasswordInput password = new PasswordInput(services.swing());
     addLine(panel, constraints, password.label, password.icon, password.field, password.toolBar);
 
     addButtons(panel, constraints, wiki, user, password);

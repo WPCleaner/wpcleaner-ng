@@ -7,9 +7,12 @@ package org.wpcleaner.api.language;
 
 import org.wpcleaner.lib.image.ImageCollection;
 
+@SuppressWarnings("PMD.DataClass")
 public enum Language {
   EN("en", "English", ImageCollection.LANGUAGE_EN),
   FR("fr", "French", ImageCollection.LANGUAGE_FR);
+
+  public static final Language DEFAULT = EN;
 
   private final String code;
   private final String description;
@@ -19,10 +22,6 @@ public enum Language {
     this.code = code;
     this.description = description;
     this.image = image;
-  }
-
-  public static Language defaultLanguage() {
-    return EN;
   }
 
   public String getCode() {

@@ -16,6 +16,6 @@ public final class LanguageComboBox extends JComboBox<Language> {
   public LanguageComboBox() {
     super(Language.values());
     setEditable(false);
-    setSelectedItem(Language.defaultLanguage());
+    setSelectedItem(Language.DEFAULT);
   }
 }

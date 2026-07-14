@@ -24,7 +24,7 @@ public class PasswordInput {
   final JLabel label;
   final JToolBar toolBar;
 
-  PasswordInput(final SwingCoreServices swingCoreServices, final UrlService urlService) {
+  PasswordInput(final SwingCoreServices swingCoreServices) {
     final ActionService actionService = swingCoreServices.action().action();
     final ComponentService componentService = swingCoreServices.component();
     icon =
@@ -46,7 +46,7 @@ public class PasswordInput {
             .buttons()
             .builder("Bot passwords", false)
             .withIcon(ImageCollection.HELP, ImageSize.TOOLBAR)
-            .withAction(actionService.openUrl(urlService.specialBotPasswords()))
+            .withAction(actionService.openUrl(UrlService.BOT_PASSWORDS))
             .build();
     final JButton addPassword =
         componentService

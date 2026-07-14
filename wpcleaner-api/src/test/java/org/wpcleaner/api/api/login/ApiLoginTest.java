@@ -6,6 +6,7 @@ package org.wpcleaner.api.api.login;
  */
 
 import java.util.List;
+import java.util.Objects;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,7 +55,11 @@ class ApiLoginTest {
 
     // WHEN
     final Login login =
-        apiLogin.login(wiki, credential.username(), credential.password(), tokens.login());
+        apiLogin.login(
+            wiki,
+            credential.username(),
+            credential.password(),
+            Objects.requireNonNull(tokens.login()));
 
     // THEN
     Assertions.assertThat(login).as("login").isNotNull();
