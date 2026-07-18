@@ -8,7 +8,7 @@ package org.wpcleaner.application.gui.swing.login;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Optional;
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
@@ -52,14 +52,14 @@ public class WikiInput {
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(comboBox)
             .build();
-    final JButton warning =
+    final AbstractButton warning =
         componentService
             .buttons()
             .builder(NO_WARNING, false)
             .withIcon(ImageCollection.WARNING, ImageSize.TOOLBAR)
             .build();
     warning.setEnabled(false);
-    final JButton otherWiki =
+    final AbstractButton otherWiki =
         componentService
             .buttons()
             .builder("Other wiki", false)
@@ -67,14 +67,14 @@ public class WikiInput {
             .withAction(
                 actionService.openUrl("https://en.wikipedia.org/wiki/Wikipedia:WPCleaner/Wikis"))
             .build();
-    final JButton addWiki =
+    final AbstractButton addWiki =
         componentService
             .buttons()
             .builder("Add wiki", false)
             .withIcon(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
             .withAction(actionService.notImplemented())
             .build();
-    final JButton removeWiki =
+    final AbstractButton removeWiki =
         componentService
             .buttons()
             .builder("Remove wiki", false)
@@ -111,9 +111,9 @@ public class WikiInput {
     }
   }
 
-  private record WikiComboBoxAction(WikiComboBox comboBox, JButton warningButton) {
+  private record WikiComboBoxAction(WikiComboBox comboBox, AbstractButton warningButton) {
 
-    private WikiComboBoxAction(final WikiComboBox comboBox, final JButton warningButton) {
+    private WikiComboBoxAction(final WikiComboBox comboBox, final AbstractButton warningButton) {
       this.comboBox = comboBox;
       this.warningButton = warningButton;
       this.warningButton.addActionListener(_ -> displayWarning());

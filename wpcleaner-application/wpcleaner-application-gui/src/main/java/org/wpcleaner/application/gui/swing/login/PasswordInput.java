@@ -5,7 +5,7 @@ package org.wpcleaner.application.gui.swing.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JToolBar;
@@ -41,21 +41,21 @@ public class PasswordInput {
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(field)
             .build();
-    final JButton specialBotPasswords =
+    final AbstractButton specialBotPasswords =
         componentService
             .buttons()
             .builder("Bot passwords", false)
             .withIcon(ImageCollection.HELP, ImageSize.TOOLBAR)
             .withAction(actionService.openUrl(UrlService.BOT_PASSWORDS))
             .build();
-    final JButton addPassword =
+    final AbstractButton addPassword =
         componentService
             .buttons()
             .builder("Save user and password", false)
             .withIcon(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
             .withAction(actionService.notImplemented())
             .build();
-    final JButton removePassword =
+    final AbstractButton removePassword =
         componentService
             .buttons()
             .builder("Forget password", false)

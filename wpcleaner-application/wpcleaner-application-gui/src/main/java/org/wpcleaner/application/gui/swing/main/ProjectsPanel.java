@@ -8,7 +8,7 @@ package org.wpcleaner.application.gui.swing.main;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serial;
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JPanel;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 
@@ -27,7 +27,7 @@ final class ProjectsPanel extends JPanel {
   private void initialize() {
     final GridBagConstraints constraints = services.swing().layout().initializeConstraints();
 
-    final JButton button =
+    final AbstractButton button =
         services
             .swing()
             .component()

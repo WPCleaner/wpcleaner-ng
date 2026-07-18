@@ -5,7 +5,7 @@ package org.wpcleaner.application.gui.swing.core.component;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JToolBar;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.action.ActionService;
@@ -38,19 +38,19 @@ public class ToolBarService {
   }
 
   public JToolBar feedbacks() {
-    final JButton feedbackButton =
+    final AbstractButton feedbackButton =
         buttonService
             .builder("Feedback", false)
             .withIcon(ImageCollection.HELP_FAQ, ImageSize.BUTTON)
             .withAction(feedbackAction::execute)
             .build();
-    final JButton optionsButton =
+    final AbstractButton optionsButton =
         buttonService
             .builder("Options", false)
             .withIcon(ImageCollection.OPTIONS, ImageSize.BUTTON)
             .withAction(optionsAction::execute)
             .build();
-    final JButton aboutButton =
+    final AbstractButton aboutButton =
         buttonService
             .builder("About", false)
             .withIcon(ImageCollection.HELP_ABOUT, ImageSize.BUTTON)

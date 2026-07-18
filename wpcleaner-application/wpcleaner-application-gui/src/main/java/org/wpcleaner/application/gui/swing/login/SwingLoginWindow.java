@@ -10,7 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.io.Serial;
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -89,7 +89,7 @@ public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServ
       final UserInput userInput,
       final PasswordInput passwordInput) {
     final JPanel buttons = new JPanel(new GridLayout(1, 0));
-    final JButton loginButton =
+    final AbstractButton loginButton =
         services
             .swing()
             .component()
@@ -108,7 +108,7 @@ public final class SwingLoginWindow extends WPCleanerWindow<SwingLoginWindowServ
                             e -> services.swing().errorDialog().showErrorMessage(this, e)))
             .build();
     buttons.add(loginButton);
-    final JButton demoButton =
+    final AbstractButton demoButton =
         services
             .swing()
             .component()

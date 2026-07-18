@@ -6,7 +6,7 @@ package org.wpcleaner.application.gui.swing.login;
  */
 
 import java.util.Objects;
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
@@ -42,14 +42,14 @@ public class UserInput {
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(comboBox)
             .build();
-    final JButton addUser =
+    final AbstractButton addUser =
         componentService
             .buttons()
             .builder("Save user", false)
             .withIcon(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
             .withAction(actionService.notImplemented())
             .build();
-    final JButton removeUser =
+    final AbstractButton removeUser =
         componentService
             .buttons()
             .builder("Forget user", false)

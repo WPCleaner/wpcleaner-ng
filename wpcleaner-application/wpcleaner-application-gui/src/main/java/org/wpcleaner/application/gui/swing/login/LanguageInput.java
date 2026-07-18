@@ -5,7 +5,7 @@ package org.wpcleaner.application.gui.swing.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -42,7 +42,7 @@ public class LanguageInput {
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(comboBox)
             .build();
-    final JButton addLanguageButton =
+    final AbstractButton addLanguageButton =
         componentService
             .buttons()
             .builder("Add language", false)

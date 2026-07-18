@@ -6,7 +6,7 @@ package org.wpcleaner.application.gui.swing.main;
  */
 
 import java.util.Objects;
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JToolBar;
@@ -50,14 +50,14 @@ public class PageInput {
             .withHorizontalAlignment(SwingConstants.TRAILING)
             .withComponent(comboBox)
             .build();
-    final JButton addPage =
+    final AbstractButton addPage =
         componentService
             .buttons()
             .builder("Add page", false)
             .withIcon(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
             .withAction(actionService.notImplemented())
             .build();
-    final JButton removePage =
+    final AbstractButton removePage =
         componentService
             .buttons()
             .builder("Forget page", false)

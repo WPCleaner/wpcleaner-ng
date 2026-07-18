@@ -32,6 +32,8 @@ public enum ImageCollection {
   OPTIONS("commons/gnome-preferences-other.png"),
   PAGE("commons/gnome-text-x-generic.png"),
   PASSWORD("commons/gnome-dialog-password.png"),
+  REFRESH("commons/gnome-view-refresh.png"),
+  REFRESH_STOP("commons/gnome-view-refresh-stop.png"),
   SYSTEM_OPTIONS("commons/gnome-preferences-system.png"),
   TAG("commons/codex-icon-tag-color-progressive.png"),
   USER("commons/gnome-face-cool.png"),

@@ -94,7 +94,7 @@ public class ApiRecentChanges {
           options.show().stream().map(s -> s.value).collect(Collectors.joining("|")));
     }
     if (options.limit() != null) {
-      builder.queryParam(RecentChangesParameters.LIMIT.value, options.limit().toString());
+      builder.queryParam(RecentChangesParameters.LIMIT.value, options.limit());
     }
     if (options.type() != null && !options.type().isEmpty()) {
       builder.queryParam(
