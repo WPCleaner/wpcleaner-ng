@@ -47,7 +47,7 @@ class ApiRecentChangesTest {
   void retrieveRecentChangesWithLimit() {
     // GIVEN
     final RecentChangesQuery options =
-        RecentChangesQuery.builder()
+        RecentChangesQuery.emptyBuilder()
             .limit(5)
             .properties(
                 List.of(

@@ -5,7 +5,9 @@ package org.wpcleaner.application.gui.swing.core.component.table;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.io.Closeable;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -19,7 +21,7 @@ public class ByRowTableModel<C> extends AbstractTableModel {
 
   protected ByRowTableModel(final List<ColumnInformation<C, ?>> columns, final List<C> values) {
     this.columns = columns;
-    this.values = values;
+    this.values = new ArrayList<>(values);
   }
 
   @Override
@@ -60,11 +62,38 @@ public class ByRowTableModel<C> extends AbstractTableModel {
     return columns.get(columnIndex);
   }
 
-  private C getValue(final int rowIndex) {
+  public C getValue(final int rowIndex) {
     if (rowIndex < 0 || rowIndex >= values.size()) {
       throw new IllegalArgumentException(
           "Invalid row index %s/%s".formatted(rowIndex, values.size()));
     }
     return values.get(rowIndex);
+  }
+
+  public RowChanger rowChanger() {
+    return new RowChanger();
+  }
+
+  public class RowChanger implements Closeable {
+
+    boolean changesMade;
+
+    public void addValue(final int rowIndex, final C value) {
+      values.add(rowIndex, value);
+      changesMade = true;
+    }
+
+    public void removeValue(final int rowIndex) {
+      values.remove(rowIndex);
+      changesMade = true;
+    }
+
+    @Override
+    public void close() {
+      if (!changesMade) {
+        return;
+      }
+      fireTableDataChanged();
+    }
   }
 }

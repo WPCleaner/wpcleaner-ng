@@ -7,8 +7,11 @@ package org.wpcleaner.api.api.query.list.recentchanges;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Direction;
+import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Properties;
 
 @SuppressWarnings({"PMD.TooManyFields", "PMD.AvoidFieldNameMatchingMethodName"})
 public record RecentChangesQuery(
@@ -16,9 +19,9 @@ public record RecentChangesQuery(
     @Nullable Instant end,
     @Nullable String excludeUser,
     @Nullable Boolean generateRevisions,
-    @Nullable Integer limit,
+    @Nullable String limit,
     @Nullable List<Integer> namespace,
-    @Nullable List<RecentChangesParameters.Properties> properties,
+    @Nullable List<Properties> properties,
     @Nullable String rccontinue,
     @Nullable List<RecentChangesParameters.Show> show,
     @Nullable String slot,
@@ -29,7 +32,44 @@ public record RecentChangesQuery(
     @Nullable List<RecentChangesParameters.Type> type,
     @Nullable String user) {
 
-  public static Builder builder() {
+  public RecentChangesQuery {
+    checkLimit(limit);
+  }
+
+  private static void checkLimit(@Nullable final String limit) {
+    if (limit == null || Objects.equals(limit, "max")) {
+      return;
+    }
+    try {
+      //noinspection ResultOfMethodCallIgnored
+      Integer.parseUnsignedInt(limit);
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException(
+          "RecentChangesQuery.limit should be an integer or the String max", e);
+    }
+  }
+
+  public Builder builder() {
+    return emptyBuilder()
+        .direction(direction)
+        .end(end)
+        .excludeUser(excludeUser)
+        .generateRevisions(generateRevisions)
+        .limit(limit)
+        .namespace(namespace)
+        .properties(properties)
+        .rccontinue(rccontinue)
+        .show(show)
+        .slot(slot)
+        .start(start)
+        .tag(tag)
+        .title(title)
+        .topOnly(topOnly)
+        .type(type)
+        .user(user);
+  }
+
+  public static Builder emptyBuilder() {
     return new Builder();
   }
 
@@ -39,9 +79,9 @@ public record RecentChangesQuery(
     @Nullable private Instant end;
     @Nullable private String excludeUser;
     @Nullable private Boolean generateRevisions;
-    @Nullable private Integer limit;
+    @Nullable private String limit;
     @Nullable private List<Integer> namespace;
-    @Nullable private List<RecentChangesParameters.Properties> properties;
+    @Nullable private List<Properties> properties;
     @Nullable private String rccontinue;
     @Nullable private List<RecentChangesParameters.Show> show;
     @Nullable private String slot;
@@ -52,82 +92,87 @@ public record RecentChangesQuery(
     @Nullable private List<RecentChangesParameters.Type> type;
     @Nullable private String user;
 
-    public Builder direction(final RecentChangesParameters.Direction direction) {
+    public Builder direction(@Nullable final Direction direction) {
       this.direction = direction;
       return this;
     }
 
-    public Builder end(final Instant end) {
+    public Builder end(@Nullable final Instant end) {
       this.end = end;
       return this;
     }
 
-    public Builder excludeUser(final String excludeUser) {
+    public Builder excludeUser(@Nullable final String excludeUser) {
       this.excludeUser = excludeUser;
       return this;
     }
 
-    public Builder generateRevisions(final Boolean generateRevisions) {
+    public Builder generateRevisions(@Nullable final Boolean generateRevisions) {
       this.generateRevisions = generateRevisions;
       return this;
     }
 
-    public Builder limit(final Integer limit) {
+    public Builder limit(@Nullable final Integer limit) {
+      this.limit = Optional.ofNullable(limit).map(Integer::toUnsignedString).orElse(null);
+      return this;
+    }
+
+    public Builder limit(@Nullable final String limit) {
       this.limit = limit;
       return this;
     }
 
-    public Builder namespace(final List<Integer> namespace) {
+    public Builder namespace(@Nullable final List<Integer> namespace) {
       this.namespace = namespace;
       return this;
     }
 
-    public Builder properties(final List<RecentChangesParameters.Properties> properties) {
+    public Builder properties(@Nullable final List<Properties> properties) {
       this.properties = properties;
       return this;
     }
 
-    public Builder rccontinue(final String rccontinue) {
+    public Builder rccontinue(@Nullable final String rccontinue) {
       this.rccontinue = rccontinue;
       return this;
     }
 
-    public Builder show(final List<RecentChangesParameters.Show> show) {
+    public Builder show(@Nullable final List<RecentChangesParameters.Show> show) {
       this.show = show;
       return this;
     }
 
-    public Builder slot(final String slot) {
+    public Builder slot(@Nullable final String slot) {
       this.slot = slot;
       return this;
     }
 
-    public Builder start(final Instant start) {
+    public Builder start(@Nullable final Instant start) {
       this.start = start;
       return this;
     }
 
-    public Builder tag(final String tag) {
+    public Builder tag(@Nullable final String tag) {
       this.tag = tag;
       return this;
     }
 
-    public Builder title(final String title) {
+    public Builder title(@Nullable final String title) {
       this.title = title;
       return this;
     }
 
-    public Builder topOnly(final Boolean topOnly) {
+    public Builder topOnly(@Nullable final Boolean topOnly) {
       this.topOnly = topOnly;
       return this;
     }
 
-    public Builder type(final List<RecentChangesParameters.Type> type) {
+    public Builder type(@Nullable final List<RecentChangesParameters.Type> type) {
       this.type = type;
       return this;
     }
 
-    public Builder user(final String user) {
+    public Builder user(@Nullable final String user) {
       this.user = user;
       return this;
     }
