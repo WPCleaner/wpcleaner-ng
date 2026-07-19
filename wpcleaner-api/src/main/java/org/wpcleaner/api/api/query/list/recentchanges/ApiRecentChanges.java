@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
@@ -18,6 +17,7 @@ import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUtils;
+import org.wpcleaner.api.api.UriBuilderUtils;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -50,74 +50,47 @@ public class ApiRecentChanges {
         .body(Response.class);
   }
 
-  @SuppressWarnings({"PMD.CognitiveComplexity", "PMD.CyclomaticComplexity", "PMD.NPathComplexity"})
   private URI computeUri(final UriBuilder uriBuilder, @Nullable final RecentChangesQuery options) {
     final UriBuilder builder =
         ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
             .queryParam(QueryParameters.LIST.value, QueryParameters.List.RECENT_CHANGES.value);
-
-    if (options == null) {
-      return builder.build();
-    }
-
-    if (options.start() != null) {
-      builder.queryParam(RecentChangesParameters.START.value, options.start().toString());
-    }
-    if (options.end() != null) {
-      builder.queryParam(RecentChangesParameters.END.value, options.end().toString());
-    }
-    if (options.direction() != null) {
-      builder.queryParam(RecentChangesParameters.DIRECTION.value, options.direction().value);
-    }
-    if (options.namespace() != null && !options.namespace().isEmpty()) {
-      builder.queryParam(
-          RecentChangesParameters.NAMESPACE.value,
-          options.namespace().stream().map(Object::toString).collect(Collectors.joining("|")));
-    }
-    if (options.user() != null) {
-      builder.queryParam(RecentChangesParameters.USER.value, options.user());
-    }
-    if (options.excludeUser() != null) {
-      builder.queryParam(RecentChangesParameters.EXCLUDE_USER.value, options.excludeUser());
-    }
-    if (options.tag() != null) {
-      builder.queryParam(RecentChangesParameters.TAG.value, options.tag());
-    }
-    if (options.properties() != null && !options.properties().isEmpty()) {
-      builder.queryParam(
-          RecentChangesParameters.PROPERTIES.value,
-          options.properties().stream().map(p -> p.value).collect(Collectors.joining("|")));
-    }
-    if (options.show() != null && !options.show().isEmpty()) {
-      builder.queryParam(
-          RecentChangesParameters.SHOW.value,
-          options.show().stream().map(s -> s.value).collect(Collectors.joining("|")));
-    }
-    if (options.limit() != null) {
-      builder.queryParam(RecentChangesParameters.LIMIT.value, options.limit());
-    }
-    if (options.type() != null && !options.type().isEmpty()) {
-      builder.queryParam(
-          RecentChangesParameters.TYPE.value,
-          options.type().stream().map(t -> t.value).collect(Collectors.joining("|")));
-    }
-    if (options.topOnly() != null) {
-      builder.queryParam(RecentChangesParameters.TOP_ONLY.value, options.topOnly().toString());
-    }
-    if (options.title() != null) {
-      builder.queryParam(RecentChangesParameters.TITLE.value, options.title());
-    }
-    if (options.rccontinue() != null) {
-      builder.queryParam(RecentChangesParameters.CONTINUE.value, options.rccontinue());
-    }
-    if (options.generateRevisions() != null) {
-      builder.queryParam(
-          RecentChangesParameters.GENERATE_REVISIONS.value, options.generateRevisions().toString());
-    }
-    if (options.slot() != null) {
-      builder.queryParam(RecentChangesParameters.SLOT.value, options.slot());
+    if (options != null) {
+      computeOptions(builder, options);
     }
     return builder.build();
+  }
+
+  private void computeOptions(final UriBuilder builder, final RecentChangesQuery options) {
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.START.value, options.start());
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.END.value, options.end());
+    UriBuilderUtils.queryParam(
+        builder,
+        RecentChangesParameters.DIRECTION.value,
+        options.direction(),
+        direction -> direction.value);
+    UriBuilderUtils.queryParamCollection(
+        builder, RecentChangesParameters.NAMESPACE.value, options.namespace());
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.USER.value, options.user());
+    UriBuilderUtils.queryParam(
+        builder, RecentChangesParameters.EXCLUDE_USER.value, options.excludeUser());
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.TAG.value, options.tag());
+    UriBuilderUtils.queryParamCollection(
+        builder,
+        RecentChangesParameters.PROPERTIES.value,
+        options.properties(),
+        properties -> properties.value);
+    UriBuilderUtils.queryParamCollection(
+        builder, RecentChangesParameters.SHOW.value, options.show(), show -> show.value);
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.LIMIT.value, options.limit());
+    UriBuilderUtils.queryParamCollection(
+        builder, RecentChangesParameters.TYPE.value, options.type(), type -> type.value);
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.TOP_ONLY.value, options.topOnly());
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.TITLE.value, options.title());
+    UriBuilderUtils.queryParam(
+        builder, RecentChangesParameters.CONTINUE.value, options.rccontinue());
+    UriBuilderUtils.queryParam(
+        builder, RecentChangesParameters.GENERATE_REVISIONS.value, options.generateRevisions());
+    UriBuilderUtils.queryParam(builder, RecentChangesParameters.SLOT.value, options.slot());
   }
 
   private record Response(

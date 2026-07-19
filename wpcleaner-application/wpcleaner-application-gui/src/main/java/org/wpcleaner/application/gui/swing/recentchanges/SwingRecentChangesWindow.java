@@ -15,7 +15,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -43,19 +45,27 @@ public final class SwingRecentChangesWindow
       RecentChangesQuery.emptyBuilder()
           .limit("max")
           .properties(
-              List.of(
+              Set.of(
                   Properties.COMMENT,
                   Properties.IDS,
                   Properties.TAGS,
                   Properties.TIMESTAMP,
                   Properties.TITLE,
                   Properties.USER))
-          .type(List.of(RecentChangesParameters.Type.EDIT, RecentChangesParameters.Type.NEW))
           .build();
+  private static final RecentChangesOptions DEFAULT_OPTIONS =
+      new RecentChangesOptions(
+          "Default options",
+          Set.of(),
+          Set.of(),
+          null,
+          Set.of(RecentChangesParameters.Type.EDIT, RecentChangesParameters.Type.NEW),
+          false);
 
-  private final RecentChangesModel model;
-  private final Timer timerRecentChanges;
   @Nullable private Instant lastRecentChange;
+  private final RecentChangesModel model;
+  private final JComboBox<RecentChangesOptions> options;
+  private final Timer timerRecentChanges;
 
   static void create(final SwingRecentChangesWindowServices services) {
     final SwingRecentChangesWindow window = new SwingRecentChangesWindow(services);
@@ -65,6 +75,7 @@ public final class SwingRecentChangesWindow
   private SwingRecentChangesWindow(final SwingRecentChangesWindowServices services) {
     super(services);
     this.model = new RecentChangesModel(List.of(), services.columnFactory());
+    this.options = new JComboBox<>();
     this.timerRecentChanges = new Timer(60_000, _ -> refreshList());
     timerRecentChanges.setInitialDelay(0);
   }
@@ -97,8 +108,17 @@ public final class SwingRecentChangesWindow
             .withToggle(true)
             .withAction(this::manageRefresh)
             .build();
+    options.setRenderer(new RecentChangesOptionsListCellRenderer());
+    options.addItem(DEFAULT_OPTIONS);
     final JToolBar toolbar =
-        services.swing().component().toolBars().builder().withComponent(refresh).build();
+        services
+            .swing()
+            .component()
+            .toolBars()
+            .builder()
+            .withComponent(refresh)
+            .withComponent(options)
+            .build();
     services.swing().layout().addRowSpanningAllColumns(panel, constraints, toolbar);
   }
 
@@ -136,7 +156,17 @@ public final class SwingRecentChangesWindow
 
   private void refreshList() {
     final WikiDefinition wiki = services.user().getCurrentUser().wiki();
-    final RecentChangesQuery query = DEFAULT_QUERY.builder().end(lastRecentChange).build();
+    final RecentChangesOptions currentOptions = currentOptions();
+    final RecentChangesQuery query =
+        DEFAULT_QUERY
+            .builder()
+            .end(lastRecentChange)
+            .namespace(currentOptions.namespace())
+            .show(currentOptions.show())
+            .tag(currentOptions.tag())
+            .topOnly(currentOptions.topOnly())
+            .type(currentOptions.type())
+            .build();
     final List<RecentChange> recentChanges =
         services.apiRecentChanges().retrieveRecentChanges(wiki, query);
     recentChanges.sort(RecentChangeComparator.INSTANCE);
@@ -163,5 +193,12 @@ public final class SwingRecentChangesWindow
               .map(instant -> instant.minus(RECENT_CHANGES_OVERLAP))
               .orElse(null);
     }
+  }
+
+  private RecentChangesOptions currentOptions() {
+    if (!(options.getSelectedItem() instanceof RecentChangesOptions selected)) {
+      return DEFAULT_OPTIONS;
+    }
+    return selected;
   }
 }

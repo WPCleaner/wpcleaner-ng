@@ -6,6 +6,7 @@ package org.wpcleaner.api.api.query.list.recentchanges;
  */
 
 import java.util.List;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class ApiRecentChangesTest {
         RecentChangesQuery.emptyBuilder()
             .limit(5)
             .properties(
-                List.of(
+                Set.of(
                     RecentChangesParameters.Properties.COMMENT,
                     RecentChangesParameters.Properties.FLAGS,
                     RecentChangesParameters.Properties.TITLE,

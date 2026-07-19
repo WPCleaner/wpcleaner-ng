@@ -6,9 +6,9 @@ package org.wpcleaner.api.api.query.list.recentchanges;
  */
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Direction;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Properties;
@@ -18,18 +18,18 @@ public record RecentChangesQuery(
     @Nullable Direction direction,
     @Nullable Instant end,
     @Nullable String excludeUser,
-    @Nullable Boolean generateRevisions,
+    boolean generateRevisions,
     @Nullable String limit,
-    @Nullable List<Integer> namespace,
-    @Nullable List<Properties> properties,
+    @Nullable Set<Integer> namespace,
+    @Nullable Set<Properties> properties,
     @Nullable String rccontinue,
-    @Nullable List<RecentChangesParameters.Show> show,
+    @Nullable Set<RecentChangesParameters.Show> show,
     @Nullable String slot,
     @Nullable Instant start,
     @Nullable String tag,
     @Nullable String title,
-    @Nullable Boolean topOnly,
-    @Nullable List<RecentChangesParameters.Type> type,
+    boolean topOnly,
+    @Nullable Set<RecentChangesParameters.Type> type,
     @Nullable String user) {
 
   public RecentChangesQuery {
@@ -78,18 +78,18 @@ public record RecentChangesQuery(
     @Nullable private Direction direction;
     @Nullable private Instant end;
     @Nullable private String excludeUser;
-    @Nullable private Boolean generateRevisions;
+    private boolean generateRevisions;
     @Nullable private String limit;
-    @Nullable private List<Integer> namespace;
-    @Nullable private List<Properties> properties;
+    @Nullable private Set<Integer> namespace;
+    @Nullable private Set<Properties> properties;
     @Nullable private String rccontinue;
-    @Nullable private List<RecentChangesParameters.Show> show;
+    @Nullable private Set<RecentChangesParameters.Show> show;
     @Nullable private String slot;
     @Nullable private Instant start;
     @Nullable private String tag;
     @Nullable private String title;
-    @Nullable private Boolean topOnly;
-    @Nullable private List<RecentChangesParameters.Type> type;
+    private boolean topOnly;
+    @Nullable private Set<RecentChangesParameters.Type> type;
     @Nullable private String user;
 
     public Builder direction(@Nullable final Direction direction) {
@@ -107,7 +107,7 @@ public record RecentChangesQuery(
       return this;
     }
 
-    public Builder generateRevisions(@Nullable final Boolean generateRevisions) {
+    public Builder generateRevisions(final boolean generateRevisions) {
       this.generateRevisions = generateRevisions;
       return this;
     }
@@ -122,12 +122,12 @@ public record RecentChangesQuery(
       return this;
     }
 
-    public Builder namespace(@Nullable final List<Integer> namespace) {
+    public Builder namespace(@Nullable final Set<Integer> namespace) {
       this.namespace = namespace;
       return this;
     }
 
-    public Builder properties(@Nullable final List<Properties> properties) {
+    public Builder properties(@Nullable final Set<Properties> properties) {
       this.properties = properties;
       return this;
     }
@@ -137,7 +137,7 @@ public record RecentChangesQuery(
       return this;
     }
 
-    public Builder show(@Nullable final List<RecentChangesParameters.Show> show) {
+    public Builder show(@Nullable final Set<RecentChangesParameters.Show> show) {
       this.show = show;
       return this;
     }
@@ -162,12 +162,12 @@ public record RecentChangesQuery(
       return this;
     }
 
-    public Builder topOnly(@Nullable final Boolean topOnly) {
+    public Builder topOnly(final boolean topOnly) {
       this.topOnly = topOnly;
       return this;
     }
 
-    public Builder type(@Nullable final List<RecentChangesParameters.Type> type) {
+    public Builder type(@Nullable final Set<RecentChangesParameters.Type> type) {
       this.type = type;
       return this;
     }
