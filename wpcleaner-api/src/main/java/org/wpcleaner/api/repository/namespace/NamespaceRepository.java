@@ -23,4 +23,8 @@ public class NamespaceRepository {
     namespaces.add(namespace);
     namespaces.sort(Comparator.comparingInt(Namespace::id));
   }
+
+  public List<Namespace> getNamespaces() {
+    return List.copyOf(namespaces);
+  }
 }

@@ -17,7 +17,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import javax.swing.AbstractButton;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
@@ -26,7 +25,6 @@ import javax.swing.Timer;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
-import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Properties;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.swing.core.component.table.ByRowTableModel;
@@ -46,25 +44,17 @@ public final class SwingRecentChangesWindow
           .limit("max")
           .properties(
               Set.of(
-                  Properties.COMMENT,
-                  Properties.IDS,
-                  Properties.TAGS,
-                  Properties.TIMESTAMP,
-                  Properties.TITLE,
-                  Properties.USER))
+                  RecentChangesParameters.Properties.COMMENT,
+                  RecentChangesParameters.Properties.IDS,
+                  RecentChangesParameters.Properties.TAGS,
+                  RecentChangesParameters.Properties.TIMESTAMP,
+                  RecentChangesParameters.Properties.TITLE,
+                  RecentChangesParameters.Properties.USER))
           .build();
-  private static final RecentChangesOptions DEFAULT_OPTIONS =
-      new RecentChangesOptions(
-          "Default options",
-          Set.of(),
-          Set.of(),
-          null,
-          Set.of(RecentChangesParameters.Type.EDIT, RecentChangesParameters.Type.NEW),
-          false);
 
   @Nullable private Instant lastRecentChange;
   private final RecentChangesModel model;
-  private final JComboBox<RecentChangesOptions> options;
+  private final transient RecentChangesOptionsInput optionsInput;
   private final Timer timerRecentChanges;
 
   static void create(final SwingRecentChangesWindowServices services) {
@@ -75,7 +65,7 @@ public final class SwingRecentChangesWindow
   private SwingRecentChangesWindow(final SwingRecentChangesWindowServices services) {
     super(services);
     this.model = new RecentChangesModel(List.of(), services.columnFactory());
-    this.options = new JComboBox<>();
+    this.optionsInput = new RecentChangesOptionsInput(this, services);
     this.timerRecentChanges = new Timer(60_000, _ -> refreshList());
     timerRecentChanges.setInitialDelay(0);
   }
@@ -108,8 +98,6 @@ public final class SwingRecentChangesWindow
             .withToggle(true)
             .withAction(this::manageRefresh)
             .build();
-    options.setRenderer(new RecentChangesOptionsListCellRenderer());
-    options.addItem(DEFAULT_OPTIONS);
     final JToolBar toolbar =
         services
             .swing()
@@ -117,7 +105,10 @@ public final class SwingRecentChangesWindow
             .toolBars()
             .builder()
             .withComponent(refresh)
-            .withComponent(options)
+            .withComponent(optionsInput.getComboBox())
+            .withComponent(optionsInput.getEditButton())
+            .withComponent(optionsInput.getAddButton())
+            .withComponent(optionsInput.getRemoveButton())
             .build();
     services.swing().layout().addRowSpanningAllColumns(panel, constraints, toolbar);
   }
@@ -156,7 +147,7 @@ public final class SwingRecentChangesWindow
 
   private void refreshList() {
     final WikiDefinition wiki = services.user().getCurrentUser().wiki();
-    final RecentChangesOptions currentOptions = currentOptions();
+    final RecentChangesOptions currentOptions = optionsInput.getSelectedOptions();
     final RecentChangesQuery query =
         DEFAULT_QUERY
             .builder()
@@ -193,12 +184,5 @@ public final class SwingRecentChangesWindow
               .map(instant -> instant.minus(RECENT_CHANGES_OVERLAP))
               .orElse(null);
     }
-  }
-
-  private RecentChangesOptions currentOptions() {
-    if (!(options.getSelectedItem() instanceof RecentChangesOptions selected)) {
-      return DEFAULT_OPTIONS;
-    }
-    return selected;
   }
 }
