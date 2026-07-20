@@ -12,14 +12,13 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
-import org.wpcleaner.api.api.ApiUtils;
+import org.wpcleaner.api.api.ApiUriBuilder;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -53,12 +52,10 @@ public class ApiTokens {
 
   private URI computeUri(
       final UriBuilder uriBuilder, final Collection<TokensParameters.Type> tokens) {
-    return ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
-        .queryParam(QueryParameters.META.value, QueryParameters.Meta.TOKENS.value)
-        .queryParam(
-            TokensParameters.TYPE.value,
-            tokens.stream().map(type -> type.value).collect(Collectors.joining("|")))
-        .build();
+    final ApiUriBuilder builder = ApiUriBuilder.of(uriBuilder, ApiParameters.Action.QUERY);
+    builder.queryParam(QueryParameters.META.value, QueryParameters.Meta.TOKENS.value);
+    builder.queryParamCollection(TokensParameters.TYPE.value, tokens, token -> token.value);
+    return builder.build();
   }
 
   private record Response(

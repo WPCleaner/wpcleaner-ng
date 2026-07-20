@@ -20,6 +20,7 @@ import org.wpcleaner.api.api.ApiException;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiResponse;
 import org.wpcleaner.api.api.ApiRestClient;
+import org.wpcleaner.api.api.ApiUriBuilder;
 import org.wpcleaner.api.api.ApiUtils;
 import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -75,7 +76,7 @@ public class ApiLogin {
     return restClient
         .getRestClient(wiki)
         .post()
-        .uri(uriBuilder -> ApiUtils.configure(uriBuilder, ApiParameters.Action.LOGIN).build())
+        .uri(uriBuilder -> ApiUriBuilder.of(uriBuilder, ApiParameters.Action.LOGIN).build())
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         .body(body)
         .retrieve()

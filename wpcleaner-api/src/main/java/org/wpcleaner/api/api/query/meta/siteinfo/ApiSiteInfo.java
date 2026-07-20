@@ -13,14 +13,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
-import org.wpcleaner.api.api.ApiUtils;
+import org.wpcleaner.api.api.ApiUriBuilder;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters.FilterInterwiki;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -97,28 +96,14 @@ public class ApiSiteInfo {
       @Nullable final FilterInterwiki filterInterwiki,
       @Nullable final Boolean showImageList,
       @Nullable final Boolean numberInGroup) {
-    UriBuilder builder =
-        ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
-            .queryParam(QueryParameters.META.value, QueryParameters.Meta.SITE_INFO.value);
-
-    if (!properties.isEmpty()) {
-      builder =
-          builder.queryParam(
-              SiteInfoParameters.PROPERTIES.value,
-              properties.stream().map(prop -> prop.value).collect(Collectors.joining("|")));
-    }
-    if (filterInterwiki != null) {
-      builder =
-          builder.queryParam(SiteInfoParameters.FILTER_INTERWIKI.value, filterInterwiki.value);
-    }
-    if (showImageList != null) {
-      builder =
-          builder.queryParam(SiteInfoParameters.SHOW_IMAGE_LIST.value, showImageList.toString());
-    }
-    if (numberInGroup != null) {
-      builder =
-          builder.queryParam(SiteInfoParameters.NUMBER_IN_GROUP.value, numberInGroup.toString());
-    }
+    final ApiUriBuilder builder = ApiUriBuilder.of(uriBuilder, ApiParameters.Action.QUERY);
+    builder.queryParam(QueryParameters.META.value, QueryParameters.Meta.SITE_INFO.value);
+    builder.queryParamCollection(
+        SiteInfoParameters.PROPERTIES.value, properties, property -> property.value);
+    builder.queryParam(
+        SiteInfoParameters.FILTER_INTERWIKI.value, filterInterwiki, filter -> filter.value);
+    builder.queryParam(SiteInfoParameters.SHOW_IMAGE_LIST.value, showImageList);
+    builder.queryParam(SiteInfoParameters.NUMBER_IN_GROUP.value, numberInGroup);
     return builder.build();
   }
 

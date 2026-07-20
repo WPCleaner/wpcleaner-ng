@@ -16,8 +16,7 @@ import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
-import org.wpcleaner.api.api.ApiUtils;
-import org.wpcleaner.api.api.UriBuilderUtils;
+import org.wpcleaner.api.api.ApiUriBuilder;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -51,46 +50,38 @@ public class ApiRecentChanges {
   }
 
   private URI computeUri(final UriBuilder uriBuilder, @Nullable final RecentChangesQuery options) {
-    final UriBuilder builder =
-        ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
-            .queryParam(QueryParameters.LIST.value, QueryParameters.List.RECENT_CHANGES.value);
+    final ApiUriBuilder builder = ApiUriBuilder.of(uriBuilder, ApiParameters.Action.QUERY);
+    builder.queryParam(QueryParameters.LIST.value, QueryParameters.List.RECENT_CHANGES.value);
     if (options != null) {
       computeOptions(builder, options);
     }
     return builder.build();
   }
 
-  private void computeOptions(final UriBuilder builder, final RecentChangesQuery options) {
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.START.value, options.start());
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.END.value, options.end());
-    UriBuilderUtils.queryParam(
-        builder,
-        RecentChangesParameters.DIRECTION.value,
-        options.direction(),
-        direction -> direction.value);
-    UriBuilderUtils.queryParamCollection(
-        builder, RecentChangesParameters.NAMESPACE.value, options.namespace());
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.USER.value, options.user());
-    UriBuilderUtils.queryParam(
-        builder, RecentChangesParameters.EXCLUDE_USER.value, options.excludeUser());
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.TAG.value, options.tag());
-    UriBuilderUtils.queryParamCollection(
-        builder,
+  private void computeOptions(final ApiUriBuilder builder, final RecentChangesQuery options) {
+    builder.queryParam(RecentChangesParameters.START.value, options.start());
+    builder.queryParam(RecentChangesParameters.END.value, options.end());
+    builder.queryParam(
+        RecentChangesParameters.DIRECTION.value, options.direction(), direction -> direction.value);
+    builder.queryParamCollection(RecentChangesParameters.NAMESPACE.value, options.namespace());
+    builder.queryParam(RecentChangesParameters.USER.value, options.user());
+    builder.queryParam(RecentChangesParameters.EXCLUDE_USER.value, options.excludeUser());
+    builder.queryParam(RecentChangesParameters.TAG.value, options.tag());
+    builder.queryParamCollection(
         RecentChangesParameters.PROPERTIES.value,
         options.properties(),
         properties -> properties.value);
-    UriBuilderUtils.queryParamCollection(
-        builder, RecentChangesParameters.SHOW.value, options.show(), show -> show.value);
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.LIMIT.value, options.limit());
-    UriBuilderUtils.queryParamCollection(
-        builder, RecentChangesParameters.TYPE.value, options.type(), type -> type.value);
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.TOP_ONLY.value, options.topOnly());
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.TITLE.value, options.title());
-    UriBuilderUtils.queryParam(
-        builder, RecentChangesParameters.CONTINUE.value, options.rccontinue());
-    UriBuilderUtils.queryParam(
-        builder, RecentChangesParameters.GENERATE_REVISIONS.value, options.generateRevisions());
-    UriBuilderUtils.queryParam(builder, RecentChangesParameters.SLOT.value, options.slot());
+    builder.queryParamCollection(
+        RecentChangesParameters.SHOW.value, options.show(), show -> show.value);
+    builder.queryParam(RecentChangesParameters.LIMIT.value, options.limit());
+    builder.queryParamCollection(
+        RecentChangesParameters.TYPE.value, options.type(), type -> type.value);
+    builder.queryParam(RecentChangesParameters.TOP_ONLY.value, options.topOnly());
+    builder.queryParam(RecentChangesParameters.TITLE.value, options.title());
+    builder.queryParam(RecentChangesParameters.CONTINUE.value, options.rccontinue());
+    builder.queryParam(
+        RecentChangesParameters.GENERATE_REVISIONS.value, options.generateRevisions());
+    builder.queryParam(RecentChangesParameters.SLOT.value, options.slot());
   }
 
   private record Response(

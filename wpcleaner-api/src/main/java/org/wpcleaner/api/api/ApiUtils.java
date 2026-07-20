@@ -10,7 +10,6 @@ import java.util.function.Function;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.UriBuilder;
 
 public final class ApiUtils {
 
@@ -19,15 +18,6 @@ public final class ApiUtils {
 
   private ApiUtils() {
     // Utility class
-  }
-
-  public static UriBuilder configure(
-      final UriBuilder uriBuilder, final ApiParameters.Action action) {
-    return uriBuilder
-        .queryParam(ApiParameters.ACTION.value, action.value)
-        .queryParam(ApiParameters.ERROR_FORMAT.value, ApiParameters.ErrorFormat.PLAIN_TEXT.value)
-        .queryParam(ApiParameters.FORMAT.value, ApiParameters.Format.JSON.value)
-        .queryParam(ApiParameters.FORMAT_VERSION.value, ApiParameters.FORMAT_VERSION_VALUE);
   }
 
   public static <I extends ApiResponse, T> T processApiResponse(

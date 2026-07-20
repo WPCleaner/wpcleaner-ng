@@ -11,13 +11,14 @@ import com.fasterxml.jackson.annotation.Nulls;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
 import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
-import org.wpcleaner.api.api.ApiUtils;
+import org.wpcleaner.api.api.ApiUriBuilder;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -49,16 +50,13 @@ public class ApiUsers {
   }
 
   private URI computeUri(final UriBuilder uriBuilder, final String name) {
-    return ApiUtils.configure(uriBuilder, ApiParameters.Action.QUERY)
-        .queryParam(QueryParameters.LIST.value, QueryParameters.List.USERS.value)
-        .queryParam(
-            UsersParameters.PROPERTIES.value,
-            "%s|%s"
-                .formatted(
-                    UsersParameters.Properties.GROUPS.value,
-                    UsersParameters.Properties.RIGHTS.value))
-        .queryParam(UsersParameters.USERS.value, name)
-        .build();
+    final ApiUriBuilder builder = ApiUriBuilder.of(uriBuilder, ApiParameters.Action.QUERY);
+    builder.queryParam(QueryParameters.LIST.value, QueryParameters.List.USERS.value);
+    builder.queryParamCollection(
+        QueryParameters.PROPERTIES.value,
+        Set.of(UsersParameters.Properties.GROUPS.value, UsersParameters.Properties.RIGHTS.value));
+    builder.queryParam(UsersParameters.USERS.value, name);
+    return builder.build();
   }
 
   private record Response(
