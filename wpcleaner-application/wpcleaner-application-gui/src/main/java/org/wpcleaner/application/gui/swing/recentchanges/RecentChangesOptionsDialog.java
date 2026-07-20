@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -23,11 +24,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
+import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.component.FunctionListCellRenderer;
 import org.wpcleaner.application.gui.swing.core.layout.GridBagComponent;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class RecentChangesOptionsDialog extends JDialog {
 
   @Serial private static final long serialVersionUID = 1L;
@@ -35,7 +38,7 @@ public final class RecentChangesOptionsDialog extends JDialog {
   private final JTextField nameField;
   private final JList<Namespace> namespaceList;
   private final JList<RecentChangesParameters.Show> showList;
-  private final JTextField tagField;
+  private final JComboBox<String> tagField;
   private final JList<RecentChangesParameters.Type> typeList;
   private final JCheckBox topOnlyCheckbox;
   private boolean confirmed;
@@ -44,6 +47,7 @@ public final class RecentChangesOptionsDialog extends JDialog {
       final Frame owner,
       final SwingCoreServices swing,
       final List<Namespace> availableNamespaces,
+      final List<Tag> availableTags,
       @Nullable final RecentChangesOptions initialOptions) {
     super(owner, "Recent changes options", true);
     this.confirmed = false;
@@ -89,9 +93,14 @@ public final class RecentChangesOptionsDialog extends JDialog {
             GridBagComponent.of(new JLabel("Show:")),
             GridBagComponent.of(showScroll));
 
-    tagField = new JTextField(20);
+    final List<String> tagNames = new ArrayList<>();
+    tagNames.add("");
+    for (final Tag tag : availableTags) {
+      tagNames.add(tag.name());
+    }
+    tagField = new JComboBox<>(tagNames.toArray(new String[0]));
     if (initialOptions != null && initialOptions.tag() != null) {
-      tagField.setText(initialOptions.tag());
+      tagField.setSelectedItem(initialOptions.tag());
     }
     swing
         .layout()
@@ -183,9 +192,11 @@ public final class RecentChangesOptionsDialog extends JDialog {
       final Frame owner,
       final SwingCoreServices swing,
       final List<Namespace> availableNamespaces,
+      final List<Tag> availableTags,
       @Nullable final RecentChangesOptions initialOptions) {
     final RecentChangesOptionsDialog dialog =
-        new RecentChangesOptionsDialog(owner, swing, availableNamespaces, initialOptions);
+        new RecentChangesOptionsDialog(
+            owner, swing, availableNamespaces, availableTags, initialOptions);
     dialog.setVisible(true);
     return dialog.getOptions();
   }
@@ -209,8 +220,8 @@ public final class RecentChangesOptionsDialog extends JDialog {
     final Set<Integer> namespaceSet =
         Set.copyOf(namespaceList.getSelectedValuesList().stream().map(Namespace::id).toList());
     final Set<RecentChangesParameters.Show> showSet = Set.copyOf(showList.getSelectedValuesList());
-    final String tagText = tagField.getText().trim();
-    final String tag = tagText.isEmpty() ? null : tagText;
+    final String tagText = (String) tagField.getSelectedItem();
+    final String tag = (tagText == null || tagText.isEmpty()) ? null : tagText;
     final Set<RecentChangesParameters.Type> typeSet = Set.copyOf(typeList.getSelectedValuesList());
     final boolean topOnly = topOnlyCheckbox.isSelected();
     return Optional.of(

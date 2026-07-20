@@ -21,6 +21,7 @@ module org.wpcleaner.api {
   requires org.yaml.snakeyaml;
   exports org.wpcleaner.api.api.login;
   exports org.wpcleaner.api.api.query.list.recentchanges;
+  exports org.wpcleaner.api.api.query.list.tags;
   exports org.wpcleaner.api.api.query.list.users;
   exports org.wpcleaner.api.api.query.meta.siteinfo;
   exports org.wpcleaner.api.api.query.meta.tokens;
@@ -29,12 +30,14 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.hook.login;
   exports org.wpcleaner.api.language;
   exports org.wpcleaner.api.repository.namespace;
+  exports org.wpcleaner.api.repository.tag;
   exports org.wpcleaner.api.settings;
   exports org.wpcleaner.api.utils;
   exports org.wpcleaner.api.wiki.builder;
   exports org.wpcleaner.api.wiki.definition;
   opens org.wpcleaner.api.api.login;
   opens org.wpcleaner.api.api.query.list.recentchanges;
+  opens org.wpcleaner.api.api.query.list.tags;
   opens org.wpcleaner.api.api.query.list.users;
   opens org.wpcleaner.api.api.query.meta.siteinfo;
   opens org.wpcleaner.api.api.query.meta.tokens;
@@ -43,6 +46,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.hook.login;
   opens org.wpcleaner.api.language;
   opens org.wpcleaner.api.repository.namespace;
+  opens org.wpcleaner.api.repository.tag;
   opens org.wpcleaner.api.settings;
   opens org.wpcleaner.api.utils;
   opens org.wpcleaner.api.wiki.builder;

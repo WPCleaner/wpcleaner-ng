@@ -44,12 +44,14 @@ When this skill is active, you MUST:
    The nested enums should be sorted alphabetically.
  
 6. As needed, implement records with proper Jackson annotations for modeling the response of the API module.
+   When the API module has a properties parameter (like `usprop`), test all the possible values for it because the response may contain new fields for each value.
    Order record parameters alphabetically.
    Order record methods alphabetically.
 
 7. If the API module has more the 5 parameters, implement a record for grouping all the available parameters.
    Order record parameters alphabetically.
    Implement a nested `Builder` class following the Builder pattern with the parameters sorted alphabetically, followed by the setter methods sorted alphabetically.
+   If the API module has a parameter for specifying limits (like `uslimit`), ensure that you use a String and not an Integer for it, because it can be a number or the literal String `max`.
 
 8. Implement the service class named `ApiModuleName` where `ModuleName` is the capitalized API module name.
  

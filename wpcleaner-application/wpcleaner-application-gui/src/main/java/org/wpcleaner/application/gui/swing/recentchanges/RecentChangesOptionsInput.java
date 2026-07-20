@@ -103,6 +103,7 @@ public final class RecentChangesOptionsInput {
             owner,
             services.swing(),
             services.namespaceRepository().getNamespaces(),
+            services.tagRepository().getTags(),
             getSelectedOptions());
     result.ifPresent(
         newOptions -> {
@@ -121,7 +122,11 @@ public final class RecentChangesOptionsInput {
     }
     final Optional<RecentChangesOptions> result =
         RecentChangesOptionsDialog.showDialog(
-            owner, services.swing(), services.namespaceRepository().getNamespaces(), selected);
+            owner,
+            services.swing(),
+            services.namespaceRepository().getNamespaces(),
+            services.tagRepository().getTags(),
+            selected);
     result.ifPresent(
         newOptions -> {
           final int index = comboBox.getSelectedIndex();

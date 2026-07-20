@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.swing.recentchanges;
 import java.awt.EventQueue;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
 import org.wpcleaner.api.hook.login.LoginHook;
 
@@ -20,6 +21,12 @@ public class SwingRecentChangesWindowFactory {
       final LoginHook loginHook, final SwingRecentChangesWindowServices services) {
     this.services = services;
     loginHook.addSiteInfoProperties(Set.of(SiteInfoParameters.Properties.NAMESPACES));
+    loginHook.addTagsProperties(
+        Set.of(
+            TagsParameters.Properties.ACTIVE,
+            TagsParameters.Properties.DEFINED,
+            TagsParameters.Properties.DESCRIPTION,
+            TagsParameters.Properties.DISPLAY_NAME));
   }
 
   public void displayRecentChangesWindow() {
