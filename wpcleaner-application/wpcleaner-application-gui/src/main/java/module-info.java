@@ -6,6 +6,7 @@
 @org.jspecify.annotations.NullMarked
 module org.wpcleaner.application.gui {
   requires transitive java.desktop;
+  requires transitive javafx.controls;
   requires transitive org.jspecify;
   requires transitive org.wpcleaner.api;
   requires transitive org.wpcleaner.application.base;
@@ -21,6 +22,8 @@ module org.wpcleaner.application.gui {
   exports org.wpcleaner.application.gui.core.action;
   exports org.wpcleaner.application.gui.core.desktop;
   exports org.wpcleaner.application.gui.core.factory;
+  exports org.wpcleaner.application.gui.javafx.login;
+  exports org.wpcleaner.application.gui.javafx;
   exports org.wpcleaner.application.gui.settings.graphical;
   exports org.wpcleaner.application.gui.settings.interesting;
   exports org.wpcleaner.application.gui.settings.windows;
@@ -41,6 +44,8 @@ module org.wpcleaner.application.gui {
   opens org.wpcleaner.application.gui.core.action;
   opens org.wpcleaner.application.gui.core.desktop;
   opens org.wpcleaner.application.gui.core.factory;
+  opens org.wpcleaner.application.gui.javafx.login;
+  opens org.wpcleaner.application.gui.javafx;
   opens org.wpcleaner.application.gui.settings.graphical;
   opens org.wpcleaner.application.gui.settings.interesting;
   opens org.wpcleaner.application.gui.settings.windows;

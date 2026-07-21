@@ -53,7 +53,7 @@ public class ApiUsers {
     final ApiUriBuilder builder = ApiUriBuilder.of(uriBuilder, ApiParameters.Action.QUERY);
     builder.queryParam(QueryParameters.LIST.value, QueryParameters.List.USERS.value);
     builder.queryParamCollection(
-        QueryParameters.PROPERTIES.value,
+        UsersParameters.PROPERTIES.value,
         Set.of(UsersParameters.Properties.GROUPS.value, UsersParameters.Properties.RIGHTS.value));
     builder.queryParam(UsersParameters.USERS.value, name);
     return builder.build();
