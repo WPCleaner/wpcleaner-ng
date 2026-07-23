@@ -40,7 +40,7 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v6
 
-    - name: Build with Gradle Wrapper
-      run: |
-        apt install xvfb
-        xvfb-run ./gradlew build
+    - name: Build with Gradle Wrapper (using xvfb to provide a virtual display)
+      uses: coactions/setup-xvfb@v1
+      with:
+        run: ./gradlew build
