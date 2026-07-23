@@ -7,11 +7,11 @@ package org.wpcleaner.application.gui.swing.main;
 
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.application.gui.core.factory.RecentChangesWindowFactory;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 import org.wpcleaner.application.gui.swing.core.SwingCoreServices;
 import org.wpcleaner.application.gui.swing.core.window.WPCleanerWindowServices;
-import org.wpcleaner.application.gui.swing.recentchanges.SwingRecentChangesWindowFactory;
 
 @Service
 public record SwingMainWindowServices(
@@ -19,5 +19,5 @@ public record SwingMainWindowServices(
     CurrentUserService user,
     WindowsSettingsManager windowsSettings,
     InterestingSettingsManager interestingSettings,
-    SwingRecentChangesWindowFactory recentChangesWindowFactory)
+    RecentChangesWindowFactory recentChangesWindowFactory)
     implements WPCleanerWindowServices {}

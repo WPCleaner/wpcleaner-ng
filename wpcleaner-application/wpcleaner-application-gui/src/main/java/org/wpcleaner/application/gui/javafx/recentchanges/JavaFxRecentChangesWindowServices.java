@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.main;
+package org.wpcleaner.application.gui.javafx.recentchanges;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -7,21 +7,23 @@ package org.wpcleaner.application.gui.javafx.main;
 
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.api.api.query.list.recentchanges.ApiRecentChanges;
+import org.wpcleaner.api.repository.namespace.NamespaceRepository;
+import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
-import org.wpcleaner.application.gui.core.factory.RecentChangesWindowFactory;
-import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 import org.wpcleaner.application.gui.swing.core.window.SaveWindowsPositionAction;
 import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
-public record JavaFxMainWindowServices(
+public record JavaFxRecentChangesWindowServices(
+    ApiRecentChanges apiRecentChanges,
+    NamespaceRepository namespaceRepository,
+    TagRepository tagRepository,
     CurrentUserService user,
-    WindowsSettingsManager windowsSettings,
-    InterestingSettingsManager interestingSettings,
-    RecentChangesWindowFactory recentChangesWindowFactory,
     ImageLoader imageLoader,
     DesktopService desktopService,
     UrlService urlService,
-    SaveWindowsPositionAction saveWindowsPositionAction) {}
+    SaveWindowsPositionAction saveWindowsPositionAction,
+    WindowsSettingsManager windowsSettings) {}

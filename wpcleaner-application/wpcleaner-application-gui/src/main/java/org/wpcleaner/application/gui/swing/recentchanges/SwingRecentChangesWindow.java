@@ -24,6 +24,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.Timer;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
+import org.wpcleaner.api.api.query.list.recentchanges.RecentChangeComparator;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;

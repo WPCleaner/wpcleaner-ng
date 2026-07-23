@@ -1,27 +1,28 @@
-package org.wpcleaner.application.gui.swing.recentchanges;
+package org.wpcleaner.application.gui.javafx.recentchanges;
 
 /*
- * SPDX-FileCopyrightText: © 2025 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
+ * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.awt.EventQueue;
 import java.util.Set;
+import javafx.application.Platform;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
 import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.application.gui.core.factory.RecentChangesWindowFactory;
+import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
 
-@ConditionalOnProperty(name = "gui", havingValue = "swing", matchIfMissing = true)
+@ConditionalOnProperty(name = "gui", havingValue = "javafx")
 @Service
-public class SwingRecentChangesWindowFactory implements RecentChangesWindowFactory {
+public class JavaFxRecentChangesWindowFactory implements RecentChangesWindowFactory {
 
-  private final SwingRecentChangesWindowServices services;
+  private final JavaFxRecentChangesWindowServices services;
 
-  public SwingRecentChangesWindowFactory(
-      final LoginHook loginHook, final SwingRecentChangesWindowServices services) {
+  public JavaFxRecentChangesWindowFactory(
+      final LoginHook loginHook, final JavaFxRecentChangesWindowServices services) {
     this.services = services;
     loginHook.addSiteInfoProperties(Set.of(SiteInfoParameters.Properties.NAMESPACES));
     loginHook.addTagsProperties(
@@ -34,6 +35,11 @@ public class SwingRecentChangesWindowFactory implements RecentChangesWindowFacto
 
   @Override
   public void displayRecentChangesWindow() {
-    EventQueue.invokeLater(() -> SwingRecentChangesWindow.create(services));
+    JavaFxInitializer.initialize();
+    Platform.runLater(
+        () -> {
+          final JavaFxRecentChangesWindow window = new JavaFxRecentChangesWindow(services);
+          window.show();
+        });
   }
 }

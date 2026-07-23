@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.swing.recentchanges;
+package org.wpcleaner.api.api.query.list.recentchanges;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -7,7 +7,6 @@ package org.wpcleaner.application.gui.swing.recentchanges;
 
 import java.util.Comparator;
 import java.util.Objects;
-import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 
 public record RecentChangeComparator() implements Comparator<RecentChange> {
 
