@@ -16,6 +16,7 @@ module org.wpcleaner.application.gui {
   requires transitive spring.context;
   requires transitive spring.core;
   requires com.fasterxml.jackson.databind;
+  requires org.controlsfx.controls;
   requires org.slf4j;
   requires spring.web;
   requires static org.jetbrains.annotations;

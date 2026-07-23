@@ -9,5 +9,6 @@ dependencies {
 
     constraints {
         api("org.jspecify:jspecify:1.0.0")
+        api("org.controlsfx:controlsfx:11.2.1")
     }
 }

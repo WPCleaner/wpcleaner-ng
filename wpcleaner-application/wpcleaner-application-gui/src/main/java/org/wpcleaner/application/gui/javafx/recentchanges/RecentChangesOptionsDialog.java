@@ -20,12 +20,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Window;
+import javafx.util.StringConverter;
+import org.controlsfx.control.CheckComboBox;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.tags.Tag;
@@ -35,10 +34,10 @@ import org.wpcleaner.api.repository.namespace.Namespace;
 public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentChangesOptions> {
 
   private final TextField nameField;
-  private final ListView<@Nullable Namespace> namespaceListView;
-  private final ListView<RecentChangesParameters.@Nullable Show> showListView;
+  private final CheckComboBox<Namespace> namespaceComboBox;
+  private final CheckComboBox<RecentChangesParameters.Show> showComboBox;
   private final ComboBox<@Nullable String> tagField;
-  private final ListView<RecentChangesParameters.@Nullable Type> typeListView;
+  private final CheckComboBox<RecentChangesParameters.Type> typeComboBox;
   private final CheckBox topOnlyCheckbox;
 
   public RecentChangesOptionsDialog(
@@ -63,15 +62,15 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
     grid.add(new Label("Name:"), 0, 0);
     grid.add(nameField, 1, 0);
 
-    namespaceListView = new ListView<>();
+    namespaceComboBox = new CheckComboBox<>();
     setupNamespaceList(availableNamespaces, initialOptions);
     grid.add(new Label("Namespace:"), 0, 1);
-    grid.add(namespaceListView, 1, 1);
+    grid.add(namespaceComboBox, 1, 1);
 
-    showListView = new ListView<>();
+    showComboBox = new CheckComboBox<>();
     setupShowList(initialOptions);
     grid.add(new Label("Show:"), 0, 2);
-    grid.add(showListView, 1, 2);
+    grid.add(showComboBox, 1, 2);
 
     final List<String> tagNames = new ArrayList<>();
     tagNames.add("");
@@ -87,10 +86,10 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
     grid.add(new Label("Tag:"), 0, 3);
     grid.add(tagField, 1, 3);
 
-    typeListView = new ListView<>();
+    typeComboBox = new CheckComboBox<>();
     setupTypeList(initialOptions);
     grid.add(new Label("Type:"), 0, 4);
-    grid.add(typeListView, 1, 4);
+    grid.add(typeComboBox, 1, 4);
 
     topOnlyCheckbox = new CheckBox();
     if (initialOptions != null) {
@@ -125,17 +124,16 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
           if (Objects.equals(dialogButton, okButtonType)) {
             final String name = nameField.getText().trim();
             final Set<Integer> namespaceSet =
-                namespaceListView.getSelectionModel().getSelectedItems().stream()
-                    .filter(Objects::nonNull)
+                namespaceComboBox.getCheckModel().getCheckedItems().stream()
                     .map(Namespace::id)
                     .collect(Collectors.toUnmodifiableSet());
             final Set<RecentChangesParameters.Show> showSet =
-                showListView.getSelectionModel().getSelectedItems().stream()
+                showComboBox.getCheckModel().getCheckedItems().stream()
                     .collect(Collectors.toUnmodifiableSet());
             final String selectedTag = tagField.getSelectionModel().getSelectedItem();
             final String tag = (selectedTag == null || selectedTag.isEmpty()) ? null : selectedTag;
             final Set<RecentChangesParameters.Type> typeSet =
-                typeListView.getSelectionModel().getSelectedItems().stream()
+                typeComboBox.getCheckModel().getCheckedItems().stream()
                     .collect(Collectors.toUnmodifiableSet());
             final boolean topOnly = topOnlyCheckbox.isSelected();
             return new RecentChangesOptions(name, namespaceSet, showSet, tag, typeSet, topOnly);
@@ -147,80 +145,72 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
   private void setupNamespaceList(
       final List<Namespace> availableNamespaces,
       @Nullable final RecentChangesOptions initialOptions) {
-    namespaceListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    namespaceListView.setPrefHeight(100);
-    namespaceListView.getItems().addAll(availableNamespaces);
-    namespaceListView.setCellFactory(
-        _ ->
-            new ListCell<>() {
-              @Override
-              protected void updateItem(@Nullable final Namespace item, final boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                  setText(null);
-                } else {
-                  setText(item.name());
-                }
-              }
-            });
+    namespaceComboBox.setPrefWidth(250);
+    namespaceComboBox.getItems().addAll(availableNamespaces);
+    namespaceComboBox.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(@Nullable final Namespace namespace) {
+            return namespace != null ? namespace.name() : "";
+          }
+
+          @Override
+          public @Nullable Namespace fromString(final String string) {
+            return null;
+          }
+        });
     if (initialOptions != null) {
       for (final Namespace ns : availableNamespaces) {
         if (initialOptions.namespace().contains(ns.id())) {
-          namespaceListView.getSelectionModel().select(ns);
+          namespaceComboBox.getCheckModel().check(ns);
         }
       }
     }
   }
 
   private void setupShowList(@Nullable final RecentChangesOptions initialOptions) {
-    showListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    showListView.setPrefHeight(100);
-    showListView.getItems().addAll(RecentChangesParameters.Show.values());
-    showListView.setCellFactory(
-        _ ->
-            new ListCell<>() {
-              @Override
-              protected void updateItem(
-                  final RecentChangesParameters.@Nullable Show item, final boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                  setText(null);
-                } else {
-                  setText(item.value);
-                }
-              }
-            });
+    showComboBox.setPrefWidth(250);
+    showComboBox.getItems().addAll(RecentChangesParameters.Show.values());
+    showComboBox.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(final RecentChangesParameters.@Nullable Show show) {
+            return show != null ? show.value : "";
+          }
+
+          @Override
+          public RecentChangesParameters.@Nullable Show fromString(final String string) {
+            return null;
+          }
+        });
     if (initialOptions != null) {
       for (final RecentChangesParameters.Show show : RecentChangesParameters.Show.values()) {
         if (initialOptions.show().contains(show)) {
-          showListView.getSelectionModel().select(show);
+          showComboBox.getCheckModel().check(show);
         }
       }
     }
   }
 
   private void setupTypeList(@Nullable final RecentChangesOptions initialOptions) {
-    typeListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-    typeListView.setPrefHeight(100);
-    typeListView.getItems().addAll(RecentChangesParameters.Type.values());
-    typeListView.setCellFactory(
-        _ ->
-            new ListCell<>() {
-              @Override
-              protected void updateItem(
-                  final RecentChangesParameters.@Nullable Type item, final boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                  setText(null);
-                } else {
-                  setText(item.value);
-                }
-              }
-            });
+    typeComboBox.setPrefWidth(250);
+    typeComboBox.getItems().addAll(RecentChangesParameters.Type.values());
+    typeComboBox.setConverter(
+        new StringConverter<>() {
+          @Override
+          public String toString(final RecentChangesParameters.@Nullable Type type) {
+            return type != null ? type.value : "";
+          }
+
+          @Override
+          public RecentChangesParameters.@Nullable Type fromString(final String string) {
+            return null;
+          }
+        });
     if (initialOptions != null) {
       for (final RecentChangesParameters.Type type : RecentChangesParameters.Type.values()) {
         if (initialOptions.type().contains(type)) {
-          typeListView.getSelectionModel().select(type);
+          typeComboBox.getCheckModel().check(type);
         }
       }
     }

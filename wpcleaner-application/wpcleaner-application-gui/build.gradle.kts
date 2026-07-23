@@ -25,6 +25,7 @@ dependencies {
   implementation("org.openjfx:javafx-base:${javafxVersion}:${javafxPlatform}")
   implementation("org.openjfx:javafx-controls:${javafxVersion}:${javafxPlatform}")
   implementation("org.openjfx:javafx-graphics:${javafxVersion}:${javafxPlatform}")
+  implementation("org.controlsfx:controlsfx")
   implementation("org.springframework.boot:spring-boot-starter")
   implementation("org.springframework.boot:spring-boot-starter-web")
   compileOnly("org.jetbrains:annotations:26.1.0")
