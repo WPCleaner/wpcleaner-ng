@@ -41,6 +41,6 @@ jobs:
       uses: gradle/actions/setup-gradle@v6
 
     - name: Build with Gradle Wrapper
-      run: >
+      run: |
         apt install xvfb
         xvfb-run ./gradlew build
