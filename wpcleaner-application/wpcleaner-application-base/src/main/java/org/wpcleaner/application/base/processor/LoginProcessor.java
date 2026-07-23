@@ -43,11 +43,10 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
     currentUserService.logout();
     if (!input.demo()) {
       final Tokens tokens;
-      try (ProgressTracker.ProgressStep _ = tracker.start("Retrieving login token")) {
+      try (ProgressStep _ = tracker.start("Retrieving login token")) {
         tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
       }
-      try (ProgressTracker.ProgressStep _ =
-          tracker.start("Login for user %s".formatted(input.username))) {
+      try (ProgressStep _ = tracker.start("Login for user %s".formatted(input.username))) {
         apiLogin.login(
             input.wiki,
             input.username,
@@ -57,7 +56,7 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
     }
     final String compactUsername = compactUsername(input.username);
     currentUserService.login(input.wiki(), compactUsername, input.demo());
-    try (ProgressTracker.ProgressStep _ =
+    try (ProgressStep _ =
         tracker.start("Retrieving information about user %s".formatted(input.username))) {
       final User user = apiUsers.retrieveUser(input.wiki, compactUsername);
       currentUserService.withGroups(user.groups());

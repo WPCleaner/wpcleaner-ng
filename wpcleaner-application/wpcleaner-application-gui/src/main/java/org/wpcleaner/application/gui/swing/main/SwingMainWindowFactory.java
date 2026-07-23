@@ -6,9 +6,11 @@ package org.wpcleaner.application.gui.swing.main;
  */
 
 import java.awt.EventQueue;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
 
+@ConditionalOnProperty(name = "gui", havingValue = "swing", matchIfMissing = true)
 @Service
 public class SwingMainWindowFactory implements MainWindowFactory {
 

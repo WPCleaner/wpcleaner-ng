@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.application.base.processor.DefaultProgressTracker;
 import org.wpcleaner.application.base.processor.Processor;
 import org.wpcleaner.application.base.processor.ProgressTracker;
 
@@ -60,7 +61,7 @@ public class SwingWorkerProcessor {
         progressPanel.setVisible(true);
         progressPanel.repaint();
       }
-      final ProgressTracker tracker = new ProgressTracker(this::publish);
+      final ProgressTracker tracker = new DefaultProgressTracker(this::publish);
       this.callable = () -> processor.execute(input, tracker);
       this.onSuccess = onSuccess;
       this.onFailure = onFailure;
