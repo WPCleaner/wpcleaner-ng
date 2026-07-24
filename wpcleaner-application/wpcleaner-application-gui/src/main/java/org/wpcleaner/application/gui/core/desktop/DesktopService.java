@@ -52,7 +52,7 @@ public class DesktopService {
 
   public void browse(final String url) {
     try {
-      browse(new URI(url), uri -> {});
+      browse(new URI(url), _ -> {});
     } catch (URISyntaxException e) {
       LOGGER.error("Error viewing page {}: {}", url, e.getMessage());
     }

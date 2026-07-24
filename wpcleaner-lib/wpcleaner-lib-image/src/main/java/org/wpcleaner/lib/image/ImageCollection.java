@@ -7,6 +7,7 @@ package org.wpcleaner.lib.image;
 
 @SuppressWarnings("SpellCheckingInspection")
 public enum ImageCollection {
+  DIFF("commons/gnome-edit-copy.png"),
   DOCUMENT_SAVE("commons/gnome-document-save.png"),
   EDIT("commons/gnome-document-properties.png"),
   GO_FIRST("commons/gnome-go-first.png"),
@@ -38,6 +39,7 @@ public enum ImageCollection {
   MOVE_FIRST("commons/gnome-go-top.png"),
   MOVE_LAST("commons/gnome-go-bottom.png"),
   MOVE_UP("commons/gnome-go-up.png"),
+  OPEN_URL("commons/gnome-web-browser.png"),
   OPTIONS("commons/gnome-preferences-other.png"),
   PAGE("commons/gnome-text-x-generic.png"),
   PASSWORD("commons/gnome-dialog-password.png"),

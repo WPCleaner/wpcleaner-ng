@@ -47,6 +47,7 @@ public final class JavaFxRecentChangesWindow extends Stage {
               Set.of(
                   RecentChangesParameters.Properties.COMMENT,
                   RecentChangesParameters.Properties.IDS,
+                  RecentChangesParameters.Properties.SIZES,
                   RecentChangesParameters.Properties.TAGS,
                   RecentChangesParameters.Properties.TIMESTAMP,
                   RecentChangesParameters.Properties.TITLE,
@@ -108,7 +109,12 @@ public final class JavaFxRecentChangesWindow extends Stage {
             optionsInput.getAddButton(),
             optionsInput.getRemoveButton());
 
-    final TableView<RecentChange> tableView = new RecentChangesTableView(tableItems, imageLoader);
+    final TableView<RecentChange> tableView =
+        new RecentChangesTableView(
+            tableItems,
+            imageLoader,
+            services.user().getCurrentUser().wiki(),
+            services.desktopService());
     VBox.setVgrow(tableView, Priority.ALWAYS);
 
     mainContainer.getChildren().addAll(toolbar, tableView);
