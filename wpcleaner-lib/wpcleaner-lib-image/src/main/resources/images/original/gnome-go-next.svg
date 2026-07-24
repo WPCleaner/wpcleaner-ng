@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" version="1.0">
+  <defs>
+    <radialGradient id="a" cx="11.25" cy="19.031" r="8.0625" gradientTransform="matrix(1 0 0 .28295 0 13.646)" gradientUnits="userSpaceOnUse">
+      <stop offset="0"/>
+      <stop offset="1" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="b" x1="17.499" x2="34.744" y1="10.445" y2="40.231" gradientTransform="matrix(1.0046 0 0 1 -1.0377 .047681)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g color="#000">
+    <path fill="url(#a)" d="M19.312 19.031a8.0625 2.2812 0 1 1-16.124 0 8.0625 2.2812 0 1 1 16.124 0z" opacity=".16292" transform="matrix(2.4806 0 0 2.411 -3.907 -5.3836)"/>
+    <path fill="#3465a4" stroke="#204a87" d="m22.502 9.5398 19.004 16.506-19.004 16.423v-7.87H7.506l.0004-17.055h14.996V9.5396z"/>
+    <path fill="#729fcf" d="M8 18.048V26l32.769-.024-17.615-15.345v7.417H8z" opacity=".35393"/>
+    <path fill="none" stroke="url(#b)" d="M23.573 11.681 40.09 26.067 23.573 40.266v-6.738H8.506l.0004-14.978h15.067v-6.869z" opacity=".354"/>
+  </g>
+</svg>

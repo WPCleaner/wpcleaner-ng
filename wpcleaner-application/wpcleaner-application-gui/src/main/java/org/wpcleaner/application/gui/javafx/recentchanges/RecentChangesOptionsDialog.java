@@ -21,27 +21,30 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Window;
-import javafx.util.StringConverter;
-import org.controlsfx.control.CheckComboBox;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
+import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.NamespaceCheckComboBox;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentChangesOptions> {
 
   private final TextField nameField;
-  private final CheckComboBox<Namespace> namespaceComboBox;
-  private final CheckComboBox<RecentChangesParameters.Show> showComboBox;
+  private final NamespaceCheckComboBox namespaceComboBox;
+  private final ShowCheckComboBox showComboBox;
   private final ComboBox<@Nullable String> tagField;
-  private final CheckComboBox<RecentChangesParameters.Type> typeComboBox;
+  private final TypeCheckComboBox typeComboBox;
   private final CheckBox topOnlyCheckbox;
 
   public RecentChangesOptionsDialog(
-      final Window owner,
+      @Nullable final Window owner,
+      final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
       final List<Tag> availableTags,
       @Nullable final RecentChangesOptions initialOptions) {
@@ -55,48 +58,38 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
     grid.setPadding(new Insets(15, 15, 15, 15));
 
     nameField = new TextField();
-    nameField.setPrefWidth(250);
-    if (initialOptions != null) {
-      nameField.setText(initialOptions.name());
-    }
+    setupNameField(initialOptions);
     grid.add(new Label("Name:"), 0, 0);
     grid.add(nameField, 1, 0);
 
-    namespaceComboBox = new CheckComboBox<>();
-    setupNamespaceList(availableNamespaces, initialOptions);
+    namespaceComboBox = new NamespaceCheckComboBox();
+    namespaceComboBox.setup(
+        availableNamespaces, initialOptions != null ? initialOptions.namespace() : Set.of());
     grid.add(new Label("Namespace:"), 0, 1);
     grid.add(namespaceComboBox, 1, 1);
 
-    showComboBox = new CheckComboBox<>();
-    setupShowList(initialOptions);
+    showComboBox = new ShowCheckComboBox();
+    showComboBox.setup(initialOptions != null ? initialOptions.show() : Set.of());
     grid.add(new Label("Show:"), 0, 2);
     grid.add(showComboBox, 1, 2);
 
-    final List<String> tagNames = new ArrayList<>();
-    tagNames.add("");
-    for (final Tag tag : availableTags) {
-      tagNames.add(tag.name());
-    }
     tagField = new ComboBox<>();
-    tagField.getItems().addAll(tagNames);
-    tagField.getSelectionModel().select("");
-    if (initialOptions != null && initialOptions.tag() != null) {
-      tagField.getSelectionModel().select(initialOptions.tag());
-    }
+    setupTagField(availableTags, initialOptions);
     grid.add(new Label("Tag:"), 0, 3);
     grid.add(tagField, 1, 3);
 
-    typeComboBox = new CheckComboBox<>();
-    setupTypeList(initialOptions);
+    typeComboBox = new TypeCheckComboBox();
+    typeComboBox.setup(initialOptions != null ? initialOptions.type() : Set.of());
     grid.add(new Label("Type:"), 0, 4);
     grid.add(typeComboBox, 1, 4);
 
     topOnlyCheckbox = new CheckBox();
-    if (initialOptions != null) {
-      topOnlyCheckbox.setSelected(initialOptions.topOnly());
-    }
+    setupTopOnlyCheckbox(initialOptions);
     grid.add(new Label("Top only:"), 0, 5);
     grid.add(topOnlyCheckbox, 1, 5);
+
+    final RecentChangesFilterListView filtersListView =
+        setupFilters(grid, imageLoader, availableNamespaces, availableTags, initialOptions);
 
     getDialogPane().setContent(grid);
 
@@ -136,93 +129,73 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
                 typeComboBox.getCheckModel().getCheckedItems().stream()
                     .collect(Collectors.toUnmodifiableSet());
             final boolean topOnly = topOnlyCheckbox.isSelected();
-            return new RecentChangesOptions(name, namespaceSet, showSet, tag, typeSet, topOnly);
+            final List<@Nullable RecentChangesFilter> filterList =
+                new ArrayList<>(filtersListView.getItems());
+            return new RecentChangesOptions(
+                name, namespaceSet, showSet, tag, typeSet, topOnly, List.copyOf(filterList));
           }
           return null;
         });
   }
 
-  private void setupNamespaceList(
+  private void setupNameField(@Nullable final RecentChangesOptions initialOptions) {
+    nameField.setPrefWidth(250);
+    if (initialOptions != null) {
+      nameField.setText(initialOptions.name());
+    }
+  }
+
+  private void setupTagField(
+      final List<Tag> availableTags, @Nullable final RecentChangesOptions initialOptions) {
+    final List<String> tagNames = new ArrayList<>();
+    tagNames.add("");
+    for (final Tag tag : availableTags) {
+      tagNames.add(tag.name());
+    }
+    tagField.getItems().addAll(tagNames);
+    tagField.getSelectionModel().select("");
+    if (initialOptions != null && initialOptions.tag() != null) {
+      tagField.getSelectionModel().select(initialOptions.tag());
+    }
+  }
+
+  private void setupTopOnlyCheckbox(@Nullable final RecentChangesOptions initialOptions) {
+    if (initialOptions != null) {
+      topOnlyCheckbox.setSelected(initialOptions.topOnly());
+    }
+  }
+
+  private RecentChangesFilterListView setupFilters(
+      final GridPane grid,
+      final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
+      final List<Tag> availableTags,
       @Nullable final RecentChangesOptions initialOptions) {
-    namespaceComboBox.setPrefWidth(250);
-    namespaceComboBox.getItems().addAll(availableNamespaces);
-    namespaceComboBox.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(@Nullable final Namespace namespace) {
-            return namespace != null ? namespace.name() : "";
-          }
-
-          @Override
-          public @Nullable Namespace fromString(final String string) {
-            return null;
-          }
-        });
+    final ToolBar filtersToolBar = new ToolBar();
+    final RecentChangesFilterListView filtersListView =
+        new RecentChangesFilterListView(
+            imageLoader, availableNamespaces, availableTags, filtersToolBar);
     if (initialOptions != null) {
-      for (final Namespace ns : availableNamespaces) {
-        if (initialOptions.namespace().contains(ns.id())) {
-          namespaceComboBox.getCheckModel().check(ns);
-        }
-      }
+      filtersListView.getItems().addAll(initialOptions.filters());
     }
-  }
 
-  private void setupShowList(@Nullable final RecentChangesOptions initialOptions) {
-    showComboBox.setPrefWidth(250);
-    showComboBox.getItems().addAll(RecentChangesParameters.Show.values());
-    showComboBox.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(final RecentChangesParameters.@Nullable Show show) {
-            return show != null ? show.value : "";
-          }
+    final VBox filtersBox = new VBox(5);
+    filtersBox.getChildren().addAll(filtersListView, filtersToolBar);
 
-          @Override
-          public RecentChangesParameters.@Nullable Show fromString(final String string) {
-            return null;
-          }
-        });
-    if (initialOptions != null) {
-      for (final RecentChangesParameters.Show show : RecentChangesParameters.Show.values()) {
-        if (initialOptions.show().contains(show)) {
-          showComboBox.getCheckModel().check(show);
-        }
-      }
-    }
-  }
-
-  private void setupTypeList(@Nullable final RecentChangesOptions initialOptions) {
-    typeComboBox.setPrefWidth(250);
-    typeComboBox.getItems().addAll(RecentChangesParameters.Type.values());
-    typeComboBox.setConverter(
-        new StringConverter<>() {
-          @Override
-          public String toString(final RecentChangesParameters.@Nullable Type type) {
-            return type != null ? type.value : "";
-          }
-
-          @Override
-          public RecentChangesParameters.@Nullable Type fromString(final String string) {
-            return null;
-          }
-        });
-    if (initialOptions != null) {
-      for (final RecentChangesParameters.Type type : RecentChangesParameters.Type.values()) {
-        if (initialOptions.type().contains(type)) {
-          typeComboBox.getCheckModel().check(type);
-        }
-      }
-    }
+    grid.add(new Label("Filters:"), 0, 6);
+    grid.add(filtersBox, 1, 6);
+    return filtersListView;
   }
 
   public static Optional<RecentChangesOptions> showDialog(
       final Window owner,
+      final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
       final List<Tag> availableTags,
       @Nullable final RecentChangesOptions initialOptions) {
     final RecentChangesOptionsDialog dialog =
-        new RecentChangesOptionsDialog(owner, availableNamespaces, availableTags, initialOptions);
+        new RecentChangesOptionsDialog(
+            owner, imageLoader, availableNamespaces, availableTags, initialOptions);
     return dialog.showAndWait();
   }
 }

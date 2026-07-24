@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="48" height="48" version="1.0">
+  <defs>
+    <linearGradient xlink:href="#a" id="e" x1="18.396891" x2="40.377598" y1="-11.068471" y2="-.9833169" gradientTransform="translate(-1.960196 48.00635)" gradientUnits="userSpaceOnUse"/>
+    <linearGradient id="b">
+      <stop offset="0"/>
+      <stop offset="1" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="a">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient xlink:href="#a" id="d" x1="-.9779641" x2="39.161507" y1="15.632895" y2="35.856434" gradientTransform="matrix(0 1.00464 1 0 -1.952319 -3.03769)" gradientUnits="userSpaceOnUse"/>
+    <radialGradient xlink:href="#b" id="c" cx="11.25" cy="19.03125" r="8.0625" fx="11.25" fy="19.03125" gradientTransform="matrix(1 0 0 .28295 0 13.64644)" gradientUnits="userSpaceOnUse"/>
+  </defs>
+  <path fill="url(#c)" d="M19.3125 19.03125a8.0625 2.28125 0 1 1-16.125 0 8.0625 2.28125 0 1 1 16.125 0z" color="#000" opacity=".16292138" overflow="visible" style="marker:none" transform="matrix(2.48062 0 0 2.41096 -3.906976 -5.38361)"/>
+  <path fill="#3465a4" stroke="#204a87" stroke-width=".99999958" d="M7.5398059 20.590592 24.04583 39.506349l16.423291-18.915757h-7.869835V5.5063649H15.544154V20.590592H7.5398059z" color="#000" overflow="visible" style="marker:none"/>
+  <path fill="#729fcf" d="M16.047738 6H24l-.024103 32.768867L8.6313729 21.154262h7.4163651V6z" color="#000" opacity=".35393258" overflow="visible" style="marker:none"/>
+  <path fill="none" stroke="url(#d)" stroke-width=".99999958" d="M9.6808629 21.573053 24.067136 38.089692l14.199301-16.516639h-6.738369V6.5063695H16.549734V21.573053H9.6808629z" color="#000" opacity=".35400002" overflow="visible" style="marker:none"/>
+  <path fill="#3465a4" stroke="#204a87" stroke-width=".99999982" d="M7.5398059 40.506359h33.000008v4.0000119H7.5398059z" color="#000" overflow="visible" style="marker:none"/>
+  <path fill="none" stroke="url(#e)" stroke-width=".99999988" d="M8.5398045 41.506351h31v2.0000019h-31z" color="#000" opacity=".35400002" overflow="visible" style="marker:none"/>
+  <path fill="#729fcf" d="M8.0398064 44.006359v-3h16v3z" opacity=".35400002"/>
+</svg>

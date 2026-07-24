@@ -137,6 +137,9 @@ public final class JavaFxRecentChangesWindow extends Stage {
     recentChanges.sort(RecentChangeComparator.INSTANCE);
     int currentRowIndex = 0;
     for (final RecentChange rc : recentChanges) {
+      if (!currentOptions.matchesFilters(rc)) {
+        continue;
+      }
       while (currentRowIndex < tableItems.size()
           && RecentChangeComparator.INSTANCE.compare(rc, tableItems.get(currentRowIndex)) > 0) {
         currentRowIndex++;

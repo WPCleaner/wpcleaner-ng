@@ -25,11 +25,13 @@ public final class RecentChangesOptionsInput {
   private final Button editOptions;
   private final Button addOptions;
   private final Button removeOptions;
+  private final JavaFxImageLoader imageLoader;
 
   public RecentChangesOptionsInput(
       final Window owner,
       final JavaFxRecentChangesWindowServices services,
       final JavaFxImageLoader imageLoader) {
+    this.imageLoader = imageLoader;
     this.comboBox = new ComboBox<>();
     this.comboBox.setCellFactory(
         _ ->
@@ -66,6 +68,7 @@ public final class RecentChangesOptionsInput {
     imageLoader
         .getImageView(ImageCollection.EDIT, ImageSize.BUTTON)
         .ifPresent(editOptions::setGraphic);
+    editOptions.setTooltip(new Tooltip("Edit options"));
     editOptions.setOnAction(_ -> editOptionsAction(owner, services));
 
     this.addOptions = new Button();
@@ -73,6 +76,7 @@ public final class RecentChangesOptionsInput {
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.BUTTON)
         .ifPresent(addOptions::setGraphic);
+    addOptions.setTooltip(new Tooltip("Add options"));
     addOptions.setOnAction(_ -> addOptionsAction(owner, services));
 
     this.removeOptions = new Button();
@@ -80,6 +84,7 @@ public final class RecentChangesOptionsInput {
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.BUTTON)
         .ifPresent(removeOptions::setGraphic);
+    removeOptions.setTooltip(new Tooltip("Remove options"));
     removeOptions.setOnAction(_ -> removeOptionsAction(owner));
 
     this.comboBox
@@ -115,6 +120,7 @@ public final class RecentChangesOptionsInput {
     final Optional<RecentChangesOptions> result =
         RecentChangesOptionsDialog.showDialog(
             owner,
+            imageLoader,
             services.namespaceRepository().getNamespaces(),
             services.tagRepository().getTags(),
             getSelectedOptions());
@@ -135,6 +141,7 @@ public final class RecentChangesOptionsInput {
     final Optional<RecentChangesOptions> result =
         RecentChangesOptionsDialog.showDialog(
             owner,
+            imageLoader,
             services.namespaceRepository().getNamespaces(),
             services.tagRepository().getTags(),
             selected);
