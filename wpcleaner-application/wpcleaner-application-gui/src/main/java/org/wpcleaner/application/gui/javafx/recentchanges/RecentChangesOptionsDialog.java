@@ -47,7 +47,7 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
       final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
       final List<Tag> availableTags,
-      @Nullable final RecentChangesOptions initialOptions) {
+      final RecentChangesOptions initialOptions) {
     super();
     initOwner(owner);
     setTitle("Recent changes options");
@@ -63,13 +63,12 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
     grid.add(nameField, 1, 0);
 
     namespaceComboBox = new NamespaceCheckComboBox();
-    namespaceComboBox.setup(
-        availableNamespaces, initialOptions != null ? initialOptions.namespace() : Set.of());
+    namespaceComboBox.setup(availableNamespaces, initialOptions.namespace());
     grid.add(new Label("Namespace:"), 0, 1);
     grid.add(namespaceComboBox, 1, 1);
 
     showComboBox = new ShowCheckComboBox();
-    showComboBox.setup(initialOptions != null ? initialOptions.show() : Set.of());
+    showComboBox.setup(initialOptions.show());
     grid.add(new Label("Show:"), 0, 2);
     grid.add(showComboBox, 1, 2);
 
@@ -79,7 +78,7 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
     grid.add(tagField, 1, 3);
 
     typeComboBox = new TypeCheckComboBox();
-    typeComboBox.setup(initialOptions != null ? initialOptions.type() : Set.of());
+    typeComboBox.setup(initialOptions.type());
     grid.add(new Label("Type:"), 0, 4);
     grid.add(typeComboBox, 1, 4);
 
@@ -170,14 +169,12 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
       final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
       final List<Tag> availableTags,
-      @Nullable final RecentChangesOptions initialOptions) {
+      final RecentChangesOptions initialOptions) {
     final ToolBar filtersToolBar = new ToolBar();
     final RecentChangesFilterListView filtersListView =
         new RecentChangesFilterListView(
             imageLoader, availableNamespaces, availableTags, filtersToolBar);
-    if (initialOptions != null) {
-      filtersListView.getItems().addAll(initialOptions.filters());
-    }
+    filtersListView.getItems().addAll(initialOptions.filters());
 
     final VBox filtersBox = new VBox(5);
     filtersBox.getChildren().addAll(filtersListView, filtersToolBar);
@@ -192,7 +189,7 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
       final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
       final List<Tag> availableTags,
-      @Nullable final RecentChangesOptions initialOptions) {
+      final RecentChangesOptions initialOptions) {
     final RecentChangesOptionsDialog dialog =
         new RecentChangesOptionsDialog(
             owner, imageLoader, availableNamespaces, availableTags, initialOptions);

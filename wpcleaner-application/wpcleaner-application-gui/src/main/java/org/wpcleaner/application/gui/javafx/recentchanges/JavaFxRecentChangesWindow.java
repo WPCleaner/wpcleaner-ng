@@ -8,7 +8,6 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import javafx.animation.Animation;
@@ -26,8 +25,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
-import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
-import org.wpcleaner.api.api.query.list.recentchanges.RecentChangeComparator;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -56,7 +53,7 @@ public final class JavaFxRecentChangesWindow extends Stage {
 
   private final JavaFxRecentChangesWindowServices services;
   private final JavaFxImageLoader imageLoader;
-  private final ObservableList<RecentChange> tableItems;
+  private final ObservableList<FilteredRecentChange> tableItems;
   private final RecentChangesOptionsInput optionsInput;
   private final Timeline timeline;
   @Nullable private Instant lastRecentChange;
@@ -109,12 +106,8 @@ public final class JavaFxRecentChangesWindow extends Stage {
             optionsInput.getAddButton(),
             optionsInput.getRemoveButton());
 
-    final TableView<RecentChange> tableView =
-        new RecentChangesTableView(
-            tableItems,
-            imageLoader,
-            services.user().getCurrentUser().wiki(),
-            services.desktopService());
+    final TableView<FilteredRecentChange> tableView =
+        new RecentChangesTableView(tableItems, imageLoader, services.desktopService());
     VBox.setVgrow(tableView, Priority.ALWAYS);
 
     mainContainer.getChildren().addAll(toolbar, tableView);
@@ -138,20 +131,23 @@ public final class JavaFxRecentChangesWindow extends Stage {
             .topOnly(currentOptions.topOnly())
             .type(currentOptions.type())
             .build();
-    final List<RecentChange> recentChanges =
-        services.apiRecentChanges().retrieveRecentChanges(wiki, query);
-    recentChanges.sort(RecentChangeComparator.INSTANCE);
+    final List<FilteredRecentChange> recentChanges =
+        services.apiRecentChanges().retrieveRecentChanges(wiki, query).stream()
+            .map(rc -> FilteredRecentChange.of(rc, wiki, currentOptions))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .sorted(FilteredRecentChangeComparator.INSTANCE)
+            .toList();
     int currentRowIndex = 0;
-    for (final RecentChange rc : recentChanges) {
-      if (!currentOptions.matchesFilters(rc)) {
-        continue;
-      }
+    for (final FilteredRecentChange rc : recentChanges) {
       while (currentRowIndex < tableItems.size()
-          && RecentChangeComparator.INSTANCE.compare(rc, tableItems.get(currentRowIndex)) > 0) {
+          && FilteredRecentChangeComparator.INSTANCE.compare(rc, tableItems.get(currentRowIndex))
+              > 0) {
         currentRowIndex++;
       }
       if (currentRowIndex >= tableItems.size()
-          || !Objects.equals(rc, tableItems.get(currentRowIndex))) {
+          || FilteredRecentChangeComparator.INSTANCE.compare(rc, tableItems.get(currentRowIndex))
+              != 0) {
         tableItems.add(currentRowIndex, rc);
         currentRowIndex++;
       }

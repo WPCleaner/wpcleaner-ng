@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
 
-public class IconListStringTableCell<S> extends TableCell<S, @Nullable List<String>> {
+public class IconListStringTableCell<S> extends TableCell<S, List<String>> {
 
   private final String tooltipPrefix;
   @Nullable private final Image image;
@@ -27,9 +27,9 @@ public class IconListStringTableCell<S> extends TableCell<S, @Nullable List<Stri
   }
 
   @Override
-  protected void updateItem(@Nullable final List<String> item, final boolean empty) {
+  protected void updateItem(final List<String> item, final boolean empty) {
     super.updateItem(item, empty);
-    if (empty || item == null || item.isEmpty()) {
+    if (empty || item.isEmpty()) {
       setGraphic(null);
       setTooltip(null);
     } else {

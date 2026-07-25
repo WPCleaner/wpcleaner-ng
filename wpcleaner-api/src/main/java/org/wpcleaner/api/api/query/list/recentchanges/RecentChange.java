@@ -40,13 +40,6 @@ public record RecentChange(
     @JsonProperty("type") @Nullable String type,
     @JsonProperty("user") @Nullable String user,
     @JsonProperty("userid") @Nullable Integer userid) {
-  @Nullable
-  public Integer delta() {
-    if (newLen == null || oldLen == null) {
-      return null;
-    }
-    return newLen - oldLen;
-  }
 
   public boolean isAutopatrolled() {
     return autopatrolled != null;

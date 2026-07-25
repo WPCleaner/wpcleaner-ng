@@ -19,8 +19,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
-import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
@@ -64,64 +62,82 @@ class RecentChangesTableViewTest {
           Mockito.when(mockImageLoader.getImageView(Mockito.any(), Mockito.any()))
               .thenReturn(Optional.empty());
 
-          final WikiDefinition mockWiki = Mockito.mock(WikiDefinition.class);
-          Mockito.when(mockWiki.mainHost()).thenReturn("en.wikipedia.org");
-          Mockito.when(mockWiki.wikiPath()).thenReturn("/wiki");
-
           final DesktopService mockDesktopService = Mockito.mock(DesktopService.class);
 
-          final ObservableList<RecentChange> items = FXCollections.observableArrayList();
-          final RecentChange rc = Mockito.mock(RecentChange.class);
+          final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
+          final FilteredRecentChange rc = Mockito.mock(FilteredRecentChange.class);
+          Mockito.when(rc.diffURI())
+              .thenReturn(URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345"));
+          Mockito.when(rc.pageURI())
+              .thenReturn(URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest"));
           Mockito.when(rc.title()).thenReturn("Main Page?Test");
-          Mockito.when(rc.revid()).thenReturn(12_345);
-          Mockito.when(rc.type()).thenReturn("edit");
+
+          final RecentChangesFilter mockFilter = Mockito.mock(RecentChangesFilter.class);
+          Mockito.when(mockFilter.severity()).thenReturn(Severity.ALERT_4);
+          Mockito.when(rc.filter()).thenReturn(mockFilter);
           items.add(rc);
 
           final RecentChangesTableView tableView =
-              new RecentChangesTableView(items, mockImageLoader, mockWiki, mockDesktopService);
+              new RecentChangesTableView(items, mockImageLoader, mockDesktopService);
 
           // Verify total columns size
-          Assertions.assertThat(tableView.getColumns()).hasSize(8);
+          Assertions.assertThat(tableView.getColumns()).hasSize(9);
 
-          // Verify timeCol, titleCol, and urlCol
-          final TableColumn<RecentChange, ?> urlCol = tableView.getColumns().get(6);
-          Assertions.assertThat(urlCol).isInstanceOf(UrlTableColumn.class);
-          Assertions.assertThat(urlCol.getText()).isEmpty();
-          // Verify cell value factory for urlCol
+          // Verify severityCol at index 0
+          final TableColumn<FilteredRecentChange, ?> severityCol = tableView.getColumns().get(0);
+          Assertions.assertThat(severityCol.getText()).isEmpty();
           @SuppressWarnings("unchecked")
-          final TableColumn<RecentChange, URI> castedUrlCol =
-              (TableColumn<RecentChange, URI>) urlCol;
+          final TableColumn<FilteredRecentChange, Severity> castedSeverityCol =
+              (TableColumn<FilteredRecentChange, Severity>) severityCol;
 
-          final TableColumn.CellDataFeatures<RecentChange, URI> feature =
-              new TableColumn.CellDataFeatures<>(tableView, castedUrlCol, rc);
-          final URI urlValue = castedUrlCol.getCellValueFactory().call(feature).getValue();
-          final URI expectedUri = URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest");
-          Assertions.assertThat(urlValue).isEqualTo(expectedUri);
+          final TableColumn.CellDataFeatures<FilteredRecentChange, Severity> severityFeature =
+              new TableColumn.CellDataFeatures<>(tableView, castedSeverityCol, rc);
+          final Severity severityValue =
+              castedSeverityCol.getCellValueFactory().call(severityFeature).getValue();
+          Assertions.assertThat(severityValue).isEqualTo(Severity.ALERT_4);
 
-          // Verify diffCol at index 7
-          final TableColumn<RecentChange, ?> diffCol = tableView.getColumns().get(7);
-          Assertions.assertThat(diffCol).isInstanceOf(UrlTableColumn.class);
-          Assertions.assertThat(diffCol.getText()).isEmpty();
+          // Verify timeCol, titleCol, and pageURICol
+          final TableColumn<FilteredRecentChange, ?> pageURICol = tableView.getColumns().get(7);
+          Assertions.assertThat(pageURICol).isInstanceOf(UrlTableColumn.class);
+          Assertions.assertThat(pageURICol.getText()).isEmpty();
+          // Verify cell value factory for page
+          @SuppressWarnings("unchecked")
+          final TableColumn<FilteredRecentChange, URI> castedPageURICol =
+              (TableColumn<FilteredRecentChange, URI>) pageURICol;
+
+          final TableColumn.CellDataFeatures<FilteredRecentChange, URI> pageURIFeature =
+              new TableColumn.CellDataFeatures<>(tableView, castedPageURICol, rc);
+          final URI pageURIValue =
+              castedPageURICol.getCellValueFactory().call(pageURIFeature).getValue();
+          final URI expectedPageUri = URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest");
+          Assertions.assertThat(pageURIValue).isEqualTo(expectedPageUri);
+
+          // Verify diffURICol at index 8
+          final TableColumn<FilteredRecentChange, ?> diffURICol = tableView.getColumns().get(8);
+          Assertions.assertThat(diffURICol).isInstanceOf(UrlTableColumn.class);
+          Assertions.assertThat(diffURICol.getText()).isEmpty();
 
           @SuppressWarnings("unchecked")
-          final TableColumn<RecentChange, URI> castedDiffCol =
-              (TableColumn<RecentChange, URI>) diffCol;
+          final TableColumn<FilteredRecentChange, URI> castedDiffURICol =
+              (TableColumn<FilteredRecentChange, URI>) diffURICol;
 
-          final TableColumn.CellDataFeatures<RecentChange, URI> diffFeature =
-              new TableColumn.CellDataFeatures<>(tableView, castedDiffCol, rc);
-          final URI diffValue = castedDiffCol.getCellValueFactory().call(diffFeature).getValue();
+          final TableColumn.CellDataFeatures<FilteredRecentChange, URI> diffURIFeature =
+              new TableColumn.CellDataFeatures<>(tableView, castedDiffURICol, rc);
+          final URI diffURIValue =
+              castedDiffURICol.getCellValueFactory().call(diffURIFeature).getValue();
           final URI expectedDiffUri =
               URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345");
-          Assertions.assertThat(diffValue).isEqualTo(expectedDiffUri);
+          Assertions.assertThat(diffURIValue).isEqualTo(expectedDiffUri);
 
           // Verify cell factory and cell update
-          final UrlTableCell<RecentChange> cell =
-              (UrlTableCell<RecentChange>) castedUrlCol.getCellFactory().call(castedUrlCol);
+          final UrlTableCell<FilteredRecentChange> cell =
+              (UrlTableCell<FilteredRecentChange>)
+                  castedPageURICol.getCellFactory().call(castedPageURICol);
           Assertions.assertThat(cell).isNotNull();
           Assertions.assertThat(cell.getAlignment().name()).isEqualTo("CENTER");
 
           // Update item to a mock url and verify button is set as graphic
-          cell.updateItem(expectedUri, false);
+          cell.updateItem(expectedPageUri, false);
           Assertions.assertThat(cell.getGraphic()).isInstanceOf(Button.class);
 
           // Trigger button action and verify desktopService.browse is called
@@ -129,6 +145,17 @@ class RecentChangesTableViewTest {
           button.getOnAction().handle(null);
           Mockito.verify(mockDesktopService, Mockito.timeout(1000))
               .browse("https://en.wikipedia.org/wiki/Main_Page%3FTest");
+
+          // Verify SeverityTableCell factory and cell update
+          final SeverityTableCell<FilteredRecentChange> severityCell =
+              (SeverityTableCell<FilteredRecentChange>)
+                  castedSeverityCol.getCellFactory().call(castedSeverityCol);
+          Assertions.assertThat(severityCell).isNotNull();
+          Assertions.assertThat(severityCell.getAlignment().name()).isEqualTo("CENTER");
+
+          severityCell.updateItem(Severity.ALERT_4, false);
+          Assertions.assertThat(severityCell.getTooltip())
+              .isNull(); // because getImageView returns Optional.empty()
         });
   }
 }

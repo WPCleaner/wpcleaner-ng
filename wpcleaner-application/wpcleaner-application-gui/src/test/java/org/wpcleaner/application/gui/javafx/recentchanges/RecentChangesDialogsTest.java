@@ -56,18 +56,43 @@ class RecentChangesDialogsTest {
           final Namespace ns0 = new Namespace(0, "Main", "Main");
           final Namespace ns1 = new Namespace(1, "Talk", "Talk");
           final Tag tag1 = new Tag(null, null, null, null, null, "tag1", List.of());
-          final RecentChangesFilter filter =
+          final RecentChangesFilter filterWithSeverity =
               new RecentChangesFilter(
                   "My Filter",
                   Set.of(0),
+                  Severity.ALERT_4,
                   Set.of("tag1"),
                   Set.of(RecentChangesParameters.Type.EDIT));
 
-          final RecentChangesFilterDialog dialog =
-              new RecentChangesFilterDialog(null, List.of(ns0, ns1), List.of(tag1), filter);
+          final JavaFxImageLoader mockImageLoader =
+              org.mockito.Mockito.mock(JavaFxImageLoader.class);
+          org.mockito.Mockito.when(
+                  mockImageLoader.getImageView(
+                      org.mockito.Mockito.any(), org.mockito.Mockito.any()))
+              .thenReturn(java.util.Optional.empty());
 
-          Assertions.assertThat(dialog.getTitle()).isEqualTo("Recent changes filter");
-          Assertions.assertThat(dialog.getDialogPane().getContent()).isNotNull();
+          final RecentChangesFilterDialog dialogWithSeverity =
+              new RecentChangesFilterDialog(
+                  null, mockImageLoader, List.of(ns0, ns1), List.of(tag1), filterWithSeverity);
+
+          Assertions.assertThat(dialogWithSeverity.getTitle()).isEqualTo("Recent changes filter");
+          Assertions.assertThat(dialogWithSeverity.getDialogPane().getContent()).isNotNull();
+          Assertions.assertThat(dialogWithSeverity.getSelectedSeverity())
+              .isEqualTo(Severity.ALERT_4);
+
+          final RecentChangesFilter filterWithNullSeverity =
+              new RecentChangesFilter(
+                  "My Filter Null",
+                  Set.of(0),
+                  null,
+                  Set.of("tag1"),
+                  Set.of(RecentChangesParameters.Type.EDIT));
+
+          final RecentChangesFilterDialog dialogWithNullSeverity =
+              new RecentChangesFilterDialog(
+                  null, mockImageLoader, List.of(ns0, ns1), List.of(tag1), filterWithNullSeverity);
+
+          Assertions.assertThat(dialogWithNullSeverity.getSelectedSeverity()).isNull();
         });
   }
 
@@ -83,7 +108,11 @@ class RecentChangesDialogsTest {
           final Tag tag1 = new Tag(null, null, null, null, null, "tag1", List.of());
           final RecentChangesFilter filter =
               new RecentChangesFilter(
-                  "Filter1", Set.of(0), Set.of("tag1"), Set.of(RecentChangesParameters.Type.EDIT));
+                  "Filter1",
+                  Set.of(0),
+                  null,
+                  Set.of("tag1"),
+                  Set.of(RecentChangesParameters.Type.EDIT));
           final RecentChangesOptions options =
               new RecentChangesOptions(
                   "My Options",

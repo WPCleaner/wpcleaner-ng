@@ -7,12 +7,21 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
 
 import java.util.Objects;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 
 public record RecentChangesFilter(
-    String name, Set<Integer> namespace, Set<String> tag, Set<RecentChangesParameters.Type> type) {
-  boolean matches(final RecentChange rc) {
+    String name,
+    Set<Integer> namespace,
+    @Nullable Severity severity,
+    Set<String> tag,
+    Set<RecentChangesParameters.Type> type) {
+
+  public static final RecentChangesFilter ACCEPT_ALL =
+      new RecentChangesFilter("Accept all", Set.of(), null, Set.of(), Set.of());
+
+  public boolean matches(final RecentChange rc) {
     return matchesNamespace(rc) && matchesTag(rc) && matchesType(rc);
   }
 
@@ -26,8 +35,6 @@ public record RecentChangesFilter(
 
   private boolean matchesType(final RecentChange rc) {
     return type.isEmpty()
-        || type.stream()
-            .map(RecentChangesParameters.Type::name)
-            .anyMatch(type -> Objects.equals(type, rc.logtype()));
+        || type.stream().map(type -> type.value).anyMatch(type -> Objects.equals(type, rc.type()));
   }
 }

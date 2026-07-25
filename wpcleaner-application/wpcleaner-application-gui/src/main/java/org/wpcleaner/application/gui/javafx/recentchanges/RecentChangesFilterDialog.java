@@ -15,6 +15,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -24,6 +25,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
+import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.NamespaceCheckComboBox;
 import org.wpcleaner.application.gui.javafx.core.TagCheckComboBox;
 
@@ -33,9 +35,11 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
   private final NamespaceCheckComboBox namespaceCheckComboBox;
   private final TagCheckComboBox tagCheckComboBox;
   private final TypeCheckComboBox typeCheckComboBox;
+  private final ComboBox<@Nullable Severity> severityComboBox;
 
   public RecentChangesFilterDialog(
       @Nullable final Window owner,
+      final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
       final List<Tag> availableTags,
       @Nullable final RecentChangesFilter initialFilter) {
@@ -71,6 +75,20 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
     typeCheckComboBox.setup(initialFilter != null ? initialFilter.type() : Set.of());
     grid.add(new Label("Types:"), 0, 3);
     grid.add(typeCheckComboBox, 1, 3);
+
+    severityComboBox = new ComboBox<>();
+    severityComboBox.getItems().add(null);
+    severityComboBox.getItems().addAll(Severity.values());
+    severityComboBox.setCellFactory(_ -> new SeverityListCell(imageLoader));
+    severityComboBox.setButtonCell(new SeverityListCell(imageLoader));
+    severityComboBox.setMaxWidth(Double.MAX_VALUE);
+    if (initialFilter != null) {
+      severityComboBox.getSelectionModel().select(initialFilter.severity());
+    } else {
+      severityComboBox.getSelectionModel().select(null);
+    }
+    grid.add(new Label("Severity:"), 0, 4);
+    grid.add(severityComboBox, 1, 4);
 
     getDialogPane().setContent(grid);
 
@@ -108,19 +126,26 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
             final Set<RecentChangesParameters.Type> typeSet =
                 typeCheckComboBox.getCheckModel().getCheckedItems().stream()
                     .collect(Collectors.toUnmodifiableSet());
-            return new RecentChangesFilter(name, namespaceSet, tagSet, typeSet);
+            final Severity severity = severityComboBox.getSelectionModel().getSelectedItem();
+            return new RecentChangesFilter(name, namespaceSet, severity, tagSet, typeSet);
           }
           return null;
         });
   }
 
+  @Nullable Severity getSelectedSeverity() {
+    return severityComboBox.getSelectionModel().getSelectedItem();
+  }
+
   public static Optional<RecentChangesFilter> showDialog(
       final Window owner,
+      final JavaFxImageLoader imageLoader,
       final List<Namespace> availableNamespaces,
       final List<Tag> availableTags,
       @Nullable final RecentChangesFilter initialFilter) {
     final RecentChangesFilterDialog dialog =
-        new RecentChangesFilterDialog(owner, availableNamespaces, availableTags, initialFilter);
+        new RecentChangesFilterDialog(
+            owner, imageLoader, availableNamespaces, availableTags, initialFilter);
     return dialog.showAndWait();
   }
 }

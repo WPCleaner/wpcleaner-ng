@@ -6,6 +6,7 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  */
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
@@ -30,7 +31,10 @@ public record RecentChangesOptions(
           false,
           List.of());
 
-  public boolean matchesFilters(final RecentChange rc) {
-    return filters.isEmpty() || filters.stream().anyMatch(filter -> filter.matches(rc));
+  public Optional<RecentChangesFilter> matchesFilters(final RecentChange rc) {
+    if (filters.isEmpty()) {
+      return Optional.of(RecentChangesFilter.ACCEPT_ALL);
+    }
+    return filters.stream().filter(filter -> filter.matches(rc)).findFirst();
   }
 }

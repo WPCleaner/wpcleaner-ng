@@ -43,8 +43,16 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                   setText(null);
+                  setGraphic(null);
                 } else {
                   setText(item.name());
+                  if (item.severity() != null) {
+                    imageLoader
+                        .getImageView(item.severity().getImage(), ImageSize.BUTTON)
+                        .ifPresentOrElse(this::setGraphic, () -> setGraphic(null));
+                  } else {
+                    setGraphic(null);
+                  }
                 }
               }
             });
@@ -87,7 +95,8 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
           if (getScene() != null) {
             final javafx.stage.Window window = getScene().getWindow();
             if (window != null) {
-              RecentChangesFilterDialog.showDialog(window, availableNamespaces, availableTags, null)
+              RecentChangesFilterDialog.showDialog(
+                      window, imageLoader, availableNamespaces, availableTags, null)
                   .ifPresent(newFilter -> getItems().add(newFilter));
             }
           }
@@ -112,7 +121,7 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
             if (window != null) {
               final int selectedIndex = getSelectionModel().getSelectedIndex();
               RecentChangesFilterDialog.showDialog(
-                      window, availableNamespaces, availableTags, selectedFilter)
+                      window, imageLoader, availableNamespaces, availableTags, selectedFilter)
                   .ifPresent(editedFilter -> getItems().set(selectedIndex, editedFilter));
             }
           }

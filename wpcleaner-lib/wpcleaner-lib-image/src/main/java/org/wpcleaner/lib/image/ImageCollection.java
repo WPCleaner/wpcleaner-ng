@@ -5,11 +5,25 @@ package org.wpcleaner.lib.image;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings("PMD.ExcessivePublicCount")
 public enum ImageCollection {
+  ALERT("commons/codex-icon-alert.png"),
+  ALERT_ERROR("commons/codex-icon-alert-color-error.png"),
+  ALERT_ORANGE("commons/codex-icon-alert-orange.png"),
+  ALERT_PLACEHOLDER("commons/codex-icon-alert-color-placeholder.png"),
+  ALERT_PROGRESSIVE("commons/codex-icon-alert-color-progressive.png"),
+  ALERT_SUCCESS("commons/codex-icon-alert-color-success.png"),
+  ALERT_WARNING("commons/codex-icon-alert-color-warning.png"),
+  ALERT_YELLOW("commons/codex-icon-alert-yellow.png"),
   DIFF("commons/gnome-edit-copy.png"),
   DOCUMENT_SAVE("commons/gnome-document-save.png"),
   EDIT("commons/gnome-document-properties.png"),
+  ERROR("commons/codex-icon-error.png"),
+  ERROR_ERROR("commons/codex-icon-error-color-error.png"),
+  ERROR_PLACEHOLDER("commons/codex-icon-error-color-placeholder.png"),
+  ERROR_PROGRESSIVE("commons/codex-icon-error-color-progressive.png"),
+  ERROR_SUCCESS("commons/codex-icon-error-color-success.png"),
+  ERROR_WARNING("commons/codex-icon-error-color-warning.png"),
   GO_FIRST("commons/gnome-go-first.png"),
   GO_LAST("commons/gnome-go-last.png"),
   GO_NEXT("commons/gnome-go-next.png"),
@@ -39,6 +53,12 @@ public enum ImageCollection {
   MOVE_FIRST("commons/gnome-go-top.png"),
   MOVE_LAST("commons/gnome-go-bottom.png"),
   MOVE_UP("commons/gnome-go-up.png"),
+  NOTICE("commons/codex-icon-notice.png"),
+  NOTICE_ERROR("commons/codex-icon-notice-color-error.png"),
+  NOTICE_PLACEHOLDER("commons/codex-icon-notice-color-placeholder.png"),
+  NOTICE_PROGRESSIVE("commons/codex-icon-notice-color-progressive.png"),
+  NOTICE_SUCCESS("commons/codex-icon-notice-color-success.png"),
+  NOTICE_WARNING("commons/codex-icon-notice-color-warning.png"),
   OPEN_URL("commons/gnome-web-browser.png"),
   OPTIONS("commons/gnome-preferences-other.png"),
   PAGE("commons/gnome-text-x-generic.png"),

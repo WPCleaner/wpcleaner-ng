@@ -15,12 +15,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
 
-public class IconListStringTableColumn<S> extends TableColumn<S, @Nullable List<String>> {
+public class IconListStringTableColumn<S> extends TableColumn<S, List<String>> {
 
   public IconListStringTableColumn(
       final String tooltipText,
       @Nullable final Image image,
-      final Function<S, @Nullable List<String>> mapper) {
+      final Function<S, List<String>> mapper) {
     super();
 
     final Label headerLabel = new Label();
