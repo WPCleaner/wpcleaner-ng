@@ -8,9 +8,9 @@ package org.wpcleaner.application.gui.swing.core.component;
 import javax.swing.JMenuItem;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.base.utils.url.UrlService;
+import org.wpcleaner.application.gui.core.action.SaveWindowsPositionAction;
 import org.wpcleaner.application.gui.swing.core.action.SwingActionService;
 import org.wpcleaner.application.gui.swing.core.image.ImageIconLoader;
-import org.wpcleaner.application.gui.swing.core.window.SaveWindowsPositionAction;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 

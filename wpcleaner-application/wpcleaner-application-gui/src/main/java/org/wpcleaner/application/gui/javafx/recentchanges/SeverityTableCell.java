@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.lib.image.ImageSize;
 
-public class SeverityTableCell<S> extends TableCell<S, @Nullable Severity> {
+public final class SeverityTableCell<S> extends TableCell<S, @Nullable Severity> {
 
   private final JavaFxImageLoader imageLoader;
 

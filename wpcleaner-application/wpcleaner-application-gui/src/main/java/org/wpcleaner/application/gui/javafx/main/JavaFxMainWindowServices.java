@@ -9,10 +9,11 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
-import org.wpcleaner.application.gui.core.factory.RecentChangesWindowFactory;
+import org.wpcleaner.application.gui.javafx.JavaFxSaveWindowsPositionAction;
+import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
+import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowFactory;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
-import org.wpcleaner.application.gui.swing.core.window.SaveWindowsPositionAction;
 import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
@@ -20,8 +21,9 @@ public record JavaFxMainWindowServices(
     CurrentUserService user,
     WindowsSettingsManager windowsSettings,
     InterestingSettingsManager interestingSettings,
-    RecentChangesWindowFactory recentChangesWindowFactory,
+    JavaFxRecentChangesWindowFactory recentChangesWindowFactory,
     ImageLoader imageLoader,
     DesktopService desktopService,
     UrlService urlService,
-    SaveWindowsPositionAction saveWindowsPositionAction) {}
+    JavaFxSaveWindowsPositionAction saveWindowsPositionAction,
+    JavaFxWindowsRegistry windowsRegistry) {}

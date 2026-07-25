@@ -11,9 +11,10 @@ import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.application.base.processor.LoginProcessor;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
-import org.wpcleaner.application.gui.core.factory.MainWindowFactory;
+import org.wpcleaner.application.gui.javafx.JavaFxSaveWindowsPositionAction;
+import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
+import org.wpcleaner.application.gui.javafx.main.JavaFxMainWindowFactory;
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
-import org.wpcleaner.application.gui.swing.core.window.SaveWindowsPositionAction;
 import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
@@ -21,9 +22,10 @@ public record JavaFxLoginWindowServices(
     CredentialsProvider credentialsProvider,
     KnownDefinitions knownDefinitions,
     LoginProcessor loginProcessor,
-    MainWindowFactory main,
+    JavaFxMainWindowFactory main,
     DesktopService desktopService,
     ImageLoader imageLoader,
     WindowsSettingsManager windowsSettings,
     UrlService urlService,
-    SaveWindowsPositionAction saveWindowsPositionAction) {}
+    JavaFxSaveWindowsPositionAction saveWindowsPositionAction,
+    JavaFxWindowsRegistry windowsRegistry) {}

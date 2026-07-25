@@ -46,6 +46,7 @@ public final class JavaFxLoginWindow extends Stage {
   private void initialize() {
     setTitle("WPCleaner");
     imageLoader.setWindowIcon(this);
+    services.windowsRegistry().register(this);
 
     final StackPane root = new StackPane();
     final VBox mainContainer = new VBox(10);
@@ -86,7 +87,22 @@ public final class JavaFxLoginWindow extends Stage {
           }
         });
 
-    sizeToScene();
+    position();
+  }
+
+  private void position() {
+    services
+        .windowsSettings()
+        .getCurrentSettings()
+        .getWindowSettings("login")
+        .ifPresentOrElse(
+            windowSettings -> {
+              setX(windowSettings.x());
+              setY(windowSettings.y());
+              setWidth(windowSettings.width());
+              setHeight(windowSettings.height());
+            },
+            this::sizeToScene);
   }
 
   private GridPane createFormGrid(

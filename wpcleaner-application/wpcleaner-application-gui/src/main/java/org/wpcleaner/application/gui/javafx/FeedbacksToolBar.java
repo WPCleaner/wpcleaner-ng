@@ -12,8 +12,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import org.wpcleaner.application.base.utils.url.UrlService;
+import org.wpcleaner.application.gui.core.action.SaveWindowsPositionAction;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
-import org.wpcleaner.application.gui.swing.core.window.SaveWindowsPositionAction;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 

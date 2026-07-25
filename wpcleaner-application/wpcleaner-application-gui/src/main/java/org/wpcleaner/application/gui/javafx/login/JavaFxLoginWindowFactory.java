@@ -6,12 +6,10 @@
 package org.wpcleaner.application.gui.javafx.login;
 
 import javafx.application.Platform;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.factory.LoginWindowFactory;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
 
-@ConditionalOnProperty(name = "gui", havingValue = "javafx")
 @Service
 public class JavaFxLoginWindowFactory implements LoginWindowFactory {
 

@@ -73,6 +73,7 @@ public final class JavaFxRecentChangesWindow extends Stage {
   private void initialize() {
     setTitle("WPCleaner - Recent changes");
     imageLoader.setWindowIcon(this);
+    services.windowsRegistry().register(this);
 
     final VBox mainContainer = new VBox(10);
     mainContainer.setPadding(new Insets(10, 15, 10, 15));
@@ -116,6 +117,21 @@ public final class JavaFxRecentChangesWindow extends Stage {
     setScene(scene);
 
     setOnCloseRequest(_ -> timeline.stop());
+    position();
+  }
+
+  private void position() {
+    services
+        .windowsSettings()
+        .getCurrentSettings()
+        .getWindowSettings("recentChanges")
+        .ifPresent(
+            windowSettings -> {
+              setX(windowSettings.x());
+              setY(windowSettings.y());
+              setWidth(windowSettings.width());
+              setHeight(windowSettings.height());
+            });
   }
 
   private void refreshList() {

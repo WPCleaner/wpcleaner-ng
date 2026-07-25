@@ -40,6 +40,7 @@ public final class JavaFxMainWindow extends Stage {
   private void initialize() {
     setTitle("WPCleaner");
     imageLoader.setWindowIcon(this);
+    services.windowsRegistry().register(this);
 
     final StackPane root = new StackPane();
     final VBox mainContainer = new VBox(15);
@@ -98,7 +99,22 @@ public final class JavaFxMainWindow extends Stage {
 
     final Scene scene = new Scene(root, 650, 450);
     setScene(scene);
-    sizeToScene();
+    position();
+  }
+
+  private void position() {
+    services
+        .windowsSettings()
+        .getCurrentSettings()
+        .getWindowSettings("main")
+        .ifPresentOrElse(
+            windowSettings -> {
+              setX(windowSettings.x());
+              setY(windowSettings.y());
+              setWidth(windowSettings.width());
+              setHeight(windowSettings.height());
+            },
+            this::sizeToScene);
   }
 
   private ToolBar createFeedbacksToolbar() {

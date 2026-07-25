@@ -7,7 +7,6 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
 
 import java.util.Set;
 import javafx.application.Platform;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
@@ -15,7 +14,6 @@ import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.application.gui.core.factory.RecentChangesWindowFactory;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
 
-@ConditionalOnProperty(name = "gui", havingValue = "javafx")
 @Service
 public class JavaFxRecentChangesWindowFactory implements RecentChangesWindowFactory {
 

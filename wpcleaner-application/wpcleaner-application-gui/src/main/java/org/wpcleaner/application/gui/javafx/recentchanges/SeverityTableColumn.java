@@ -11,7 +11,7 @@ import javafx.scene.control.TableColumn;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 
-public class SeverityTableColumn<S> extends TableColumn<S, @Nullable Severity> {
+public final class SeverityTableColumn<S> extends TableColumn<S, @Nullable Severity> {
 
   public SeverityTableColumn(
       final String title,

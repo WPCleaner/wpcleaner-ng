@@ -7,14 +7,12 @@ package org.wpcleaner.application.gui.swing.recentchanges;
 
 import java.awt.EventQueue;
 import java.util.Set;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
 import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.application.gui.core.factory.RecentChangesWindowFactory;
 
-@ConditionalOnProperty(name = "gui", havingValue = "swing", matchIfMissing = true)
 @Service
 public class SwingRecentChangesWindowFactory implements RecentChangesWindowFactory {
 
