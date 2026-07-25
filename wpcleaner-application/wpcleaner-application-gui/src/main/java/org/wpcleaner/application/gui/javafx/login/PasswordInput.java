@@ -13,6 +13,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
@@ -45,7 +46,7 @@ final class PasswordInput {
     imageLoader
         .getImageView(ImageCollection.HELP, ImageSize.TOOLBAR)
         .ifPresent(botPasswordsButton::setGraphic);
-    botPasswordsButton.setTooltip(new Tooltip("Bot passwords"));
+    botPasswordsButton.setTooltip(new Tooltip(GT._T("Bot passwords")));
     botPasswordsButton.setOnAction(
         _ -> JavaFxInitializer.browse(desktopService, UrlService.BOT_PASSWORDS));
 
@@ -54,7 +55,7 @@ final class PasswordInput {
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addPasswordButton::setGraphic);
-    addPasswordButton.setTooltip(new Tooltip("Save user and password"));
+    addPasswordButton.setTooltip(new Tooltip(GT._T("Save user and password")));
     addPasswordButton.setOnAction(_ -> showNotImplementedAlert());
 
     final Button removePasswordButton = new Button();
@@ -62,7 +63,7 @@ final class PasswordInput {
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removePasswordButton::setGraphic);
-    removePasswordButton.setTooltip(new Tooltip("Forget password"));
+    removePasswordButton.setTooltip(new Tooltip(GT._T("Forget password")));
     removePasswordButton.setOnAction(_ -> showNotImplementedAlert());
 
     toolBar = new ToolBar();
@@ -81,9 +82,9 @@ final class PasswordInput {
 
   private void showNotImplementedAlert() {
     final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Not Implemented");
+    alert.setTitle(GT._T("Not Implemented"));
     alert.setHeaderText(null);
-    alert.setContentText("This feature is not implemented yet.");
+    alert.setContentText(GT._T("This feature is not implemented yet."));
     alert.showAndWait();
   }
 }

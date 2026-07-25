@@ -14,6 +14,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.language.Language;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
@@ -41,7 +42,7 @@ final class LanguageInput {
     comboBox.setCellFactory(_ -> new LanguageListCell(imageLoader));
     comboBox.setButtonCell(new LanguageListCell(imageLoader));
 
-    label = new Label("Language");
+    label = new Label(GT._T("Language"));
     label.setMaxWidth(Double.MAX_VALUE);
     label.setAlignment(Pos.CENTER_RIGHT);
 
@@ -50,7 +51,7 @@ final class LanguageInput {
     imageLoader
         .getImageView(ImageCollection.LANGUAGE_ADD, ImageSize.TOOLBAR)
         .ifPresent(addLanguageButton::setGraphic);
-    addLanguageButton.setTooltip(new Tooltip("Add language"));
+    addLanguageButton.setTooltip(new Tooltip(GT._T("Add language")));
     addLanguageButton.setOnAction(
         _ ->
             JavaFxInitializer.browse(

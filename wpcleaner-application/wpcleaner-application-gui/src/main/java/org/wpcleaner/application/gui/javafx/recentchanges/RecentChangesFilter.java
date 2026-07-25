@@ -10,6 +10,7 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
+import org.wpcleaner.api.utils.GT;
 
 public record RecentChangesFilter(
     String name,
@@ -19,7 +20,7 @@ public record RecentChangesFilter(
     Set<RecentChangesParameters.Type> type) {
 
   public static final RecentChangesFilter ACCEPT_ALL =
-      new RecentChangesFilter("Accept all", Set.of(), null, Set.of(), Set.of());
+      new RecentChangesFilter(GT._T("Accept all"), Set.of(), null, Set.of(), Set.of());
 
   public boolean matches(final RecentChange rc) {
     return matchesNamespace(rc) && matchesTag(rc) && matchesType(rc);

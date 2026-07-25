@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -21,7 +22,7 @@ public final class MoveLastButton<T> extends Button {
     imageLoader
         .getImageView(ImageCollection.MOVE_LAST, ImageSize.BUTTON)
         .ifPresent(this::setGraphic);
-    setTooltip(new Tooltip("Move last"));
+    setTooltip(new Tooltip(GT._T("Move last")));
     disableProperty()
         .bind(
             listView

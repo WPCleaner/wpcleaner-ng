@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
@@ -29,7 +30,7 @@ public class UrlTableCell<S> extends TableCell<S, @Nullable URI> {
     this.desktopService = desktopService;
     button.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
     imageLoader.getImageView(icon, ImageSize.BUTTON).ifPresent(button::setGraphic);
-    button.setTooltip(new Tooltip("Open URL"));
+    button.setTooltip(new Tooltip(GT._T("Open URL")));
     setAlignment(Pos.CENTER);
   }
 

@@ -15,6 +15,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -34,7 +35,7 @@ final class UserInput {
     comboBox.setEditable(true);
     comboBox.setMaxWidth(Double.MAX_VALUE);
 
-    label = new Label("Username");
+    label = new Label(GT._T("Username"));
     label.setMaxWidth(Double.MAX_VALUE);
     label.setAlignment(Pos.CENTER_RIGHT);
 
@@ -43,7 +44,7 @@ final class UserInput {
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addUserButton::setGraphic);
-    addUserButton.setTooltip(new Tooltip("Save user"));
+    addUserButton.setTooltip(new Tooltip(GT._T("Save user")));
     addUserButton.setOnAction(_ -> showNotImplementedAlert());
 
     final Button removeUserButton = new Button();
@@ -51,7 +52,7 @@ final class UserInput {
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removeUserButton::setGraphic);
-    removeUserButton.setTooltip(new Tooltip("Forget user"));
+    removeUserButton.setTooltip(new Tooltip(GT._T("Forget user")));
     removeUserButton.setOnAction(_ -> showNotImplementedAlert());
 
     toolBar = new ToolBar();
@@ -75,9 +76,9 @@ final class UserInput {
 
   private void showNotImplementedAlert() {
     final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Not Implemented");
+    alert.setTitle(GT._T("Not Implemented"));
     alert.setHeaderText(null);
-    alert.setContentText("This feature is not implemented yet.");
+    alert.setContentText(GT._T("This feature is not implemented yet."));
     alert.showAndWait();
   }
 }

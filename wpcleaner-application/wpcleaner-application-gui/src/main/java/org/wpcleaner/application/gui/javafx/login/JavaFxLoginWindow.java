@@ -22,6 +22,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
 import org.wpcleaner.application.gui.javafx.FeedbacksToolBar;
@@ -159,12 +160,12 @@ public final class JavaFxLoginWindow extends Stage {
     final HBox buttons = new HBox(10);
     buttons.setAlignment(Pos.CENTER);
 
-    final Button loginButton = new Button("Login");
+    final Button loginButton = new Button(GT._T("Login"));
     loginButton.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(loginButton, Priority.ALWAYS);
     loginButton.setOnAction(_ -> handleLogin(wiki, user, password));
 
-    final Button demoButton = new Button("Demo");
+    final Button demoButton = new Button(GT._T("Demo"));
     demoButton.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(demoButton, Priority.ALWAYS);
     demoButton.setOnAction(_ -> handleDemo(wiki, user));
@@ -188,19 +189,21 @@ public final class JavaFxLoginWindow extends Stage {
       final WikiInput wiki, final UserInput user, final PasswordInput password) {
     final WikiDefinition selectedWiki = wiki.getSelectedWiki().orElse(null);
     if (selectedWiki == null) {
-      showWarning("Missing wiki", "You must select a wiki before login!");
+      showWarning(GT._T("Missing wiki"), GT._T("You must select a wiki before login!"));
       return;
     }
     final String userVal = user.getUser();
     if (userVal.isEmpty()) {
-      showWarning("Missing username", "You must input your username before login!");
+      showWarning(GT._T("Missing username"), GT._T("You must input your username before login!"));
       return;
     }
     final char[] passwordVal = password.getPassword();
     if (passwordVal.length == 0) {
       showWarning(
-          "Missing password",
-          "You must input your password before login!\nIf you prefer to test WPCleaner first, you can use the Demo mode.");
+          GT._T("Missing password"),
+          GT._T("You must input your password before login!")
+              + "\n"
+              + GT._T("If you prefer to test WPCleaner first, you can use the Demo mode."));
       return;
     }
 
@@ -227,8 +230,8 @@ public final class JavaFxLoginWindow extends Stage {
           () -> {
             loading.set(false);
             showError(
-                "Login Failed",
-                "An error occurred during login",
+                GT._T("Login Failed"),
+                GT._T("An error occurred during login"),
                 Objects.requireNonNullElseGet(e.getMessage(), e::toString));
           });
     }
@@ -237,12 +240,15 @@ public final class JavaFxLoginWindow extends Stage {
   private void handleDemo(final WikiInput wiki, final UserInput user) {
     final WikiDefinition selectedWiki = wiki.getSelectedWiki().orElse(null);
     if (selectedWiki == null) {
-      showWarning("Missing wiki", "You must select a wiki before starting demo mode!");
+      showWarning(
+          GT._T("Missing wiki"), GT._T("You must select a wiki before starting demo mode!"));
       return;
     }
     final String userVal = user.getUser();
     if (userVal.isEmpty()) {
-      showWarning("Missing username", "You must input your username before starting demo mode!");
+      showWarning(
+          GT._T("Missing username"),
+          GT._T("You must input your username before starting demo mode!"));
       return;
     }
 
@@ -267,8 +273,8 @@ public final class JavaFxLoginWindow extends Stage {
           () -> {
             loading.set(false);
             showError(
-                "Demo Mode Failed",
-                "An error occurred during demo startup",
+                GT._T("Demo Mode Failed"),
+                GT._T("An error occurred during demo startup"),
                 Objects.requireNonNullElseGet(e.getMessage(), e::toString));
           });
     }

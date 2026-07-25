@@ -16,6 +16,7 @@ import org.wpcleaner.api.api.query.list.users.User;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.Tokens;
 import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
@@ -43,21 +44,21 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
     currentUserService.logout();
     if (!input.demo()) {
       final Tokens tokens;
-      try (ProgressStep _ = tracker.start("Retrieving login token")) {
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving login token"))) {
         tokens = apiTokens.requestTokens(input.wiki, List.of(TokensParameters.Type.LOGIN));
       }
-      try (ProgressStep _ = tracker.start("Login for user %s".formatted(input.username))) {
+      try (ProgressStep _ = tracker.start(GT._T("Login for user %s", input.username))) {
         apiLogin.login(
             input.wiki,
             input.username,
             new String(input.password),
-            Objects.requireNonNull(tokens.login(), "Login token is null"));
+            Objects.requireNonNull(tokens.login(), GT._T("Login token is null")));
       }
     }
     final String compactUsername = compactUsername(input.username);
     currentUserService.login(input.wiki(), compactUsername, input.demo());
     try (ProgressStep _ =
-        tracker.start("Retrieving information about user %s".formatted(input.username))) {
+        tracker.start(GT._T("Retrieving information about user %s", input.username))) {
       final User user = apiUsers.retrieveUser(input.wiki, compactUsername);
       currentUserService.withGroups(user.groups());
       currentUserService.withRights(user.rights());

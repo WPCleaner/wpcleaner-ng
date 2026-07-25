@@ -11,6 +11,7 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.action.SaveWindowsPositionAction;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
@@ -41,31 +42,31 @@ public final class FeedbacksToolBar extends ToolBar {
     setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
 
     final MenuButton feedbackButton = new MenuButton();
-    feedbackButton.setTooltip(new Tooltip("Feedback"));
+    feedbackButton.setTooltip(new Tooltip(GT._T("Feedback")));
     feedbackButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
     imageLoader
         .getImageView(ImageCollection.HELP_FAQ, ImageSize.BUTTON)
         .ifPresent(feedbackButton::setGraphic);
 
-    final MenuItem helpItem = new MenuItem("Help");
+    final MenuItem helpItem = new MenuItem(GT._T("Help"));
     imageLoader.getImageView(ImageCollection.HELP, ImageSize.MENU).ifPresent(helpItem::setGraphic);
     helpItem.setOnAction(_ -> JavaFxInitializer.browse(desktopService, UrlService.HELP));
 
-    final MenuItem reportBugItem = new MenuItem("Report bug");
+    final MenuItem reportBugItem = new MenuItem(GT._T("Report bug"));
     imageLoader
         .getImageView(ImageCollection.LOGO_PHABRICATOR, ImageSize.MENU)
         .ifPresent(reportBugItem::setGraphic);
     reportBugItem.setOnAction(
         _ -> JavaFxInitializer.browse(desktopService, urlService.reportBug()));
 
-    final MenuItem requestFeatureItem = new MenuItem("Request new feature");
+    final MenuItem requestFeatureItem = new MenuItem(GT._T("Request new feature"));
     imageLoader
         .getImageView(ImageCollection.LOGO_PHABRICATOR, ImageSize.MENU)
         .ifPresent(requestFeatureItem::setGraphic);
     requestFeatureItem.setOnAction(
         _ -> JavaFxInitializer.browse(desktopService, UrlService.REQUEST_FEATURE));
 
-    final MenuItem askQuestionItem = new MenuItem("Ask a question");
+    final MenuItem askQuestionItem = new MenuItem(GT._T("Ask a question"));
     imageLoader
         .getImageView(ImageCollection.HELP, ImageSize.MENU)
         .ifPresent(askQuestionItem::setGraphic);
@@ -75,13 +76,13 @@ public final class FeedbacksToolBar extends ToolBar {
     feedbackButton.getItems().addAll(helpItem, reportBugItem, requestFeatureItem, askQuestionItem);
 
     final MenuButton optionsButton = new MenuButton();
-    optionsButton.setTooltip(new Tooltip("Options"));
+    optionsButton.setTooltip(new Tooltip(GT._T("Options")));
     optionsButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
     imageLoader
         .getImageView(ImageCollection.OPTIONS, ImageSize.BUTTON)
         .ifPresent(optionsButton::setGraphic);
 
-    final MenuItem savePosItem = new MenuItem("Save windows position");
+    final MenuItem savePosItem = new MenuItem(GT._T("Save windows position"));
     imageLoader
         .getImageView(ImageCollection.DOCUMENT_SAVE, ImageSize.MENU)
         .ifPresent(savePosItem::setGraphic);
@@ -98,9 +99,9 @@ public final class FeedbacksToolBar extends ToolBar {
     aboutButton.setOnAction(
         _ -> {
           final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-          alert.setTitle("About");
+          alert.setTitle(GT._T("About"));
           alert.setHeaderText("WPCleaner-NG");
-          alert.setContentText("WPCleaner Next Generation Prototype in JavaFX.");
+          alert.setContentText(GT._T("WPCleaner Next Generation Prototype in JavaFX."));
           alert.showAndWait();
         });
 

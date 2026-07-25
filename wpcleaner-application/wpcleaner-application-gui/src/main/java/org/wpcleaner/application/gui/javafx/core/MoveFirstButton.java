@@ -9,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -22,7 +23,7 @@ public final class MoveFirstButton<T> extends Button {
     imageLoader
         .getImageView(ImageCollection.MOVE_FIRST, ImageSize.BUTTON)
         .ifPresent(this::setGraphic);
-    setTooltip(new Tooltip("Move first"));
+    setTooltip(new Tooltip(GT._T("Move first")));
     disableProperty()
         .bind(listView.getSelectionModel().selectedIndexProperty().lessThanOrEqualTo(0));
     setOnAction(

@@ -7,6 +7,7 @@
 module org.wpcleaner.api {
   requires transitive com.fasterxml.jackson.annotation;
   requires transitive com.fasterxml.jackson.databind;
+  requires transitive com.google.errorprone.annotations;
   requires transitive java.desktop;
   requires transitive org.jspecify;
   requires transitive org.wpcleaner.lib.image;

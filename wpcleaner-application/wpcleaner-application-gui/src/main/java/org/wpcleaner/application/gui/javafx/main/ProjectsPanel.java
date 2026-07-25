@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
+import org.wpcleaner.api.utils.GT;
 
 final class ProjectsPanel extends VBox {
 
@@ -24,7 +25,7 @@ final class ProjectsPanel extends VBox {
     setPadding(new Insets(10, 15, 10, 15));
     setAlignment(Pos.TOP_LEFT);
 
-    final Button button = new Button("Recent changes");
+    final Button button = new Button(GT._T("Recent changes"));
     button.setOnAction(_ -> services.recentChangesWindowFactory().displayRecentChangesWindow());
 
     getChildren().add(button);

@@ -17,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.wpcleaner.api.api.ConnectedUser;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.application.gui.javafx.FeedbacksToolBar;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
@@ -51,28 +52,29 @@ public final class JavaFxMainWindow extends Stage {
     welcomeContainer.setAlignment(Pos.CENTER);
 
     final Label welcomeLabel =
-        new Label("Welcome %s on WPCleaner Next Generation!".formatted(user.username()));
+        new Label(GT._T("Welcome %s on WPCleaner Next Generation!", user.username()));
     welcomeLabel.setAlignment(Pos.CENTER);
 
-    final Label connectedLabel =
-        new Label("You are currently connected to %s".formatted(user.wiki()));
+    final Label connectedLabel = new Label(GT._T("You are currently connected to %s", user.wiki()));
     connectedLabel.setAlignment(Pos.CENTER);
 
     welcomeContainer.getChildren().addAll(welcomeLabel, connectedLabel);
 
     if (user.demo()) {
       final Label demoLabel =
-          new Label("You are currently in demo mode, you won't be able to save your modifications");
+          new Label(
+              GT._T(
+                  "You are currently in demo mode, you won't be able to save your modifications"));
       demoLabel.setAlignment(Pos.CENTER);
       welcomeContainer.getChildren().add(demoLabel);
     }
 
     final Label groupsLabel =
-        new Label("Your groups: %s".formatted(StringUtils.joinWithEllipsis(user.groups(), 3)));
+        new Label(GT._T("Your groups: %s", StringUtils.joinWithEllipsis(user.groups(), 3)));
     groupsLabel.setAlignment(Pos.CENTER);
 
     final Label rightsLabel =
-        new Label("Your rights: %s".formatted(StringUtils.joinWithEllipsis(user.rights(), 3)));
+        new Label(GT._T("Your rights: %s", StringUtils.joinWithEllipsis(user.rights(), 3)));
     rightsLabel.setAlignment(Pos.CENTER);
 
     welcomeContainer.getChildren().addAll(groupsLabel, rightsLabel);
@@ -81,13 +83,13 @@ public final class JavaFxMainWindow extends Stage {
     tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
     VBox.setVgrow(tabPane, Priority.ALWAYS);
 
-    final Tab byPageTab = new Tab("By page");
+    final Tab byPageTab = new Tab(GT._T("By page"));
     imageLoader
         .getImageView(ImageCollection.PAGE, ImageSize.BUTTON)
         .ifPresent(byPageTab::setGraphic);
     byPageTab.setContent(new ByPagePanel(user.wiki(), services.interestingSettings(), imageLoader));
 
-    final Tab projectsTab = new Tab("Projects");
+    final Tab projectsTab = new Tab(GT._T("Projects"));
     projectsTab.setContent(new ProjectsPanel(services));
 
     tabPane.getTabs().addAll(byPageTab, projectsTab);

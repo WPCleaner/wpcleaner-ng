@@ -29,6 +29,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.NamespaceCheckComboBox;
 
@@ -50,7 +51,7 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
       final RecentChangesOptions initialOptions) {
     super();
     initOwner(owner);
-    setTitle("Recent changes options");
+    setTitle(GT._T("Recent changes options"));
 
     final GridPane grid = new GridPane();
     grid.setHgap(10);
@@ -59,32 +60,32 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
 
     nameField = new TextField();
     setupNameField(initialOptions);
-    grid.add(new Label("Name:"), 0, 0);
+    grid.add(new Label(GT._T("Name:")), 0, 0);
     grid.add(nameField, 1, 0);
 
     namespaceComboBox = new NamespaceCheckComboBox();
     namespaceComboBox.setup(availableNamespaces, initialOptions.namespace());
-    grid.add(new Label("Namespace:"), 0, 1);
+    grid.add(new Label(GT._T("Namespace:")), 0, 1);
     grid.add(namespaceComboBox, 1, 1);
 
     showComboBox = new ShowCheckComboBox();
     showComboBox.setup(initialOptions.show());
-    grid.add(new Label("Show:"), 0, 2);
+    grid.add(new Label(GT._T("Show:")), 0, 2);
     grid.add(showComboBox, 1, 2);
 
     tagField = new ComboBox<>();
     setupTagField(availableTags, initialOptions);
-    grid.add(new Label("Tag:"), 0, 3);
+    grid.add(new Label(GT._T("Tag:")), 0, 3);
     grid.add(tagField, 1, 3);
 
     typeComboBox = new TypeCheckComboBox();
     typeComboBox.setup(initialOptions.type());
-    grid.add(new Label("Type:"), 0, 4);
+    grid.add(new Label(GT._T("Type:")), 0, 4);
     grid.add(typeComboBox, 1, 4);
 
     topOnlyCheckbox = new CheckBox();
     setupTopOnlyCheckbox(initialOptions);
-    grid.add(new Label("Top only:"), 0, 5);
+    grid.add(new Label(GT._T("Top only:")), 0, 5);
     grid.add(topOnlyCheckbox, 1, 5);
 
     final RecentChangesFilterListView filtersListView =
@@ -92,8 +93,9 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
 
     getDialogPane().setContent(grid);
 
-    final ButtonType okButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-    final ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+    final ButtonType okButtonType = new ButtonType(GT._T("OK"), ButtonBar.ButtonData.OK_DONE);
+    final ButtonType cancelButtonType =
+        new ButtonType(GT._T("Cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
     getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
 
     final Button okButton = (Button) getDialogPane().lookupButton(okButtonType);
@@ -104,9 +106,9 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
             event.consume();
             final Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(getDialogPane().getScene().getWindow());
-            alert.setTitle("Error");
+            alert.setTitle(GT._T("Error"));
             alert.setHeaderText(null);
-            alert.setContentText("The option name cannot be empty or blank.");
+            alert.setContentText(GT._T("The option name cannot be empty or blank."));
             alert.showAndWait();
           }
         });
@@ -179,7 +181,7 @@ public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentCha
     final VBox filtersBox = new VBox(5);
     filtersBox.getChildren().addAll(filtersListView, filtersToolBar);
 
-    grid.add(new Label("Filters:"), 0, 6);
+    grid.add(new Label(GT._T("Filters:")), 0, 6);
     grid.add(filtersBox, 1, 6);
     return filtersListView;
   }

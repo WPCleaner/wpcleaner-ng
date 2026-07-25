@@ -16,6 +16,7 @@ import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.MoveDownButton;
 import org.wpcleaner.application.gui.javafx.core.MoveFirstButton;
@@ -89,7 +90,7 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.BUTTON)
         .ifPresent(button::setGraphic);
-    button.setTooltip(new Tooltip("Add"));
+    button.setTooltip(new Tooltip(GT._T("Add")));
     button.setOnAction(
         _ -> {
           if (getScene() != null) {
@@ -111,7 +112,7 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
     final Button button = new Button();
     button.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
     imageLoader.getImageView(ImageCollection.EDIT, ImageSize.BUTTON).ifPresent(button::setGraphic);
-    button.setTooltip(new Tooltip("Edit"));
+    button.setTooltip(new Tooltip(GT._T("Edit")));
     button.disableProperty().bind(getSelectionModel().selectedItemProperty().isNull());
     button.setOnAction(
         _ -> {
@@ -135,7 +136,7 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.BUTTON)
         .ifPresent(button::setGraphic);
-    button.setTooltip(new Tooltip("Remove"));
+    button.setTooltip(new Tooltip(GT._T("Remove")));
     button.disableProperty().bind(getSelectionModel().selectedItemProperty().isNull());
     button.setOnAction(
         _ -> {

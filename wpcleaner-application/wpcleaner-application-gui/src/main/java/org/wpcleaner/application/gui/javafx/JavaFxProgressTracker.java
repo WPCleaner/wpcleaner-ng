@@ -13,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.base.processor.DefaultProgressTracker;
 import org.wpcleaner.application.base.processor.ProgressStep;
 import org.wpcleaner.application.base.processor.ProgressTracker;
@@ -30,7 +31,7 @@ public final class JavaFxProgressTracker implements ProgressTracker {
     progressOverlay.setStyle("-fx-background-color: rgba(255, 255, 255, 0.85);");
 
     final ProgressIndicator progressIndicator = new ProgressIndicator();
-    final Label progressLabel = new Label("Processing...");
+    final Label progressLabel = new Label(GT._T("Processing..."));
     progressLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #333333;");
     progressOverlay.getChildren().addAll(progressIndicator, progressLabel);
 

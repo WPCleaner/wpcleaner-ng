@@ -5,29 +5,30 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.image.ImageCollection;
 
 public enum Severity {
-  NOTICE_0(0, "Notice, green", ImageCollection.NOTICE_SUCCESS),
-  NOTICE_1(1, "Notice, black", ImageCollection.NOTICE),
-  NOTICE_2(2, "Notice, grey", ImageCollection.NOTICE_PLACEHOLDER),
-  NOTICE_3(3, "Notice, blue", ImageCollection.NOTICE_PROGRESSIVE),
-  NOTICE_4(4, "Notice, gold", ImageCollection.NOTICE_WARNING),
-  NOTICE_5(5, "Notice, red", ImageCollection.ERROR),
-  ALERT_0(10, "Alert, green", ImageCollection.ALERT_SUCCESS),
-  ALERT_1(11, "Alert, black", ImageCollection.ALERT),
-  ALERT_2(12, "Alert, grey", ImageCollection.ALERT_PLACEHOLDER),
-  ALERT_3(13, "Alert, blue", ImageCollection.ALERT_PROGRESSIVE),
-  ALERT_4(14, "Alert, gold", ImageCollection.ALERT_WARNING),
-  ALERT_5(15, "Alert, yellow", ImageCollection.ALERT_YELLOW),
-  ALERT_6(16, "Alert, orange", ImageCollection.ALERT_ORANGE),
-  ALERT_7(17, "Alert, red", ImageCollection.ALERT_ERROR),
-  ERROR_0(20, "Error, green", ImageCollection.ERROR_SUCCESS),
-  ERROR_1(21, "Error, black", ImageCollection.ERROR),
-  ERROR_2(22, "Error, grey", ImageCollection.ERROR_PLACEHOLDER),
-  ERROR_3(23, "Error, blue", ImageCollection.ERROR_PROGRESSIVE),
-  ERROR_4(24, "Error, gold", ImageCollection.ERROR_WARNING),
-  ERROR_5(25, "Error, red", ImageCollection.ERROR_ERROR);
+  NOTICE_0(0, GT._T("Notice, green"), ImageCollection.NOTICE_SUCCESS),
+  NOTICE_1(1, GT._T("Notice, black"), ImageCollection.NOTICE),
+  NOTICE_2(2, GT._T("Notice, grey"), ImageCollection.NOTICE_PLACEHOLDER),
+  NOTICE_3(3, GT._T("Notice, blue"), ImageCollection.NOTICE_PROGRESSIVE),
+  NOTICE_4(4, GT._T("Notice, gold"), ImageCollection.NOTICE_WARNING),
+  NOTICE_5(5, GT._T("Notice, red"), ImageCollection.ERROR),
+  ALERT_0(10, GT._T("Alert, green"), ImageCollection.ALERT_SUCCESS),
+  ALERT_1(11, GT._T("Alert, black"), ImageCollection.ALERT),
+  ALERT_2(12, GT._T("Alert, grey"), ImageCollection.ALERT_PLACEHOLDER),
+  ALERT_3(13, GT._T("Alert, blue"), ImageCollection.ALERT_PROGRESSIVE),
+  ALERT_4(14, GT._T("Alert, gold"), ImageCollection.ALERT_WARNING),
+  ALERT_5(15, GT._T("Alert, yellow"), ImageCollection.ALERT_YELLOW),
+  ALERT_6(16, GT._T("Alert, orange"), ImageCollection.ALERT_ORANGE),
+  ALERT_7(17, GT._T("Alert, red"), ImageCollection.ALERT_ERROR),
+  ERROR_0(20, GT._T("Error, green"), ImageCollection.ERROR_SUCCESS),
+  ERROR_1(21, GT._T("Error, black"), ImageCollection.ERROR),
+  ERROR_2(22, GT._T("Error, grey"), ImageCollection.ERROR_PLACEHOLDER),
+  ERROR_3(23, GT._T("Error, blue"), ImageCollection.ERROR_PROGRESSIVE),
+  ERROR_4(24, GT._T("Error, gold"), ImageCollection.ERROR_WARNING),
+  ERROR_5(25, GT._T("Error, red"), ImageCollection.ERROR_ERROR);
 
   private final int id;
   private final String name;

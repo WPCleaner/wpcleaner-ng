@@ -16,6 +16,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
@@ -51,7 +52,7 @@ final class WikiInput {
     comboBox.setCellFactory(_ -> new WikiListCell(imageLoader));
     comboBox.setButtonCell(new WikiListCell(imageLoader));
 
-    label = new Label("Wiki");
+    label = new Label(GT._T("Wiki"));
     label.setMaxWidth(Double.MAX_VALUE);
     label.setAlignment(Pos.CENTER_RIGHT);
 
@@ -68,7 +69,7 @@ final class WikiInput {
     imageLoader
         .getImageView(ImageCollection.HELP, ImageSize.TOOLBAR)
         .ifPresent(otherWikiButton::setGraphic);
-    otherWikiButton.setTooltip(new Tooltip("Other wiki"));
+    otherWikiButton.setTooltip(new Tooltip(GT._T("Other wiki")));
     otherWikiButton.setOnAction(
         _ ->
             JavaFxInitializer.browse(
@@ -79,7 +80,7 @@ final class WikiInput {
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addWikiButton::setGraphic);
-    addWikiButton.setTooltip(new Tooltip("Add wiki"));
+    addWikiButton.setTooltip(new Tooltip(GT._T("Add wiki")));
     addWikiButton.setOnAction(_ -> showNotImplementedAlert());
 
     final Button removeWikiButton = new Button();
@@ -87,7 +88,7 @@ final class WikiInput {
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removeWikiButton::setGraphic);
-    removeWikiButton.setTooltip(new Tooltip("Remove wiki"));
+    removeWikiButton.setTooltip(new Tooltip(GT._T("Remove wiki")));
     removeWikiButton.setOnAction(_ -> showNotImplementedAlert());
 
     toolBar = new ToolBar();
@@ -110,7 +111,7 @@ final class WikiInput {
           if (selected != null && selected.warning() != null) {
             final Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle(WARNING);
-            alert.setHeaderText("Warning for " + selected.name());
+            alert.setHeaderText(GT._T("Warning for %s", selected.name()));
             alert.setContentText(selected.warning().text());
             alert.showAndWait();
           }
@@ -138,9 +139,9 @@ final class WikiInput {
 
   private void showNotImplementedAlert() {
     final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Not Implemented");
+    alert.setTitle(GT._T("Not Implemented"));
     alert.setHeaderText(null);
-    alert.setContentText("This feature is not implemented yet.");
+    alert.setContentText(GT._T("This feature is not implemented yet."));
     alert.showAndWait();
   }
 }

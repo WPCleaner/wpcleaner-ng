@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
+import org.wpcleaner.api.utils.GT;
 
 public record RecentChangesOptions(
     String name,
@@ -23,7 +24,7 @@ public record RecentChangesOptions(
 
   public static final RecentChangesOptions DEFAULT_OPTIONS =
       new RecentChangesOptions(
-          "Default options",
+          GT._T("Default options"),
           Set.of(),
           Set.of(RecentChangesParameters.Show.NOT_BOT),
           null,

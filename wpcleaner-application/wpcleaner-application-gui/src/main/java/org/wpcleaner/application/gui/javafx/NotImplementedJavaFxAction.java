@@ -7,6 +7,7 @@ package org.wpcleaner.application.gui.javafx;
 
 import javafx.scene.control.Alert;
 import org.springframework.stereotype.Component;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.core.action.NotImplementedAction;
 
 @Component
@@ -15,9 +16,9 @@ public class NotImplementedJavaFxAction implements NotImplementedAction {
   @Override
   public void run() {
     final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Not implemented");
+    alert.setTitle(GT._T("Not implemented"));
     alert.setHeaderText(null);
-    alert.setContentText("This feature is not implemented yet. Try again later!");
+    alert.setContentText(GT._T("This feature is not implemented yet. Try again later!"));
     alert.showAndWait();
   }
 }

@@ -15,6 +15,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -68,7 +69,7 @@ public final class RecentChangesOptionsInput {
     imageLoader
         .getImageView(ImageCollection.EDIT, ImageSize.BUTTON)
         .ifPresent(editOptions::setGraphic);
-    editOptions.setTooltip(new Tooltip("Edit options"));
+    editOptions.setTooltip(new Tooltip(GT._T("Edit options")));
     editOptions.setOnAction(_ -> editOptionsAction(owner, services));
 
     this.addOptions = new Button();
@@ -76,7 +77,7 @@ public final class RecentChangesOptionsInput {
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.BUTTON)
         .ifPresent(addOptions::setGraphic);
-    addOptions.setTooltip(new Tooltip("Add options"));
+    addOptions.setTooltip(new Tooltip(GT._T("Add options")));
     addOptions.setOnAction(_ -> addOptionsAction(owner, services));
 
     this.removeOptions = new Button();
@@ -84,7 +85,7 @@ public final class RecentChangesOptionsInput {
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.BUTTON)
         .ifPresent(removeOptions::setGraphic);
-    removeOptions.setTooltip(new Tooltip("Remove options"));
+    removeOptions.setTooltip(new Tooltip(GT._T("Remove options")));
     removeOptions.setOnAction(_ -> removeOptionsAction(owner));
 
     this.comboBox
@@ -159,15 +160,15 @@ public final class RecentChangesOptionsInput {
   private void removeOptionsAction(final Window owner) {
     final RecentChangesOptions selected = getSelectedOptions();
     if (Objects.equals(selected, RecentChangesOptions.DEFAULT_OPTIONS)) {
-      showErrorAlert(owner, "The default options cannot be deleted.");
+      showErrorAlert(owner, GT._T("The default options cannot be deleted."));
       return;
     }
     final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
     alert.initOwner(owner);
-    alert.setTitle("Confirm deletion");
+    alert.setTitle(GT._T("Confirm deletion"));
     alert.setHeaderText(null);
     alert.setContentText(
-        "Are you sure you want to delete the options \"%s\"?".formatted(selected.name()));
+        GT._T("Are you sure you want to delete the options \"%s\"?", selected.name()));
     final Optional<ButtonType> result = alert.showAndWait();
     if (result.isPresent() && result.get() == ButtonType.OK) {
       comboBox.getItems().remove(selected);
@@ -180,18 +181,18 @@ public final class RecentChangesOptionsInput {
     editOptions.setDisable(isDefault);
     removeOptions.setDisable(isDefault);
     if (isDefault) {
-      editOptions.setTooltip(new Tooltip("Default options cannot be edited"));
-      removeOptions.setTooltip(new Tooltip("Default options cannot be deleted"));
+      editOptions.setTooltip(new Tooltip(GT._T("Default options cannot be edited")));
+      removeOptions.setTooltip(new Tooltip(GT._T("Default options cannot be deleted")));
     } else {
-      editOptions.setTooltip(new Tooltip("Edit selected options"));
-      removeOptions.setTooltip(new Tooltip("Remove selected options"));
+      editOptions.setTooltip(new Tooltip(GT._T("Edit selected options")));
+      removeOptions.setTooltip(new Tooltip(GT._T("Remove selected options")));
     }
   }
 
   private void showErrorAlert(final Window owner, final String message) {
     final Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.initOwner(owner);
-    alert.setTitle("Error");
+    alert.setTitle(GT._T("Error"));
     alert.setHeaderText(null);
     alert.setContentText(message);
     alert.showAndWait();

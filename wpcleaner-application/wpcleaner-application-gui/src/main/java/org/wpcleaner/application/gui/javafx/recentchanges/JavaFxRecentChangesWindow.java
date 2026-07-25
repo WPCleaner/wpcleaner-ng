@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.ImageToggleButton;
@@ -71,7 +72,7 @@ public final class JavaFxRecentChangesWindow extends Stage {
   }
 
   private void initialize() {
-    setTitle("WPCleaner - Recent changes");
+    setTitle("WPCleaner - " + GT._T("Recent changes"));
     imageLoader.setWindowIcon(this);
     services.windowsRegistry().register(this);
 
@@ -82,7 +83,8 @@ public final class JavaFxRecentChangesWindow extends Stage {
         imageLoader.getImage(ImageCollection.REFRESH_STOP, ImageSize.BUTTON).orElse(null);
     final Image selected =
         imageLoader.getImage(ImageCollection.REFRESH, ImageSize.BUTTON).orElse(null);
-    final ToggleButton refreshButton = new ImageToggleButton("Refresh list", unselected, selected);
+    final ToggleButton refreshButton =
+        new ImageToggleButton(GT._T("Refresh list"), unselected, selected);
 
     refreshButton
         .selectedProperty()

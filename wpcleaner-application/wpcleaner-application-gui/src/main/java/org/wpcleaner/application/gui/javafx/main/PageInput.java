@@ -15,6 +15,7 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
@@ -43,7 +44,7 @@ public class PageInput {
         .flatMap(settings -> settings.pages().stream())
         .forEach(comboBox.getItems()::add);
 
-    label = new Label("Page");
+    label = new Label(GT._T("Page"));
     label.setMaxWidth(Double.MAX_VALUE);
     label.setAlignment(Pos.CENTER_RIGHT);
 
@@ -52,7 +53,7 @@ public class PageInput {
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addPage::setGraphic);
-    addPage.setTooltip(new Tooltip("Add page"));
+    addPage.setTooltip(new Tooltip(GT._T("Add page")));
     addPage.setOnAction(_ -> showNotImplementedAlert());
 
     final Button removePage = new Button();
@@ -60,7 +61,7 @@ public class PageInput {
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removePage::setGraphic);
-    removePage.setTooltip(new Tooltip("Forget page"));
+    removePage.setTooltip(new Tooltip(GT._T("Forget page")));
     removePage.setOnAction(_ -> showNotImplementedAlert());
 
     toolBar = new ToolBar();
@@ -74,9 +75,9 @@ public class PageInput {
 
   private void showNotImplementedAlert() {
     final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle("Not Implemented");
+    alert.setTitle(GT._T("Not Implemented"));
     alert.setHeaderText(null);
-    alert.setContentText("This feature is not implemented yet.");
+    alert.setContentText(GT._T("This feature is not implemented yet."));
     alert.showAndWait();
   }
 }

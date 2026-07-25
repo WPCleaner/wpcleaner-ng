@@ -14,6 +14,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.IconListStringTableColumn;
@@ -36,13 +37,13 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
         new SeverityTableColumn<>("", imageLoader, item -> item.filter().severity());
 
     final TableColumn<FilteredRecentChange, @Nullable Instant> timeCol =
-        new TimeTableColumn<>("Time", FilteredRecentChange::timestamp);
+        new TimeTableColumn<>(GT._T("Time"), FilteredRecentChange::timestamp);
 
-    final TableColumn<FilteredRecentChange, String> titleCol = new TableColumn<>("Title");
+    final TableColumn<FilteredRecentChange, String> titleCol = new TableColumn<>(GT._T("Title"));
     titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().title()));
     titleCol.setPrefWidth(200);
 
-    final TableColumn<FilteredRecentChange, String> userCol = new TableColumn<>("User");
+    final TableColumn<FilteredRecentChange, String> userCol = new TableColumn<>(GT._T("User"));
     userCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().user()));
     userCol.setPrefWidth(120);
     userCol.setResizable(false);
@@ -50,14 +51,15 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
     final TableColumn<FilteredRecentChange, String> deltaCol =
         new SignedIntegerTableColumn<>("+/-", FilteredRecentChange::delta);
 
-    final TableColumn<FilteredRecentChange, String> commentCol = new TableColumn<>("Comment");
+    final TableColumn<FilteredRecentChange, String> commentCol =
+        new TableColumn<>(GT._T("Comment"));
     commentCol.setCellValueFactory(
         cellData -> new SimpleStringProperty(cellData.getValue().comment()));
     commentCol.setPrefWidth(400);
 
     final Image tagIcon = imageLoader.getImage(ImageCollection.TAG, ImageSize.BUTTON).orElse(null);
     final TableColumn<FilteredRecentChange, List<String>> tagsCol =
-        new IconListStringTableColumn<>("Tags", tagIcon, FilteredRecentChange::tags);
+        new IconListStringTableColumn<>(GT._T("Tags"), tagIcon, FilteredRecentChange::tags);
 
     final TableColumn<FilteredRecentChange, @Nullable URI> pageURICol =
         new UrlTableColumn<>(
