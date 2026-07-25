@@ -18,9 +18,6 @@ import org.wpcleaner.application.gui.core.factory.LoginWindowFactory;
     excludeFilters = {
       @ComponentScan.Filter(
           type = FilterType.REGEX,
-          pattern = "org\\.wpcleaner\\.application\\.gui\\.swing\\..*"),
-      @ComponentScan.Filter(
-          type = FilterType.REGEX,
           pattern = "org\\.wpcleaner\\.application\\.gui\\.javafx\\..*")
     })
 public class WPCleaner {

@@ -5,6 +5,7 @@ The WPCleaner-NG project is a modular Spring boot application that is responsibl
 ## Tech Stack & Architecture
 - **Language:** Java (JDK 25)
 - **Framework:** Spring boot 4.x
+- **Graphical User Interface:** JavaFX
 - **Build Tool:** Gradle (Kotlin DSL)
 - **Testing:** JUnit 5, AssertJ, Mockito
 

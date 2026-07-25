@@ -10,6 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @ComponentScan(basePackages = "org.wpcleaner.application.gui.javafx")
-@ConditionalOnProperty(name = "gui", havingValue = "javafx")
+@ConditionalOnProperty(name = "gui", havingValue = "javafx", matchIfMissing = true)
 @Configuration
 public class JavaFxConfiguration {}
