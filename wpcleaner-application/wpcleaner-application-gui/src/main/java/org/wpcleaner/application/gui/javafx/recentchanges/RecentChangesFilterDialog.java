@@ -20,6 +20,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
@@ -198,9 +199,7 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
     }
 
     grid.add(new Label(GT._T("Sub-pages:")), 0, 5);
-    grid.add(bothRadio, 1, 5);
-    grid.add(topPagesRadio, 2, 5);
-    grid.add(subPagesRadio, 3, 5);
+    grid.add(new HBox(bothRadio, topPagesRadio, subPagesRadio), 1, 5);
     return group;
   }
 
