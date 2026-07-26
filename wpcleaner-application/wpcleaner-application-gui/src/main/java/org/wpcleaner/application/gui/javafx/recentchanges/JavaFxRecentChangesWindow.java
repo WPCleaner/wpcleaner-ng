@@ -13,6 +13,9 @@ import java.util.Set;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -22,6 +25,7 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
@@ -29,11 +33,14 @@ import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.application.base.processor.ProgressStep;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.control.ImageToggleButton;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class JavaFxRecentChangesWindow extends Stage {
 
   private static final int MAX_RECENT_CHANGES = 1000;
@@ -57,6 +64,8 @@ public final class JavaFxRecentChangesWindow extends Stage {
   private final ObservableList<FilteredRecentChange> tableItems;
   private final RecentChangesOptionsInput optionsInput;
   private final Timeline timeline;
+  private final BooleanProperty loading;
+  private final JavaFxProgressTracker progressTracker;
   @Nullable private Instant lastRecentChange;
 
   public JavaFxRecentChangesWindow(final JavaFxRecentChangesWindowServices services) {
@@ -65,8 +74,10 @@ public final class JavaFxRecentChangesWindow extends Stage {
     this.imageLoader = new JavaFxImageLoader(services.imageLoader());
     this.tableItems = FXCollections.observableArrayList();
     this.optionsInput = new RecentChangesOptionsInput(this, services, imageLoader);
+    this.loading = new SimpleBooleanProperty(false);
+    this.progressTracker = JavaFxProgressTracker.forObservable(loading);
     this.timeline =
-        new Timeline(new KeyFrame(javafx.util.Duration.seconds(60), _ -> refreshList()));
+        new Timeline(new KeyFrame(javafx.util.Duration.seconds(60), _ -> refreshList(false)));
     this.timeline.setCycleCount(Animation.INDEFINITE);
     initialize();
   }
@@ -91,7 +102,7 @@ public final class JavaFxRecentChangesWindow extends Stage {
         .addListener(
             (_, _, isSelected) -> {
               if (isSelected) {
-                refreshList();
+                refreshList(true);
                 timeline.play();
               } else {
                 timeline.stop();
@@ -115,14 +126,22 @@ public final class JavaFxRecentChangesWindow extends Stage {
 
     mainContainer.getChildren().addAll(toolbar, tableView);
 
-    final Scene scene = new Scene(mainContainer, 1200, 600);
+    mainContainer.disableProperty().bind(loading);
+
+    final StackPane root = new StackPane();
+    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+
+    final Scene scene = new Scene(root, 1200, 600);
     setScene(scene);
 
     setOnCloseRequest(_ -> timeline.stop());
     services.actionServices().positionWindow(this, "recentChanges");
   }
 
-  private void refreshList() {
+  private void refreshList(final boolean showProgress) {
+    if (showProgress) {
+      loading.set(true);
+    }
     final WikiDefinition wiki = services.user().getCurrentUser().wiki();
     final RecentChangesOptions currentOptions = optionsInput.getSelectedOptions();
     final RecentChangesQuery query =
@@ -135,13 +154,44 @@ public final class JavaFxRecentChangesWindow extends Stage {
             .topOnly(currentOptions.topOnly())
             .type(currentOptions.type())
             .build();
-    final List<FilteredRecentChange> recentChanges =
-        services.apiRecentChanges().retrieveRecentChanges(wiki, query).stream()
-            .map(rc -> FilteredRecentChange.of(rc, wiki, currentOptions))
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .sorted(FilteredRecentChangeComparator.INSTANCE)
-            .toList();
+    final Thread thread =
+        new Thread(
+            () -> {
+              try (ProgressStep _ = progressTracker.start(GT._T("Loading recent changes"))) {
+                runRefreshList(wiki, query, currentOptions, showProgress);
+              }
+            });
+    thread.setDaemon(true);
+    thread.start();
+  }
+
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
+  private void runRefreshList(
+      final WikiDefinition wiki,
+      final RecentChangesQuery query,
+      final RecentChangesOptions options,
+      final boolean showProgress) {
+    try {
+      final List<FilteredRecentChange> recentChanges =
+          services.apiRecentChanges().retrieveRecentChanges(wiki, query).stream()
+              .map(rc -> FilteredRecentChange.of(rc, wiki, options))
+              .filter(Optional::isPresent)
+              .map(Optional::get)
+              .sorted(FilteredRecentChangeComparator.INSTANCE)
+              .toList();
+      Platform.runLater(() -> updateTable(recentChanges, showProgress));
+    } catch (final Exception e) {
+      Platform.runLater(
+          () -> {
+            if (showProgress) {
+              loading.set(false);
+            }
+          });
+    }
+  }
+
+  private void updateTable(
+      final List<FilteredRecentChange> recentChanges, final boolean showProgress) {
     int currentRowIndex = 0;
     for (final FilteredRecentChange rc : recentChanges) {
       while (currentRowIndex < tableItems.size()
@@ -164,6 +214,9 @@ public final class JavaFxRecentChangesWindow extends Stage {
           Optional.ofNullable(recentChanges.getFirst().timestamp())
               .map(instant -> instant.minus(RECENT_CHANGES_OVERLAP))
               .orElse(null);
+    }
+    if (showProgress) {
+      loading.set(false);
     }
   }
 }
