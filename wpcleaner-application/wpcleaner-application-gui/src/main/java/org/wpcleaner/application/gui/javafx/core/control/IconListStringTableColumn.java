@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.core;
+package org.wpcleaner.application.gui.javafx.core.control;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -15,7 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
 
-public class IconListStringTableColumn<S> extends TableColumn<S, List<String>> {
+public final class IconListStringTableColumn<S> extends TableColumn<S, List<String>> {
 
   public IconListStringTableColumn(
       final String tooltipText,

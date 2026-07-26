@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.core;
+package org.wpcleaner.application.gui.javafx.core.control;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -14,7 +14,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.TextFieldTableCell;
 import org.jspecify.annotations.Nullable;
 
-public class SignedIntegerTableColumn<S> extends TableColumn<S, String> {
+public final class SignedIntegerTableColumn<S> extends TableColumn<S, String> {
 
   public SignedIntegerTableColumn(final String title, final Function<S, @Nullable Integer> mapper) {
     super(title);

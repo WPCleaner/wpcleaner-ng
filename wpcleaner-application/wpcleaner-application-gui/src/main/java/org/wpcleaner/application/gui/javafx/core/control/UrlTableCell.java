@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.core;
+package org.wpcleaner.application.gui.javafx.core.control;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -12,22 +12,21 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
-public class UrlTableCell<S> extends TableCell<S, @Nullable URI> {
+public final class UrlTableCell<S> extends TableCell<S, @Nullable URI> {
 
   private final Button button = new Button();
-  private final DesktopService desktopService;
+  private final JavaFxActionServices actionServices;
 
   public UrlTableCell(
       final JavaFxImageLoader imageLoader,
-      final DesktopService desktopService,
+      final JavaFxActionServices actionServices,
       final ImageCollection icon) {
-    this.desktopService = desktopService;
+    this.actionServices = actionServices;
     button.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
     imageLoader.getImageView(icon, ImageSize.BUTTON).ifPresent(button::setGraphic);
     button.setTooltip(new Tooltip(GT._T("Open URL")));
@@ -40,7 +39,7 @@ public class UrlTableCell<S> extends TableCell<S, @Nullable URI> {
     if (empty || item == null) {
       setGraphic(null);
     } else {
-      button.setOnAction(_ -> JavaFxInitializer.browse(desktopService, item.toString()));
+      button.setOnAction(_ -> actionServices.browse(item.toString()));
       setGraphic(button);
     }
   }

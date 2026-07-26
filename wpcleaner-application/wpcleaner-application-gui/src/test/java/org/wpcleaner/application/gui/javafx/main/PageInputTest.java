@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.settings.interesting.InterestingByWikiSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
@@ -36,6 +37,7 @@ class PageInputTest {
     final InterestingSettings settings = Mockito.mock(InterestingSettings.class);
     final InterestingByWikiSettings wikiSettings = Mockito.mock(InterestingByWikiSettings.class);
     final JavaFxImageLoader imageLoader = Mockito.mock(JavaFxImageLoader.class);
+    final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
 
     Mockito.when(settingsManager.getCurrentSettings()).thenReturn(settings);
     Mockito.when(settings.getByWikiSettings(wiki)).thenReturn(Optional.of(wikiSettings));
@@ -45,7 +47,8 @@ class PageInputTest {
 
     Platform.runLater(
         () -> {
-          final PageInput pageInput = new PageInput(wiki, settingsManager, imageLoader);
+          final PageInput pageInput =
+              new PageInput(wiki, settingsManager, imageLoader, actionServices);
 
           Assertions.assertThat(pageInput.comboBox.getItems()).containsExactly("Page1", "Page2");
           Assertions.assertThat(pageInput.getPage()).isEmpty();

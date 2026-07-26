@@ -7,7 +7,6 @@ package org.wpcleaner.application.gui.javafx.main;
 
 import java.util.Objects;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -18,6 +17,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -32,7 +32,8 @@ public class PageInput {
   PageInput(
       final WikiDefinition wiki,
       final InterestingSettingsManager settingsManager,
-      final JavaFxImageLoader imageLoader) {
+      final JavaFxImageLoader imageLoader,
+      final JavaFxActionServices actionServices) {
     icon =
         imageLoader.getImageView(ImageCollection.PAGE, ImageSize.LABEL).orElseGet(ImageView::new);
 
@@ -54,7 +55,7 @@ public class PageInput {
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addPage::setGraphic);
     addPage.setTooltip(new Tooltip(GT._T("Add page")));
-    addPage.setOnAction(_ -> showNotImplementedAlert());
+    addPage.setOnAction(_ -> actionServices.notImplemented().run());
 
     final Button removePage = new Button();
     removePage.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -62,7 +63,7 @@ public class PageInput {
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removePage::setGraphic);
     removePage.setTooltip(new Tooltip(GT._T("Forget page")));
-    removePage.setOnAction(_ -> showNotImplementedAlert());
+    removePage.setOnAction(_ -> actionServices.notImplemented().run());
 
     toolBar = new ToolBar();
     toolBar.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
@@ -71,13 +72,5 @@ public class PageInput {
 
   public String getPage() {
     return Objects.requireNonNullElse(comboBox.getValue(), "");
-  }
-
-  private void showNotImplementedAlert() {
-    final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle(GT._T("Not Implemented"));
-    alert.setHeaderText(null);
-    alert.setContentText(GT._T("This feature is not implemented yet."));
-    alert.showAndWait();
   }
 }

@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx;
+package org.wpcleaner.application.gui.javafx.core.action;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -11,7 +11,7 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.core.action.NotImplementedAction;
 
 @Component
-public class NotImplementedJavaFxAction implements NotImplementedAction {
+public class JavaFxNotImplementedAction implements NotImplementedAction {
 
   @Override
   public void run() {

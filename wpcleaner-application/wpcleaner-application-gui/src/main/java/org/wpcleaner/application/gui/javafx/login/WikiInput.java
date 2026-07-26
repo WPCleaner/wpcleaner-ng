@@ -19,9 +19,8 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -38,7 +37,7 @@ final class WikiInput {
   WikiInput(
       final KnownDefinitions knownDefinitions,
       final JavaFxImageLoader imageLoader,
-      final DesktopService desktopService) {
+      final JavaFxActionServices actionServices) {
     icon =
         imageLoader
             .getImageView(ImageCollection.LOGO_MEDIAWIKI, ImageSize.LABEL)
@@ -71,9 +70,7 @@ final class WikiInput {
         .ifPresent(otherWikiButton::setGraphic);
     otherWikiButton.setTooltip(new Tooltip(GT._T("Other wiki")));
     otherWikiButton.setOnAction(
-        _ ->
-            JavaFxInitializer.browse(
-                desktopService, "https://en.wikipedia.org/wiki/Wikipedia:WPCleaner/Wikis"));
+        _ -> actionServices.browse("https://en.wikipedia.org/wiki/Wikipedia:WPCleaner/Wikis"));
 
     final Button addWikiButton = new Button();
     addWikiButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -81,7 +78,7 @@ final class WikiInput {
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addWikiButton::setGraphic);
     addWikiButton.setTooltip(new Tooltip(GT._T("Add wiki")));
-    addWikiButton.setOnAction(_ -> showNotImplementedAlert());
+    addWikiButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     final Button removeWikiButton = new Button();
     removeWikiButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -89,7 +86,7 @@ final class WikiInput {
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removeWikiButton::setGraphic);
     removeWikiButton.setTooltip(new Tooltip(GT._T("Remove wiki")));
-    removeWikiButton.setOnAction(_ -> showNotImplementedAlert());
+    removeWikiButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     toolBar = new ToolBar();
     toolBar.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
@@ -135,13 +132,5 @@ final class WikiInput {
     if (current != null) {
       listener.changed(comboBox.getSelectionModel().selectedItemProperty(), null, current);
     }
-  }
-
-  private void showNotImplementedAlert() {
-    final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle(GT._T("Not Implemented"));
-    alert.setHeaderText(null);
-    alert.setContentText(GT._T("This feature is not implemented yet."));
-    alert.showAndWait();
   }
 }

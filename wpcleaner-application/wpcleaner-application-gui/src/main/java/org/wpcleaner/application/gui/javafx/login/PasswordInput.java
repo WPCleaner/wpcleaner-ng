@@ -6,7 +6,6 @@
 package org.wpcleaner.application.gui.javafx.login;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -15,9 +14,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.base.utils.url.UrlService;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -28,7 +26,7 @@ final class PasswordInput {
   final Label label;
   final ToolBar toolBar;
 
-  PasswordInput(final JavaFxImageLoader imageLoader, final DesktopService desktopService) {
+  PasswordInput(final JavaFxImageLoader imageLoader, final JavaFxActionServices actionServices) {
     icon =
         imageLoader
             .getImageView(ImageCollection.PASSWORD, ImageSize.LABEL)
@@ -47,8 +45,7 @@ final class PasswordInput {
         .getImageView(ImageCollection.HELP, ImageSize.TOOLBAR)
         .ifPresent(botPasswordsButton::setGraphic);
     botPasswordsButton.setTooltip(new Tooltip(GT._T("Bot passwords")));
-    botPasswordsButton.setOnAction(
-        _ -> JavaFxInitializer.browse(desktopService, UrlService.BOT_PASSWORDS));
+    botPasswordsButton.setOnAction(_ -> actionServices.browse(UrlService.BOT_PASSWORDS));
 
     final Button addPasswordButton = new Button();
     addPasswordButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -56,7 +53,7 @@ final class PasswordInput {
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addPasswordButton::setGraphic);
     addPasswordButton.setTooltip(new Tooltip(GT._T("Save user and password")));
-    addPasswordButton.setOnAction(_ -> showNotImplementedAlert());
+    addPasswordButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     final Button removePasswordButton = new Button();
     removePasswordButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -64,7 +61,7 @@ final class PasswordInput {
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removePasswordButton::setGraphic);
     removePasswordButton.setTooltip(new Tooltip(GT._T("Forget password")));
-    removePasswordButton.setOnAction(_ -> showNotImplementedAlert());
+    removePasswordButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     toolBar = new ToolBar();
     toolBar.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
@@ -78,13 +75,5 @@ final class PasswordInput {
 
   void setPassword(final String password) {
     field.setText(password);
-  }
-
-  private void showNotImplementedAlert() {
-    final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle(GT._T("Not Implemented"));
-    alert.setHeaderText(null);
-    alert.setContentText(GT._T("This feature is not implemented yet."));
-    alert.showAndWait();
   }
 }

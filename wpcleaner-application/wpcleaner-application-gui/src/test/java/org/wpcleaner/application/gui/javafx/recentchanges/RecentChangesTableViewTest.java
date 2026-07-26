@@ -19,11 +19,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
-import org.wpcleaner.application.gui.javafx.core.UrlTableCell;
-import org.wpcleaner.application.gui.javafx.core.UrlTableColumn;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.control.UrlTableCell;
+import org.wpcleaner.application.gui.javafx.core.control.UrlTableColumn;
 
 class RecentChangesTableViewTest {
 
@@ -62,7 +62,7 @@ class RecentChangesTableViewTest {
           Mockito.when(mockImageLoader.getImageView(Mockito.any(), Mockito.any()))
               .thenReturn(Optional.empty());
 
-          final DesktopService mockDesktopService = Mockito.mock(DesktopService.class);
+          final JavaFxActionServices mockActionsServices = Mockito.mock(JavaFxActionServices.class);
 
           final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
           final FilteredRecentChange rc = Mockito.mock(FilteredRecentChange.class);
@@ -78,7 +78,7 @@ class RecentChangesTableViewTest {
           items.add(rc);
 
           final RecentChangesTableView tableView =
-              new RecentChangesTableView(items, mockImageLoader, mockDesktopService);
+              new RecentChangesTableView(items, mockImageLoader, mockActionsServices);
 
           // Verify total columns size
           Assertions.assertThat(tableView.getColumns()).hasSize(9);
@@ -143,7 +143,7 @@ class RecentChangesTableViewTest {
           // Trigger button action and verify desktopService.browse is called
           final Button button = (Button) cell.getGraphic();
           button.getOnAction().handle(null);
-          Mockito.verify(mockDesktopService, Mockito.timeout(1000))
+          Mockito.verify(mockActionsServices, Mockito.timeout(1000))
               .browse("https://en.wikipedia.org/wiki/Main_Page%3FTest");
 
           // Verify SeverityTableCell factory and cell update

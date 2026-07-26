@@ -11,21 +11,17 @@ import org.wpcleaner.api.api.query.list.recentchanges.ApiRecentChanges;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.application.base.utils.url.UrlService;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
-import org.wpcleaner.application.gui.javafx.JavaFxSaveWindowsPositionAction;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
 public record JavaFxRecentChangesWindowServices(
+    JavaFxActionServices actionServices,
     ApiRecentChanges apiRecentChanges,
+    ImageLoader imageLoader,
     NamespaceRepository namespaceRepository,
     TagRepository tagRepository,
-    CurrentUserService user,
-    ImageLoader imageLoader,
-    DesktopService desktopService,
     UrlService urlService,
-    JavaFxSaveWindowsPositionAction saveWindowsPositionAction,
-    WindowsSettingsManager windowsSettings,
+    CurrentUserService user,
     JavaFxWindowsRegistry windowsRegistry) {}

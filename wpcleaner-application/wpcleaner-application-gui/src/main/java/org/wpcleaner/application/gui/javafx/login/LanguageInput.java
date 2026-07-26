@@ -15,9 +15,8 @@ import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.language.Language;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -28,7 +27,7 @@ final class LanguageInput {
   final Label label;
   final ToolBar toolBar;
 
-  LanguageInput(final JavaFxImageLoader imageLoader, final DesktopService desktopService) {
+  LanguageInput(final JavaFxImageLoader imageLoader, final JavaFxActionServices actionServices) {
     icon =
         imageLoader
             .getImageView(ImageCollection.LANGUAGE, ImageSize.LABEL)
@@ -53,9 +52,7 @@ final class LanguageInput {
         .ifPresent(addLanguageButton::setGraphic);
     addLanguageButton.setTooltip(new Tooltip(GT._T("Add language")));
     addLanguageButton.setOnAction(
-        _ ->
-            JavaFxInitializer.browse(
-                desktopService, "https://translatewiki.net/wiki/Translating:WPCleaner"));
+        _ -> actionServices.browse("https://translatewiki.net/wiki/Translating:WPCleaner"));
 
     toolBar = new ToolBar();
     toolBar.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");

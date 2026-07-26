@@ -18,10 +18,10 @@ import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.core.MoveDownButton;
-import org.wpcleaner.application.gui.javafx.core.MoveFirstButton;
-import org.wpcleaner.application.gui.javafx.core.MoveLastButton;
-import org.wpcleaner.application.gui.javafx.core.MoveUpButton;
+import org.wpcleaner.application.gui.javafx.core.control.MoveDownButton;
+import org.wpcleaner.application.gui.javafx.core.control.MoveFirstButton;
+import org.wpcleaner.application.gui.javafx.core.control.MoveLastButton;
+import org.wpcleaner.application.gui.javafx.core.control.MoveUpButton;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 

@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.core;
+package org.wpcleaner.application.gui.javafx.core.control;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>

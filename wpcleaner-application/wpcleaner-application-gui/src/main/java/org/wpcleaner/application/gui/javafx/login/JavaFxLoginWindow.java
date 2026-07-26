@@ -25,9 +25,9 @@ import javafx.stage.Stage;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
-import org.wpcleaner.application.gui.javafx.FeedbacksToolBar;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
+import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
 
 public final class JavaFxLoginWindow extends Stage {
 
@@ -55,10 +55,10 @@ public final class JavaFxLoginWindow extends Stage {
     mainContainer.setAlignment(Pos.CENTER);
 
     final WikiInput wiki =
-        new WikiInput(services.knownDefinitions(), imageLoader, services.desktopService());
-    final LanguageInput language = new LanguageInput(imageLoader, services.desktopService());
-    final UserInput user = new UserInput(imageLoader);
-    final PasswordInput password = new PasswordInput(imageLoader, services.desktopService());
+        new WikiInput(services.knownDefinitions(), imageLoader, services.actionServices());
+    final LanguageInput language = new LanguageInput(imageLoader, services.actionServices());
+    final UserInput user = new UserInput(imageLoader, services.actionServices());
+    final PasswordInput password = new PasswordInput(imageLoader, services.actionServices());
 
     final GridPane grid = createFormGrid(wiki, language, user, password);
     final HBox buttons = createButtonsPanel(wiki, user, password);
@@ -88,22 +88,7 @@ public final class JavaFxLoginWindow extends Stage {
           }
         });
 
-    position();
-  }
-
-  private void position() {
-    services
-        .windowsSettings()
-        .getCurrentSettings()
-        .getWindowSettings("login")
-        .ifPresentOrElse(
-            windowSettings -> {
-              setX(windowSettings.x());
-              setY(windowSettings.y());
-              setWidth(windowSettings.width());
-              setHeight(windowSettings.height());
-            },
-            this::sizeToScene);
+    services.actionServices().positionWindow(this, "login");
   }
 
   private GridPane createFormGrid(
@@ -176,11 +161,7 @@ public final class JavaFxLoginWindow extends Stage {
 
   private ToolBar createFeedbacksToolbar() {
     final FeedbacksToolBar feedbacks =
-        new FeedbacksToolBar(
-            imageLoader,
-            services.desktopService(),
-            services.urlService(),
-            services.saveWindowsPositionAction());
+        new FeedbacksToolBar(services.actionServices(), imageLoader, services.urlService());
     feedbacks.disableProperty().bind(loading);
     return feedbacks;
   }

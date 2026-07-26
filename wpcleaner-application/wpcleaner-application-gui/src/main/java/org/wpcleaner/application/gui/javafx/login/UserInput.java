@@ -7,7 +7,6 @@ package org.wpcleaner.application.gui.javafx.login;
 
 import java.util.Objects;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -17,6 +16,7 @@ import javafx.scene.image.ImageView;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -27,7 +27,7 @@ final class UserInput {
   final Label label;
   final ToolBar toolBar;
 
-  UserInput(final JavaFxImageLoader imageLoader) {
+  UserInput(final JavaFxImageLoader imageLoader, final JavaFxActionServices actionServices) {
     icon =
         imageLoader.getImageView(ImageCollection.USER, ImageSize.LABEL).orElseGet(ImageView::new);
 
@@ -45,7 +45,7 @@ final class UserInput {
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addUserButton::setGraphic);
     addUserButton.setTooltip(new Tooltip(GT._T("Save user")));
-    addUserButton.setOnAction(_ -> showNotImplementedAlert());
+    addUserButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     final Button removeUserButton = new Button();
     removeUserButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -53,7 +53,7 @@ final class UserInput {
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removeUserButton::setGraphic);
     removeUserButton.setTooltip(new Tooltip(GT._T("Forget user")));
-    removeUserButton.setOnAction(_ -> showNotImplementedAlert());
+    removeUserButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     toolBar = new ToolBar();
     toolBar.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
@@ -72,13 +72,5 @@ final class UserInput {
   void setUser(final String user) {
     comboBox.getSelectionModel().select(user);
     comboBox.getEditor().setText(user);
-  }
-
-  private void showNotImplementedAlert() {
-    final Alert alert = new Alert(Alert.AlertType.INFORMATION);
-    alert.setTitle(GT._T("Not Implemented"));
-    alert.setHeaderText(null);
-    alert.setContentText(GT._T("This feature is not implemented yet."));
-    alert.showAndWait();
   }
 }

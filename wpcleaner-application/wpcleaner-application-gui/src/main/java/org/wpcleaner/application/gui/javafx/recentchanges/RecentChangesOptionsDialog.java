@@ -31,7 +31,7 @@ import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.core.NamespaceCheckComboBox;
+import org.wpcleaner.application.gui.javafx.core.control.NamespaceCheckComboBox;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class RecentChangesOptionsDialog extends Dialog<@Nullable RecentChangesOptions> {

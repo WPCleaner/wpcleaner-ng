@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx;
+package org.wpcleaner.application.gui.javafx.core.control;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -13,28 +13,25 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.base.utils.url.UrlService;
-import org.wpcleaner.application.gui.core.action.SaveWindowsPositionAction;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
+import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
 public final class FeedbacksToolBar extends ToolBar {
 
+  private final JavaFxActionServices actionServices;
   private final JavaFxImageLoader imageLoader;
-  private final DesktopService desktopService;
   private final UrlService urlService;
-  private final SaveWindowsPositionAction saveWindowsPositionAction;
 
   public FeedbacksToolBar(
+      final JavaFxActionServices actionServices,
       final JavaFxImageLoader imageLoader,
-      final DesktopService desktopService,
-      final UrlService urlService,
-      final SaveWindowsPositionAction saveWindowsPositionAction) {
+      final UrlService urlService) {
     super();
+    this.actionServices = actionServices;
     this.imageLoader = imageLoader;
-    this.desktopService = desktopService;
     this.urlService = urlService;
-    this.saveWindowsPositionAction = saveWindowsPositionAction;
     initialize();
   }
 
@@ -50,28 +47,25 @@ public final class FeedbacksToolBar extends ToolBar {
 
     final MenuItem helpItem = new MenuItem(GT._T("Help"));
     imageLoader.getImageView(ImageCollection.HELP, ImageSize.MENU).ifPresent(helpItem::setGraphic);
-    helpItem.setOnAction(_ -> JavaFxInitializer.browse(desktopService, UrlService.HELP));
+    helpItem.setOnAction(_ -> actionServices.browse(UrlService.HELP));
 
     final MenuItem reportBugItem = new MenuItem(GT._T("Report bug"));
     imageLoader
         .getImageView(ImageCollection.LOGO_PHABRICATOR, ImageSize.MENU)
         .ifPresent(reportBugItem::setGraphic);
-    reportBugItem.setOnAction(
-        _ -> JavaFxInitializer.browse(desktopService, urlService.reportBug()));
+    reportBugItem.setOnAction(_ -> actionServices.browse(urlService.reportBug()));
 
     final MenuItem requestFeatureItem = new MenuItem(GT._T("Request new feature"));
     imageLoader
         .getImageView(ImageCollection.LOGO_PHABRICATOR, ImageSize.MENU)
         .ifPresent(requestFeatureItem::setGraphic);
-    requestFeatureItem.setOnAction(
-        _ -> JavaFxInitializer.browse(desktopService, UrlService.REQUEST_FEATURE));
+    requestFeatureItem.setOnAction(_ -> actionServices.browse(UrlService.REQUEST_FEATURE));
 
     final MenuItem askQuestionItem = new MenuItem(GT._T("Ask a question"));
     imageLoader
         .getImageView(ImageCollection.HELP, ImageSize.MENU)
         .ifPresent(askQuestionItem::setGraphic);
-    askQuestionItem.setOnAction(
-        _ -> JavaFxInitializer.browse(desktopService, UrlService.ASK_QUESTION));
+    askQuestionItem.setOnAction(_ -> actionServices.browse(UrlService.ASK_QUESTION));
 
     feedbackButton.getItems().addAll(helpItem, reportBugItem, requestFeatureItem, askQuestionItem);
 
@@ -86,7 +80,7 @@ public final class FeedbacksToolBar extends ToolBar {
     imageLoader
         .getImageView(ImageCollection.DOCUMENT_SAVE, ImageSize.MENU)
         .ifPresent(savePosItem::setGraphic);
-    savePosItem.setOnAction(_ -> saveWindowsPositionAction.execute());
+    savePosItem.setOnAction(_ -> actionServices.saveWindowsPosition().execute());
 
     optionsButton.getItems().add(savePosItem);
 

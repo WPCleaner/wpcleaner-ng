@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.core;
+package org.wpcleaner.application.gui.javafx.core.control;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -14,15 +14,15 @@ import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
-public final class MoveDownButton<T> extends Button {
+public final class MoveLastButton<T> extends Button {
 
-  public MoveDownButton(final JavaFxImageLoader imageLoader, final ListView<@Nullable T> listView) {
+  public MoveLastButton(final JavaFxImageLoader imageLoader, final ListView<@Nullable T> listView) {
     super();
     setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
     imageLoader
-        .getImageView(ImageCollection.MOVE_DOWN, ImageSize.BUTTON)
+        .getImageView(ImageCollection.MOVE_LAST, ImageSize.BUTTON)
         .ifPresent(this::setGraphic);
-    setTooltip(new Tooltip(GT._T("Move down")));
+    setTooltip(new Tooltip(GT._T("Move last")));
     disableProperty()
         .bind(
             listView
@@ -42,8 +42,8 @@ public final class MoveDownButton<T> extends Button {
             final int index = listView.getSelectionModel().getSelectedIndex();
             if (index >= 0 && index < listView.getItems().size() - 1) {
               listView.getItems().remove(index);
-              listView.getItems().add(index + 1, selected);
-              listView.getSelectionModel().select(index + 1);
+              listView.getItems().add(selected);
+              listView.getSelectionModel().select(listView.getItems().size() - 1);
             }
           }
         });

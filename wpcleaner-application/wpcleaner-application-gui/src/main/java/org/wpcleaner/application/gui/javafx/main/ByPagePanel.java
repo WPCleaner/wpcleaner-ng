@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 
 final class ByPagePanel extends GridPane {
@@ -18,14 +19,17 @@ final class ByPagePanel extends GridPane {
   private final WikiDefinition wiki;
   private final InterestingSettingsManager interestingSettings;
   private final JavaFxImageLoader imageLoader;
+  private final JavaFxActionServices actionServices;
 
   ByPagePanel(
       final WikiDefinition wiki,
       final InterestingSettingsManager interestingSettings,
-      final JavaFxImageLoader imageLoader) {
+      final JavaFxImageLoader imageLoader,
+      final JavaFxActionServices actionServices) {
     this.wiki = wiki;
     this.interestingSettings = interestingSettings;
     this.imageLoader = imageLoader;
+    this.actionServices = actionServices;
     initialize();
   }
 
@@ -52,7 +56,7 @@ final class ByPagePanel extends GridPane {
 
     getColumnConstraints().addAll(colLabel, colIcon, colField, colToolbar);
 
-    final PageInput page = new PageInput(wiki, interestingSettings, imageLoader);
+    final PageInput page = new PageInput(wiki, interestingSettings, imageLoader, actionServices);
     add(page.label, 0, 0);
     add(page.icon, 1, 0);
     add(page.comboBox, 2, 0);

@@ -19,8 +19,8 @@ import javafx.stage.Stage;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.utils.StringUtils;
-import org.wpcleaner.application.gui.javafx.FeedbacksToolBar;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -87,7 +87,9 @@ public final class JavaFxMainWindow extends Stage {
     imageLoader
         .getImageView(ImageCollection.PAGE, ImageSize.BUTTON)
         .ifPresent(byPageTab::setGraphic);
-    byPageTab.setContent(new ByPagePanel(user.wiki(), services.interestingSettings(), imageLoader));
+    byPageTab.setContent(
+        new ByPagePanel(
+            user.wiki(), services.interestingSettings(), imageLoader, services.actionServices()));
 
     final Tab projectsTab = new Tab(GT._T("Projects"));
     projectsTab.setContent(new ProjectsPanel(services));
@@ -101,29 +103,10 @@ public final class JavaFxMainWindow extends Stage {
 
     final Scene scene = new Scene(root, 650, 450);
     setScene(scene);
-    position();
-  }
-
-  private void position() {
-    services
-        .windowsSettings()
-        .getCurrentSettings()
-        .getWindowSettings("main")
-        .ifPresentOrElse(
-            windowSettings -> {
-              setX(windowSettings.x());
-              setY(windowSettings.y());
-              setWidth(windowSettings.width());
-              setHeight(windowSettings.height());
-            },
-            this::sizeToScene);
+    services.actionServices().positionWindow(this, "main");
   }
 
   private ToolBar createFeedbacksToolbar() {
-    return new FeedbacksToolBar(
-        imageLoader,
-        services.desktopService(),
-        services.urlService(),
-        services.saveWindowsPositionAction());
+    return new FeedbacksToolBar(services.actionServices(), imageLoader, services.urlService());
   }
 }

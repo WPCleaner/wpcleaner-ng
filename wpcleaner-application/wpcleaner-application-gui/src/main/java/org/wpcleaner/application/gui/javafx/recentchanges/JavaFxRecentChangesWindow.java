@@ -30,7 +30,7 @@ import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.core.ImageToggleButton;
+import org.wpcleaner.application.gui.javafx.core.control.ImageToggleButton;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -110,7 +110,7 @@ public final class JavaFxRecentChangesWindow extends Stage {
             optionsInput.getRemoveButton());
 
     final TableView<FilteredRecentChange> tableView =
-        new RecentChangesTableView(tableItems, imageLoader, services.desktopService());
+        new RecentChangesTableView(tableItems, imageLoader, services.actionServices());
     VBox.setVgrow(tableView, Priority.ALWAYS);
 
     mainContainer.getChildren().addAll(toolbar, tableView);
@@ -119,21 +119,7 @@ public final class JavaFxRecentChangesWindow extends Stage {
     setScene(scene);
 
     setOnCloseRequest(_ -> timeline.stop());
-    position();
-  }
-
-  private void position() {
-    services
-        .windowsSettings()
-        .getCurrentSettings()
-        .getWindowSettings("recentChanges")
-        .ifPresent(
-            windowSettings -> {
-              setX(windowSettings.x());
-              setY(windowSettings.y());
-              setWidth(windowSettings.width());
-              setHeight(windowSettings.height());
-            });
+    services.actionServices().positionWindow(this, "recentChanges");
   }
 
   private void refreshList() {

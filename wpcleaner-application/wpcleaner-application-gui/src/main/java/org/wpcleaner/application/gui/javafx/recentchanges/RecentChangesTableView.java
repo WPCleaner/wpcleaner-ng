@@ -15,12 +15,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.core.IconListStringTableColumn;
-import org.wpcleaner.application.gui.javafx.core.SignedIntegerTableColumn;
-import org.wpcleaner.application.gui.javafx.core.TimeTableColumn;
-import org.wpcleaner.application.gui.javafx.core.UrlTableColumn;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.control.IconListStringTableColumn;
+import org.wpcleaner.application.gui.javafx.core.control.SignedIntegerTableColumn;
+import org.wpcleaner.application.gui.javafx.core.control.TimeTableColumn;
+import org.wpcleaner.application.gui.javafx.core.control.UrlTableColumn;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -29,7 +29,7 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
   public RecentChangesTableView(
       final ObservableList<FilteredRecentChange> items,
       final JavaFxImageLoader imageLoader,
-      final DesktopService desktopService) {
+      final JavaFxActionServices actionServices) {
     super(items);
     setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
@@ -65,13 +65,13 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
         new UrlTableColumn<>(
             "",
             imageLoader,
-            desktopService,
+            actionServices,
             ImageCollection.OPEN_URL,
             FilteredRecentChange::pageURI);
 
     final TableColumn<FilteredRecentChange, @Nullable URI> diffURICol =
         new UrlTableColumn<>(
-            "", imageLoader, desktopService, ImageCollection.DIFF, FilteredRecentChange::diffURI);
+            "", imageLoader, actionServices, ImageCollection.DIFF, FilteredRecentChange::diffURI);
 
     getColumns().add(severityCol);
     getColumns().add(timeCol);
