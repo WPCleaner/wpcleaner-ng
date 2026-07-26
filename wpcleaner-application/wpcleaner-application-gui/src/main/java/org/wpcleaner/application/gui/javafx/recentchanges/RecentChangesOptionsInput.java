@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javafx.scene.control.Alert;
@@ -17,12 +18,13 @@ import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.settings.recentchanges.RecentChangesSettings;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
 public final class RecentChangesOptionsInput {
 
-  private final ComboBox<@Nullable RecentChangesOptions> comboBox;
+  private final ComboBox<RecentChangesOptions> comboBox;
   private final Button editOptions;
   private final Button addOptions;
   private final Button removeOptions;
@@ -38,10 +40,9 @@ public final class RecentChangesOptionsInput {
         _ ->
             new ListCell<>() {
               @Override
-              protected void updateItem(
-                  @Nullable final RecentChangesOptions item, final boolean empty) {
+              protected void updateItem(final RecentChangesOptions item, final boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
+                if (empty) {
                   setText(null);
                 } else {
                   setText(item.name());
@@ -51,10 +52,9 @@ public final class RecentChangesOptionsInput {
     this.comboBox.setButtonCell(
         new ListCell<>() {
           @Override
-          protected void updateItem(
-              @Nullable final RecentChangesOptions item, final boolean empty) {
+          protected void updateItem(final RecentChangesOptions item, final boolean empty) {
             super.updateItem(item, empty);
-            if (empty || item == null) {
+            if (empty) {
               setText(null);
             } else {
               setText(item.name());
@@ -62,7 +62,20 @@ public final class RecentChangesOptionsInput {
           }
         });
     this.comboBox.getItems().add(RecentChangesOptions.DEFAULT_OPTIONS);
-    this.comboBox.getSelectionModel().select(RecentChangesOptions.DEFAULT_OPTIONS);
+    final RecentChangesSettings currentSettings =
+        services.recentChangesSettingsManager().getCurrentSettings();
+    currentSettings.options().forEach(this.comboBox.getItems()::add);
+
+    final String lastSelectedName = currentSettings.selectedOption();
+    RecentChangesOptions toSelect = RecentChangesOptions.DEFAULT_OPTIONS;
+    if (lastSelectedName != null) {
+      toSelect =
+          this.comboBox.getItems().stream()
+              .filter(option -> lastSelectedName.equals(option.name()))
+              .findFirst()
+              .orElse(RecentChangesOptions.DEFAULT_OPTIONS);
+    }
+    this.comboBox.getSelectionModel().select(toSelect);
 
     this.editOptions = new Button();
     editOptions.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -86,12 +99,16 @@ public final class RecentChangesOptionsInput {
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.BUTTON)
         .ifPresent(removeOptions::setGraphic);
     removeOptions.setTooltip(new Tooltip(GT._T("Remove options")));
-    removeOptions.setOnAction(_ -> removeOptionsAction(owner));
+    removeOptions.setOnAction(_ -> removeOptionsAction(owner, services));
 
     this.comboBox
         .getSelectionModel()
         .selectedItemProperty()
-        .addListener((_, _, _) -> updateButtonsState());
+        .addListener(
+            (_, _, _) -> {
+              updateButtonsState();
+              saveOptions(services);
+            });
     updateButtonsState();
   }
 
@@ -112,8 +129,7 @@ public final class RecentChangesOptionsInput {
   }
 
   public RecentChangesOptions getSelectedOptions() {
-    final RecentChangesOptions selected = comboBox.getSelectionModel().getSelectedItem();
-    return selected != null ? selected : RecentChangesOptions.DEFAULT_OPTIONS;
+    return comboBox.getSelectionModel().getSelectedItem();
   }
 
   private void addOptionsAction(
@@ -129,6 +145,7 @@ public final class RecentChangesOptionsInput {
         newOptions -> {
           comboBox.getItems().add(newOptions);
           comboBox.getSelectionModel().select(newOptions);
+          saveOptions(services);
         });
   }
 
@@ -136,7 +153,7 @@ public final class RecentChangesOptionsInput {
       final Window owner, final JavaFxRecentChangesWindowServices services) {
     final RecentChangesOptions selected = getSelectedOptions();
     if (Objects.equals(selected, RecentChangesOptions.DEFAULT_OPTIONS)) {
-      showErrorAlert(owner, "The default options cannot be edited.");
+      showErrorAlert(owner, GT._T("The default options cannot be edited."));
       return;
     }
     final Optional<RecentChangesOptions> result =
@@ -153,11 +170,13 @@ public final class RecentChangesOptionsInput {
             comboBox.getItems().remove(index);
             comboBox.getItems().add(index, newOptions);
             comboBox.getSelectionModel().select(index);
+            saveOptions(services);
           }
         });
   }
 
-  private void removeOptionsAction(final Window owner) {
+  private void removeOptionsAction(
+      final Window owner, final JavaFxRecentChangesWindowServices services) {
     final RecentChangesOptions selected = getSelectedOptions();
     if (Objects.equals(selected, RecentChangesOptions.DEFAULT_OPTIONS)) {
       showErrorAlert(owner, GT._T("The default options cannot be deleted."));
@@ -172,7 +191,22 @@ public final class RecentChangesOptionsInput {
     final Optional<ButtonType> result = alert.showAndWait();
     if (result.isPresent() && result.get() == ButtonType.OK) {
       comboBox.getItems().remove(selected);
+      saveOptions(services);
     }
+  }
+
+  private void saveOptions(final JavaFxRecentChangesWindowServices services) {
+    final List<RecentChangesOptions> userOptions =
+        comboBox.getItems().stream()
+            .filter(options -> !Objects.equals(options, RecentChangesOptions.DEFAULT_OPTIONS))
+            .toList();
+    final RecentChangesOptions selected = getSelectedOptions();
+    final RecentChangesSettings settings =
+        new RecentChangesSettings(
+            services.recentChangesSettingsManager().getCurrentSettings().version(),
+            userOptions,
+            selected.name());
+    services.recentChangesSettingsManager().updateSettings(settings);
   }
 
   private void updateButtonsState() {

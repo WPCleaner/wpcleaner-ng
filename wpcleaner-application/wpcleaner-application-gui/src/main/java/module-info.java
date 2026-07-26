@@ -30,6 +30,7 @@ module org.wpcleaner.application.gui {
   exports org.wpcleaner.application.gui.javafx.recentchanges;
   exports org.wpcleaner.application.gui.javafx;
   exports org.wpcleaner.application.gui.settings.interesting;
+  exports org.wpcleaner.application.gui.settings.recentchanges;
   exports org.wpcleaner.application.gui.settings.windows;
   exports org.wpcleaner.application.gui;
   opens org.wpcleaner.application.gui.core.action;
@@ -42,6 +43,7 @@ module org.wpcleaner.application.gui {
   opens org.wpcleaner.application.gui.javafx.recentchanges;
   opens org.wpcleaner.application.gui.javafx;
   opens org.wpcleaner.application.gui.settings.interesting;
+  opens org.wpcleaner.application.gui.settings.recentchanges;
   opens org.wpcleaner.application.gui.settings.windows;
   opens org.wpcleaner.application.gui;
 }
