@@ -63,7 +63,8 @@ tasks {
     doLast {
       outputFile.parentFile.mkdirs()
       val tempFile = temporaryDir.resolve("java-files.txt")
-      val filePaths = javaFiles.files.filter { it.isFile }.map { it.relativeTo(relativeDir) }.distinct()
+      val filePaths =
+        javaFiles.files.filter { it.isFile }.map { it.relativeTo(relativeDir) }.distinct()
       tempFile.writeText(filePaths.joinToString("\n"))
 
       val process =
