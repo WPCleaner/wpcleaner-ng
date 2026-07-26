@@ -8,6 +8,7 @@ The WPCleaner-NG project is a modular Spring boot application that is responsibl
 - **Graphical User Interface:** JavaFX
 - **Build Tool:** Gradle (Kotlin DSL)
 - **Testing:** JUnit 5, AssertJ, Mockito
+- **Internationalization:** gettext
 
 ## Development Lifecycle
 - **Project Structure:** This is a multi-module Gradle project. Always verify the exact module name in `settings.gradle.kts` before running tasks.
