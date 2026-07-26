@@ -47,6 +47,7 @@ tasks {
         }
       )
     inputs.files(javaFiles)
+    val relativeDir = rootDir
 
     val outputFile = file("wpcleaner-translations/src/main/resources/WPCleaner.pot")
     outputs.file(outputFile)
@@ -62,7 +63,7 @@ tasks {
     doLast {
       outputFile.parentFile.mkdirs()
       val tempFile = temporaryDir.resolve("java-files.txt")
-      val filePaths = javaFiles.files.filter { it.isFile }.map { it.absolutePath }.distinct()
+      val filePaths = javaFiles.files.filter { it.isFile }.map { it.relativeTo(relativeDir) }.distinct()
       tempFile.writeText(filePaths.joinToString("\n"))
 
       val process =

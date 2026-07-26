@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-07-26 16:16+0200\n"
+"POT-Creation-Date: 2026-07-26 16:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,510 +17,510 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:47
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:47
 msgid "Retrieving login token"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:50
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:50
 #, java-printf-format
 msgid "Login for user %s"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:55
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:55
 msgid "Login token is null"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:61
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:61
 #, java-printf-format
 msgid "Retrieving information about user %s"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:28
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:75
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:28
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:75
 msgid "Recent changes"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:55
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:55
 #, java-printf-format
 msgid "Welcome %s on WPCleaner Next Generation!"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:58
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:58
 #, java-printf-format
 msgid "You are currently connected to %s"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:67
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:67
 msgid "You are currently in demo mode, you won't be able to save your modifications"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:73
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:73
 #, java-printf-format
 msgid "Your groups: %s"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:77
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:77
 #, java-printf-format
 msgid "Your rights: %s"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:86
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:86
 msgid "By page"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:94
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:94
 msgid "Projects"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:48
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:48
 msgid "Page"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:57
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:57
 msgid "Add page"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:65
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:65
 msgid "Forget page"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:38
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:38
 msgid "Username"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:47
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:47
 msgid "Save user"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:55
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:55
 msgid "Forget user"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:148
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:148
 msgid "Login"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:153
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:153
 msgid "Demo"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:173
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:225
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:173
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:225
 msgid "Missing wiki"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:173
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:173
 msgid "You must select a wiki before login!"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:178
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:231
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:178
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:231
 msgid "Missing username"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:178
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:178
 msgid "You must input your username before login!"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:184
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:184
 msgid "Missing password"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:185
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:185
 msgid "You must input your password before login!"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:187
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:187
 msgid "If you prefer to test WPCleaner first, you can use the Demo mode."
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:214
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:214
 msgid "Login Failed"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:215
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:215
 msgid "An error occurred during login"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:225
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:225
 msgid "You must select a wiki before starting demo mode!"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:232
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:232
 msgid "You must input your username before starting demo mode!"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:257
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:257
 msgid "Demo Mode Failed"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:258
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:258
 msgid "An error occurred during demo startup"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/LanguageInput.java:44
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/LanguageInput.java:44
 msgid "Language"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/LanguageInput.java:53
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/LanguageInput.java:53
 msgid "Add language"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:47
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:47
 msgid "Bot passwords"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:55
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:55
 msgid "Save user and password"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:63
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:63
 msgid "Forget password"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:54
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:54
 msgid "Wiki"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:71
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:71
 msgid "Other wiki"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:80
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:80
 msgid "Add wiki"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:88
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:88
 msgid "Remove wiki"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:111
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:111
 #, java-printf-format
 msgid "Warning for %s"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/JavaFxProgressTracker.java:34
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/JavaFxProgressTracker.java:34
 msgid "Processing..."
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/UrlTableCell.java:32
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/UrlTableCell.java:32
 msgid "Open URL"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveLastButton.java:25
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveLastButton.java:25
 msgid "Move last"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:42
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:42
 msgid "Feedback"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:48
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:48
 msgid "Help"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:52
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:52
 msgid "Report bug"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:58
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:58
 msgid "Request new feature"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:64
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:64
 msgid "Ask a question"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:73
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:73
 msgid "Options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:79
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:79
 msgid "Save windows position"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:96
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:96
 msgid "About"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:98
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:98
 msgid "WPCleaner Next Generation Prototype in JavaFX."
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveFirstButton.java:26
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveFirstButton.java:26
 msgid "Move first"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveDownButton.java:25
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveDownButton.java:25
 msgid "Move down"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveUpButton.java:23
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveUpButton.java:23
 msgid "Move up"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:19
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:19
 msgid "Not implemented"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:21
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:21
 msgid "This feature is not implemented yet. Try again later!"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:72
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:72
 msgid "Edit options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:80
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:80
 msgid "Add options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:88
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:88
 msgid "Remove options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:163
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:163
 msgid "The default options cannot be deleted."
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:168
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:168
 msgid "Confirm deletion"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:171
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:171
 #, java-printf-format
 msgid "Are you sure you want to delete the options \"%s\"?"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:184
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:184
 msgid "Default options cannot be edited"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:185
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:185
 msgid "Default options cannot be deleted"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:187
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:187
 msgid "Edit selected options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:188
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:188
 msgid "Remove selected options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:195
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:109
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:94
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:195
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:109
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:94
 msgid "Error"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptions.java:27
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptions.java:27
 msgid "Default options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:87
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:87
 msgid "Refresh list"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:12
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:12
 msgid "Notice, green"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:13
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:13
 msgid "Notice, black"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:14
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:14
 msgid "Notice, grey"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:15
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:15
 msgid "Notice, blue"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:16
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:16
 msgid "Notice, gold"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:17
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:17
 msgid "Notice, red"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:18
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:18
 msgid "Alert, green"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:19
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:19
 msgid "Alert, black"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:20
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:20
 msgid "Alert, grey"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:21
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:21
 msgid "Alert, blue"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:22
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:22
 msgid "Alert, gold"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:23
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:23
 msgid "Alert, yellow"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:24
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:24
 msgid "Alert, orange"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:25
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:25
 msgid "Alert, red"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:26
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:26
 msgid "Error, green"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:27
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:27
 msgid "Error, black"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:28
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:28
 msgid "Error, grey"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:29
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:29
 msgid "Error, blue"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:30
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:30
 msgid "Error, gold"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:31
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:31
 msgid "Error, red"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:40
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:40
 msgid "Time"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:42
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:42
 msgid "Title"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:46
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:46
 msgid "User"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:55
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:55
 msgid "Comment"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:62
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:62
 msgid "Tags"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:54
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:54
 msgid "Recent changes options"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:63
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:58
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:63
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:58
 msgid "Name:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:68
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:68
 msgid "Namespace:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:73
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:73
 msgid "Show:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:78
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:78
 msgid "Tag:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:83
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:83
 msgid "Type:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:88
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:88
 msgid "Top only:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:96
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:81
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:96
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:81
 msgid "OK"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:98
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:83
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:98
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:83
 msgid "Cancel"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:111
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:111
 msgid "The option name cannot be empty or blank."
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:184
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:184
 msgid "Filters:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:50
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:50
 msgid "Recent changes filter"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:62
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:62
 msgid "Namespaces:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:66
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:66
 msgid "Tags:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:70
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:70
 msgid "Types:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:74
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:74
 msgid "Severity:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:96
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:96
 msgid "The filter name cannot be empty or blank."
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:180
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:180
 msgid "Both"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:184
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:184
 msgid "Top pages"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:188
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:188
 msgid "Sub-pages"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:200
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:200
 msgid "Sub-pages:"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:93
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:93
 msgid "Add"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:115
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:115
 msgid "Edit"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:139
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:139
 msgid "Remove"
 msgstr ""
 
-#: /home/nvervelle/Perso/dev/wpcleaner-ng/wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilter.java:25
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilter.java:25
 msgid "Accept all"
 msgstr ""
