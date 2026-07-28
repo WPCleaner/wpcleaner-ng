@@ -215,8 +215,8 @@ public final class RecentChangesOptionsInput {
     editOptions.setDisable(isDefault);
     removeOptions.setDisable(isDefault);
     if (isDefault) {
-      editOptions.setTooltip(new Tooltip(GT._T("Default options cannot be edited")));
-      removeOptions.setTooltip(new Tooltip(GT._T("Default options cannot be deleted")));
+      editOptions.setTooltip(new Tooltip(GT._T("The default options cannot be edited.")));
+      removeOptions.setTooltip(new Tooltip(GT._T("The default options cannot be deleted.")));
     } else {
       editOptions.setTooltip(new Tooltip(GT._T("Edit selected options")));
       removeOptions.setTooltip(new Tooltip(GT._T("Remove selected options")));

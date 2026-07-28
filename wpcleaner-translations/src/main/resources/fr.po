@@ -1,528 +1,520 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Nicolas Vervelle
-# This file is distributed under the same license as the WPCleaner NG package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: WPCleaner NG\n"
-"Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-07-28 16:23+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.9\n"
 
 #: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:47
 msgid "Retrieving login token"
-msgstr ""
+msgstr "Récupération du jeton de connexion"
 
 #: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:50
 #, java-printf-format
 msgid "Login for user %s"
-msgstr ""
+msgstr "Connexion de l'utilisateur %s"
 
 #: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:55
 msgid "Login token is null"
-msgstr ""
+msgstr "Le jeton de connexion est absent"
 
 #: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:61
 #, java-printf-format
 msgid "Retrieving information about user %s"
-msgstr ""
+msgstr "Récupération des informations concernant l'utilisateur %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:28
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:86
 msgid "Recent changes"
-msgstr ""
+msgstr "Modifications récentes"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:55
 #, java-printf-format
 msgid "Welcome %s on WPCleaner Next Generation!"
-msgstr ""
+msgstr "Bienvenue %s dans WPCleaner Next Generation!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:58
 #, java-printf-format
 msgid "You are currently connected to %s"
-msgstr ""
+msgstr "Vous êtes actuellement connecté à %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:67
 msgid "You are currently in demo mode, you won't be able to save your modifications"
-msgstr ""
+msgstr "Vous êtes actuellement en mode démonstration, vous ne pourrez pas enregistrer vos modifications"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:73
 #, java-printf-format
 msgid "Your groups: %s"
-msgstr ""
+msgstr "Vos groupes : %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:77
 #, java-printf-format
 msgid "Your rights: %s"
-msgstr ""
+msgstr "Vos droits : %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:86
 msgid "By page"
-msgstr ""
+msgstr "Par page"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:94
 msgid "Projects"
-msgstr ""
+msgstr "Projets"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:48
 msgid "Page"
-msgstr ""
+msgstr "Page"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:57
 msgid "Add page"
-msgstr ""
+msgstr "Ajouter la page"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageInput.java:65
 msgid "Forget page"
-msgstr ""
+msgstr "Oublier la page"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:38
 msgid "Username"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:47
 msgid "Save user"
-msgstr ""
+msgstr "Enregistrer l'utilisateur"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/UserInput.java:55
 msgid "Forget user"
-msgstr ""
+msgstr "Oublier l'utilisateur"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:148
 msgid "Login"
-msgstr ""
+msgstr "Connexion"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:153
 msgid "Demo"
-msgstr ""
+msgstr "Démonstration"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:173
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:225
 msgid "Missing wiki"
-msgstr ""
+msgstr "Wiki absent"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:173
 msgid "You must select a wiki before login!"
-msgstr ""
+msgstr "Vous devez sélectionner un wiki avant de vous connecter!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:178
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:231
 msgid "Missing username"
-msgstr ""
+msgstr "Nom d'utilisateur manquant"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:178
 msgid "You must input your username before login!"
-msgstr ""
+msgstr "Vous devez saisir votre nom d'utilisateur avant de vous connecter!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:184
 msgid "Missing password"
-msgstr ""
+msgstr "Mot de passe absent"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:185
 msgid "You must input your password before login!"
-msgstr ""
+msgstr "Vous devez saisir votre mot de passe avant de vous connecter!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:187
 msgid "If you prefer to test WPCleaner first, you can use the Demo mode."
-msgstr ""
+msgstr "Si vous préférez d'abord essayer WPCleaner, vous pouvez utilise le mode Démonstration."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:214
 msgid "Login Failed"
-msgstr ""
+msgstr "Échec de connexion"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:215
 msgid "An error occurred during login"
-msgstr ""
+msgstr "Une erreur est survenue durant la connexion"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:225
 msgid "You must select a wiki before starting demo mode!"
-msgstr ""
+msgstr "Vous devez sélectionner un wiki avant de commencer le mode démonstration!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:232
 msgid "You must input your username before starting demo mode!"
-msgstr ""
+msgstr "Vous devez saisir un nom d'utilisateur avant de commencer le mode démonstration!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:257
 msgid "Demo Mode Failed"
-msgstr ""
+msgstr "Échec du mode Démonstration"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:258
 msgid "An error occurred during demo startup"
-msgstr ""
+msgstr "Une erreur est survenue durant le démarrage du mode démonstration"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/LanguageInput.java:44
 msgid "Language"
-msgstr ""
+msgstr "Langue"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/LanguageInput.java:53
 msgid "Add language"
-msgstr ""
+msgstr "Ajouter une langue"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:47
 msgid "Bot passwords"
-msgstr ""
+msgstr "Mots de passe pour robots"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:55
 msgid "Save user and password"
-msgstr ""
+msgstr "Enregistrer l'utilisateur et le mot de passe"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/PasswordInput.java:63
 msgid "Forget password"
-msgstr ""
+msgstr "Oublier le mot de passe"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:54
 msgid "Wiki"
-msgstr ""
+msgstr "Wiki"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:71
 msgid "Other wiki"
-msgstr ""
+msgstr "Autre wiki"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:80
 msgid "Add wiki"
-msgstr ""
+msgstr "Ajouter un wiki"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:88
 msgid "Remove wiki"
-msgstr ""
+msgstr "Supprimer le wiki"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:111
 #, java-printf-format
 msgid "Warning for %s"
-msgstr ""
+msgstr "Avertissement pour %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/JavaFxProgressTracker.java:34
 msgid "Processing..."
-msgstr ""
+msgstr "Traitement en cours..."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/UrlTableCell.java:32
 msgid "Open URL"
-msgstr ""
+msgstr "Ouvrir la page"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveLastButton.java:25
 msgid "Move last"
-msgstr ""
+msgstr "Aller au dernier"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:42
 msgid "Feedback"
-msgstr ""
+msgstr "Retours"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:48
 msgid "Help"
-msgstr ""
+msgstr "Aide"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:52
 msgid "Report bug"
-msgstr ""
+msgstr "Signaler un bug"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:58
 msgid "Request new feature"
-msgstr ""
+msgstr "Demander une nouvelle fonctionnalité"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:64
 msgid "Ask a question"
-msgstr ""
+msgstr "Poser une question"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:73
 msgid "Options"
-msgstr ""
+msgstr "Options"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:79
 msgid "Save windows position"
-msgstr ""
+msgstr "Enregistrer la position des fenêtres"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:96
 msgid "About"
-msgstr ""
+msgstr "A propos"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/FeedbacksToolBar.java:98
 msgid "WPCleaner Next Generation Prototype in JavaFX."
-msgstr ""
+msgstr "Prototype de WPCleaner Next Generation en JavaFX."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveFirstButton.java:26
 msgid "Move first"
-msgstr ""
+msgstr "Aller au premier"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveDownButton.java:25
 msgid "Move down"
-msgstr ""
+msgstr "Descendre d'un cran"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveUpButton.java:23
 msgid "Move up"
-msgstr ""
+msgstr "Monter d'un cran"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:19
 msgid "Not implemented"
-msgstr ""
+msgstr "Non implémenté"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:21
 msgid "This feature is not implemented yet. Try again later!"
-msgstr ""
+msgstr "Cette fonctionnalité n'a pas encore été implémentée. Réessayez plus tard!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:85
 msgid "Edit options"
-msgstr ""
+msgstr "Modifier les options"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:93
 msgid "Add options"
-msgstr ""
+msgstr "Ajouter des options"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:101
 msgid "Remove options"
-msgstr ""
+msgstr "Supprimer des options"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:156
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:218
 msgid "The default options cannot be edited."
-msgstr ""
+msgstr "Les options par défaut ne peuvent pas être modifiées."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:182
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:219
 msgid "The default options cannot be deleted."
-msgstr ""
+msgstr "Les options par défaut ne peuvent pas être supprimées."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:187
 msgid "Confirm deletion"
-msgstr ""
+msgstr "Confirmer la suppression"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:190
 #, java-printf-format
 msgid "Are you sure you want to delete the options \"%s\"?"
-msgstr ""
+msgstr "Êtes vous sûr de vouloir supprimer les options \"%s\" ?"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:221
 msgid "Edit selected options"
-msgstr ""
+msgstr "Modifier les options sélectionnées"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:222
 msgid "Remove selected options"
-msgstr ""
+msgstr "Supprimer les options sélectionnées"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:229
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:109
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:95
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptions.java:27
 msgid "Default options"
-msgstr ""
+msgstr "Options par défaut"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:98
 msgid "Refresh list"
-msgstr ""
+msgstr "Mettre à jour la liste"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:160
 msgid "Loading recent changes"
-msgstr ""
+msgstr "Chargement des modifications récentes"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:12
 msgid "Notice, green"
-msgstr ""
+msgstr "Avis, vert"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:13
 msgid "Notice, black"
-msgstr ""
+msgstr "Avis, noir"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:14
 msgid "Notice, grey"
-msgstr ""
+msgstr "Avis, gris"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:15
 msgid "Notice, blue"
-msgstr ""
+msgstr "Avis, bleu"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:16
 msgid "Notice, gold"
-msgstr ""
+msgstr "Avis, doré"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:17
 msgid "Notice, red"
-msgstr ""
+msgstr "Avis, rouge"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:18
 msgid "Alert, green"
-msgstr ""
+msgstr "Alerte, vert"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:19
 msgid "Alert, black"
-msgstr ""
+msgstr "Alerte, noir"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:20
 msgid "Alert, grey"
-msgstr ""
+msgstr "Alerte, gris"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:21
 msgid "Alert, blue"
-msgstr ""
+msgstr "Alerte, bleu"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:22
 msgid "Alert, gold"
-msgstr ""
+msgstr "Alerte, doré"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:23
 msgid "Alert, yellow"
-msgstr ""
+msgstr "Alerte, jaune"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:24
 msgid "Alert, orange"
-msgstr ""
+msgstr "Alerte, orange"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:25
 msgid "Alert, red"
-msgstr ""
+msgstr "Alerte, rouge"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:26
 msgid "Error, green"
-msgstr ""
+msgstr "Erreur, vert"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:27
 msgid "Error, black"
-msgstr ""
+msgstr "Erreur, noir"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:28
 msgid "Error, grey"
-msgstr ""
+msgstr "Erreur, gris"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:29
 msgid "Error, blue"
-msgstr ""
+msgstr "Erreur, bleu"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:30
 msgid "Error, gold"
-msgstr ""
+msgstr "Erreur, doré"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:31
 msgid "Error, red"
-msgstr ""
+msgstr "Erreur, rouge"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:40
 msgid "Time"
-msgstr ""
+msgstr "Heure"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:42
 msgid "Title"
-msgstr ""
+msgstr "Titre"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:46
 msgid "User"
-msgstr ""
+msgstr "Utilisateur"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:55
 msgid "Comment"
-msgstr ""
+msgstr "Commentaire"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:62
 msgid "Tags"
-msgstr ""
+msgstr "Labels"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:54
 msgid "Recent changes options"
-msgstr ""
+msgstr "Options des modifications récentes"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:63
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:59
 msgid "Name:"
-msgstr ""
+msgstr "Nom :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:68
 msgid "Namespace:"
-msgstr ""
+msgstr "Espace de nom :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:73
 msgid "Show:"
-msgstr ""
+msgstr "Critères :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:78
 msgid "Tag:"
-msgstr ""
+msgstr "Label :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:83
 msgid "Type:"
-msgstr ""
+msgstr "Type :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:88
 msgid "Top only:"
-msgstr ""
+msgstr "Dernière seulement :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:96
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:82
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:98
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:84
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:111
 msgid "The option name cannot be empty or blank."
-msgstr ""
+msgstr "Le nom de l'option ne peut pas être vide ou blanc."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:184
 msgid "Filters:"
-msgstr ""
+msgstr "Filtres :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:51
 msgid "Recent changes filter"
-msgstr ""
+msgstr "Filtre de modifications récentes"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:63
 msgid "Namespaces:"
-msgstr ""
+msgstr "Espaces de nom :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:67
 msgid "Tags:"
-msgstr ""
+msgstr "Labels :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:71
 msgid "Types:"
-msgstr ""
+msgstr "Types :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:75
 msgid "Severity:"
-msgstr ""
+msgstr "Gravité :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:97
 msgid "The filter name cannot be empty or blank."
-msgstr ""
+msgstr "Le nom du filtre ne peut pas être vide ou blanc."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:181
 msgid "Both"
-msgstr ""
+msgstr "Les deux"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:185
 msgid "Top pages"
-msgstr ""
+msgstr "Pages principales"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:189
 msgid "Sub-pages"
-msgstr ""
+msgstr "Sous-pages"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:201
 msgid "Sub-pages:"
-msgstr ""
+msgstr "Sous-pages :"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:93
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:115
 msgid "Edit"
-msgstr ""
+msgstr "Modifier"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterListView.java:139
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilter.java:25
 msgid "Accept all"
-msgstr ""
+msgstr "Tout accepter"

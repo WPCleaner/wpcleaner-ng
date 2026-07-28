@@ -29,3 +29,5 @@ gradle-app.setting
 # IntelliJ
 .idea
 
+# Internationalization
+**/*.mo
