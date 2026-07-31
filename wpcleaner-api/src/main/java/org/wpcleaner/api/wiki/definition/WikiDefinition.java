@@ -5,6 +5,8 @@ package org.wpcleaner.api.wiki.definition;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.awt.ComponentOrientation;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
@@ -22,7 +24,9 @@ public record WikiDefinition(
     String wikiPath,
     String code,
     @Nullable String checkWikiCode,
-    ComponentOrientation orientation,
+    @JsonDeserialize(using = ComponentOrientationDeserializer.class)
+        @JsonSerialize(using = ComponentOrientationSerializer.class)
+        ComponentOrientation orientation,
     @Nullable WikiWarning warning) {
 
   public String apiUrl() {

@@ -7,6 +7,7 @@ package org.wpcleaner.application.gui.javafx.login;
 
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CredentialsProvider;
+import org.wpcleaner.api.api.query.meta.siteinfo.ApiSiteInfo;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.application.base.processor.LoginProcessor;
 import org.wpcleaner.application.base.utils.url.UrlService;
@@ -17,6 +18,7 @@ import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
 public record JavaFxLoginWindowServices(
+    ApiSiteInfo apiSiteInfo,
     JavaFxActionServices actionServices,
     CredentialsProvider credentialsProvider,
     ImageLoader imageLoader,

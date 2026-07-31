@@ -7,6 +7,7 @@ package org.wpcleaner.api.wiki.definition;
 
 public enum WikiGroup {
   WIKIMEDIA(true),
+  FANDOM(true),
   OTHER(false);
 
   private final boolean authenticationShared;

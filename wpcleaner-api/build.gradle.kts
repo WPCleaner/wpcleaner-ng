@@ -3,8 +3,8 @@ plugins { id("wpcleaner.module.java-library") }
 dependencies {
   api(enforcedPlatform(project(":wpcleaner-dependencies")))
   api("com.fasterxml.jackson.core:jackson-annotations")
+  api("com.fasterxml.jackson.core:jackson-databind")
   implementation(project(":wpcleaner-lib-image"))
-  implementation("com.fasterxml.jackson.core:jackson-databind")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("org.springframework.boot:spring-boot-starter")
   implementation("org.springframework.boot:spring-boot-starter-web")

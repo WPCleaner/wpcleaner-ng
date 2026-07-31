@@ -38,6 +38,7 @@ public enum ImageCollection {
   LIST_ADD("commons/list-add.png"),
   LIST_REMOVE("commons/list-remove.png"),
   LOGO_COMMONS("commons/commons-logo.png"),
+  LOGO_FANDOM("commons/fandom-heart-logo.png"),
   LOGO_MEDIAWIKI("commons/mediawiki-2020-icon.png"),
   LOGO_PHABRICATOR("commons/favicon-phabricator-wm.png"),
   LOGO_WIKIBOOKS("commons/wikibooks-logo.png"),

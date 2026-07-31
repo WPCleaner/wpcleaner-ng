@@ -41,7 +41,8 @@ class KnownDefinitionsTest {
         .contains(WikisourceDefinitions.FR)
         .contains(WikiversityDefinitions.FR)
         .contains(WikivoyageDefinitions.FR)
-        .contains(WiktionaryDefinitions.FR);
+        .contains(WiktionaryDefinitions.FR)
+        .contains(FandomDefinitions.STARWARS);
   }
 
   @DisplayName("Verify that wiki definition code is unique")

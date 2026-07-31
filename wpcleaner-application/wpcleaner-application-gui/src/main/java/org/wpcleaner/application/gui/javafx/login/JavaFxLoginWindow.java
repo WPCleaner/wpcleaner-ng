@@ -55,7 +55,11 @@ public final class JavaFxLoginWindow extends Stage {
     mainContainer.setAlignment(Pos.CENTER);
 
     final WikiInput wiki =
-        new WikiInput(services.knownDefinitions(), imageLoader, services.actionServices());
+        new WikiInput(
+            services.knownDefinitions(),
+            services.apiSiteInfo(),
+            imageLoader,
+            services.actionServices());
     final LanguageInput language = new LanguageInput(imageLoader, services.actionServices());
     final UserInput user = new UserInput(imageLoader, services.actionServices());
     final PasswordInput password = new PasswordInput(imageLoader, services.actionServices());
