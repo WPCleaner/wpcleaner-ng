@@ -40,7 +40,12 @@ tasks.compileJava { options.javaModuleVersion.set(provider { version as String }
 tasks.test { useJUnitPlatform() }
 
 tasks.withType<Test>().configureEach {
-  jvmArgs("-XX:+ShowCodeDetailsInExceptionMessages", "-Duser.language=US")
+  jvmArgs(
+    "-XX:+ShowCodeDetailsInExceptionMessages",
+    "-Duser.language=US",
+    "--enable-native-access=ALL-UNNAMED",
+    "--sun-misc-unsafe-memory-access=allow"
+  )
   testLogging {
     events(TestLogEvent.FAILED)
     exceptionFormat = TestExceptionFormat.FULL

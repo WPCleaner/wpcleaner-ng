@@ -4,3 +4,4 @@ spring:
 logging:
   level:
     root: WARN
+    javafx: ERROR
