@@ -31,3 +31,6 @@ gradle-app.setting
 
 # Internationalization
 **/*.mo
+
+# Python
+scripts/__pycache__/
