@@ -51,6 +51,13 @@ jobs:
       with:
         run: ./gradlew build
 
+    - name: Upload Linux artifact
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
+      uses: actions/upload-artifact@v4
+      with:
+        name: wpcleaner-linux
+        path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
+
   build-windows:
 
     runs-on: windows-latest
@@ -84,6 +91,13 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+
+    - name: Upload Windows artifact
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
+      uses: actions/upload-artifact@v4
+      with:
+        name: wpcleaner-windows
+        path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
 
   build-macos:
 
@@ -119,3 +133,54 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+
+    - name: Upload macOS artifact
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
+      uses: actions/upload-artifact@v4
+      with:
+        name: wpcleaner-macos
+        path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
+
+  create-release:
+    needs: [build-ubuntu, build-windows, build-macos]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v7
+
+    - name: Extract version
+      id: extract_version
+      run: |
+        version=$(grep 'version.prefix=' gradle.properties | cut -d'=' -f2)
+        echo "version=$version" >> $GITHUB_OUTPUT
+
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: release-assets
+
+    - name: Prepare assets for release
+      run: |
+        mkdir -p upload-assets
+        cp release-assets/wpcleaner-linux/*.jar upload-assets/wpcleaner-ng-linux.jar
+        cp release-assets/wpcleaner-windows/*.jar upload-assets/wpcleaner-ng-windows.jar
+        cp release-assets/wpcleaner-macos/*.jar upload-assets/wpcleaner-ng-macos.jar
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ steps.extract_version.outputs.version }}
+        name: Release v${{ steps.extract_version.outputs.version }}
+        body_path: releases/v${{ steps.extract_version.outputs.version }}.md
+        draft: false
+        prerelease: false
+        files: |
+          upload-assets/wpcleaner-ng-linux.jar
+          upload-assets/wpcleaner-ng-windows.jar
+          upload-assets/wpcleaner-ng-macos.jar
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
