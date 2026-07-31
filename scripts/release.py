@@ -51,8 +51,10 @@ def verify_no_local_modifications(dry_run):
         for line in status_lines:
             if not line or line.startswith("AD "):
                 continue
-            if len(line) > 3:
-                file_path = line[3:].lstrip('"')
+            stripped_line = line.strip()
+            parts = stripped_line.split(None, 1)
+            if len(parts) == 2:
+                file_path = parts[1].lstrip('"')
                 if file_path.startswith("releases/") or file_path.startswith("scripts/"):
                     continue
             actual_modifications.append(line)
@@ -201,7 +203,7 @@ def fill_dependency_upgrades(release_notes_path):
         print(f"Error: Failed to update release notes.\n{e}", file=sys.stderr)
         sys.exit(1)
 
-def get_contributors():
+def get_contributors(release_notes_path=None):
     try:
         remote_result = subprocess.run(["git", "remote", "get-url", "origin"], capture_output=True, text=True)
         if remote_result.returncode != 0:
@@ -241,22 +243,96 @@ def get_contributors():
                 commit_hash, author_name, author_email = parts
                 if "dependabot" in author_name.lower() or "dependabot" in author_email.lower():
                     continue
+                if "github-actions" in author_name.lower() or "github-actions" in author_email.lower():
+                    continue
                 if author_email not in email_to_commit:
                     email_to_commit[author_email] = (commit_hash, author_name)
                     
+        import urllib.parse
+        existing_logins = set()
+        if release_notes_path and os.path.isfile(release_notes_path):
+            try:
+                with open(release_notes_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                parts = content.split("## :smiling_imp: Contributors")
+                if len(parts) > 1:
+                    contributors_part = parts[1].split("## ")[0]
+                    for line in contributors_part.split("\n"):
+                        match = re.search(r'\*\s+\[([^\]]+)\]', line)
+                        if match:
+                            existing_logins.add(match.group(1).strip())
+            except Exception:
+                pass
+
         github_logins = set()
+        headers = {'User-Agent': 'release-script'}
+        github_token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GITHUB_ACCESS_TOKEN")
+        if github_token:
+            headers['Authorization'] = f"token {github_token}"
+
         for author_email, (commit_hash, fallback_name) in email_to_commit.items():
+            login = None
+
             api_url = f"https://api.github.com/repos/{repo_path}/commits/{commit_hash}"
             try:
-                req = urllib.request.Request(api_url, headers={'User-Agent': 'release-script'})
+                req = urllib.request.Request(api_url, headers=headers)
                 with urllib.request.urlopen(req) as response:
                     data = json.loads(response.read().decode('utf-8'))
                     author_info = data.get("author")
                     if author_info and "login" in author_info:
-                        github_logins.add(author_info["login"])
-                    else:
-                        github_logins.add(fallback_name)
-            except Exception:
+                        login = author_info["login"]
+            except Exception as e:
+                print(f"Error: Failed to retrieve commits.\n{e}", file=sys.stderr)
+                pass
+
+            if not login:
+                try:
+                    email_url = f"https://api.github.com/repos/{repo_path}/commits?author={urllib.parse.quote(author_email)}"
+                    req = urllib.request.Request(email_url, headers=headers)
+                    with urllib.request.urlopen(req) as response:
+                        commits_data = json.loads(response.read().decode('utf-8'))
+                        if isinstance(commits_data, list) and len(commits_data) > 0:
+                            first_commit = commits_data[0]
+                            author_info = first_commit.get("author")
+                            if author_info and "login" in author_info:
+                                login = author_info["login"]
+                except Exception as e:
+                    print(f"Error: Failed to retrieve commits for author {author_email}.\n{e}", file=sys.stderr)
+                    pass
+
+            if not login:
+                try:
+                    search_url = f"https://api.github.com/search/users?q={urllib.parse.quote(author_email)}+in:email"
+                    search_headers = headers.copy()
+                    search_headers['Accept'] = 'application/vnd.github+json'
+                    req = urllib.request.Request(search_url, headers=search_headers)
+                    with urllib.request.urlopen(req) as response:
+                        search_data = json.loads(response.read().decode('utf-8'))
+                        items = search_data.get("items")
+                        if items and len(items) > 0:
+                            login = items[0].get("login")
+                except Exception as e:
+                    print(f"Error: Failed to retrieve information about user {author_email}.\n{e}", file=sys.stderr)
+                    pass
+
+            if not login and existing_logins:
+                clean_name = fallback_name.lower().replace(" ", "")
+                clean_email = author_email.lower()
+                for existing in existing_logins:
+                    clean_existing = existing.lower()
+                    if clean_existing in clean_name or clean_existing in clean_email or clean_name in clean_existing:
+                        login = existing
+                        break
+                    
+                    name_parts = fallback_name.lower().split()
+                    if len(name_parts) >= 2:
+                        if clean_existing == name_parts[0][0] + name_parts[-1]:
+                            login = existing
+                            break
+
+            if login:
+                github_logins.add(login)
+            else:
                 github_logins.add(fallback_name)
                 
         sorted_logins = sorted(list(github_logins), key=lambda s: s.lower())
@@ -266,7 +342,7 @@ def get_contributors():
         sys.exit(1)
 
 def fill_contributors(release_notes_path):
-    contributors = get_contributors()
+    contributors = get_contributors(release_notes_path)
     
     try:
         with open(release_notes_path, "r", encoding="utf-8") as f:
@@ -405,6 +481,10 @@ def push_release_modifications(version, dry_run):
         sys.exit(1)
 
 def main():
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    repo_root = os.path.abspath(os.path.join(script_directory, ".."))
+    os.chdir(repo_root)
+
     dry_run = parse_dry_run_parameter()
     print(f"Running release script with dry-run={dry_run}")
     

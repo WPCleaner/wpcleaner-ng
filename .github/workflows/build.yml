@@ -147,6 +147,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
 
     steps:
     - name: Checkout sources
@@ -184,3 +185,30 @@ jobs:
           upload-assets/wpcleaner-ng-macos.jar
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update version prefix and open Pull Request
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        version="${{ steps.extract_version.outputs.version }}"
+        IFS='.' read -r major minor patch <<< "$version"
+        new_patch=$((patch + 1))
+        new_version="$major.$minor.$new_patch"
+        
+        sed -i "s/version.prefix=.*/version.prefix=$new_version/g" gradle.properties
+        
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        
+        git checkout -b update/v$new_version
+        git add gradle.properties
+        git commit -m "Update version prefix to v$new_version"
+        
+        git push "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" update/v$new_version
+        
+        gh pr create \
+          --title "Update version prefix to v$new_version" \
+          --body "This PR automatically updates the version prefix in gradle.properties to v$new_version after releasing v$version." \
+          --head "update/v$new_version" \
+          --base "main" || echo "Warning: Could not create Pull Request"
