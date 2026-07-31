@@ -167,9 +167,9 @@ jobs:
     - name: Prepare assets for release
       run: |
         mkdir -p upload-assets
-        cp $(ls release-assets/wpcleaner-linux/*.jar | grep -v -e 'plain' -e 'testFixtures') upload-assets/wpcleaner-ng-linux.jar
-        cp $(ls release-assets/wpcleaner-windows/*.jar | grep -v -e 'plain' -e 'testFixtures') upload-assets/wpcleaner-ng-windows.jar
-        cp $(ls release-assets/wpcleaner-macos/*.jar | grep -v -e 'plain' -e 'testFixtures') upload-assets/wpcleaner-ng-macos.jar
+        cp $(ls release-assets/wpcleaner-linux/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") upload-assets/wpcleaner-ng-linux.jar
+        cp $(ls release-assets/wpcleaner-windows/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") upload-assets/wpcleaner-ng-windows.jar
+        cp $(ls release-assets/wpcleaner-macos/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") upload-assets/wpcleaner-ng-macos.jar
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2
