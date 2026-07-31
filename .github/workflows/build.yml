@@ -211,4 +211,6 @@ jobs:
           --title "Update version prefix to v$new_version" \
           --body "This PR automatically updates the version prefix in gradle.properties to v$new_version after releasing v$version." \
           --head "update/v$new_version" \
-          --base "main" || echo "Warning: Could not create Pull Request"
+          --base "main" || {
+            echo "::warning:: Could not create Pull Request. Please enable 'Allow GitHub Actions to create and approve pull requests' in your repository settings under Settings -> Actions -> General -> Workflow permissions."
+          }
