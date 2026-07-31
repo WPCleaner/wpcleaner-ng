@@ -14,7 +14,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-ubuntu:
 
     runs-on: ubuntu-latest
     permissions:
@@ -23,6 +23,7 @@ jobs:
     steps:
     - name: Checkout sources
       uses: actions/checkout@v7
+
     - name: Set up JDK 25 (for compilation/testing toolchain)
       uses: actions/setup-java@v5
       with:
@@ -49,3 +50,72 @@ jobs:
       uses: coactions/setup-xvfb@v1
       with:
         run: ./gradlew build
+
+  build-windows:
+
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v7
+
+    - name: Set up JDK 25 (for compilation/testing toolchain)
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: 25
+
+    - name: Set up JDK 21 (for executing Gradle daemon)
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: 21
+
+    - name: Set up build environment
+      run: echo "C:\Program Files\Git\usr\bin" >> $GITHUB_PATH
+      shell: bash
+
+    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v6
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
+
+  build-macos:
+
+    runs-on: macos-latest
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v7
+
+    - name: Set up JDK 25 (for compilation/testing toolchain)
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: 25
+
+    - name: Set up JDK 21 (for executing Gradle daemon)
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'temurin'
+        java-version: 21
+
+    - name: Set up build environment
+      run: |
+        brew install gettext
+        echo "$(brew --prefix gettext)/bin" >> $GITHUB_PATH
+
+    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
+    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v6
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
