@@ -42,6 +42,7 @@ When this skill is active, you MUST:
    For the example, one parameter in the documentation of the API module is named `usattachedwiki`, the corresponding item in the enum should `ATTACHED_WIKI`.
    The items in each Java enum should be sorted alphabetically.
    The nested enums should be sorted alphabetically.
+   CRITICAL: If a module parameter is marked as Deprecated, you MUST NOT include it in any enum, parameters record, or service class implementation. 
  
 6. As needed, implement records with proper Jackson annotations for modeling the response of the API module.
    When the API module has a properties parameter (like `usprop`), test all the possible values for it because the response may contain new fields for each value.

@@ -51,4 +51,14 @@ public enum QueryParameters {
       this.value = value;
     }
   }
+
+  public enum Properties {
+    REVISIONS("revisions");
+
+    public final String value;
+
+    Properties(final String value) {
+      this.value = value;
+    }
+  }
 }
