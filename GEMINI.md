@@ -31,6 +31,7 @@ The WPCleaner-NG project is a modular Spring boot application that is responsibl
     - **Composition over Inheritance:** Always prefer composition to inheritance.
     - **Deduplication:** Actively reduce duplication between related services.
     - **Vocabulary Consistency:** Avoid introducing new terms during refactoring; reuse existing wording as much as possible.
+    - **Imports over Fully Qualified Names**: Prefer `import` over fully qualified names, event it means having to suppress PMD warnings.
 - **Testing Strategy:** Favor integration tests over unit tests.
 
 ## Operational Guidelines

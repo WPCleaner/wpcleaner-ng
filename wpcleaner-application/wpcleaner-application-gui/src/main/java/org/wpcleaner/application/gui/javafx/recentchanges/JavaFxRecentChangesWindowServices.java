@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.query.list.recentchanges.ApiRecentChanges;
+import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.application.base.utils.url.UrlService;
@@ -20,6 +21,7 @@ import org.wpcleaner.lib.image.ImageLoader;
 public record JavaFxRecentChangesWindowServices(
     JavaFxActionServices actionServices,
     ApiRecentChanges apiRecentChanges,
+    ApiRevisions apiRevisions,
     ImageLoader imageLoader,
     NamespaceRepository namespaceRepository,
     RecentChangesSettingsManager recentChangesSettingsManager,

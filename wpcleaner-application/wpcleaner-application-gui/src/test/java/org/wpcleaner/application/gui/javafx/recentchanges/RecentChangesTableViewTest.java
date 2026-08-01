@@ -78,10 +78,10 @@ class RecentChangesTableViewTest {
           items.add(rc);
 
           final RecentChangesTableView tableView =
-              new RecentChangesTableView(items, mockImageLoader, mockActionsServices);
+              new RecentChangesTableView(items, mockImageLoader, mockActionsServices, _ -> {});
 
           // Verify total columns size
-          Assertions.assertThat(tableView.getColumns()).hasSize(9);
+          Assertions.assertThat(tableView.getColumns()).hasSize(10);
 
           // Verify severityCol at index 0
           final TableColumn<FilteredRecentChange, ?> severityCol = tableView.getColumns().get(0);
@@ -128,6 +128,21 @@ class RecentChangesTableViewTest {
           final URI expectedDiffUri =
               URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345");
           Assertions.assertThat(diffURIValue).isEqualTo(expectedDiffUri);
+
+          // Verify viewCol at index 9
+          final TableColumn<FilteredRecentChange, ?> viewCol = tableView.getColumns().get(9);
+          Assertions.assertThat(viewCol).isInstanceOf(ViewModificationTableColumn.class);
+          Assertions.assertThat(viewCol.getText()).isEmpty();
+
+          @SuppressWarnings("unchecked")
+          final TableColumn<FilteredRecentChange, FilteredRecentChange> castedViewCol =
+              (TableColumn<FilteredRecentChange, FilteredRecentChange>) viewCol;
+
+          final TableColumn.CellDataFeatures<FilteredRecentChange, FilteredRecentChange>
+              viewFeature = new TableColumn.CellDataFeatures<>(tableView, castedViewCol, rc);
+          final FilteredRecentChange viewValue =
+              castedViewCol.getCellValueFactory().call(viewFeature).getValue();
+          Assertions.assertThat(viewValue).isEqualTo(rc);
 
           // Verify cell factory and cell update
           final UrlTableCell<FilteredRecentChange> cell =

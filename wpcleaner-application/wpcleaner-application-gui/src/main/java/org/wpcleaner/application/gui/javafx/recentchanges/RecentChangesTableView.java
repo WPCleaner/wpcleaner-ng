@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
+import java.util.function.Consumer;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
@@ -29,7 +30,8 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
   public RecentChangesTableView(
       final ObservableList<FilteredRecentChange> items,
       final JavaFxImageLoader imageLoader,
-      final JavaFxActionServices actionServices) {
+      final JavaFxActionServices actionServices,
+      final Consumer<FilteredRecentChange> viewAction) {
     super(items);
     setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
@@ -73,6 +75,9 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
         new UrlTableColumn<>(
             "", imageLoader, actionServices, ImageCollection.DIFF, FilteredRecentChange::diffURI);
 
+    final TableColumn<FilteredRecentChange, FilteredRecentChange> viewCol =
+        new ViewModificationTableColumn(imageLoader, viewAction);
+
     getColumns().add(severityCol);
     getColumns().add(timeCol);
     getColumns().add(titleCol);
@@ -82,5 +87,6 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
     getColumns().add(tagsCol);
     getColumns().add(pageURICol);
     getColumns().add(diffURICol);
+    getColumns().add(viewCol);
   }
 }
