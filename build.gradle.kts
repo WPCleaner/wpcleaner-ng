@@ -90,6 +90,46 @@ tasks {
       }
     }
   }
+
+  register("updatePoFiles") {
+    group = "translation"
+    description = "Updates the .po files using msgmerge and WPCleaner.pot as template"
+    dependsOn("generatePotFile")
+
+    val potFile = file("wpcleaner-translations/src/main/resources/WPCleaner.pot")
+    val poFiles =
+      fileTree("wpcleaner-translations/src/main/resources") {
+        include("**/*.po")
+      }
+
+    inputs.file(potFile)
+    inputs.files(poFiles)
+    outputs.files(poFiles)
+
+    doLast {
+      poFiles.forEach { poFile ->
+        val process =
+          ProcessBuilder(
+              "msgmerge",
+              "--update",
+              "--no-wrap",
+              "--quiet",
+              poFile.absolutePath,
+              potFile.absolutePath,
+            )
+            .redirectErrorStream(true)
+            .start()
+
+        val output = process.inputStream.bufferedReader().readText()
+        val exitCode = process.waitFor()
+        if (exitCode != 0) {
+          throw GradleException(
+            "msgmerge failed for ${poFile.name} with exit code $exitCode: $output"
+          )
+        }
+      }
+    }
+  }
 }
 
 sonarqube {
