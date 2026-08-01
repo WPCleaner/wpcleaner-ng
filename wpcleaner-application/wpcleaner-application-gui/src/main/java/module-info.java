@@ -5,9 +5,11 @@
 
 @org.jspecify.annotations.NullMarked
 module org.wpcleaner.application.gui {
+  requires transitive io.github.javadiffutils;
   requires transitive java.desktop;
   requires transitive javafx.controls;
   requires transitive org.controlsfx.controls;
+  requires transitive org.fxmisc.richtext;
   requires transitive org.jspecify;
   requires transitive org.wpcleaner.api;
   requires transitive org.wpcleaner.application.base;
@@ -18,6 +20,7 @@ module org.wpcleaner.application.gui {
   requires transitive spring.core;
   requires com.fasterxml.jackson.databind;
   requires java.management;
+  requires org.fxmisc.flowless;
   requires org.slf4j;
   requires spring.web;
   requires static org.jetbrains.annotations;

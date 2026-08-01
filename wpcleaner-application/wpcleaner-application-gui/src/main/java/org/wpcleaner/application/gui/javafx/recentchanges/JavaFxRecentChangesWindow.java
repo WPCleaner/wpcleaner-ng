@@ -33,7 +33,8 @@ public final class JavaFxRecentChangesWindow extends Stage {
     this.imageLoader = new JavaFxImageLoader(services.imageLoader());
     this.loading = new SimpleBooleanProperty(false);
     this.progressTracker = JavaFxProgressTracker.forObservable(loading);
-    this.detailsPanel = new RecentChangesDetailsPanel(services, progressTracker, loading);
+    this.detailsPanel =
+        new RecentChangesDetailsPanel(services, imageLoader, progressTracker, loading);
     initialize();
   }
 

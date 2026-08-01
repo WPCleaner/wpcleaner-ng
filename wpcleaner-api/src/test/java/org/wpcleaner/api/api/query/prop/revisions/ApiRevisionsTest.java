@@ -49,6 +49,40 @@ class ApiRevisionsTest {
     }
   }
 
+  @DisplayName("Retrieve revisions by revision ID")
+  @Test
+  void retrieveRevisionsByRevisionIdTest() {
+    final List<Page> pagesByTitle =
+        apiRevisions.retrieveRevisionsByTitle(
+            WikimediaDefinitions.META, List.of("Main Page"), null);
+    Assertions.assertThat(pagesByTitle).isNotEmpty();
+    final Page page = pagesByTitle.getFirst();
+    Assertions.assertThat(page.revisions()).isNotEmpty();
+    final Integer revid = page.revisions().getFirst().revid();
+    Assertions.assertThat(revid).isNotNull();
+
+    final List<Page> pagesById =
+        apiRevisions.retrieveRevisionsByRevisionId(WikimediaDefinitions.META, List.of(revid), null);
+
+    Assertions.assertThat(pagesById).isNotEmpty();
+    final Page pageById = pagesById.getFirst();
+    Assertions.assertThat(pageById.revisions()).isNotEmpty();
+    Assertions.assertThat(pageById.revisions().getFirst().revid()).isEqualTo(revid);
+
+    // Test with an invalid/zero old revision ID
+    final List<Page> pagesWithInvalid =
+        apiRevisions.retrieveRevisionsByRevisionId(
+            WikimediaDefinitions.META, List.of(0, revid), null);
+    Assertions.assertThat(pagesWithInvalid).isNotNull();
+    final boolean hasRevid =
+        pagesWithInvalid.stream()
+            .flatMap(p -> p.revisions().stream())
+            .anyMatch(revision -> revid.equals(revision.revid()));
+    Assertions.assertThat(hasRevid)
+        .as("Valid revid should still be found when queried with 0")
+        .isTrue();
+  }
+
   @DisplayName("Retrieve revisions by title with all properties and slots specified")
   @Test
   void retrieveRevisionsWithAllProperties() {
