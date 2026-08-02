@@ -14,12 +14,10 @@ import java.util.Set;
 import java.util.stream.Stream;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -34,8 +32,6 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
-import org.wpcleaner.lib.image.ImageCollection;
-import org.wpcleaner.lib.image.ImageSize;
 
 public final class RecentChangesDetailsPanel extends VBox {
 
@@ -45,9 +41,10 @@ public final class RecentChangesDetailsPanel extends VBox {
   private final JavaFxRecentChangesWindowServices services;
   private final JavaFxProgressTracker progressTracker;
   private final BooleanProperty loading;
-  private final TextField titleField;
   private final InlineCssTextArea contentArea;
   private final RecentChangesDifferencesPanel differencesPanel;
+  private final ObjectProperty<@Nullable FilteredRecentChange> selectedRecentChange =
+      new SimpleObjectProperty<>(this, "selectedRecentChange");
 
   public RecentChangesDetailsPanel(
       final JavaFxRecentChangesWindowServices services,
@@ -58,18 +55,6 @@ public final class RecentChangesDetailsPanel extends VBox {
     this.services = services;
     this.progressTracker = progressTracker;
     this.loading = loading;
-
-    final Label pageLabel = new Label(GT._T("Page:"));
-    imageLoader
-        .getImageView(ImageCollection.PAGE, ImageSize.LABEL)
-        .ifPresent(pageLabel::setGraphic);
-    this.titleField = new TextField();
-    this.titleField.setEditable(false);
-
-    final HBox pageLine = new HBox(10);
-    pageLine.setAlignment(Pos.CENTER_LEFT);
-    pageLine.getChildren().addAll(pageLabel, titleField);
-    HBox.setHgrow(titleField, Priority.ALWAYS);
 
     this.contentArea = new InlineCssTextArea();
     this.contentArea.setEditable(false);
@@ -88,12 +73,17 @@ public final class RecentChangesDetailsPanel extends VBox {
     final Tab differencesTab = new Tab(GT._T("Differences"), differencesPanel);
     tabPane.getTabs().addAll(newTextTab, differencesTab);
 
-    getChildren().addAll(pageLine, tabPane);
+    final RecentChangesDetailsToolBar navigationToolBar =
+        new RecentChangesDetailsToolBar(
+            imageLoader, services.actionServices(), tabPane, differencesTab, differencesPanel);
+    navigationToolBar.currentRecentChangeProperty().bind(selectedRecentChange);
+
+    getChildren().addAll(navigationToolBar, tabPane);
     setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
   }
 
   public void viewModifications(final FilteredRecentChange rc) {
-    titleField.setText(rc.title());
+    selectedRecentChange.set(rc);
     contentArea.clear();
     differencesPanel.clear();
     final Integer revid = rc.revId();

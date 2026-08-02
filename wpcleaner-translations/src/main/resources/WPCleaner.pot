@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-08-01 15:25+0200\n"
+"POT-Creation-Date: 2026-08-02 16:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,34 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:47
+msgid "Login has been aborted"
+msgstr ""
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:49
+#, java-printf-format
+msgid ""
+"You're probably trying to login using your main account password instead of a bot password.<br/>\n"
+"You should create a bot password and use it instead of your main account password.<br/>\n"
+"See <a href=\"%s\">Special:Botpasswords</a> for creating your bot password.\n"
+msgstr ""
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:58
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:67
+msgid "Login failed"
+msgstr ""
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:60
+msgid ""
+"You've probably used an incorrect username or password.<br/>\n"
+"Please try again.\n"
+msgstr ""
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:67
+#, java-printf-format
+msgid "Result returned was %s"
+msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:47
 msgid "Retrieving login token"
@@ -36,7 +64,7 @@ msgid "Retrieving information about user %s"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:28
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:41
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:42
 msgid "Recent changes"
 msgstr ""
 
@@ -301,10 +329,6 @@ msgstr ""
 msgid "Processing..."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/UrlTableCell.java:32
-msgid "Open URL"
-msgstr ""
-
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveLastButton.java:25
 msgid "Move last"
 msgstr ""
@@ -365,6 +389,36 @@ msgstr ""
 msgid "This feature is not implemented yet. Try again later!"
 msgstr ""
 
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:42
+msgid "Page:"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:57
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:72
+msgid "Open page in browser"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:72
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:81
+msgid "Open modifications in browser"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:87
+msgid "Go to first modification"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:100
+msgid "Go to previous modification"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:113
+msgid "Go to next modification"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:126
+msgid "Go to last modification"
+msgstr ""
+
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:85
 msgid "Edit options"
 msgstr ""
@@ -410,6 +464,14 @@ msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/ViewModificationTableCell.java:29
 msgid "View modifications"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:50
+msgid "Previous revision"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:63
+msgid "New revision"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:12
@@ -592,7 +654,15 @@ msgstr ""
 msgid "Sub-pages:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:60
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:72
+msgid "New text"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:73
+msgid "Differences"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:101
 msgid "Retrieving modifications"
 msgstr ""
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-08-01 15:18+0200\n"
+"POT-Creation-Date: 2026-08-02 16:17+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,6 +11,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.9\n"
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:47
+msgid "Login has been aborted"
+msgstr "La connexion a été annulée"
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:49
+#, java-printf-format
+msgid ""
+"You're probably trying to login using your main account password instead of a bot password.<br/>\n"
+"You should create a bot password and use it instead of your main account password.<br/>\n"
+"See <a href=\"%s\">Special:Botpasswords</a> for creating your bot password.\n"
+msgstr ""
+"Vous essayez probablement de vous connecter en utilisant le mot de passe principal de votre compte au lieu d'un mot de passe pour bot.<br/>\n"
+"Vous devriez créer un mot de passe pour bot et l'utiliser au lieu de votre mot de passe principal.<br/>\n"
+"Cf. <a href=\"%s\">Spécial:BotPasswords</a> pour créer un mot de passe pour bot.\n"
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:58
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:67
+msgid "Login failed"
+msgstr "Échec de connexion"
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:60
+msgid ""
+"You've probably used an incorrect username or password.<br/>\n"
+"Please try again.\n"
+msgstr ""
+"Vous avez probablement utilisé un nom d'utilisateur ou un mot de passe incorrect.<br/>\n"
+"Veuillez réessayer.\n"
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/api/login/ApiLogin.java:67
+#, java-printf-format
+msgid "Result returned was %s"
+msgstr "La réponse était %s"
 
 #: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:47
 msgid "Retrieving login token"
@@ -31,7 +64,7 @@ msgid "Retrieving information about user %s"
 msgstr "Récupération des informations concernant l'utilisateur %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:28
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:41
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/JavaFxRecentChangesWindow.java:42
 msgid "Recent changes"
 msgstr "Modifications récentes"
 
@@ -296,10 +329,6 @@ msgstr "Avertissement pour %s"
 msgid "Processing..."
 msgstr "Traitement en cours..."
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/UrlTableCell.java:32
-msgid "Open URL"
-msgstr "Ouvrir la page"
-
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveLastButton.java:25
 msgid "Move last"
 msgstr "Aller au dernier"
@@ -360,6 +389,36 @@ msgstr "Non implémenté"
 msgid "This feature is not implemented yet. Try again later!"
 msgstr "Cette fonctionnalité n'a pas encore été implémentée. Réessayez plus tard!"
 
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:42
+msgid "Page:"
+msgstr "Page :"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:57
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:72
+msgid "Open page in browser"
+msgstr "Afficher la page dans le navigateur"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:72
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:81
+msgid "Open modifications in browser"
+msgstr "Afficher les modifications dans le navigateur"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:87
+msgid "Go to first modification"
+msgstr "Aller à la première modification"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:100
+msgid "Go to previous modification"
+msgstr "Aller à la modification précédente"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:113
+msgid "Go to next modification"
+msgstr "Aller à la modification suivante"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:126
+msgid "Go to last modification"
+msgstr "Aller à la dernière modification"
+
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:85
 msgid "Edit options"
 msgstr "Modifier les options"
@@ -406,6 +465,14 @@ msgstr "Options par défaut"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/ViewModificationTableCell.java:29
 msgid "View modifications"
 msgstr "Voir les modifications"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:50
+msgid "Previous revision"
+msgstr "Version précédente"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:63
+msgid "New revision"
+msgstr "Nouvelle version"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/Severity.java:12
 msgid "Notice, green"
@@ -587,7 +654,15 @@ msgstr "Sous-pages"
 msgid "Sub-pages:"
 msgstr "Sous-pages :"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:60
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:72
+msgid "New text"
+msgstr "Nouveau texte"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:73
+msgid "Differences"
+msgstr "Différences"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsPanel.java:101
 msgid "Retrieving modifications"
 msgstr "Récupération des modifications"
 

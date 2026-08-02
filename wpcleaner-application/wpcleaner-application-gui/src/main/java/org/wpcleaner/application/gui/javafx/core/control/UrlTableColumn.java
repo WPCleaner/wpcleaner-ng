@@ -21,10 +21,11 @@ public final class UrlTableColumn<S> extends TableColumn<S, @Nullable URI> {
       final JavaFxImageLoader imageLoader,
       final JavaFxActionServices actionServices,
       final ImageCollection icon,
+      final String tooltipText,
       final Function<S, @Nullable URI> mapper) {
     super(title);
     setCellValueFactory(cellData -> new SimpleObjectProperty<>(mapper.apply(cellData.getValue())));
-    setCellFactory(_ -> new UrlTableCell<>(imageLoader, actionServices, icon));
+    setCellFactory(_ -> new UrlTableCell<>(imageLoader, actionServices, icon, tooltipText));
     setPrefWidth(30);
     setResizable(false);
   }

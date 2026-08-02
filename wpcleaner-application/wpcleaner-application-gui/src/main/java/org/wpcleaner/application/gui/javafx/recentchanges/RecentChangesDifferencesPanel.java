@@ -33,6 +33,7 @@ public final class RecentChangesDifferencesPanel extends HBox {
   private final InlineCssTextArea newContentArea;
   private final List<AbstractDelta<Character>> deltas;
   private boolean isSyncingScroll;
+  private int currentDeltaIndex = -1;
 
   public RecentChangesDifferencesPanel() {
     super(10);
@@ -123,6 +124,7 @@ public final class RecentChangesDifferencesPanel extends HBox {
   public void clear() {
     oldContentArea.clear();
     newContentArea.clear();
+    currentDeltaIndex = -1;
   }
 
   public void updateContents(
@@ -131,6 +133,7 @@ public final class RecentChangesDifferencesPanel extends HBox {
       final List<AbstractDelta<Character>> deltas) {
     this.deltas.clear();
     this.deltas.addAll(deltas);
+    this.currentDeltaIndex = -1;
     if (content != null) {
       newContentArea.replaceText(content);
       newContentArea.setStyle(0, content.length(), "");
@@ -161,5 +164,67 @@ public final class RecentChangesDifferencesPanel extends HBox {
         newContentArea.setStyle(start, start + length, "-rtfx-background-color: #ccffcc;");
       }
     }
+  }
+
+  @SuppressWarnings("PMD.UnusedAssignment")
+  private void selectDelta(final int index) {
+    if (deltas.isEmpty()) {
+      return;
+    }
+    if (index < 0 || index >= deltas.size()) {
+      return;
+    }
+    currentDeltaIndex = index;
+    final AbstractDelta<Character> delta = deltas.get(index);
+    isSyncingScroll = true;
+    try {
+      final int oldStart = delta.getSource().getPosition();
+      final int oldLength = delta.getSource().getLines().size();
+      oldContentArea.selectRange(oldStart, oldStart + oldLength);
+      oldContentArea.requestFollowCaret();
+
+      final int newStart = delta.getTarget().getPosition();
+      final int newLength = delta.getTarget().getLines().size();
+      newContentArea.selectRange(newStart, newStart + newLength);
+      newContentArea.requestFollowCaret();
+    } finally {
+      isSyncingScroll = false;
+    }
+  }
+
+  public void selectFirstDelta() {
+    if (deltas.isEmpty()) {
+      return;
+    }
+    selectDelta(0);
+  }
+
+  public void selectPreviousDelta() {
+    if (deltas.isEmpty()) {
+      return;
+    }
+    int targetIndex = currentDeltaIndex - 1;
+    if (targetIndex < 0) {
+      targetIndex = deltas.size() - 1;
+    }
+    selectDelta(targetIndex);
+  }
+
+  public void selectNextDelta() {
+    if (deltas.isEmpty()) {
+      return;
+    }
+    int targetIndex = currentDeltaIndex + 1;
+    if (targetIndex >= deltas.size()) {
+      targetIndex = 0;
+    }
+    selectDelta(targetIndex);
+  }
+
+  public void selectLastDelta() {
+    if (deltas.isEmpty()) {
+      return;
+    }
+    selectDelta(deltas.size() - 1);
   }
 }

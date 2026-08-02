@@ -153,8 +153,11 @@ class RecentChangesTableViewTest {
           cell.updateItem(expectedPageUri, false);
           Assertions.assertThat(cell.getGraphic()).isInstanceOf(Button.class);
 
-          // Trigger button action and verify desktopService.browse is called
           final Button button = (Button) cell.getGraphic();
+          Assertions.assertThat(button.getTooltip()).isNotNull();
+          Assertions.assertThat(button.getTooltip().getText()).isEqualTo("Open page in browser");
+
+          // Trigger button action and verify desktopService.browse is called
           button.getOnAction().handle(null);
           Mockito.verify(mockActionsServices, Mockito.timeout(1000))
               .browse("https://en.wikipedia.org/wiki/Main_Page%3FTest");

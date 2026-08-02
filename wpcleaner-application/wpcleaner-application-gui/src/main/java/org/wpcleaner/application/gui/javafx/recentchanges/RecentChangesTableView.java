@@ -69,11 +69,17 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
             imageLoader,
             actionServices,
             ImageCollection.OPEN_URL,
+            GT._T("Open page in browser"),
             FilteredRecentChange::pageURI);
 
     final TableColumn<FilteredRecentChange, @Nullable URI> diffURICol =
         new UrlTableColumn<>(
-            "", imageLoader, actionServices, ImageCollection.DIFF, FilteredRecentChange::diffURI);
+            "",
+            imageLoader,
+            actionServices,
+            ImageCollection.DIFF,
+            GT._T("Open modifications in browser"),
+            FilteredRecentChange::diffURI);
 
     final TableColumn<FilteredRecentChange, FilteredRecentChange> viewCol =
         new ViewModificationTableColumn(imageLoader, viewAction);
