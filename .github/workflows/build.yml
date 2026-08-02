@@ -172,7 +172,7 @@ jobs:
         cp $(ls release-assets/wpcleaner-macos/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") upload-assets/wpcleaner-ng-macos.jar
 
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v3
       with:
         tag_name: v${{ steps.extract_version.outputs.version }}
         name: Release v${{ steps.extract_version.outputs.version }}
