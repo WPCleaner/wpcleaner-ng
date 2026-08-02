@@ -15,7 +15,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.stage.Window;
-import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.settings.recentchanges.RecentChangesSettings;
@@ -112,7 +111,7 @@ public final class RecentChangesOptionsInput {
     updateButtonsState();
   }
 
-  public ComboBox<@Nullable RecentChangesOptions> getComboBox() {
+  public ComboBox<RecentChangesOptions> getComboBox() {
     return comboBox;
   }
 

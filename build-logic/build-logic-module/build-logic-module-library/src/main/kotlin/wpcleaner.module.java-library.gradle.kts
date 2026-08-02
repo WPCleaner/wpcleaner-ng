@@ -31,6 +31,8 @@ tasks.withType<JavaCompile>().configureEach {
       check("NullAway", CheckSeverity.ERROR)
       option("NullAway:AnnotatedPackages", "org.wpcleaner")
       option("NullAway:AcknowledgeRestrictiveAnnotations", "true")
+      // option("NullAway:JSpecifyMode", "true")
+      check("RequireExplicitNullMarking", CheckSeverity.ERROR)
     }
   }
 }
