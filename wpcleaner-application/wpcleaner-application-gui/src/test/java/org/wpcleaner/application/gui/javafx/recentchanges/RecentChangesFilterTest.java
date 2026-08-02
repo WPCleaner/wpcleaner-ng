@@ -66,7 +66,7 @@ class RecentChangesFilterTest {
 
   private RecentChange createRecentChange(final String title) {
     return new RecentChange(
-        null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
-        null, null, null, null, List.of(), null, title, null, null, null);
+        false, false, null, null, null, null, null, false, null, null, null, null, null, null,
+        false, null, false, null, null, List.of(), null, title, null, null, null);
   }
 }

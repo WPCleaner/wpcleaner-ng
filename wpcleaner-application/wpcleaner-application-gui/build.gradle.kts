@@ -13,7 +13,7 @@ fun getJavaFxPlatform(): String {
   }
 }
 
-val javafxVersion = "25.0.3"
+val javafxVersion = "25.0.4"
 val javafxPlatform = getJavaFxPlatform()
 
 dependencies {

@@ -56,7 +56,7 @@ class RecentChangesDialogsTest {
         () -> {
           final Namespace ns0 = new Namespace(0, "Main", "Main");
           final Namespace ns1 = new Namespace(1, "Talk", "Talk");
-          final Tag tag1 = new Tag(null, null, null, null, null, "tag1", List.of());
+          final Tag tag1 = new Tag(false, false, null, null, null, "tag1", List.of());
           final RecentChangesFilter filterWithSeverity =
               new RecentChangesFilter(
                   "My Filter",
@@ -103,7 +103,7 @@ class RecentChangesDialogsTest {
     runOnJavaFx(
         () -> {
           final Namespace ns0 = new Namespace(0, "Main", "Main");
-          final Tag tag1 = new Tag(null, null, null, null, null, "tag1", List.of());
+          final Tag tag1 = new Tag(false, false, null, null, null, "tag1", List.of());
           final RecentChangesOptions options = getRecentChangesOptions();
 
           final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);
