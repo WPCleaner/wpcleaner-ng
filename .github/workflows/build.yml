@@ -53,7 +53,7 @@ jobs:
 
     - name: Upload Linux artifact
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: wpcleaner-linux
         path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
@@ -94,7 +94,7 @@ jobs:
 
     - name: Upload Windows artifact
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: wpcleaner-windows
         path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
@@ -136,7 +136,7 @@ jobs:
 
     - name: Upload macOS artifact
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: wpcleaner-macos
         path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
