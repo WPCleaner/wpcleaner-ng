@@ -8,6 +8,8 @@ package org.wpcleaner.api.wiki.definition;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.awt.ComponentOrientation;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -34,7 +36,16 @@ public record WikiDefinition(
   }
 
   public String pageUrl(final String title) {
-    return "https://%s/%s/%s".formatted(mainHost, wikiPath, title);
+    return "https://%s/%s/%s".formatted(mainHost, wikiPath, title.replace(' ', '_'));
+  }
+
+  @Nullable
+  public URI pageUri(final String title) {
+    try {
+      return new URI("https", mainHost, wikiPath + "/" + title.replace(' ', '_'), null);
+    } catch (final URISyntaxException e) {
+      return null;
+    }
   }
 
   @Override

@@ -23,6 +23,7 @@ import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUriBuilder;
 import org.wpcleaner.api.api.ApiUtils;
 import org.wpcleaner.api.hook.login.LoginHook;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
@@ -43,24 +44,27 @@ public class ApiLogin {
             internalLogin(wiki, username, password, token), Response::login);
     if (Objects.equals(login.result(), Login.RESULT_ABORTED)) {
       throw new ApiException(
-          "Login has been aborted",
-          """
+          GT._T("Login has been aborted"),
+          GT._T(
+              """
           You're probably trying to login using your main account password instead of a bot password.<br/>
           You should create a bot password and use it instead of your main account password.<br/>
           See <a href="%s">Special:Botpasswords</a> for creating your bot password.
-          """
-              .formatted(wiki.pageUrl("Special:Botpasswords")));
+          """,
+              wiki.pageUrl("Special:Botpasswords")));
     }
     if (Objects.equals(login.result(), Login.RESULT_FAILED)) {
       throw new ApiException(
-          "Login failed",
-          """
+          GT._T("Login failed"),
+          GT._T(
+              """
           You've probably used an incorrect username or password.<br/>
           Please try again.
-          """);
+          """));
     }
     if (!Objects.equals(login.result(), Login.RESULT_SUCCESS)) {
-      throw new ApiException("Login failed", "Result returned was %s".formatted(login.result()));
+      throw new ApiException(
+          GT._T("Login failed"), GT._T("Result returned was %s", login.result()));
     }
     loginHook.executeHook(wiki);
     return login;
@@ -86,7 +90,7 @@ public class ApiLogin {
   private record Response(
       @JsonProperty("errors") @JsonSetter(nulls = Nulls.AS_EMPTY) List<ApiError> errors,
       @JsonProperty("warnings") @JsonSetter(nulls = Nulls.AS_EMPTY) List<ApiError> warnings,
-      @JsonProperty("docref") @Nullable String docref,
+      @JsonProperty("docref") @Nullable String docRef,
       @JsonProperty("login") Login login)
       implements ApiResponse {}
 }

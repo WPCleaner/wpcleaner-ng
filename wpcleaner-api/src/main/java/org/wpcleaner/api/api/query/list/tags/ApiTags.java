@@ -33,9 +33,9 @@ public class ApiTags {
   public List<Tag> retrieveTags(
       final WikiDefinition wiki,
       @Nullable final String limit,
-      @Nullable final String tgcontinue,
+      @Nullable final String tgContinue,
       @Nullable final Collection<TagsParameters.Properties> properties) {
-    final Response response = internalRetrieveTags(wiki, limit, tgcontinue, properties);
+    final Response response = internalRetrieveTags(wiki, limit, tgContinue, properties);
     if (response == null) {
       return List.of();
     }
@@ -46,12 +46,12 @@ public class ApiTags {
   private Response internalRetrieveTags(
       final WikiDefinition wiki,
       @Nullable final String limit,
-      @Nullable final String tgcontinue,
+      @Nullable final String tgContinue,
       @Nullable final Collection<TagsParameters.Properties> properties) {
     return restClient
         .getRestClient(wiki)
         .get()
-        .uri(uriBuilder -> computeUri(uriBuilder, limit, tgcontinue, properties))
+        .uri(uriBuilder -> computeUri(uriBuilder, limit, tgContinue, properties))
         .retrieve()
         .body(Response.class);
   }
@@ -59,12 +59,12 @@ public class ApiTags {
   private URI computeUri(
       final UriBuilder uriBuilder,
       @Nullable final String limit,
-      @Nullable final String tgcontinue,
+      @Nullable final String tgContinue,
       @Nullable final Collection<TagsParameters.Properties> properties) {
     final ApiUriBuilder builder = ApiUriBuilder.of(uriBuilder, ApiParameters.Action.QUERY);
     builder.queryParam(QueryParameters.LIST.value, QueryParameters.List.TAGS.value);
     builder.queryParam(TagsParameters.LIMIT.value, limit);
-    builder.queryParam(TagsParameters.CONTINUE.value, tgcontinue);
+    builder.queryParam(TagsParameters.CONTINUE.value, tgContinue);
     builder.queryParamCollection(TagsParameters.PROPERTIES.value, properties, prop -> prop.value);
     return builder.build();
   }

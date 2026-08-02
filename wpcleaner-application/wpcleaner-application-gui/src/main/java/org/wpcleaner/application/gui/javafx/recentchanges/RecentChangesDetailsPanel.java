@@ -96,23 +96,23 @@ public final class RecentChangesDetailsPanel extends VBox {
     titleField.setText(rc.title());
     contentArea.clear();
     differencesPanel.clear();
-    final Integer revid = rc.revid();
+    final Integer revid = rc.revId();
     if (revid == null) {
       return;
     }
     loading.set(true);
-    final Thread thread = new Thread(() -> tryRetrieveRevisionContent(revid, rc.oldRevid()));
+    final Thread thread = new Thread(() -> tryRetrieveRevisionContent(revid, rc.oldRevId()));
     thread.setDaemon(true);
     thread.start();
   }
 
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void tryRetrieveRevisionContent(final Integer revid, @Nullable final Integer oldRevid) {
+  private void tryRetrieveRevisionContent(final Integer revId, @Nullable final Integer oldRevId) {
     try (AutoCloseable _ = progressTracker.start(GT._T("Retrieving modifications"))) {
-      final List<Page> pages = retrieveRevisionsContent(revid, oldRevid);
-      LOGGER.info("Retrieved {} pages for revid {} and oldRevid {}", pages.size(), revid, oldRevid);
-      final String content = extractContentForRevision(pages, revid);
-      final String oldContent = extractContentForRevision(pages, oldRevid);
+      final List<Page> pages = retrieveRevisionsContent(revId, oldRevId);
+      LOGGER.info("Retrieved {} pages for revId {} and oldRevId {}", pages.size(), revId, oldRevId);
+      final String content = extractContentForRevision(pages, revId);
+      final String oldContent = extractContentForRevision(pages, oldRevId);
       LOGGER.info(
           "Extracted content lengths - content: {}, oldContent: {}",
           content != null ? Integer.toString(content.length()) : "null",
@@ -147,13 +147,13 @@ public final class RecentChangesDetailsPanel extends VBox {
   }
 
   @Nullable
-  private String extractContentForRevision(final List<Page> pages, @Nullable final Integer revid) {
-    if (revid == null) {
+  private String extractContentForRevision(final List<Page> pages, @Nullable final Integer revId) {
+    if (revId == null) {
       return null;
     }
     return pages.stream()
         .flatMap(page -> page.revisions().stream())
-        .filter(revision -> revid.equals(revision.revid()))
+        .filter(revision -> revId.equals(revision.revId()))
         .map(revision -> revision.slots().get("main"))
         .filter(Objects::nonNull)
         .map(RevisionSlot::content)

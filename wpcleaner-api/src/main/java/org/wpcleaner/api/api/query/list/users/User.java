@@ -15,7 +15,7 @@ import org.jspecify.annotations.Nullable;
 public record User(
     @JsonProperty("attachedlocal") @Nullable AttachedLocal attachedLocal,
     @JsonProperty("centralids") @Nullable CentralIds centralIds,
-    @JsonProperty("editcount") @Nullable Integer editcount,
+    @JsonProperty("editcount") @Nullable Integer editCount,
     @JsonProperty("emailable") @Nullable Boolean emailable,
     @JsonProperty("gender") @Nullable String gender,
     @JsonProperty("groupmemberships") @JsonSetter(nulls = Nulls.AS_EMPTY)
@@ -28,7 +28,7 @@ public record User(
     @JsonProperty("registration") @Nullable Instant registration,
     @JsonProperty("rights") @JsonSetter(nulls = Nulls.AS_EMPTY) List<String> rights,
     @JsonProperty("tempexpired") @Nullable String tempExpired,
-    @JsonProperty("userid") @Nullable Integer userid) {
+    @JsonProperty("userid") @Nullable Integer userId) {
 
   public static User ofMissing(final String name) {
     return new User(

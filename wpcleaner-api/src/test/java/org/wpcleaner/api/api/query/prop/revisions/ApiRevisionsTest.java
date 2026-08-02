@@ -44,7 +44,7 @@ class ApiRevisionsTest {
       Assertions.assertThat(revisions).as("revisions").isNotNull();
       if (!revisions.isEmpty()) {
         final Revision revision = revisions.getFirst();
-        Assertions.assertThat(revision.revid()).as("revid").isNotNull();
+        Assertions.assertThat(revision.revId()).as("revId").isNotNull();
       }
     }
   }
@@ -58,28 +58,28 @@ class ApiRevisionsTest {
     Assertions.assertThat(pagesByTitle).isNotEmpty();
     final Page page = pagesByTitle.getFirst();
     Assertions.assertThat(page.revisions()).isNotEmpty();
-    final Integer revid = page.revisions().getFirst().revid();
-    Assertions.assertThat(revid).isNotNull();
+    final Integer revId = page.revisions().getFirst().revId();
+    Assertions.assertThat(revId).isNotNull();
 
     final List<Page> pagesById =
-        apiRevisions.retrieveRevisionsByRevisionId(WikimediaDefinitions.META, List.of(revid), null);
+        apiRevisions.retrieveRevisionsByRevisionId(WikimediaDefinitions.META, List.of(revId), null);
 
     Assertions.assertThat(pagesById).isNotEmpty();
     final Page pageById = pagesById.getFirst();
     Assertions.assertThat(pageById.revisions()).isNotEmpty();
-    Assertions.assertThat(pageById.revisions().getFirst().revid()).isEqualTo(revid);
+    Assertions.assertThat(pageById.revisions().getFirst().revId()).isEqualTo(revId);
 
     // Test with an invalid/zero old revision ID
     final List<Page> pagesWithInvalid =
         apiRevisions.retrieveRevisionsByRevisionId(
-            WikimediaDefinitions.META, List.of(0, revid), null);
+            WikimediaDefinitions.META, List.of(0, revId), null);
     Assertions.assertThat(pagesWithInvalid).isNotNull();
-    final boolean hasRevid =
+    final boolean hasRevId =
         pagesWithInvalid.stream()
             .flatMap(p -> p.revisions().stream())
-            .anyMatch(revision -> revid.equals(revision.revid()));
-    Assertions.assertThat(hasRevid)
-        .as("Valid revid should still be found when queried with 0")
+            .anyMatch(revision -> revId.equals(revision.revId()));
+    Assertions.assertThat(hasRevId)
+        .as("Valid revId should still be found when queried with 0")
         .isTrue();
   }
 
@@ -123,10 +123,10 @@ class ApiRevisionsTest {
       final List<Revision> revisions = page.revisions();
       Assertions.assertThat(revisions).as("revisions").isNotEmpty();
       final Revision revision = revisions.getFirst();
-      Assertions.assertThat(revision.revid()).as("revid").isNotNull();
+      Assertions.assertThat(revision.revId()).as("revId").isNotNull();
       Assertions.assertThat(revision.timestamp()).as("timestamp").isNotNull();
       Assertions.assertThat(revision.user()).as("user").isNotNull();
-      Assertions.assertThat(revision.userid()).as("userid").isNotNull();
+      Assertions.assertThat(revision.userId()).as("userId").isNotNull();
 
       // Slots
       Assertions.assertThat(revision.slots()).as("slots").containsKey("main");

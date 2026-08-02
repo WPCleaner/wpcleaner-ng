@@ -17,7 +17,6 @@ import org.wpcleaner.api.utils.AutoCatch;
 @Service
 public final class OldSettings {
 
-  @SuppressWarnings("SpellCheckingInspection")
   private static final String ROOT_PATH = "org/wikipediacleaner";
 
   @Nullable private final Preferences rootPreferences;

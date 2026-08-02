@@ -6,7 +6,6 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  */
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
@@ -22,9 +21,9 @@ public record FilteredRecentChange(
     @Nullable URI diffURI,
     RecentChangesFilter filter,
     @Nullable URI pageURI,
-    @Nullable Integer rcid,
-    @Nullable Integer revid,
-    @Nullable Integer oldRevid,
+    @Nullable Integer rcId,
+    @Nullable Integer revId,
+    @Nullable Integer oldRevId,
     List<String> tags,
     @Nullable Instant timestamp,
     String title,
@@ -45,9 +44,9 @@ public record FilteredRecentChange(
             buildDiffURI(rc, wiki),
             filter.get(),
             buildPageURI(rc, wiki),
-            rc.rcid(),
-            rc.revid(),
-            rc.oldRevid(),
+            rc.rcId(),
+            rc.revId(),
+            rc.oldRevId(),
             Objects.requireNonNullElseGet(rc.tags(), List::of),
             rc.timestamp(),
             Objects.requireNonNullElse(rc.title(), ""),
@@ -59,24 +58,14 @@ public record FilteredRecentChange(
     if (rc.title() == null) {
       return null;
     }
-    try {
-      final String path = wiki.wikiPath() + "/" + rc.title().replace(' ', '_');
-      return new URI("https", wiki.mainHost(), path, null);
-    } catch (final URISyntaxException e) {
-      return null;
-    }
+    return wiki.pageUri(rc.title());
   }
 
   @Nullable
   private static URI buildDiffURI(final RecentChange rc, final WikiDefinition wiki) {
-    if (rc.revid() == null || !Objects.equals(rc.type(), RecentChangesParameters.Type.EDIT.value)) {
+    if (rc.revId() == null || !Objects.equals(rc.type(), RecentChangesParameters.Type.EDIT.value)) {
       return null;
     }
-    try {
-      final String path = wiki.wikiPath() + "/Special:Diff/" + rc.revid();
-      return new URI("https", wiki.mainHost(), path, null);
-    } catch (final URISyntaxException e) {
-      return null;
-    }
+    return wiki.pageUri("Special:Diff/" + rc.revId());
   }
 }

@@ -22,7 +22,7 @@ public record RecentChangesQuery(
     @Nullable String limit,
     @Nullable Set<Integer> namespace,
     @Nullable Set<Properties> properties,
-    @Nullable String rccontinue,
+    @Nullable String rcContinue,
     @Nullable Set<RecentChangesParameters.Show> show,
     @Nullable String slot,
     @Nullable Instant start,
@@ -58,7 +58,7 @@ public record RecentChangesQuery(
         .limit(limit)
         .namespace(namespace)
         .properties(properties)
-        .rccontinue(rccontinue)
+        .rcContinue(rcContinue)
         .show(show)
         .slot(slot)
         .start(start)
@@ -82,7 +82,7 @@ public record RecentChangesQuery(
     @Nullable private String limit;
     @Nullable private Set<Integer> namespace;
     @Nullable private Set<Properties> properties;
-    @Nullable private String rccontinue;
+    @Nullable private String rcContinue;
     @Nullable private Set<RecentChangesParameters.Show> show;
     @Nullable private String slot;
     @Nullable private Instant start;
@@ -132,8 +132,8 @@ public record RecentChangesQuery(
       return this;
     }
 
-    public Builder rccontinue(@Nullable final String rccontinue) {
-      this.rccontinue = rccontinue;
+    public Builder rcContinue(@Nullable final String rcContinue) {
+      this.rcContinue = rcContinue;
       return this;
     }
 
@@ -186,7 +186,7 @@ public record RecentChangesQuery(
           limit,
           namespace,
           properties,
-          rccontinue,
+          rcContinue,
           show,
           slot,
           start,

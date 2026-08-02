@@ -8,7 +8,9 @@ package org.wpcleaner.application.gui.javafx.main;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
@@ -59,9 +61,7 @@ class JavaFxMainWindowTest {
   @DisplayName("JavaFxMainWindow initializes and customizes feedbacks toolbar with user button")
   @Test
   void testMainWindowInitializationAndUserButton()
-      throws InterruptedException,
-          java.util.concurrent.ExecutionException,
-          java.util.concurrent.TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
           final JavaFxMainWindowServices services = Mockito.mock(JavaFxMainWindowServices.class);

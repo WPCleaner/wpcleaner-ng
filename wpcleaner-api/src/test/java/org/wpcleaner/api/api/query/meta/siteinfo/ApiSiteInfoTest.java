@@ -51,7 +51,7 @@ class ApiSiteInfoTest {
 
     Assertions.assertThat(siteInfo.general()).as("general").isNotNull();
     Assertions.assertThat(siteInfo.general().lang()).as("lang").isEqualTo("en");
-    Assertions.assertThat(siteInfo.general().wikiId()).as("wikiid").isEqualTo("metawiki");
+    Assertions.assertThat(siteInfo.general().wikiId()).as("wikiId").isEqualTo("metawiki");
 
     Assertions.assertThat(siteInfo.interwikiMap()).as("interwikiMap").isNotEmpty();
     Assertions.assertThat(siteInfo.languages()).as("languages").isNotEmpty();

@@ -70,7 +70,7 @@ class ApiRecentChangesTest {
     for (final RecentChange rc : recentChanges) {
       Assertions.assertThat(rc.title()).as("title").isNotNull();
       Assertions.assertThat(rc.user()).as("user").isNotNull();
-      Assertions.assertThat(rc.userid()).as("userid").isNotNull();
+      Assertions.assertThat(rc.userId()).as("userId").isNotNull();
     }
   }
 }

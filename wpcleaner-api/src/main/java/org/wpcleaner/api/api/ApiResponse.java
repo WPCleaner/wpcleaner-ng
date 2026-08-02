@@ -14,5 +14,5 @@ public interface ApiResponse {
 
   List<ApiError> warnings();
 
-  @Nullable String docref();
+  @Nullable String docRef();
 }

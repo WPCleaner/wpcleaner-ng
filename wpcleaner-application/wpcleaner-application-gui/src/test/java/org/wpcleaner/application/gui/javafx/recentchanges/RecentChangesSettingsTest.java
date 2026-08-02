@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -24,27 +25,7 @@ class RecentChangesSettingsTest {
   @DisplayName("RecentChangesSettings serialization and deserialization works correctly")
   @Test
   void testRecentChangesSettingsSerialization(@TempDir final Path tempDir) throws IOException {
-    final RecentChangesFilter filter =
-        new RecentChangesFilter(
-            "Filter1",
-            Set.of(0, 1),
-            Severity.ALERT_4,
-            Set.of("tag1"),
-            Set.of(RecentChangesParameters.Type.EDIT),
-            RecentChangesFilter.SubPages.SUB_PAGES);
-
-    final RecentChangesOptions options =
-        new RecentChangesOptions(
-            "Options1",
-            Set.of(2),
-            Set.of(RecentChangesParameters.Show.NOT_BOT),
-            "tag1",
-            Set.of(RecentChangesParameters.Type.NEW),
-            true,
-            List.of(filter));
-
-    final RecentChangesSettings settings =
-        new RecentChangesSettings(1, List.of(options), "Options1");
+    final RecentChangesSettings settings = getRecentChangesSettings();
 
     final File file = tempDir.resolve("recentchanges.json").toFile();
     JsonUtils.writeValue(file, settings);
@@ -78,5 +59,27 @@ class RecentChangesSettingsTest {
     Assertions.assertThat(loadedFilter.type()).containsExactly(RecentChangesParameters.Type.EDIT);
     Assertions.assertThat(loadedFilter.subPages())
         .isEqualTo(RecentChangesFilter.SubPages.SUB_PAGES);
+  }
+
+  private static @NonNull RecentChangesSettings getRecentChangesSettings() {
+    final RecentChangesFilter filter =
+        new RecentChangesFilter(
+            "Filter1",
+            Set.of(0, 1),
+            Severity.ALERT_4,
+            Set.of("tag1"),
+            Set.of(RecentChangesParameters.Type.EDIT),
+            RecentChangesFilter.SubPages.SUB_PAGES);
+
+    final RecentChangesOptions options =
+        new RecentChangesOptions(
+            "Options1",
+            Set.of(2),
+            Set.of(RecentChangesParameters.Show.NOT_BOT),
+            "tag1",
+            Set.of(RecentChangesParameters.Type.NEW),
+            true,
+            List.of(filter));
+    return new RecentChangesSettings(1, List.of(options), "Options1");
   }
 }

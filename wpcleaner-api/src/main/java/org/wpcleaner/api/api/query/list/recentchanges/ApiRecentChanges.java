@@ -78,7 +78,7 @@ public class ApiRecentChanges {
         RecentChangesParameters.TYPE.value, options.type(), type -> type.value);
     builder.queryParam(RecentChangesParameters.TOP_ONLY.value, options.topOnly());
     builder.queryParam(RecentChangesParameters.TITLE.value, options.title());
-    builder.queryParam(RecentChangesParameters.CONTINUE.value, options.rccontinue());
+    builder.queryParam(RecentChangesParameters.CONTINUE.value, options.rcContinue());
     builder.queryParam(
         RecentChangesParameters.GENERATE_REVISIONS.value, options.generateRevisions());
     builder.queryParam(RecentChangesParameters.SLOT.value, options.slot());

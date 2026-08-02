@@ -37,14 +37,14 @@ class ApiTokensTest {
 
     // THEN
     Assertions.assertThat(tokens).as("tokens").isNotNull();
-    Assertions.assertThat(tokens.createAccount()).as("createaccount").isNull();
+    Assertions.assertThat(tokens.createAccount()).as("createAccount").isNull();
     Assertions.assertThat(tokens.csrf()).as("csrf").isNull();
-    Assertions.assertThat(tokens.deleteGlobalAccount()).as("deleteglobalaccount").isNull();
+    Assertions.assertThat(tokens.deleteGlobalAccount()).as("deleteGlobalAccount").isNull();
     Assertions.assertThat(tokens.login()).as("login").isNotNull();
     Assertions.assertThat(tokens.patrol()).as("patrol").isNotNull();
     Assertions.assertThat(tokens.rollback()).as("rollback").isNull();
-    Assertions.assertThat(tokens.setGlobalAccountStatus()).as("setglobalaccountstatus").isNull();
-    Assertions.assertThat(tokens.userRights()).as("userrights").isNull();
+    Assertions.assertThat(tokens.setGlobalAccountStatus()).as("setGlobalAccountStatus").isNull();
+    Assertions.assertThat(tokens.userRights()).as("userRights").isNull();
     Assertions.assertThat(tokens.watch()).as("watch").isNull();
   }
 
@@ -56,14 +56,14 @@ class ApiTokensTest {
 
     // THEN
     Assertions.assertThat(tokens).as("tokens").isNotNull();
-    Assertions.assertThat(tokens.createAccount()).as("createaccount").isNull();
+    Assertions.assertThat(tokens.createAccount()).as("createAccount").isNull();
     Assertions.assertThat(tokens.csrf()).as("csrf").isNull();
-    Assertions.assertThat(tokens.deleteGlobalAccount()).as("deleteglobalaccount").isNull();
+    Assertions.assertThat(tokens.deleteGlobalAccount()).as("deleteGlobalAccount").isNull();
     Assertions.assertThat(tokens.login()).as("login").isNull();
     Assertions.assertThat(tokens.patrol()).as("patrol").isNull();
     Assertions.assertThat(tokens.rollback()).as("rollback").isNull();
-    Assertions.assertThat(tokens.setGlobalAccountStatus()).as("setglobalaccountstatus").isNull();
-    Assertions.assertThat(tokens.userRights()).as("userrights").isNull();
+    Assertions.assertThat(tokens.setGlobalAccountStatus()).as("setGlobalAccountStatus").isNull();
+    Assertions.assertThat(tokens.userRights()).as("userRights").isNull();
     Assertions.assertThat(tokens.watch()).as("watch").isNull();
   }
 }

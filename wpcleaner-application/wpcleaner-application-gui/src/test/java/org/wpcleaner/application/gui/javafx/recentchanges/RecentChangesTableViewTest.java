@@ -8,7 +8,9 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,9 +36,7 @@ class RecentChangesTableViewTest {
 
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private void runOnJavaFx(final Runnable runnable)
-      throws InterruptedException,
-          java.util.concurrent.ExecutionException,
-          java.util.concurrent.TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException {
     final CompletableFuture<Void> future = new CompletableFuture<>();
     Platform.runLater(
         () -> {
@@ -53,9 +53,7 @@ class RecentChangesTableViewTest {
   @DisplayName("RecentChangesTableView initializes columns and behaves correctly")
   @Test
   void testRecentChangesTableViewInitialization()
-      throws InterruptedException,
-          java.util.concurrent.ExecutionException,
-          java.util.concurrent.TimeoutException {
+      throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
           final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);

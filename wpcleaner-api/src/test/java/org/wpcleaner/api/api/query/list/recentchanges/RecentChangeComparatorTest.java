@@ -34,7 +34,7 @@ class RecentChangeComparatorTest {
             12,
             "parsed comment",
             null,
-            1234, // rcid = 1234
+            1234, // rcId = 1234
             null,
             5678,
             "hash",
@@ -62,7 +62,7 @@ class RecentChangeComparatorTest {
             12,
             "parsed comment",
             null,
-            1235, // rcid = 1235 (higher)
+            1235, // rcId = 1235 (higher)
             null,
             5678,
             "hash",
@@ -90,7 +90,7 @@ class RecentChangeComparatorTest {
             12,
             "parsed comment",
             null,
-            1230, // rcid = 1230
+            1230, // rcId = 1230
             null,
             5678,
             "hash",
@@ -108,7 +108,7 @@ class RecentChangeComparatorTest {
 
     list.sort(RecentChangeComparator.INSTANCE);
 
-    // Order should be: newer timestamp first (change3), then higher rcid (change2), then change1
+    // Order should be: newer timestamp first (change3), then higher rcId (change2), then change1
     Assertions.assertThat(list).containsExactly(change3, change2, change1);
   }
 }

@@ -22,7 +22,7 @@ public record RevisionsQuery(
     @Nullable String excludeUser,
     @Nullable String limit,
     @Nullable Set<Properties> properties,
-    @Nullable String rvcontinue,
+    @Nullable String rvContinue,
     @Nullable Integer section,
     @Nullable Set<String> slots,
     @Nullable Instant start,
@@ -56,7 +56,7 @@ public record RevisionsQuery(
         .excludeUser(excludeUser)
         .limit(limit)
         .properties(properties)
-        .rvcontinue(rvcontinue)
+        .rvContinue(rvContinue)
         .section(section)
         .slots(slots)
         .start(start)
@@ -78,7 +78,7 @@ public record RevisionsQuery(
     @Nullable private String excludeUser;
     @Nullable private String limit;
     @Nullable private Set<Properties> properties;
-    @Nullable private String rvcontinue;
+    @Nullable private String rvContinue;
     @Nullable private Integer section;
     @Nullable private Set<String> slots;
     @Nullable private Instant start;
@@ -126,8 +126,8 @@ public record RevisionsQuery(
       return this;
     }
 
-    public Builder rvcontinue(@Nullable final String rvcontinue) {
-      this.rvcontinue = rvcontinue;
+    public Builder rvContinue(@Nullable final String rvContinue) {
+      this.rvContinue = rvContinue;
       return this;
     }
 
@@ -170,7 +170,7 @@ public record RevisionsQuery(
           excludeUser,
           limit,
           properties,
-          rvcontinue,
+          rvContinue,
           section,
           slots,
           start,

@@ -18,14 +18,14 @@ public record Revision(
     @JsonProperty("minor") @Nullable String minor,
     @JsonProperty("parentid") @Nullable Integer parentId,
     @JsonProperty("parsedcomment") @Nullable String parsedComment,
-    @JsonProperty("revid") @Nullable Integer revid,
+    @JsonProperty("revid") @Nullable Integer revId,
     @JsonProperty("sha1") @Nullable String sha1,
     @JsonProperty("size") @Nullable Integer size,
     @JsonProperty("slots") @JsonSetter(nulls = Nulls.AS_EMPTY) Map<String, RevisionSlot> slots,
     @JsonProperty("tags") @JsonSetter(nulls = Nulls.AS_EMPTY) List<String> tags,
     @JsonProperty("timestamp") @Nullable Instant timestamp,
     @JsonProperty("user") @Nullable String user,
-    @JsonProperty("userid") @Nullable Integer userid) {
+    @JsonProperty("userid") @Nullable Integer userId) {
 
   public boolean isMinor() {
     return minor != null;

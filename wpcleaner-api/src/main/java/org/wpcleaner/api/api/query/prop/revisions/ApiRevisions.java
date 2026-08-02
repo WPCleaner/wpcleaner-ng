@@ -120,7 +120,7 @@ public class ApiRevisions {
 
   private void computeOptions(final ApiUriBuilder builder, final RevisionsQuery options) {
     builder.queryParam(RevisionsParameters.CONTENT_FORMAT_MAIN.value, options.contentFormatMain());
-    builder.queryParam(RevisionsParameters.CONTINUE.value, options.rvcontinue());
+    builder.queryParam(RevisionsParameters.CONTINUE.value, options.rvContinue());
     builder.queryParam(
         RevisionsParameters.DIRECTION.value, options.direction(), direction -> direction.value);
     builder.queryParam(RevisionsParameters.END.value, options.end());

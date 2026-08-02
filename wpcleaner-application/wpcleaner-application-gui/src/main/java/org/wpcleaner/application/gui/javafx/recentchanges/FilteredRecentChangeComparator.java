@@ -13,5 +13,5 @@ public final class FilteredRecentChangeComparator {
       Comparator.comparing(
               FilteredRecentChange::timestamp, Comparator.nullsLast(Comparator.reverseOrder()))
           .thenComparing(
-              FilteredRecentChange::rcid, Comparator.nullsLast(Comparator.reverseOrder()));
+              FilteredRecentChange::rcId, Comparator.nullsLast(Comparator.reverseOrder()));
 }
