@@ -25,6 +25,8 @@ dependencies {
   implementation("org.openjfx:javafx-base:${javafxVersion}:${javafxPlatform}")
   implementation("org.openjfx:javafx-controls:${javafxVersion}:${javafxPlatform}")
   implementation("org.openjfx:javafx-graphics:${javafxVersion}:${javafxPlatform}")
+  implementation("org.openjfx:jfx-incubator-richtext:${javafxVersion}:${javafxPlatform}")
+  implementation("org.openjfx:jfx-incubator-input:${javafxVersion}:${javafxPlatform}")
   implementation("org.controlsfx:controlsfx")
   implementation("org.fxmisc.richtext:richtextfx")
   implementation("org.reactfx:reactfx")

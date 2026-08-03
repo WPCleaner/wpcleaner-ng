@@ -8,6 +8,8 @@ module org.wpcleaner.application.gui {
   requires transitive io.github.javadiffutils;
   requires transitive java.desktop;
   requires transitive javafx.controls;
+  requires transitive jfx.incubator.input;
+  requires transitive jfx.incubator.richtext;
   requires transitive org.controlsfx.controls;
   requires transitive org.fxmisc.richtext;
   requires transitive org.jspecify;

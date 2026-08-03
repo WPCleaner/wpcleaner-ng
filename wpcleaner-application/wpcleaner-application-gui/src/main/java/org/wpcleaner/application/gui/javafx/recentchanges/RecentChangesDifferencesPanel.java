@@ -6,33 +6,41 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  */
 
 import com.github.difflib.patch.AbstractDelta;
-import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.DeltaType;
-import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
-import javafx.beans.value.ObservableValue;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.InlineCssTextArea;
+import javafx.scene.paint.Color;
+import jfx.incubator.scene.control.richtext.RichTextArea;
+import jfx.incubator.scene.control.richtext.TextPos;
+import jfx.incubator.scene.control.richtext.model.StyleAttributeMap;
 import org.jspecify.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wpcleaner.api.utils.GT;
 
 public final class RecentChangesDifferencesPanel extends HBox {
 
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  private static final StyleAttributeMap RED_BACKGROUND =
+      StyleAttributeMap.builder().setBackground(Color.web("#ffcccc")).build();
 
-  private final InlineCssTextArea oldContentArea;
-  private final InlineCssTextArea newContentArea;
+  private static final StyleAttributeMap GREEN_BACKGROUND =
+      StyleAttributeMap.builder().setBackground(Color.web("#ccffcc")).build();
+
+  private static final char NEWLINE = '\n';
+
+  private final RichTextArea oldContentArea;
+  private final RichTextArea newContentArea;
   private final List<AbstractDelta<Character>> deltas;
+  private @Nullable String currentContent;
+  private @Nullable String currentOldContent;
   private boolean isSyncingScroll;
+  private boolean isScrollSynced;
   private int currentDeltaIndex = -1;
 
   public RecentChangesDifferencesPanel() {
@@ -40,90 +48,108 @@ public final class RecentChangesDifferencesPanel extends HBox {
 
     this.deltas = new ArrayList<>();
 
-    this.oldContentArea = new InlineCssTextArea();
+    this.oldContentArea = new RichTextArea();
     this.oldContentArea.setEditable(false);
     this.oldContentArea.setWrapText(true);
     this.oldContentArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-    final VirtualizedScrollPane<InlineCssTextArea> oldContentAreaScrollPane =
-        new VirtualizedScrollPane<>(oldContentArea);
 
     final Label previousLabel = new Label(GT._T("Previous revision"));
     final VBox leftBox = new VBox(5);
-    leftBox.getChildren().addAll(previousLabel, oldContentAreaScrollPane);
-    VBox.setVgrow(oldContentAreaScrollPane, Priority.ALWAYS);
+    leftBox.getChildren().addAll(previousLabel, oldContentArea);
+    VBox.setVgrow(oldContentArea, Priority.ALWAYS);
     setHgrow(leftBox, Priority.ALWAYS);
 
-    this.newContentArea = new InlineCssTextArea();
+    this.newContentArea = new RichTextArea();
     this.newContentArea.setEditable(false);
     this.newContentArea.setWrapText(true);
     this.newContentArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-    final VirtualizedScrollPane<InlineCssTextArea> newContentAreaScrollPane =
-        new VirtualizedScrollPane<>(newContentArea);
 
     final Label newLabel = new Label(GT._T("New revision"));
     final VBox rightBox = new VBox(5);
-    rightBox.getChildren().addAll(newLabel, newContentAreaScrollPane);
-    VBox.setVgrow(newContentAreaScrollPane, Priority.ALWAYS);
+    rightBox.getChildren().addAll(newLabel, newContentArea);
+    VBox.setVgrow(newContentArea, Priority.ALWAYS);
     setHgrow(rightBox, Priority.ALWAYS);
-
-    final ObservableValue<Double> oldScrollY = this.oldContentArea.estimatedScrollYProperty();
-    oldScrollY.addListener((_, _, _) -> syncScroll(oldContentArea, newContentArea, true));
-
-    final ObservableValue<Double> newScrollY = this.newContentArea.estimatedScrollYProperty();
-    newScrollY.addListener((_, _, _) -> syncScroll(newContentArea, oldContentArea, false));
 
     getChildren().addAll(leftBox, rightBox);
   }
 
-  private void syncScroll(
-      final InlineCssTextArea sourceArea, final InlineCssTextArea targetArea, final boolean newer) {
-    if (isSyncingScroll) {
+  @Override
+  protected void layoutChildren() {
+    super.layoutChildren();
+    setupScrollSync();
+  }
+
+  private void setupScrollSync() {
+    if (isScrollSynced) {
       return;
     }
-    isSyncingScroll = true;
-    try {
-      moveToMatchingParagraph(sourceArea, targetArea, newer);
-    } finally {
-      isSyncingScroll = false;
+    final ScrollBar oldVBar = findVerticalScrollBar(oldContentArea);
+    final ScrollBar newVBar = findVerticalScrollBar(newContentArea);
+    if (oldVBar != null && newVBar != null) {
+      isScrollSynced = true;
+      bindScrollBars(oldVBar, newVBar);
+      bindScrollBars(newVBar, oldVBar);
     }
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void moveToMatchingParagraph(
-      final InlineCssTextArea sourceArea, final InlineCssTextArea targetArea, final boolean newer) {
-    if (sourceArea.getLength() == 0) {
-      return;
-    }
-    try {
-      final int lastSourcePar = sourceArea.lastVisibleParToAllParIndex();
-      final int lastTargetPosition = computeTargetPosition(sourceArea, lastSourcePar, newer);
-      final int firstSourcePar = sourceArea.firstVisibleParToAllParIndex();
-      final int firstTargetPosition = computeTargetPosition(sourceArea, firstSourcePar, newer);
-      targetArea.moveTo((firstTargetPosition + lastTargetPosition) / 2);
-      targetArea.requestFollowCaret();
-    } catch (Exception e) {
-      LOGGER.error("Error in moveToMatchingParagraph: {}", e.getMessage(), e);
-    }
+  @SuppressWarnings("PMD.UnusedAssignment")
+  private void bindScrollBars(final ScrollBar sourceBar, final ScrollBar targetBar) {
+    sourceBar
+        .valueProperty()
+        .addListener(
+            (_, _, newValue) -> {
+              if (!isSyncingScroll) {
+                isSyncingScroll = true;
+                try {
+                  final double max = sourceBar.getMax();
+                  final double relativeValue = max > 0 ? newValue.doubleValue() / max : 0;
+                  targetBar.setValue(relativeValue * targetBar.getMax());
+                } finally {
+                  isSyncingScroll = false;
+                }
+              }
+            });
   }
 
-  private int computeTargetPosition(
-      final InlineCssTextArea sourceArea, final int sourcePar, final boolean newer) {
-    int targetPosition =
-        IntStream.range(0, sourcePar).map(index -> sourceArea.getText(index).length()).sum()
-            + sourcePar;
-    for (final AbstractDelta<Character> delta : deltas) {
-      final Chunk<Character> sourceChunk = newer ? delta.getSource() : delta.getTarget();
-      final Chunk<Character> targetChunk = newer ? delta.getTarget() : delta.getSource();
-      if (sourceChunk.getPosition() < targetPosition) {
-        targetPosition += targetChunk.size() - sourceChunk.size();
+  private @Nullable ScrollBar findVerticalScrollBar(final Parent parent) {
+    for (final Node node : parent.getChildrenUnmodifiable()) {
+      if (node instanceof ScrollBar scrollBar
+          && scrollBar.getOrientation() == Orientation.VERTICAL) {
+        return scrollBar;
+      }
+      if (node instanceof Parent parentNode) {
+        final ScrollBar scrollBar = findVerticalScrollBar(parentNode);
+        if (scrollBar != null) {
+          return scrollBar;
+        }
       }
     }
-    return targetPosition;
+    return null;
   }
 
+  private TextPos getTextPos(@Nullable final String text, final int flatOffset) {
+    if (text == null || flatOffset <= 0) {
+      return TextPos.ZERO;
+    }
+    int paragraphIndex = 0;
+    int currentOffset = 0;
+    for (int i = 0; i < text.length() && i < flatOffset; i++) {
+      if (text.charAt(i) == NEWLINE) {
+        paragraphIndex++;
+        currentOffset = 0;
+      } else {
+        currentOffset++;
+      }
+    }
+    return TextPos.ofLeading(paragraphIndex, currentOffset);
+  }
+
+  @SuppressWarnings("PMD.NullAssignment")
   public void clear() {
     oldContentArea.clear();
     newContentArea.clear();
+    currentContent = null;
+    currentOldContent = null;
     currentDeltaIndex = -1;
   }
 
@@ -133,20 +159,22 @@ public final class RecentChangesDifferencesPanel extends HBox {
       final List<AbstractDelta<Character>> deltas) {
     this.deltas.clear();
     this.deltas.addAll(deltas);
+    this.currentContent = content;
+    this.currentOldContent = oldContent;
     this.currentDeltaIndex = -1;
     if (content != null) {
-      newContentArea.replaceText(content);
-      newContentArea.setStyle(0, content.length(), "");
+      newContentArea.clear();
+      newContentArea.appendText(content, StyleAttributeMap.EMPTY);
     }
     if (oldContent != null) {
-      oldContentArea.replaceText(oldContent);
-      oldContentArea.setStyle(0, oldContent.length(), "");
+      oldContentArea.clear();
+      oldContentArea.appendText(oldContent, StyleAttributeMap.EMPTY);
     }
 
     if (content != null && oldContent != null) {
       applyDeltaStyles(deltas);
     } else if (content != null) {
-      newContentArea.setStyle(0, content.length(), "-rtfx-background-color: #ccffcc;");
+      newContentArea.applyStyle(TextPos.ZERO, newContentArea.getDocumentEnd(), GREEN_BACKGROUND);
     }
   }
 
@@ -156,17 +184,20 @@ public final class RecentChangesDifferencesPanel extends HBox {
       if (type == DeltaType.DELETE || type == DeltaType.CHANGE) {
         final int start = delta.getSource().getPosition();
         final int length = delta.getSource().getLines().size();
-        oldContentArea.setStyle(start, start + length, "-rtfx-background-color: #ffcccc;");
+        final TextPos startPos = getTextPos(currentOldContent, start);
+        final TextPos endPos = getTextPos(currentOldContent, start + length);
+        oldContentArea.applyStyle(startPos, endPos, RED_BACKGROUND);
       }
       if (type == DeltaType.INSERT || type == DeltaType.CHANGE) {
         final int start = delta.getTarget().getPosition();
         final int length = delta.getTarget().getLines().size();
-        newContentArea.setStyle(start, start + length, "-rtfx-background-color: #ccffcc;");
+        final TextPos startPos = getTextPos(currentContent, start);
+        final TextPos endPos = getTextPos(currentContent, start + length);
+        newContentArea.applyStyle(startPos, endPos, GREEN_BACKGROUND);
       }
     }
   }
 
-  @SuppressWarnings("PMD.UnusedAssignment")
   private void selectDelta(final int index) {
     if (deltas.isEmpty()) {
       return;
@@ -180,13 +211,15 @@ public final class RecentChangesDifferencesPanel extends HBox {
     try {
       final int oldStart = delta.getSource().getPosition();
       final int oldLength = delta.getSource().getLines().size();
-      oldContentArea.selectRange(oldStart, oldStart + oldLength);
-      oldContentArea.requestFollowCaret();
+      final TextPos oldStartPos = getTextPos(currentOldContent, oldStart);
+      final TextPos oldEndPos = getTextPos(currentOldContent, oldStart + oldLength);
+      oldContentArea.select(oldStartPos, oldEndPos);
 
       final int newStart = delta.getTarget().getPosition();
       final int newLength = delta.getTarget().getLines().size();
-      newContentArea.selectRange(newStart, newStart + newLength);
-      newContentArea.requestFollowCaret();
+      final TextPos newStartPos = getTextPos(currentContent, newStart);
+      final TextPos newEndPos = getTextPos(currentContent, newStart + newLength);
+      newContentArea.select(newStartPos, newEndPos);
     } finally {
       isSyncingScroll = false;
     }
