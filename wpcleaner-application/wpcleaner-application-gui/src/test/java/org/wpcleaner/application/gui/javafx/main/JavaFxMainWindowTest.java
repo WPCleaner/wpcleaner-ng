@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
@@ -65,6 +66,7 @@ class JavaFxMainWindowTest {
     runOnJavaFx(
         () -> {
           final JavaFxMainWindowServices services = Mockito.mock(JavaFxMainWindowServices.class);
+          final ApiRandom apiRandom = Mockito.mock(ApiRandom.class);
           final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
           final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
           final InterestingSettingsManager interestingSettings =
@@ -79,6 +81,7 @@ class JavaFxMainWindowTest {
           final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
 
           Mockito.when(services.actionServices()).thenReturn(actionServices);
+          Mockito.when(services.apiRandom()).thenReturn(apiRandom);
           Mockito.when(services.imageLoader()).thenReturn(imageLoader);
           Mockito.when(services.interestingSettings()).thenReturn(interestingSettings);
           Mockito.when(services.recentChangesWindowFactory())

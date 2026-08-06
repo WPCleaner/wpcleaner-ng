@@ -30,6 +30,7 @@ public enum QueryParameters {
   }
 
   public enum List {
+    RANDOM("random"),
     RECENT_CHANGES("recentchanges"),
     TAGS("tags"),
     USERS("users");

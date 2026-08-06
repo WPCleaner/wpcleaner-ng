@@ -21,6 +21,7 @@ module org.wpcleaner.api {
   requires org.slf4j;
   requires org.yaml.snakeyaml;
   exports org.wpcleaner.api.api.login;
+  exports org.wpcleaner.api.api.query.list.random;
   exports org.wpcleaner.api.api.query.list.recentchanges;
   exports org.wpcleaner.api.api.query.list.tags;
   exports org.wpcleaner.api.api.query.list.users;
@@ -38,6 +39,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.wiki.builder;
   exports org.wpcleaner.api.wiki.definition;
   opens org.wpcleaner.api.api.login;
+  opens org.wpcleaner.api.api.query.list.random;
   opens org.wpcleaner.api.api.query.list.recentchanges;
   opens org.wpcleaner.api.api.query.list.tags;
   opens org.wpcleaner.api.api.query.list.users;

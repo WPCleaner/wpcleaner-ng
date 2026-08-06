@@ -64,6 +64,7 @@ public enum ImageCollection {
   OPTIONS("commons/gnome-preferences-other.png"),
   PAGE("commons/gnome-text-x-generic.png"),
   PASSWORD("commons/gnome-dialog-password.png"),
+  RANDOM("commons/nuvola-apps-atlantik.png"),
   REFRESH("commons/gnome-view-refresh.png"),
   REFRESH_STOP("commons/gnome-view-refresh-stop.png"),
   SYSTEM_OPTIONS("commons/gnome-preferences-system.png"),

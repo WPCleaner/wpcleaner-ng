@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
@@ -38,6 +39,7 @@ class PageInputTest {
     final InterestingByWikiSettings wikiSettings = Mockito.mock(InterestingByWikiSettings.class);
     final JavaFxImageLoader imageLoader = Mockito.mock(JavaFxImageLoader.class);
     final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
+    final ApiRandom apiRandom = Mockito.mock(ApiRandom.class);
 
     Mockito.when(settingsManager.getCurrentSettings()).thenReturn(settings);
     Mockito.when(settings.getByWikiSettings(wiki)).thenReturn(Optional.of(wikiSettings));
@@ -48,7 +50,7 @@ class PageInputTest {
     Platform.runLater(
         () -> {
           final PageInput pageInput =
-              new PageInput(wiki, settingsManager, imageLoader, actionServices);
+              new PageInput(wiki, settingsManager, imageLoader, actionServices, apiRandom);
 
           Assertions.assertThat(pageInput.comboBox.getItems()).containsExactly("Page1", "Page2");
           Assertions.assertThat(pageInput.getPage()).isEmpty();
