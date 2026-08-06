@@ -52,7 +52,7 @@ When this skill is active, you MUST:
 7. If the API module has more the 5 parameters, implement a record for grouping all the available parameters.
    Order record parameters alphabetically.
    Implement a nested `Builder` class following the Builder pattern with the parameters sorted alphabetically, followed by the setter methods sorted alphabetically.
-   If the API module has a parameter for specifying limits (like `uslimit`), ensure that you use a String and not an Integer for it, because it can be a number or the literal String `max`.
+   If the API module has a parameter for specifying limits (like `uslimit`), ensure that you use a Limit and not an Integer for it, because it can be a number or the literal String `max`.
 
 8. Implement the service class named `ApiModuleName` where `ModuleName` is the capitalized API module name.
  

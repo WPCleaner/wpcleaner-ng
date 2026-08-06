@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.wpcleaner.api.TestCallingMWApi;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
 @SpringBootTest(classes = ApiRecentChangesTest.SpringBootTestConfig.class)
@@ -49,7 +50,7 @@ class ApiRecentChangesTest {
     // GIVEN
     final RecentChangesQuery options =
         RecentChangesQuery.emptyBuilder()
-            .limit(5)
+            .limit(Limit.of(5))
             .properties(
                 Set.of(
                     RecentChangesParameters.Properties.COMMENT,

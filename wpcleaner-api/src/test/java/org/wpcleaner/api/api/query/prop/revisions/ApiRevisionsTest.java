@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.wpcleaner.api.TestCallingMWApi;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
 @SpringBootTest(classes = ApiRevisionsTest.SpringBootTestConfig.class)
@@ -89,7 +90,7 @@ class ApiRevisionsTest {
     // GIVEN
     final RevisionsQuery options =
         RevisionsQuery.emptyBuilder()
-            .limit(1)
+            .limit(Limit.of(1))
             .properties(
                 Set.of(
                     RevisionsParameters.Properties.COMMENT,

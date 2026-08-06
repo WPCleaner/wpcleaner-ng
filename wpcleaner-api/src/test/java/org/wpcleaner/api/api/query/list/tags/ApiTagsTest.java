@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.wpcleaner.api.TestCallingMWApi;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
 @SpringBootTest(classes = ApiTagsTest.SpringBootTestConfig.class)
@@ -45,7 +46,7 @@ class ApiTagsTest {
   @Test
   void retrieveTagsWithLimit() {
     // WHEN
-    final List<Tag> tags = apiTags.retrieveTags(WikimediaDefinitions.META, "5", null, null);
+    final List<Tag> tags = apiTags.retrieveTags(WikimediaDefinitions.META, Limit.of(5), null, null);
 
     // THEN
     Assertions.assertThat(tags).as("tags").isNotNull();
@@ -69,7 +70,8 @@ class ApiTagsTest {
             TagsParameters.Properties.SOURCE);
 
     // WHEN
-    final List<Tag> tags = apiTags.retrieveTags(WikimediaDefinitions.META, "5", null, properties);
+    final List<Tag> tags =
+        apiTags.retrieveTags(WikimediaDefinitions.META, Limit.of(5), null, properties);
 
     // THEN
     Assertions.assertThat(tags).as("tags").isNotNull();

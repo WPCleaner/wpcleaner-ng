@@ -17,6 +17,7 @@ import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUriBuilder;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -67,7 +68,7 @@ public class ApiRandom {
         RandomParameters.FILTER_REDIRECT.value,
         options.filterRedirect(),
         filterRedirect -> filterRedirect.value);
-    builder.queryParam(RandomParameters.LIMIT.value, options.limit());
+    builder.queryParam(RandomParameters.LIMIT.value, options.limit(), Limit::value);
     builder.queryParam(RandomParameters.MAX_SIZE.value, options.maxSize());
     builder.queryParam(RandomParameters.MIN_SIZE.value, options.minSize());
     builder.queryParamCollection(

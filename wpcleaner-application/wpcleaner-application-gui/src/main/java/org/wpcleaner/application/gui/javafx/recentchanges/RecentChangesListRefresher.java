@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
 import org.wpcleaner.api.utils.GT;
@@ -27,7 +28,7 @@ public final class RecentChangesListRefresher {
   private static final Duration RECENT_CHANGES_OVERLAP = Duration.ofSeconds(10);
   private static final RecentChangesQuery DEFAULT_QUERY =
       RecentChangesQuery.emptyBuilder()
-          .limit("max")
+          .limit(Limit.max())
           .properties(
               Set.of(
                   RecentChangesParameters.Properties.COMMENT,

@@ -6,10 +6,9 @@ package org.wpcleaner.api.api.query.prop.revisions;
  */
 
 import java.time.Instant;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters.Direction;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters.Properties;
 
@@ -20,7 +19,7 @@ public record RevisionsQuery(
     @Nullable Instant end,
     @Nullable Integer endId,
     @Nullable String excludeUser,
-    @Nullable String limit,
+    @Nullable Limit limit,
     @Nullable Set<Properties> properties,
     @Nullable String rvContinue,
     @Nullable Integer section,
@@ -29,23 +28,6 @@ public record RevisionsQuery(
     @Nullable Integer startId,
     @Nullable String tag,
     @Nullable String user) {
-
-  public RevisionsQuery {
-    checkLimit(limit);
-  }
-
-  private static void checkLimit(@Nullable final String limit) {
-    if (limit == null || Objects.equals(limit, "max")) {
-      return;
-    }
-    try {
-      //noinspection ResultOfMethodCallIgnored
-      Integer.parseUnsignedInt(limit);
-    } catch (NumberFormatException e) {
-      throw new IllegalArgumentException(
-          "RevisionsQuery.limit should be an integer or the String max", e);
-    }
-  }
 
   public Builder builder() {
     return emptyBuilder()
@@ -76,7 +58,7 @@ public record RevisionsQuery(
     @Nullable private Instant end;
     @Nullable private Integer endId;
     @Nullable private String excludeUser;
-    @Nullable private String limit;
+    @Nullable private Limit limit;
     @Nullable private Set<Properties> properties;
     @Nullable private String rvContinue;
     @Nullable private Integer section;
@@ -111,12 +93,7 @@ public record RevisionsQuery(
       return this;
     }
 
-    public Builder limit(@Nullable final Integer limit) {
-      this.limit = Optional.ofNullable(limit).map(Integer::toUnsignedString).orElse(null);
-      return this;
-    }
-
-    public Builder limit(@Nullable final String limit) {
+    public Builder limit(@Nullable final Limit limit) {
       this.limit = limit;
       return this;
     }

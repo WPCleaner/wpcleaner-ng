@@ -5,10 +5,9 @@ package org.wpcleaner.api.api.query.list.random;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.random.RandomParameters.ContentModel;
 import org.wpcleaner.api.api.query.list.random.RandomParameters.FilterRedirect;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -17,27 +16,11 @@ import org.wpcleaner.api.repository.namespace.Namespace;
 public record RandomQuery(
     @Nullable ContentModel contentModel,
     @Nullable FilterRedirect filterRedirect,
-    @Nullable String limit,
+    @Nullable Limit limit,
     @Nullable Integer maxSize,
     @Nullable Integer minSize,
     @Nullable Set<Namespace> namespace,
     @Nullable String rnContinue) {
-
-  public RandomQuery {
-    checkLimit(limit);
-  }
-
-  private static void checkLimit(@Nullable final String limit) {
-    if (limit == null || Objects.equals(limit, "max")) {
-      return;
-    }
-    try {
-      Integer.parseUnsignedInt(limit);
-    } catch (NumberFormatException e) {
-      throw new IllegalArgumentException(
-          "RandomQuery.limit should be an integer or the String max", e);
-    }
-  }
 
   public Builder builder() {
     return emptyBuilder()
@@ -58,7 +41,7 @@ public record RandomQuery(
 
     @Nullable private ContentModel contentModel;
     @Nullable private FilterRedirect filterRedirect;
-    @Nullable private String limit;
+    @Nullable private Limit limit;
     @Nullable private Integer maxSize;
     @Nullable private Integer minSize;
     @Nullable private Set<Namespace> namespace;
@@ -74,12 +57,7 @@ public record RandomQuery(
       return this;
     }
 
-    public Builder limit(@Nullable final Integer limit) {
-      this.limit = Optional.ofNullable(limit).map(Integer::toUnsignedString).orElse(null);
-      return this;
-    }
-
-    public Builder limit(@Nullable final String limit) {
+    public Builder limit(@Nullable final Limit limit) {
       this.limit = limit;
       return this;
     }

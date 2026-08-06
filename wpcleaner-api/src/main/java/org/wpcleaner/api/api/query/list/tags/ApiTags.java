@@ -18,6 +18,7 @@ import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUriBuilder;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -32,7 +33,7 @@ public class ApiTags {
 
   public List<Tag> retrieveTags(
       final WikiDefinition wiki,
-      @Nullable final String limit,
+      @Nullable final Limit limit,
       @Nullable final String tgContinue,
       @Nullable final Collection<TagsParameters.Properties> properties) {
     final Response response = internalRetrieveTags(wiki, limit, tgContinue, properties);
@@ -45,7 +46,7 @@ public class ApiTags {
   @Nullable
   private Response internalRetrieveTags(
       final WikiDefinition wiki,
-      @Nullable final String limit,
+      @Nullable final Limit limit,
       @Nullable final String tgContinue,
       @Nullable final Collection<TagsParameters.Properties> properties) {
     return restClient
@@ -58,12 +59,12 @@ public class ApiTags {
 
   private URI computeUri(
       final UriBuilder uriBuilder,
-      @Nullable final String limit,
+      @Nullable final Limit limit,
       @Nullable final String tgContinue,
       @Nullable final Collection<TagsParameters.Properties> properties) {
     final ApiUriBuilder builder = ApiUriBuilder.of(uriBuilder, ApiParameters.Action.QUERY);
     builder.queryParam(QueryParameters.LIST.value, QueryParameters.List.TAGS.value);
-    builder.queryParam(TagsParameters.LIMIT.value, limit);
+    builder.queryParam(TagsParameters.LIMIT.value, limit, Limit::value);
     builder.queryParam(TagsParameters.CONTINUE.value, tgContinue);
     builder.queryParamCollection(TagsParameters.PROPERTIES.value, properties, prop -> prop.value);
     return builder.build();

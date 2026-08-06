@@ -17,6 +17,7 @@ import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUriBuilder;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -73,7 +74,7 @@ public class ApiRecentChanges {
         properties -> properties.value);
     builder.queryParamCollection(
         RecentChangesParameters.SHOW.value, options.show(), show -> show.value);
-    builder.queryParam(RecentChangesParameters.LIMIT.value, options.limit());
+    builder.queryParam(RecentChangesParameters.LIMIT.value, options.limit(), Limit::value);
     builder.queryParamCollection(
         RecentChangesParameters.TYPE.value, options.type(), type -> type.value);
     builder.queryParam(RecentChangesParameters.TOP_ONLY.value, options.topOnly());

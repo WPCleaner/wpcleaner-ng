@@ -5,11 +5,11 @@ package org.wpcleaner.api.hook.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.tags.ApiTags;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
@@ -24,9 +24,9 @@ public class LoginHook {
   private final ApiSiteInfo apiSiteInfo;
   private final ApiTags apiTags;
   private final SiteInfoExtractor siteInfoExtractor;
-  private final Collection<SiteInfoParameters.Properties> siteInfoProperties;
+  private final Set<SiteInfoParameters.Properties> siteInfoProperties;
   private final TagRepository tagRepository;
-  private final Collection<TagsParameters.Properties> tagsProperties;
+  private final Set<TagsParameters.Properties> tagsProperties;
 
   public LoginHook(
       final ApiSiteInfo apiSiteInfo,
@@ -47,7 +47,7 @@ public class LoginHook {
           apiSiteInfo.requestSiteInfo(wiki, siteInfoProperties, null, null, null));
     }
     if (!tagsProperties.isEmpty()) {
-      final List<Tag> tags = apiTags.retrieveTags(wiki, "max", null, tagsProperties);
+      final List<Tag> tags = apiTags.retrieveTags(wiki, Limit.max(), null, tagsProperties);
       tagRepository.addTags(tags);
     }
   }

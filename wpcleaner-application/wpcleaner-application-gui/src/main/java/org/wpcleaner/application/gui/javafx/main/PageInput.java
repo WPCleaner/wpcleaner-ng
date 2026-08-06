@@ -20,6 +20,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.list.random.RandomPage;
 import org.wpcleaner.api.api.query.list.random.RandomQuery;
@@ -115,7 +116,7 @@ public class PageInput {
               try (ProgressStep _ = progressTracker.start(GT._T("Retrieving random page"))) {
                 final RandomQuery query =
                     RandomQuery.emptyBuilder()
-                        .limit(1)
+                        .limit(Limit.of(1))
                         .namespace(Set.of(new Namespace(0, "Main", "Main")))
                         .build();
                 final List<RandomPage> pages = apiRandom.retrieveRandomPages(wiki, query);

@@ -17,6 +17,7 @@ import org.wpcleaner.api.api.ApiError;
 import org.wpcleaner.api.api.ApiParameters;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUriBuilder;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.QueryParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -126,7 +127,7 @@ public class ApiRevisions {
     builder.queryParam(RevisionsParameters.END.value, options.end());
     builder.queryParam(RevisionsParameters.END_ID.value, options.endId());
     builder.queryParam(RevisionsParameters.EXCLUDE_USER.value, options.excludeUser());
-    builder.queryParam(RevisionsParameters.LIMIT.value, options.limit());
+    builder.queryParam(RevisionsParameters.LIMIT.value, options.limit(), Limit::value);
     builder.queryParamCollection(
         RevisionsParameters.PROPERTIES.value, options.properties(), properties -> properties.value);
     builder.queryParam(RevisionsParameters.SECTION.value, options.section());

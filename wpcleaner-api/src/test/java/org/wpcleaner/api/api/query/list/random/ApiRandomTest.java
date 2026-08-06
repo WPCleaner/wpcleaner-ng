@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.wpcleaner.api.TestCallingMWApi;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
@@ -47,7 +48,7 @@ class ApiRandomTest {
   void retrieveRandomPagesWithOptions() {
     final RandomQuery options =
         RandomQuery.emptyBuilder()
-            .limit(2)
+            .limit(Limit.of(2))
             .namespace(Set.of(new Namespace(0, "Main", "")))
             .filterRedirect(RandomParameters.FilterRedirect.NON_REDIRECTS)
             .build();

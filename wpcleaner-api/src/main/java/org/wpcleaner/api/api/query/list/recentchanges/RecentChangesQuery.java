@@ -6,10 +6,9 @@ package org.wpcleaner.api.api.query.list.recentchanges;
  */
 
 import java.time.Instant;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Direction;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters.Properties;
 
@@ -19,7 +18,7 @@ public record RecentChangesQuery(
     @Nullable Instant end,
     @Nullable String excludeUser,
     boolean generateRevisions,
-    @Nullable String limit,
+    @Nullable Limit limit,
     @Nullable Set<Integer> namespace,
     @Nullable Set<Properties> properties,
     @Nullable String rcContinue,
@@ -31,23 +30,6 @@ public record RecentChangesQuery(
     boolean topOnly,
     @Nullable Set<RecentChangesParameters.Type> type,
     @Nullable String user) {
-
-  public RecentChangesQuery {
-    checkLimit(limit);
-  }
-
-  private static void checkLimit(@Nullable final String limit) {
-    if (limit == null || Objects.equals(limit, "max")) {
-      return;
-    }
-    try {
-      //noinspection ResultOfMethodCallIgnored
-      Integer.parseUnsignedInt(limit);
-    } catch (NumberFormatException e) {
-      throw new IllegalArgumentException(
-          "RecentChangesQuery.limit should be an integer or the String max", e);
-    }
-  }
 
   public Builder builder() {
     return emptyBuilder()
@@ -79,7 +61,7 @@ public record RecentChangesQuery(
     @Nullable private Instant end;
     @Nullable private String excludeUser;
     private boolean generateRevisions;
-    @Nullable private String limit;
+    @Nullable private Limit limit;
     @Nullable private Set<Integer> namespace;
     @Nullable private Set<Properties> properties;
     @Nullable private String rcContinue;
@@ -112,12 +94,7 @@ public record RecentChangesQuery(
       return this;
     }
 
-    public Builder limit(@Nullable final Integer limit) {
-      this.limit = Optional.ofNullable(limit).map(Integer::toUnsignedString).orElse(null);
-      return this;
-    }
-
-    public Builder limit(@Nullable final String limit) {
+    public Builder limit(@Nullable final Limit limit) {
       this.limit = limit;
       return this;
     }
