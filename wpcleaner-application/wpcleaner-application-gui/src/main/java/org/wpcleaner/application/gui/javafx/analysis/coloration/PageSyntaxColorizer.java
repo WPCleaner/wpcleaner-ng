@@ -5,12 +5,13 @@ package org.wpcleaner.application.gui.javafx.analysis.coloration;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 
 @Service
@@ -18,31 +19,11 @@ public class PageSyntaxColorizer {
 
   private final List<PageSyntaxRule> rules;
   private final JavaFxStylePropertiesRegistry styleRegistry;
-  private final Pattern combinedPattern;
 
   public PageSyntaxColorizer(
       final List<PageSyntaxRule> rules, final JavaFxStylePropertiesRegistry styleRegistry) {
     this.rules = List.copyOf(rules);
     this.styleRegistry = styleRegistry;
-
-    final StringBuilder patternBuilder = new StringBuilder();
-    for (final PageSyntaxRule rule : this.rules) {
-      if (!patternBuilder.isEmpty()) {
-        patternBuilder.append('|');
-      }
-      patternBuilder
-          .append("(?<")
-          .append(rule.getGroupName())
-          .append('>')
-          .append(rule.getPattern().pattern())
-          .append(')');
-    }
-
-    if (patternBuilder.isEmpty()) {
-      this.combinedPattern = Pattern.compile("$^");
-    } else {
-      this.combinedPattern = Pattern.compile(patternBuilder.toString());
-    }
   }
 
   public StyleSpans<String> computeStyleSpans(final String text) {
@@ -52,28 +33,71 @@ public class PageSyntaxColorizer {
       return spansBuilder.create();
     }
 
-    final Matcher matcher = combinedPattern.matcher(text);
+    final PageAnalysis pageAnalysis = new PageAnalysis("", text);
+
+    final List<StyledRange> ranges = new ArrayList<>();
+    for (final PageSyntaxRule rule : rules) {
+      final String style = styleRegistry.getStyle(rule.getStyleName());
+      for (final PageSyntaxRule.RuleRange range : rule.getRanges(pageAnalysis)) {
+        ranges.add(new StyledRange(range.begin(), range.end(), style));
+      }
+    }
+    Collections.sort(ranges);
+
     int lastKwEnd = 0;
-    while (matcher.find()) {
-      String style = "";
-      for (final PageSyntaxRule rule : rules) {
-        if (matcher.group(rule.getGroupName()) != null) {
-          style = styleRegistry.getStyle(rule.getStyleName());
-          break;
-        }
+    for (final StyledRange range : ranges) {
+      final int start = range.begin();
+      final int end = range.end();
+
+      if (start < lastKwEnd) {
+        continue;
       }
 
-      final int start = matcher.start();
       if (start > lastKwEnd) {
         spansBuilder.add("", start - lastKwEnd);
       }
-      spansBuilder.add(style, matcher.end() - start);
-      lastKwEnd = matcher.end();
+      spansBuilder.add(range.styleName(), end - start);
+      lastKwEnd = end;
     }
 
     if (lastKwEnd < text.length()) {
       spansBuilder.add("", text.length() - lastKwEnd);
     }
     return spansBuilder.create();
+  }
+
+  private record StyledRange(int begin, int end, String styleName)
+      implements Comparable<StyledRange> {
+
+    @Override
+    public int compareTo(final StyledRange other) {
+      final int beginCompare = Integer.compare(this.begin, other.begin);
+      if (beginCompare != 0) {
+        return beginCompare;
+      }
+      final int endCompare = Integer.compare(this.end, other.end);
+      if (endCompare != 0) {
+        return endCompare;
+      }
+      return this.styleName.compareTo(other.styleName);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (!(obj instanceof StyledRange other)) {
+        return false;
+      }
+      return this.begin == other.begin
+          && this.end == other.end
+          && java.util.Objects.equals(this.styleName, other.styleName);
+    }
+
+    @Override
+    public int hashCode() {
+      return java.util.Objects.hash(this.begin, this.end, this.styleName);
+    }
   }
 }

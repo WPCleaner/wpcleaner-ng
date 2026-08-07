@@ -21,7 +21,7 @@ public class PageAnalysisStylePropertiesInitializer implements StylePropertiesIn
             COMMENT,
             StyleProperties.builder()
                 .withForeground(true)
-                .withForegroundColor(Color.LIGHTGRAY)
+                .withForegroundColor(Color.GRAY)
                 .build()));
   }
 }

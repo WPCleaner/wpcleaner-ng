@@ -20,7 +20,6 @@ public final class PageAnalysisArea extends InlineCssTextArea {
 
     textProperty()
         .addListener(
-            (_, _, newText) ->
-                setStyleSpans(0, this.colorizer.computeStyleSpans(newText)));
+            (_, _, newText) -> setStyleSpans(0, this.colorizer.computeStyleSpans(newText)));
   }
 }

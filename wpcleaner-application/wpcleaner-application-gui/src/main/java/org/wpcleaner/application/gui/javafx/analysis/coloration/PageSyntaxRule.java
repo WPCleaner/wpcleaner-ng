@@ -5,13 +5,14 @@ package org.wpcleaner.application.gui.javafx.analysis.coloration;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.regex.Pattern;
+import java.util.List;
+import org.wpcleaner.api.analysis.PageAnalysis;
 
 public interface PageSyntaxRule {
 
-  String getGroupName();
-
-  Pattern getPattern();
-
   String getStyleName();
+
+  List<RuleRange> getRanges(PageAnalysis pageAnalysis);
+
+  record RuleRange(int begin, int end) {}
 }
