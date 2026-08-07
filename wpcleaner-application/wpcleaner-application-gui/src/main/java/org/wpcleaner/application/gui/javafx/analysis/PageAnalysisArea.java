@@ -6,12 +6,21 @@ package org.wpcleaner.application.gui.javafx.analysis;
  */
 
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.wpcleaner.application.gui.javafx.analysis.coloration.PageSyntaxColorizer;
 
 public final class PageAnalysisArea extends InlineCssTextArea {
 
-  public PageAnalysisArea() {
+  private final PageSyntaxColorizer colorizer;
+
+  public PageAnalysisArea(final PageSyntaxColorizer colorizer) {
     super();
+    this.colorizer = colorizer;
     setEditable(false);
     setWrapText(true);
+
+    textProperty()
+        .addListener(
+            (_, _, newText) ->
+                setStyleSpans(0, this.colorizer.computeStyleSpans(newText)));
   }
 }

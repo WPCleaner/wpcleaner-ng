@@ -32,7 +32,7 @@ public final class PageAnalysisPanel extends StackPane {
   public PageAnalysisPanel(final JavaFxAnalysisWindowServices services, final String pageName) {
     this.services = services;
     this.pageName = pageName;
-    this.analysisArea = new PageAnalysisArea();
+    this.analysisArea = new PageAnalysisArea(services.colorizer());
     initialize();
   }
 
