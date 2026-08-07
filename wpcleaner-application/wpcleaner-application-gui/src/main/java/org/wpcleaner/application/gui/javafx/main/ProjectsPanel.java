@@ -10,14 +10,19 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import org.wpcleaner.api.utils.GT;
+import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.lib.image.ImageCollection;
+import org.wpcleaner.lib.image.ImageSize;
 
 final class ProjectsPanel extends VBox {
 
   private final JavaFxMainWindowServices services;
+  private final JavaFxImageLoader imageLoader;
 
   ProjectsPanel(final JavaFxMainWindowServices services) {
     super(10);
     this.services = services;
+    this.imageLoader = new JavaFxImageLoader(services.imageLoader());
     initialize();
   }
 
@@ -26,6 +31,10 @@ final class ProjectsPanel extends VBox {
     setAlignment(Pos.TOP_LEFT);
 
     final Button button = new Button(GT._T("Recent changes"));
+    button.setMaxWidth(Double.MAX_VALUE);
+    imageLoader
+        .getImageView(ImageCollection.RECENT_CHANGES, ImageSize.BUTTON)
+        .ifPresent(button::setGraphic);
     button.setOnAction(_ -> services.recentChangesWindowFactory().displayRecentChangesWindow());
 
     getChildren().add(button);
