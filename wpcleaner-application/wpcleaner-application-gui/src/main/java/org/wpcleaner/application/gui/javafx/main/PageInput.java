@@ -6,7 +6,6 @@ package org.wpcleaner.application.gui.javafx.main;
  */
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
@@ -19,13 +18,13 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.list.random.RandomPage;
 import org.wpcleaner.api.api.query.list.random.RandomQuery;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
+import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.ProgressStep;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
@@ -40,7 +39,7 @@ public class PageInput {
   final WikiDefinition wiki;
   final InterestingSettingsManager settingsManager;
   final ApiRandom apiRandom;
-  final ComboBox<@Nullable String> comboBox;
+  final ComboBox<String> comboBox;
   final ImageView icon;
   final Label label;
   final ToolBar toolBar;
@@ -100,8 +99,8 @@ public class PageInput {
   }
 
   private void addPage() {
-    final String value = comboBox.getValue();
-    if (value != null) {
+    final String value = StringUtils.trim(comboBox.getValue());
+    if (!value.isEmpty()) {
       final String page = value.trim();
       if (!page.isEmpty() && !comboBox.getItems().contains(page)) {
         comboBox.getItems().add(page);
@@ -112,8 +111,8 @@ public class PageInput {
   }
 
   private void removePage() {
-    final String value = comboBox.getValue();
-    if (value != null) {
+    final String value = StringUtils.trim(comboBox.getValue());
+    if (!value.isEmpty()) {
       final String page = value.trim();
       if (comboBox.getItems().remove(page)) {
         saveSettings();
@@ -122,7 +121,7 @@ public class PageInput {
   }
 
   private void saveSettings() {
-    final List<String> pages = comboBox.getItems().stream().filter(Objects::nonNull).toList();
+    final List<String> pages = comboBox.getItems().stream().map(StringUtils::trim).toList();
     settingsManager.updateSettings(
         settingsManager
             .getCurrentSettings()
@@ -130,7 +129,7 @@ public class PageInput {
   }
 
   public String getPage() {
-    return Objects.requireNonNullElse(comboBox.getValue(), "");
+    return StringUtils.trim(comboBox.getValue());
   }
 
   private void retrieveRandomPage() {

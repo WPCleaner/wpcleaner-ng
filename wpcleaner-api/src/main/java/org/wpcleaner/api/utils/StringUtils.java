@@ -7,8 +7,10 @@ package org.wpcleaner.api.utils;
 
 import java.util.Collection;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 
 public final class StringUtils {
 
@@ -16,11 +18,11 @@ public final class StringUtils {
     // Utility class
   }
 
-  public static String firstLetterLowerCase(final String str) {
-    if (str.isEmpty()) {
-      return str;
+  public static String firstLetterLowerCase(final String original) {
+    if (original.isEmpty()) {
+      return original;
     }
-    return str.substring(0, 1).toLowerCase(Locale.ROOT) + str.substring(1);
+    return original.substring(0, 1).toLowerCase(Locale.ROOT) + original.substring(1);
   }
 
   public static String joinWithEllipsis(final Collection<String> items, final int maxItems) {
@@ -31,17 +33,24 @@ public final class StringUtils {
     return String.join(", ", items);
   }
 
-  public static String removePrefix(final String str, final String prefix) {
-    if (str.startsWith(prefix)) {
-      return str.substring(prefix.length());
+  public static String removePrefix(final String original, final String prefix) {
+    if (original.startsWith(prefix)) {
+      return original.substring(prefix.length());
     }
-    return str;
+    return original;
   }
 
-  public static String removeSuffix(final String str, final String suffix) {
-    if (str.endsWith(suffix)) {
-      return str.substring(0, str.length() - suffix.length());
+  public static String removeSuffix(final String original, final String suffix) {
+    if (original.endsWith(suffix)) {
+      return original.substring(0, original.length() - suffix.length());
     }
-    return str;
+    return original;
+  }
+
+  public static String trim(@Nullable final String original) {
+    if (Objects.isNull(original) || original.isBlank()) {
+      return "";
+    }
+    return original.trim();
   }
 }
