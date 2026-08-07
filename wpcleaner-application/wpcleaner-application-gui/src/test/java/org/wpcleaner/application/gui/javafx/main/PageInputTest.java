@@ -17,7 +17,6 @@ import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.settings.interesting.InterestingByWikiSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
@@ -38,25 +37,99 @@ class PageInputTest {
     final InterestingSettings settings = Mockito.mock(InterestingSettings.class);
     final InterestingByWikiSettings wikiSettings = Mockito.mock(InterestingByWikiSettings.class);
     final JavaFxImageLoader imageLoader = Mockito.mock(JavaFxImageLoader.class);
-    final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
     final ApiRandom apiRandom = Mockito.mock(ApiRandom.class);
 
     Mockito.when(settingsManager.getCurrentSettings()).thenReturn(settings);
     Mockito.when(settings.getByWikiSettings(wiki)).thenReturn(Optional.of(wikiSettings));
-    Mockito.when(wikiSettings.pages()).thenReturn(List.of("Page1", "Page2"));
+    Mockito.when(wikiSettings.pages()).thenReturn(List.of("Page2", "Page1"));
     Mockito.when(imageLoader.getImageView(Mockito.any(), Mockito.any()))
         .thenReturn(Optional.empty());
 
     Platform.runLater(
         () -> {
-          final PageInput pageInput =
-              new PageInput(wiki, settingsManager, imageLoader, actionServices, apiRandom);
+          final PageInput pageInput = new PageInput(wiki, settingsManager, imageLoader, apiRandom);
 
           Assertions.assertThat(pageInput.comboBox.getItems()).containsExactly("Page1", "Page2");
           Assertions.assertThat(pageInput.getPage()).isEmpty();
 
           pageInput.comboBox.setValue("Page1");
           Assertions.assertThat(pageInput.getPage()).isEqualTo("Page1");
+        });
+  }
+
+  @DisplayName("PageInput add and remove page buttons")
+  @Test
+  void testPageInputAddRemoveButtons() {
+    final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+    final InterestingSettingsManager settingsManager =
+        Mockito.mock(InterestingSettingsManager.class);
+    final InterestingSettings settings = Mockito.mock(InterestingSettings.class);
+    final InterestingSettings newSettings = Mockito.mock(InterestingSettings.class);
+    final InterestingByWikiSettings wikiSettings = Mockito.mock(InterestingByWikiSettings.class);
+    final JavaFxImageLoader imageLoader = Mockito.mock(JavaFxImageLoader.class);
+    final ApiRandom apiRandom = Mockito.mock(ApiRandom.class);
+
+    Mockito.when(settingsManager.getCurrentSettings()).thenReturn(settings);
+    Mockito.when(settings.getByWikiSettings(wiki)).thenReturn(Optional.of(wikiSettings));
+    Mockito.when(wikiSettings.pages()).thenReturn(List.of("pageB", "PageA", "Page2"));
+    Mockito.when(settings.withByWikiSettings(Mockito.eq(wiki), Mockito.any()))
+        .thenReturn(newSettings);
+    Mockito.when(imageLoader.getImageView(Mockito.any(), Mockito.any()))
+        .thenReturn(Optional.empty());
+
+    Platform.runLater(
+        () -> {
+          final PageInput pageInput = new PageInput(wiki, settingsManager, imageLoader, apiRandom);
+
+          // Get the buttons
+          final javafx.scene.control.Button addPageButton =
+              (javafx.scene.control.Button) pageInput.toolBar.getItems().get(0);
+          final javafx.scene.control.Button removePageButton =
+              (javafx.scene.control.Button) pageInput.toolBar.getItems().get(1);
+
+          // Initial state
+          Assertions.assertThat(pageInput.comboBox.getItems())
+              .containsExactly("Page2", "PageA", "pageB");
+
+          // Test add empty value
+          pageInput.comboBox.setValue(" ");
+          addPageButton.fire();
+          Assertions.assertThat(pageInput.comboBox.getItems())
+              .containsExactly("Page2", "PageA", "pageB");
+          Mockito.verify(settingsManager, Mockito.never()).updateSettings(Mockito.any());
+
+          // Test add existing value
+          pageInput.comboBox.setValue("PageA");
+          addPageButton.fire();
+          Assertions.assertThat(pageInput.comboBox.getItems())
+              .containsExactly("Page2", "PageA", "pageB");
+          Mockito.verify(settingsManager, Mockito.never()).updateSettings(Mockito.any());
+
+          // Test add new value and verify sorting
+          pageInput.comboBox.setValue("Page1");
+          addPageButton.fire();
+          Assertions.assertThat(pageInput.comboBox.getItems())
+              .containsExactly("Page1", "Page2", "PageA", "pageB");
+          Mockito.verify(settingsManager, Mockito.times(1)).updateSettings(newSettings);
+
+          // Prepare mock for remove
+          Mockito.when(settingsManager.getCurrentSettings()).thenReturn(newSettings);
+          Mockito.when(newSettings.withByWikiSettings(Mockito.eq(wiki), Mockito.any()))
+              .thenReturn(settings);
+
+          // Test remove existing value
+          pageInput.comboBox.setValue("Page2");
+          removePageButton.fire();
+          Assertions.assertThat(pageInput.comboBox.getItems())
+              .containsExactly("Page1", "PageA", "pageB");
+          Mockito.verify(settingsManager, Mockito.times(1)).updateSettings(settings);
+
+          // Test remove non-existing value
+          pageInput.comboBox.setValue("Page3");
+          removePageButton.fire();
+          Assertions.assertThat(pageInput.comboBox.getItems())
+              .containsExactly("Page1", "PageA", "pageB");
+          Mockito.verify(settingsManager, Mockito.times(1)).updateSettings(settings);
         });
   }
 }

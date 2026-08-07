@@ -77,11 +77,7 @@ public final class JavaFxMainWindow extends Stage {
         .ifPresent(byPageTab::setGraphic);
     byPageTab.setContent(
         new ByPagePanel(
-            user.wiki(),
-            services.interestingSettings(),
-            imageLoader,
-            services.actionServices(),
-            services.apiRandom()));
+            user.wiki(), services.interestingSettings(), imageLoader, services.apiRandom()));
 
     final Tab projectsTab = new Tab(GT._T("Projects"));
     projectsTab.setContent(new ProjectsPanel(services));

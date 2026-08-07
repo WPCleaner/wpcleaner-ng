@@ -12,10 +12,12 @@ import org.wpcleaner.api.settings.SettingsPersistence;
 @Service
 public class InterestingSettingsManager {
 
-  private final InterestingSettings currentSettings;
+  private final SettingsPersistence persistence;
+  private InterestingSettings currentSettings;
 
   public InterestingSettingsManager(
       final SettingsPersistence persistence, final OldSettings oldSettings) {
+    this.persistence = persistence;
     this.currentSettings =
         persistence
             .load(InterestingSettings.class)
@@ -25,5 +27,10 @@ public class InterestingSettingsManager {
 
   public InterestingSettings getCurrentSettings() {
     return currentSettings;
+  }
+
+  public void updateSettings(final InterestingSettings settings) {
+    this.currentSettings = settings;
+    persistence.save(settings);
   }
 }

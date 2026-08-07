@@ -30,13 +30,15 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.ProgressStep;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.settings.interesting.InterestingByWikiSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
 public class PageInput {
 
+  final WikiDefinition wiki;
+  final InterestingSettingsManager settingsManager;
   final ApiRandom apiRandom;
   final ComboBox<@Nullable String> comboBox;
   final ImageView icon;
@@ -47,8 +49,9 @@ public class PageInput {
       final WikiDefinition wiki,
       final InterestingSettingsManager settingsManager,
       final JavaFxImageLoader imageLoader,
-      final JavaFxActionServices actionServices,
       final ApiRandom apiRandom) {
+    this.wiki = wiki;
+    this.settingsManager = settingsManager;
     this.apiRandom = apiRandom;
 
     icon =
@@ -60,6 +63,7 @@ public class PageInput {
 
     settingsManager.getCurrentSettings().getByWikiSettings(wiki).stream()
         .flatMap(settings -> settings.pages().stream())
+        .sorted(String.CASE_INSENSITIVE_ORDER)
         .forEach(comboBox.getItems()::add);
 
     label = new Label(GT._T("Page"));
@@ -72,7 +76,7 @@ public class PageInput {
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addPage::setGraphic);
     addPage.setTooltip(new Tooltip(GT._T("Add page")));
-    addPage.setOnAction(_ -> actionServices.notImplemented().run());
+    addPage.setOnAction(_ -> addPage());
 
     final Button removePage = new Button();
     removePage.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -80,7 +84,7 @@ public class PageInput {
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removePage::setGraphic);
     removePage.setTooltip(new Tooltip(GT._T("Forget page")));
-    removePage.setOnAction(_ -> actionServices.notImplemented().run());
+    removePage.setOnAction(_ -> removePage());
 
     final Button randomPage = new Button();
     randomPage.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
@@ -88,19 +92,48 @@ public class PageInput {
         .getImageView(ImageCollection.RANDOM, ImageSize.TOOLBAR)
         .ifPresent(randomPage::setGraphic);
     randomPage.setTooltip(new Tooltip(GT._T("Random page")));
-    randomPage.setOnAction(_ -> retrieveRandomPage(wiki));
+    randomPage.setOnAction(_ -> retrieveRandomPage());
 
     toolBar = new ToolBar();
     toolBar.setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
     toolBar.getItems().addAll(addPage, removePage, randomPage);
   }
 
+  private void addPage() {
+    final String value = comboBox.getValue();
+    if (value != null) {
+      final String page = value.trim();
+      if (!page.isEmpty() && !comboBox.getItems().contains(page)) {
+        comboBox.getItems().add(page);
+        comboBox.getItems().sort(String.CASE_INSENSITIVE_ORDER);
+        saveSettings();
+      }
+    }
+  }
+
+  private void removePage() {
+    final String value = comboBox.getValue();
+    if (value != null) {
+      final String page = value.trim();
+      if (comboBox.getItems().remove(page)) {
+        saveSettings();
+      }
+    }
+  }
+
+  private void saveSettings() {
+    final List<String> pages = comboBox.getItems().stream().filter(Objects::nonNull).toList();
+    settingsManager.updateSettings(
+        settingsManager
+            .getCurrentSettings()
+            .withByWikiSettings(wiki, new InterestingByWikiSettings(pages)));
+  }
+
   public String getPage() {
     return Objects.requireNonNullElse(comboBox.getValue(), "");
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void retrieveRandomPage(final WikiDefinition wiki) {
+  private void retrieveRandomPage() {
     if (comboBox.getScene() == null) {
       return;
     }
@@ -110,33 +143,37 @@ public class PageInput {
 
     Platform.runLater(() -> root.getChildren().add(progressTracker.getProgressOverlay()));
 
-    final Thread thread =
-        new Thread(
-            () -> {
-              try (ProgressStep _ = progressTracker.start(GT._T("Retrieving random page"))) {
-                final RandomQuery query =
-                    RandomQuery.emptyBuilder()
-                        .limit(Limit.of(1))
-                        .namespace(Set.of(new Namespace(0, "Main", "Main")))
-                        .build();
-                final List<RandomPage> pages = apiRandom.retrieveRandomPages(wiki, query);
-                Platform.runLater(
-                    () -> {
-                      if (!pages.isEmpty()) {
-                        comboBox.setValue(pages.getFirst().title());
-                      }
-                      root.getChildren().remove(progressTracker.getProgressOverlay());
-                      loading.set(false);
-                    });
-              } catch (final Exception e) {
-                Platform.runLater(
-                    () -> {
-                      root.getChildren().remove(progressTracker.getProgressOverlay());
-                      loading.set(false);
-                    });
-              }
-            });
+    final Thread thread = new Thread(() -> doRetrieveRandomPage(root, loading, progressTracker));
     thread.setDaemon(true);
     thread.start();
+  }
+
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
+  private void doRetrieveRandomPage(
+      final StackPane root,
+      final BooleanProperty loading,
+      final JavaFxProgressTracker progressTracker) {
+    try (ProgressStep _ = progressTracker.start(GT._T("Retrieving random page"))) {
+      final RandomQuery query =
+          RandomQuery.emptyBuilder()
+              .limit(Limit.of(1))
+              .namespace(Set.of(new Namespace(0, "Main", "Main")))
+              .build();
+      final List<RandomPage> pages = apiRandom.retrieveRandomPages(wiki, query);
+      Platform.runLater(
+          () -> {
+            if (!pages.isEmpty()) {
+              comboBox.setValue(pages.getFirst().title());
+            }
+            root.getChildren().remove(progressTracker.getProgressOverlay());
+            loading.set(false);
+          });
+    } catch (final Exception e) {
+      Platform.runLater(
+          () -> {
+            root.getChildren().remove(progressTracker.getProgressOverlay());
+            loading.set(false);
+          });
+    }
   }
 }
