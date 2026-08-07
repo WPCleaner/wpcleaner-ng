@@ -23,20 +23,23 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wpcleaner.api.utils.GT;
+import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 
 public final class RecentChangesDifferencesPanel extends HBox {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  private final JavaFxStylePropertiesRegistry styleRegistry;
   private final InlineCssTextArea oldContentArea;
   private final InlineCssTextArea newContentArea;
   private final List<AbstractDelta<Character>> deltas;
   private boolean isSyncingScroll;
   private int currentDeltaIndex = -1;
 
-  public RecentChangesDifferencesPanel() {
+  public RecentChangesDifferencesPanel(final JavaFxStylePropertiesRegistry styleRegistry) {
     super(10);
+    this.styleRegistry = styleRegistry;
 
     this.deltas = new ArrayList<>();
 
@@ -146,22 +149,27 @@ public final class RecentChangesDifferencesPanel extends HBox {
     if (content != null && oldContent != null) {
       applyDeltaStyles(deltas);
     } else if (content != null) {
-      newContentArea.setStyle(0, content.length(), "-rtfx-background-color: #ccffcc;");
+      newContentArea.setStyle(
+          0, content.length(), styleRegistry.getStyle(DifferencesStylePropertiesInitializer.ADDED));
     }
   }
 
   private void applyDeltaStyles(final List<AbstractDelta<Character>> deltas) {
+    final String removedStyle =
+        styleRegistry.getStyle(DifferencesStylePropertiesInitializer.REMOVED);
+    final String addedStyle = styleRegistry.getStyle(DifferencesStylePropertiesInitializer.ADDED);
+
     for (final AbstractDelta<Character> delta : deltas) {
       final DeltaType type = delta.getType();
       if (type == DeltaType.DELETE || type == DeltaType.CHANGE) {
         final int start = delta.getSource().getPosition();
         final int length = delta.getSource().getLines().size();
-        oldContentArea.setStyle(start, start + length, "-rtfx-background-color: #ffcccc;");
+        oldContentArea.setStyle(start, start + length, removedStyle);
       }
       if (type == DeltaType.INSERT || type == DeltaType.CHANGE) {
         final int start = delta.getTarget().getPosition();
         final int length = delta.getTarget().getLines().size();
-        newContentArea.setStyle(start, start + length, "-rtfx-background-color: #ccffcc;");
+        newContentArea.setStyle(start, start + length, addedStyle);
       }
     }
   }

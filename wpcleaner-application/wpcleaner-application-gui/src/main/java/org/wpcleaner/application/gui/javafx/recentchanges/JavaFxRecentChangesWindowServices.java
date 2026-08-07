@@ -14,6 +14,7 @@ import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 import org.wpcleaner.application.gui.settings.recentchanges.RecentChangesSettingsManager;
 import org.wpcleaner.lib.image.ImageLoader;
 
@@ -25,6 +26,7 @@ public record JavaFxRecentChangesWindowServices(
     ImageLoader imageLoader,
     NamespaceRepository namespaceRepository,
     RecentChangesSettingsManager recentChangesSettingsManager,
+    JavaFxStylePropertiesRegistry stylePropertiesRegistry,
     TagRepository tagRepository,
     UrlService urlService,
     CurrentUserService user,

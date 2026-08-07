@@ -27,8 +27,10 @@ module org.wpcleaner.application.gui {
   exports org.wpcleaner.application.gui.core.action;
   exports org.wpcleaner.application.gui.core.desktop;
   exports org.wpcleaner.application.gui.core.factory;
+  exports org.wpcleaner.application.gui.core.style;
   exports org.wpcleaner.application.gui.javafx.core.action;
   exports org.wpcleaner.application.gui.javafx.core.control;
+  exports org.wpcleaner.application.gui.javafx.core.style;
   exports org.wpcleaner.application.gui.javafx.login;
   exports org.wpcleaner.application.gui.javafx.main;
   exports org.wpcleaner.application.gui.javafx.recentchanges;
@@ -40,8 +42,10 @@ module org.wpcleaner.application.gui {
   opens org.wpcleaner.application.gui.core.action;
   opens org.wpcleaner.application.gui.core.desktop;
   opens org.wpcleaner.application.gui.core.factory;
+  opens org.wpcleaner.application.gui.core.style;
   opens org.wpcleaner.application.gui.javafx.core.action;
   opens org.wpcleaner.application.gui.javafx.core.control;
+  opens org.wpcleaner.application.gui.javafx.core.style;
   opens org.wpcleaner.application.gui.javafx.login;
   opens org.wpcleaner.application.gui.javafx.main;
   opens org.wpcleaner.application.gui.javafx.recentchanges;

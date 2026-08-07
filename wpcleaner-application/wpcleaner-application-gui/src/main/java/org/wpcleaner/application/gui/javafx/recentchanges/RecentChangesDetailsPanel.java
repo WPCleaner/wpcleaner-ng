@@ -63,7 +63,7 @@ public final class RecentChangesDetailsPanel extends VBox {
     final VirtualizedScrollPane<InlineCssTextArea> contentAreaScrollPane =
         new VirtualizedScrollPane<>(contentArea);
 
-    this.differencesPanel = new RecentChangesDifferencesPanel();
+    this.differencesPanel = new RecentChangesDifferencesPanel(services.stylePropertiesRegistry());
 
     final TabPane tabPane = new TabPane();
     tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
