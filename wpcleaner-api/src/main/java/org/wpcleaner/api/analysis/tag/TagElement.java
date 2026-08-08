@@ -11,4 +11,5 @@ public record TagElement(int begin, int end, String name) implements Element {
 
   public static final char START = '<';
   public static final char END = '>';
+  public static final char ATTRIBUTE_VALUE = '=';
 }

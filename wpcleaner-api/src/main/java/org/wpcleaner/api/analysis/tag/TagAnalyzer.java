@@ -8,6 +8,7 @@ package org.wpcleaner.api.analysis.tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.TextBrowser;
 
 final class TagAnalyzer {
@@ -33,29 +34,78 @@ final class TagAnalyzer {
     }
     cursor.moveNext();
     passOptionalSlash(text, cursor);
-    final int startName = cursor.getIndex();
-    passTagName(text, cursor);
-    if (!cursor.samePart() || cursor.getIndex() == startName) {
+    final String tagName = extractTagName(text, cursor);
+    if (tagName == null) {
       return Optional.empty();
     }
-    final int endName = cursor.getIndex();
     cursor.moveAfterWhitespace();
+    passAttributes(text, cursor);
     passOptionalSlash(text, cursor);
     if (cursor.getIndex() >= text.length() || TagElement.END != text.charAt(cursor.getIndex())) {
       return Optional.empty();
     }
-    final TagElement tag =
-        new TagElement(begin, cursor.getIndex() + 1, text.substring(startName, endName));
+    final TagElement tag = new TagElement(begin, cursor.getIndex() + 1, tagName);
     cursor.moveNext();
     return Optional.of(tag);
   }
 
-  private static void passTagName(final String text, final TextBrowser.Cursor cursor) {
+  @Nullable
+  private static String extractTagName(final String text, final TextBrowser.Cursor cursor) {
+    final int startName = cursor.getIndex();
     while (cursor.getIndex() < text.length()
         && Character.isLetterOrDigit(text.charAt(cursor.getIndex()))
         && cursor.samePart()) {
       cursor.moveNext();
     }
+    if (!cursor.samePart() || cursor.getIndex() == startName) {
+      return null;
+    }
+    return text.substring(startName, cursor.getIndex());
+  }
+
+  private static void passAttributes(final String text, final TextBrowser.Cursor cursor) {
+    final int startAttribute = cursor.getIndex();
+    final String excludedChar = " \n<>/";
+    while (cursor.getIndex() < text.length()
+        && excludedChar.indexOf(text.charAt(cursor.getIndex())) < 0
+        && cursor.samePart()) {
+      cursor.moveNext();
+    }
+    cursor.moveAfterWhitespace();
+    if (cursor.getIndex() >= text.length() || cursor.getIndex() == startAttribute) {
+      return;
+    }
+    if (text.charAt(cursor.getIndex()) != TagElement.ATTRIBUTE_VALUE) {
+      passAttributes(text, cursor);
+      return;
+    }
+    cursor.moveNext();
+    if (cursor.getIndex() >= text.length()) {
+      return;
+    }
+    passAttributeValue(text, cursor);
+    passAttributes(text, cursor);
+  }
+
+  private static void passAttributeValue(final String text, final TextBrowser.Cursor cursor) {
+    final char startValueChar = text.charAt(cursor.getIndex());
+    if (startValueChar == '"' || startValueChar == '\'') {
+      final String excludedChars = "<>" + startValueChar;
+      do {
+        cursor.moveNext();
+      } while (cursor.getIndex() < text.length()
+          && excludedChars.indexOf(text.charAt(cursor.getIndex())) < 0);
+      if (cursor.getIndex() < text.length() && text.charAt(cursor.getIndex()) == startValueChar) {
+        cursor.moveNext();
+      }
+    } else {
+      final String excludedChars = " \n\"'<>/";
+      while (cursor.getIndex() < text.length()
+          && excludedChars.indexOf(text.charAt(cursor.getIndex())) < 0) {
+        cursor.moveNext();
+      }
+    }
+    cursor.moveAfterWhitespace();
   }
 
   private static void passOptionalSlash(final String text, final TextBrowser.Cursor cursor) {
