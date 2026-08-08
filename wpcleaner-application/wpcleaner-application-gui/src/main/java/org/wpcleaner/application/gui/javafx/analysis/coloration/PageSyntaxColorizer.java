@@ -7,7 +7,9 @@ package org.wpcleaner.application.gui.javafx.analysis.coloration;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,7 @@ public class PageSyntaxColorizer {
       }
     }
     Collections.sort(ranges);
+    deduplicateStyledRanges(ranges, 0);
 
     int lastKwEnd = 0;
     for (final StyledRange range : ranges) {
@@ -66,20 +69,33 @@ public class PageSyntaxColorizer {
     return spansBuilder.create();
   }
 
+  private void deduplicateStyledRanges(final List<StyledRange> ranges, final int startAt) {
+    if (startAt > ranges.size() - 2) {
+      return;
+    }
+    final int currentEnd = ranges.get(startAt).end();
+    final int nextBegin = ranges.get(startAt + 1).begin();
+    if (currentEnd > nextBegin) {
+      final int nextEnd = ranges.get(startAt + 1).end();
+      final String styleName = ranges.get(startAt).styleName();
+      if (currentEnd > nextEnd) {
+        ranges.add(startAt + 2, new StyledRange(nextEnd, currentEnd, styleName));
+      }
+      final int currentBegin = ranges.get(startAt).begin();
+      ranges.set(startAt, new StyledRange(currentBegin, nextBegin, styleName));
+    }
+    deduplicateStyledRanges(ranges, startAt + 1);
+  }
+
   private record StyledRange(int begin, int end, String styleName)
       implements Comparable<StyledRange> {
 
     @Override
     public int compareTo(final StyledRange other) {
-      final int beginCompare = Integer.compare(this.begin, other.begin);
-      if (beginCompare != 0) {
-        return beginCompare;
-      }
-      final int endCompare = Integer.compare(this.end, other.end);
-      if (endCompare != 0) {
-        return endCompare;
-      }
-      return this.styleName.compareTo(other.styleName);
+      return Comparator.comparingInt(StyledRange::begin)
+          .thenComparingInt(StyledRange::end)
+          .thenComparing(StyledRange::styleName)
+          .compare(this, other);
     }
 
     @Override
@@ -87,17 +103,17 @@ public class PageSyntaxColorizer {
       if (this == obj) {
         return true;
       }
-      if (!(obj instanceof StyledRange other)) {
+      if (!(obj instanceof StyledRange(int otherBegin, int otherEnd, String otherName))) {
         return false;
       }
-      return this.begin == other.begin
-          && this.end == other.end
-          && java.util.Objects.equals(this.styleName, other.styleName);
+      return this.begin == otherBegin
+          && this.end == otherEnd
+          && Objects.equals(this.styleName, otherName);
     }
 
     @Override
     public int hashCode() {
-      return java.util.Objects.hash(this.begin, this.end, this.styleName);
+      return Objects.hash(this.begin, this.end, this.styleName);
     }
   }
 }

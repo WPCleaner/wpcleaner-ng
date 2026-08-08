@@ -5,7 +5,9 @@ package org.wpcleaner.api.analysis.comment;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public record CommentElement(int begin, int end) {
+import org.wpcleaner.api.analysis.Element;
+
+public record CommentElement(int begin, int end) implements Element {
 
   public static final String START = "<!--";
   public static final String END = "-->";

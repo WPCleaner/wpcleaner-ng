@@ -5,8 +5,8 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.awt.Color;
 import java.util.Map;
-import javafx.scene.paint.Color;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.style.StyleProperties;
 import org.wpcleaner.application.gui.core.style.StylePropertiesInitializer;
@@ -24,13 +24,13 @@ public class DifferencesStylePropertiesInitializer implements StylePropertiesIni
             REMOVED,
             StyleProperties.builder()
                 .withBackground(true)
-                .withBackgroundColor(Color.rgb(0xFF, 0xCC, 0xCC))
+                .withBackgroundColor(new Color(255, 204, 204))
                 .build()),
         Map.entry(
             ADDED,
             StyleProperties.builder()
                 .withBackground(true)
-                .withBackgroundColor(Color.rgb(0xCC, 0xFF, 0xCC))
+                .withBackgroundColor(new Color(204, 255, 204))
                 .build()));
   }
 }

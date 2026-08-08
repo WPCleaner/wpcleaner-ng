@@ -5,7 +5,7 @@ package org.wpcleaner.application.gui.core.style;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import javafx.scene.paint.Color;
+import java.awt.Color;
 
 public record StyleProperties(
     boolean enabled,

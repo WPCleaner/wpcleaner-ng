@@ -5,7 +5,7 @@ package org.wpcleaner.application.gui.javafx.core.style;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import javafx.scene.paint.Color;
+import java.awt.Color;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.style.StyleProperties;
 import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
@@ -45,10 +45,6 @@ public record JavaFxStylePropertiesRegistry(StylePropertiesRegistry registry) {
   }
 
   private String toCssColor(final Color color) {
-    return String.format(
-        "#%02X%02X%02X",
-        (int) (color.getRed() * 255),
-        (int) (color.getGreen() * 255),
-        (int) (color.getBlue() * 255));
+    return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue() * 255);
   }
 }

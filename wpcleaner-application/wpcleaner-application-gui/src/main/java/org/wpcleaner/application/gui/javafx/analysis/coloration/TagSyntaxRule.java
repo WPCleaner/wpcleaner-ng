@@ -11,17 +11,17 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 
 @Component
-public class CommentSyntaxRule implements PageSyntaxRule {
+public class TagSyntaxRule implements PageSyntaxRule {
 
   @Override
   public String getStyleName() {
-    return PageAnalysisStylePropertiesInitializer.COMMENT;
+    return PageAnalysisStylePropertiesInitializer.TAG;
   }
 
   @Override
   public List<RuleRange> getRanges(final PageAnalysis pageAnalysis) {
-    return pageAnalysis.getComments().stream()
-        .map(comment -> new RuleRange(comment.begin(), comment.end()))
+    return pageAnalysis.getTags().stream()
+        .map(tag -> new RuleRange(tag.begin(), tag.end()))
         .toList();
   }
 }
