@@ -134,12 +134,15 @@ tasks {
 
 sonarqube {
   properties {
-    property("sonar.issue.ignore.multicriteria", "java-S4036,java-S7466")
+    property("sonar.issue.ignore.multicriteria", "java-S4036,java-S7466,java-S8924")
     // Ignore rule Searching OS commands in PATH is security-sensitive
     property("sonar.issue.ignore.multicriteria.java-S4036.ruleKey", "java:S4036")
     property("sonar.issue.ignore.multicriteria.java-S4036.resourceKey", "**/*.java")
     // Ignore rule Use `var` instead of a type with unnamed variable _
     property("sonar.issue.ignore.multicriteria.java-S7466.ruleKey", "java:S7466")
     property("sonar.issue.ignore.multicriteria.java-S7466.resourceKey", "**/*.java")
+    // Ignore rule Mockito core methods should be statically imported
+    property("sonar.issue.ignore.multicriteria.java-S8924.ruleKey", "java:S8924")
+    property("sonar.issue.ignore.multicriteria.java-S8924.resourceKey", "**/*.java")
   }
 }

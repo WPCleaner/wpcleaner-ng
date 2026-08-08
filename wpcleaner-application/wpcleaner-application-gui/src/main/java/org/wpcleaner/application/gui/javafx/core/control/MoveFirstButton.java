@@ -19,7 +19,7 @@ public final class MoveFirstButton<T> extends Button {
   public MoveFirstButton(
       final JavaFxImageLoader imageLoader, final ListView<@Nullable T> listView) {
     super();
-    setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.MOVE_FIRST, ImageSize.BUTTON)
         .ifPresent(this::setGraphic);

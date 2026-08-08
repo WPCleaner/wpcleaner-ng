@@ -24,16 +24,14 @@ public class CommentContainer {
   }
 
   public List<CommentElement> getComments() {
-    if (!done) {
-      lock.lock();
-      try {
-        if (!done) {
-          comments.addAll(CommentAnalyzer.analyze(text));
-          done = true;
-        }
-      } finally {
-        lock.unlock();
+    lock.lock();
+    try {
+      if (!done) {
+        comments.addAll(CommentAnalyzer.analyze(text));
+        done = true;
       }
+    } finally {
+      lock.unlock();
     }
     return comments;
   }

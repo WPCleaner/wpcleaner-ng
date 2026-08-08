@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -104,7 +105,7 @@ public final class JavaFxMainWindow extends Stage {
 
     final Button userButton = new Button();
     userButton.setTooltip(new Tooltip(GT._T("User information")));
-    userButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    userButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.USER, ImageSize.BUTTON)
         .ifPresent(userButton::setGraphic);

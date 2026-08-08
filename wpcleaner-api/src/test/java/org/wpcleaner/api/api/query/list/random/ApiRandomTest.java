@@ -56,8 +56,11 @@ class ApiRandomTest {
     final List<RandomPage> randomPages =
         apiRandom.retrieveRandomPages(WikimediaDefinitions.META, options);
 
-    Assertions.assertThat(randomPages).as("randomPages").isNotNull();
-    Assertions.assertThat(randomPages.size()).as("size").isLessThanOrEqualTo(2);
+    Assertions.assertThat(randomPages)
+        .as("randomPages")
+        .isNotNull()
+        .as("size")
+        .hasSizeLessThanOrEqualTo(2);
     for (final RandomPage page : randomPages) {
       Assertions.assertThat(page.title()).as("title").isNotNull();
       Assertions.assertThat(page.ns()).as("ns").isZero();

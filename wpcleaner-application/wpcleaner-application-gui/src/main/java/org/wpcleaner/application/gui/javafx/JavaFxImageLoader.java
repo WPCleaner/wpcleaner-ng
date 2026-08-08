@@ -5,6 +5,7 @@
 
 package org.wpcleaner.application.gui.javafx;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import javafx.scene.image.Image;
@@ -30,9 +31,7 @@ public final class JavaFxImageLoader {
             resource -> {
               try (InputStream is = resource.getInputStream()) {
                 return Optional.of(new Image(is));
-              } catch (final java.io.IOException
-                  | NullPointerException
-                  | IllegalArgumentException e) {
+              } catch (final IOException | NullPointerException | IllegalArgumentException _) {
                 return Optional.empty();
               }
             });

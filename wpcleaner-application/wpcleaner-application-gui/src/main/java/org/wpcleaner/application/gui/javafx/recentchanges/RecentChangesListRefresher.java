@@ -102,7 +102,7 @@ public final class RecentChangesListRefresher {
               .sorted(FilteredRecentChangeComparator.INSTANCE)
               .toList();
       Platform.runLater(() -> updateTable(recentChanges, showProgress));
-    } catch (final Exception e) {
+    } catch (final Exception _) {
       Platform.runLater(
           () -> {
             if (showProgress) {

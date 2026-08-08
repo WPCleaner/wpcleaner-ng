@@ -215,14 +215,11 @@ final class WikiDefinitionDialog extends Dialog<@Nullable WikiDefinition> {
     final WikiBuilderType type = builderTypeComboBox.getValue();
     final String name = nameField.getText().trim();
     final String language = languageField.getText().trim();
-
-    if (type == WikiBuilderType.FANDOM) {
-      return buildFandom(name, language);
-    } else if (type == WikiBuilderType.GENERIC) {
-      return buildGeneric(name, language);
-    } else {
-      return buildWikimedia(type, name, language);
-    }
+    return switch (type) {
+      case FANDOM -> buildFandom(name, language);
+      case GENERIC -> buildGeneric(name, language);
+      default -> buildWikimedia(type, name, language);
+    };
   }
 
   private WikiDefinition buildFandom(final String name, final String language) {

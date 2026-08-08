@@ -16,6 +16,7 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -40,7 +41,7 @@ final class PasswordInput {
     label.setAlignment(Pos.CENTER_RIGHT);
 
     final Button botPasswordsButton = new Button();
-    botPasswordsButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    botPasswordsButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.HELP, ImageSize.TOOLBAR)
         .ifPresent(botPasswordsButton::setGraphic);
@@ -48,7 +49,7 @@ final class PasswordInput {
     botPasswordsButton.setOnAction(_ -> actionServices.browse(UrlService.BOT_PASSWORDS));
 
     final Button addPasswordButton = new Button();
-    addPasswordButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    addPasswordButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addPasswordButton::setGraphic);
@@ -56,7 +57,7 @@ final class PasswordInput {
     addPasswordButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     final Button removePasswordButton = new Button();
-    removePasswordButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    removePasswordButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removePasswordButton::setGraphic);

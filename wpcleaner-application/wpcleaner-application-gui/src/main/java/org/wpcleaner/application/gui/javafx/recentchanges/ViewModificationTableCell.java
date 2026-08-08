@@ -12,6 +12,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.Tooltip;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -24,7 +25,7 @@ public final class ViewModificationTableCell
   public ViewModificationTableCell(
       final JavaFxImageLoader imageLoader, final Consumer<FilteredRecentChange> viewAction) {
     this.viewAction = viewAction;
-    button.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader.getImageView(ImageCollection.PAGE, ImageSize.BUTTON).ifPresent(button::setGraphic);
     button.setTooltip(new Tooltip(GT._T("View modifications")));
     setAlignment(Pos.CENTER);

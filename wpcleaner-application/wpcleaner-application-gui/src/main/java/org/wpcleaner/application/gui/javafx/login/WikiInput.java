@@ -23,6 +23,7 @@ import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -62,7 +63,7 @@ final class WikiInput {
     label.setAlignment(Pos.CENTER_RIGHT);
 
     final Button warningButton = new Button();
-    warningButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    warningButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.WARNING, ImageSize.TOOLBAR)
         .ifPresent(warningButton::setGraphic);
@@ -71,7 +72,7 @@ final class WikiInput {
     setupWarningButton(warningButton);
 
     final Button otherWikiButton = new Button();
-    otherWikiButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    otherWikiButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.HELP, ImageSize.TOOLBAR)
         .ifPresent(otherWikiButton::setGraphic);
@@ -80,7 +81,7 @@ final class WikiInput {
         _ -> actionServices.browse("https://en.wikipedia.org/wiki/Wikipedia:WPCleaner/Wikis"));
 
     final Button addWikiButton = new Button();
-    addWikiButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    addWikiButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addWikiButton::setGraphic);
@@ -88,7 +89,7 @@ final class WikiInput {
     setupAddWikiButton(addWikiButton, knownDefinitions, imageLoader);
 
     final Button removeWikiButton = new Button();
-    removeWikiButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    removeWikiButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removeWikiButton::setGraphic);

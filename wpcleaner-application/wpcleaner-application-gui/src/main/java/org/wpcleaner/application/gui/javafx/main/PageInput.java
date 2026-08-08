@@ -29,6 +29,7 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.ProgressStep;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.settings.interesting.InterestingByWikiSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -70,7 +71,7 @@ public class PageInput {
     label.setAlignment(Pos.CENTER_RIGHT);
 
     final Button addPage = new Button();
-    addPage.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    addPage.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addPage::setGraphic);
@@ -78,7 +79,7 @@ public class PageInput {
     addPage.setOnAction(_ -> addPage());
 
     final Button removePage = new Button();
-    removePage.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    removePage.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removePage::setGraphic);
@@ -86,7 +87,7 @@ public class PageInput {
     removePage.setOnAction(_ -> removePage());
 
     final Button randomPage = new Button();
-    randomPage.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    randomPage.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.RANDOM, ImageSize.TOOLBAR)
         .ifPresent(randomPage::setGraphic);
@@ -167,7 +168,7 @@ public class PageInput {
             root.getChildren().remove(progressTracker.getProgressOverlay());
             loading.set(false);
           });
-    } catch (final Exception e) {
+    } catch (final Exception _) {
       Platform.runLater(
           () -> {
             root.getChildren().remove(progressTracker.getProgressOverlay());

@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -50,7 +51,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
     HBox.setHgrow(titleField, Priority.ALWAYS);
 
     final Button openPageButton = new Button();
-    openPageButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    openPageButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.OPEN_URL, ImageSize.BUTTON)
         .ifPresent(openPageButton::setGraphic);
@@ -65,7 +66,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
         });
 
     final Button openDiffButton = new Button();
-    openDiffButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    openDiffButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.DIFF, ImageSize.BUTTON)
         .ifPresent(openDiffButton::setGraphic);
@@ -80,7 +81,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
         });
 
     final Button goFirstButton = new Button();
-    goFirstButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    goFirstButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.GO_FIRST, ImageSize.BUTTON)
         .ifPresent(goFirstButton::setGraphic);
@@ -93,7 +94,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
         });
 
     final Button goPreviousButton = new Button();
-    goPreviousButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    goPreviousButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.GO_PREVIOUS, ImageSize.BUTTON)
         .ifPresent(goPreviousButton::setGraphic);
@@ -106,7 +107,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
         });
 
     final Button goNextButton = new Button();
-    goNextButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    goNextButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.GO_NEXT, ImageSize.BUTTON)
         .ifPresent(goNextButton::setGraphic);
@@ -119,7 +120,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
         });
 
     final Button goLastButton = new Button();
-    goLastButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    goLastButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.GO_LAST, ImageSize.BUTTON)
         .ifPresent(goLastButton::setGraphic);

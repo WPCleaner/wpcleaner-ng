@@ -32,15 +32,15 @@ public final class FeedbacksToolBar extends ToolBar {
     this.actionServices = actionServices;
     this.imageLoader = imageLoader;
     this.urlService = urlService;
-    initialize();
+    internalInitialize();
   }
 
-  private void initialize() {
+  private void internalInitialize() {
     setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
 
     final MenuButton feedbackButton = new MenuButton();
     feedbackButton.setTooltip(new Tooltip(GT._T("Feedback")));
-    feedbackButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    feedbackButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.HELP_FAQ, ImageSize.BUTTON)
         .ifPresent(feedbackButton::setGraphic);
@@ -71,7 +71,7 @@ public final class FeedbacksToolBar extends ToolBar {
 
     final MenuButton optionsButton = new MenuButton();
     optionsButton.setTooltip(new Tooltip(GT._T("Options")));
-    optionsButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    optionsButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.OPTIONS, ImageSize.BUTTON)
         .ifPresent(optionsButton::setGraphic);
@@ -86,7 +86,7 @@ public final class FeedbacksToolBar extends ToolBar {
 
     final Button aboutButton = new Button();
     aboutButton.setTooltip(new Tooltip("About"));
-    aboutButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    aboutButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.HELP_ABOUT, ImageSize.BUTTON)
         .ifPresent(aboutButton::setGraphic);

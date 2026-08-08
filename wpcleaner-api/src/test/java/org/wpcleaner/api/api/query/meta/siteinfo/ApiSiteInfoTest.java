@@ -107,7 +107,7 @@ class ApiSiteInfoTest {
     // Verify Namespaces
     Assertions.assertThat(siteInfo.namespaces()).as("namespaces").isNotEmpty();
     Assertions.assertThat(siteInfo.namespaces().get("0")).as("namespace 0").isNotNull();
-    Assertions.assertThat(siteInfo.namespaces().get("0").id()).as("namespace 0 id").isEqualTo(0);
+    Assertions.assertThat(siteInfo.namespaces().get("0").id()).as("namespace 0 id").isZero();
 
     // Verify Namespace Aliases
     Assertions.assertThat(siteInfo.namespaceAliases()).as("namespaceAliases").isNotNull();

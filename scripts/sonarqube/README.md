@@ -6,7 +6,7 @@ This document explains how to locally run a SonarQube analysis of the project.
 
 Run the following command, which will start and configure SonarQube:
 ```shell script
-. bin/sonarqube/start.sh
+. scripts/sonarqube/start.sh
 ```
 
 This command will run a SonarQube instance in docker and generate a token necessary for the next steps.
@@ -15,7 +15,7 @@ The command stores the generated token in the `SONARQUBE_TOKEN` environment vari
 ## Run the SonarQube analysis on the project
 
 ```shell script
-. bin/sonarqube/run.sh
+. scripts/sonarqube/run.sh
 ```
 
 ## Display the SonarQube analysis
@@ -24,7 +24,7 @@ Open [SonarQube analysis](http://localhost:19000/dashboard?id=org.wpcleaner%3Awp
 
 ## Manually configuring SonarQube
 
-The command `. bin/sonarqube/start.sh` is equivalent to manually doing the following actions:
+The command `. scripts/sonarqube/start.sh` is equivalent to manually doing the following actions:
 ```shell script
 docker run -d --name sonarqube -p 19000:9000 -p 19092:9092 sonarqube
 ```

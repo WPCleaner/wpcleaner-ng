@@ -18,7 +18,7 @@ public final class MoveLastButton<T> extends Button {
 
   public MoveLastButton(final JavaFxImageLoader imageLoader, final ListView<@Nullable T> listView) {
     super();
-    setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.MOVE_LAST, ImageSize.BUTTON)
         .ifPresent(this::setGraphic);

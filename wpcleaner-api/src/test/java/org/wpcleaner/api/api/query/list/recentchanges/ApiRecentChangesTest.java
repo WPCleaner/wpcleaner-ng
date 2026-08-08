@@ -66,8 +66,11 @@ class ApiRecentChangesTest {
         apiRecentChanges.retrieveRecentChanges(WikimediaDefinitions.META, options);
 
     // THEN
-    Assertions.assertThat(recentChanges).as("recentChanges").isNotNull();
-    Assertions.assertThat(recentChanges.size()).as("size").isLessThanOrEqualTo(5);
+    Assertions.assertThat(recentChanges)
+        .as("recentChanges")
+        .isNotNull()
+        .as("size")
+        .hasSizeLessThanOrEqualTo(5);
     for (final RecentChange rc : recentChanges) {
       Assertions.assertThat(rc.title()).as("title").isNotNull();
       Assertions.assertThat(rc.user()).as("user").isNotNull();

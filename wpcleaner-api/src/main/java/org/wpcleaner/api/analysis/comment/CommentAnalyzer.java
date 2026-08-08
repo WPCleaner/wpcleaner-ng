@@ -16,13 +16,13 @@ final class CommentAnalyzer {
 
   static List<CommentElement> analyze(final String text) {
     final List<CommentElement> result = new ArrayList<>();
-    int begin = text.indexOf(CommentElement.START);
+    int begin = text.indexOf(CommentElement.TOKEN_START);
     while (begin >= 0) {
-      int end = text.indexOf(CommentElement.END, begin + CommentElement.START.length());
+      int end = text.indexOf(CommentElement.TOKEN_END, begin + CommentElement.TOKEN_START.length());
       if (end > 0) {
-        end += CommentElement.END.length();
+        end += CommentElement.TOKEN_END.length();
         result.add(new CommentElement(begin, end));
-        begin = text.indexOf(CommentElement.START, end);
+        begin = text.indexOf(CommentElement.TOKEN_START, end);
       } else {
         begin = -1;
       }

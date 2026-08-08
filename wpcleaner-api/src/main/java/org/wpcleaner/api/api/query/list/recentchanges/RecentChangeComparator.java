@@ -12,4 +12,8 @@ public final class RecentChangeComparator {
   public static final Comparator<RecentChange> INSTANCE =
       Comparator.comparing(RecentChange::timestamp, Comparator.nullsLast(Comparator.reverseOrder()))
           .thenComparing(RecentChange::rcId, Comparator.nullsLast(Comparator.reverseOrder()));
+
+  private RecentChangeComparator() {
+    // Utility class
+  }
 }

@@ -17,6 +17,7 @@ import org.wpcleaner.api.language.Language;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -46,7 +47,7 @@ final class LanguageInput {
     label.setAlignment(Pos.CENTER_RIGHT);
 
     final Button addLanguageButton = new Button();
-    addLanguageButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    addLanguageButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LANGUAGE_ADD, ImageSize.TOOLBAR)
         .ifPresent(addLanguageButton::setGraphic);

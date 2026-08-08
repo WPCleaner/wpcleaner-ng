@@ -6,6 +6,7 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  */
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
@@ -52,8 +53,10 @@ public record RecentChangesFilter(
   public boolean matchesSubPages(final RecentChange rc) {
     return switch (subPages) {
       case BOTH -> true;
-      case TOP_PAGES -> rc.title() == null || !rc.title().contains("/");
-      case SUB_PAGES -> rc.title() != null && rc.title().contains("/");
+      case TOP_PAGES ->
+          Optional.ofNullable(rc.title()).map(title -> !title.contains("/")).orElse(Boolean.TRUE);
+      case SUB_PAGES ->
+          Optional.ofNullable(rc.title()).map(title -> title.contains("/")).orElse(Boolean.FALSE);
     };
   }
 

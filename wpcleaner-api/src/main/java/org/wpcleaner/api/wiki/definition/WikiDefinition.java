@@ -43,7 +43,7 @@ public record WikiDefinition(
   public URI pageUri(final String title) {
     try {
       return new URI("https", mainHost, wikiPath + "/" + title.replace(' ', '_'), null);
-    } catch (final URISyntaxException e) {
+    } catch (final URISyntaxException _) {
       return null;
     }
   }

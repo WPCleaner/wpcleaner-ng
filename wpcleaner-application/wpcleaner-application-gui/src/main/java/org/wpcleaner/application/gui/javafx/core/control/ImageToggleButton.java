@@ -19,7 +19,7 @@ public final class ImageToggleButton extends ToggleButton {
       @Nullable final Image selectedImage) {
     super();
     setTooltip(new Tooltip(tooltipText));
-    setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    setStyle(DefaultStyles.TOOLBAR_ELEMENT);
 
     final ImageView imageView = new ImageView();
     if (unselectedImage != null) {
@@ -30,7 +30,7 @@ public final class ImageToggleButton extends ToggleButton {
     selectedProperty()
         .addListener(
             (_, _, isSelected) -> {
-              if (isSelected) {
+              if (Boolean.TRUE.equals(isSelected)) {
                 if (selectedImage != null) {
                   imageView.setImage(selectedImage);
                 }

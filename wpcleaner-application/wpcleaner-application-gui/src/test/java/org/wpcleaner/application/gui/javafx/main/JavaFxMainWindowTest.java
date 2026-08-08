@@ -116,8 +116,8 @@ class JavaFxMainWindowTest {
           final ToolBar feedbacksToolBar = (ToolBar) mainContainer.getChildren().get(2);
           final List<Button> buttons =
               feedbacksToolBar.getItems().stream()
-                  .filter(item -> item instanceof Button)
-                  .map(item -> (Button) item)
+                  .filter(Button.class::isInstance)
+                  .map(Button.class::cast)
                   .toList();
 
           final Optional<Button> userButton =

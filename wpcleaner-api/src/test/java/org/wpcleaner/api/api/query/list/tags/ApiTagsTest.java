@@ -49,8 +49,7 @@ class ApiTagsTest {
     final List<Tag> tags = apiTags.retrieveTags(WikimediaDefinitions.META, Limit.of(5), null, null);
 
     // THEN
-    Assertions.assertThat(tags).as("tags").isNotNull();
-    Assertions.assertThat(tags.size()).as("size").isLessThanOrEqualTo(5);
+    Assertions.assertThat(tags).as("tags").isNotNull().as("size").hasSizeLessThanOrEqualTo(5);
     for (final Tag tag : tags) {
       Assertions.assertThat(tag.name()).as("name").isNotNull().isNotEmpty();
     }
@@ -74,8 +73,7 @@ class ApiTagsTest {
         apiTags.retrieveTags(WikimediaDefinitions.META, Limit.of(5), null, properties);
 
     // THEN
-    Assertions.assertThat(tags).as("tags").isNotNull();
-    Assertions.assertThat(tags.size()).as("size").isLessThanOrEqualTo(5);
+    Assertions.assertThat(tags).as("tags").isNotNull().as("size").hasSizeLessThanOrEqualTo(5);
     for (final Tag tag : tags) {
       Assertions.assertThat(tag.name()).as("name").isNotNull().isNotEmpty();
       Assertions.assertThat(tag.description()).as("description").isNotNull();

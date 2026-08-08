@@ -9,7 +9,7 @@ import org.wpcleaner.api.analysis.Element;
 
 public record TagElement(int begin, int end, String name) implements Element {
 
-  public static final char START = '<';
-  public static final char END = '>';
-  public static final char ATTRIBUTE_VALUE = '=';
+  public static final char TOKEN_START = '<';
+  public static final char TOKEN_END = '>';
+  public static final char TOKEN_ATTRIBUTE_VALUE = '=';
 }

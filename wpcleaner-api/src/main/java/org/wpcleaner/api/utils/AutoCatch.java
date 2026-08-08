@@ -14,12 +14,14 @@ import org.jspecify.annotations.Nullable;
 @SuppressWarnings("PMD.AvoidCatchingGenericException")
 public final class AutoCatch {
 
+  private static final String NULL_CALLABLE = "callable cannot be null";
+
   private AutoCatch() {
     // Utility class
   }
 
   public static <T> T run(final Callable<T> callable) {
-    Objects.requireNonNull(callable, "callable cannot be null");
+    Objects.requireNonNull(callable, NULL_CALLABLE);
 
     try {
       return callable.call();
@@ -32,7 +34,7 @@ public final class AutoCatch {
 
   @Nullable
   public static <T> T runOrNull(final Callable<T> callable) {
-    Objects.requireNonNull(callable, "callable cannot be null");
+    Objects.requireNonNull(callable, NULL_CALLABLE);
 
     try {
       return callable.call();
@@ -44,7 +46,7 @@ public final class AutoCatch {
   @SuppressWarnings("PMD.EmptyCatchBlock")
   public static <T> T runOrDefault(
       final Callable<T> callable, final T defaultValue, final Consumer<Exception> consumer) {
-    Objects.requireNonNull(callable, "callable cannot be null");
+    Objects.requireNonNull(callable, NULL_CALLABLE);
 
     try {
       return callable.call();

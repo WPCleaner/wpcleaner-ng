@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
@@ -34,33 +35,30 @@ public class ApiRevisions {
       final WikiDefinition wiki,
       final List<Integer> pageIds,
       @Nullable final RevisionsQuery options) {
-    final Response response = internalRetrieveRevisionsByPageId(wiki, pageIds, options);
-    if (response == null || response.query() == null) {
-      return List.of();
-    }
-    return response.query().pages();
+    return Optional.ofNullable(internalRetrieveRevisionsByPageId(wiki, pageIds, options))
+        .map(Response::query)
+        .map(ResponseQuery::pages)
+        .orElseGet(List::of);
   }
 
   public List<Page> retrieveRevisionsByRevisionId(
       final WikiDefinition wiki,
       final List<Integer> revIds,
       @Nullable final RevisionsQuery options) {
-    final Response response = internalRetrieveRevisionsByRevisionId(wiki, revIds, options);
-    if (response == null || response.query() == null) {
-      return List.of();
-    }
-    return response.query().pages();
+    return Optional.ofNullable(internalRetrieveRevisionsByRevisionId(wiki, revIds, options))
+        .map(Response::query)
+        .map(ResponseQuery::pages)
+        .orElseGet(List::of);
   }
 
   public List<Page> retrieveRevisionsByTitle(
       final WikiDefinition wiki,
       final List<String> titles,
       @Nullable final RevisionsQuery options) {
-    final Response response = internalRetrieveRevisionsByTitle(wiki, titles, options);
-    if (response == null || response.query() == null) {
-      return List.of();
-    }
-    return response.query().pages();
+    return Optional.ofNullable(internalRetrieveRevisionsByTitle(wiki, titles, options))
+        .map(Response::query)
+        .map(ResponseQuery::pages)
+        .orElseGet(List::of);
   }
 
   @Nullable

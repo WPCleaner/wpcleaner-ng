@@ -17,6 +17,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -40,7 +41,7 @@ final class UserInput {
     label.setAlignment(Pos.CENTER_RIGHT);
 
     final Button addUserButton = new Button();
-    addUserButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    addUserButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
         .ifPresent(addUserButton::setGraphic);
@@ -48,7 +49,7 @@ final class UserInput {
     addUserButton.setOnAction(_ -> actionServices.notImplemented().run());
 
     final Button removeUserButton = new Button();
-    removeUserButton.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    removeUserButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)
         .ifPresent(removeUserButton::setGraphic);

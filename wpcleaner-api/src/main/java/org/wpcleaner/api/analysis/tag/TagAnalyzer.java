@@ -28,7 +28,7 @@ final class TagAnalyzer {
 
   private static Optional<TagElement> analyze(final String text, final TextBrowser.Cursor cursor) {
     final int begin = cursor.getIndex();
-    if (TagElement.START != text.charAt(begin)) {
+    if (TagElement.TOKEN_START != text.charAt(begin)) {
       cursor.moveNext();
       return Optional.empty();
     }
@@ -41,7 +41,8 @@ final class TagAnalyzer {
     cursor.moveAfterWhitespace();
     passAttributes(text, cursor);
     passOptionalSlash(text, cursor);
-    if (cursor.getIndex() >= text.length() || TagElement.END != text.charAt(cursor.getIndex())) {
+    if (cursor.getIndex() >= text.length()
+        || TagElement.TOKEN_END != text.charAt(cursor.getIndex())) {
       return Optional.empty();
     }
     final TagElement tag = new TagElement(begin, cursor.getIndex() + 1, tagName);
@@ -75,7 +76,7 @@ final class TagAnalyzer {
     if (cursor.getIndex() >= text.length() || cursor.getIndex() == startAttribute) {
       return;
     }
-    if (text.charAt(cursor.getIndex()) != TagElement.ATTRIBUTE_VALUE) {
+    if (text.charAt(cursor.getIndex()) != TagElement.TOKEN_ATTRIBUTE_VALUE) {
       passAttributes(text, cursor);
       return;
     }

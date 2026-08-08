@@ -27,7 +27,7 @@ public final class UrlTableCell<S> extends TableCell<S, @Nullable URI> {
       final ImageCollection icon,
       final String tooltipText) {
     this.actionServices = actionServices;
-    button.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader.getImageView(icon, ImageSize.BUTTON).ifPresent(button::setGraphic);
     button.setTooltip(new Tooltip(tooltipText));
     setAlignment(Pos.CENTER);

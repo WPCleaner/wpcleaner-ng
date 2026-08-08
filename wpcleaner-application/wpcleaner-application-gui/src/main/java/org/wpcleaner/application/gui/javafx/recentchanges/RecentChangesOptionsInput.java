@@ -17,6 +17,7 @@ import javafx.scene.control.Tooltip;
 import javafx.stage.Window;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.settings.recentchanges.RecentChangesSettings;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -77,7 +78,7 @@ public final class RecentChangesOptionsInput {
     this.comboBox.getSelectionModel().select(toSelect);
 
     this.editOptions = new Button();
-    editOptions.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    editOptions.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.EDIT, ImageSize.BUTTON)
         .ifPresent(editOptions::setGraphic);
@@ -85,7 +86,7 @@ public final class RecentChangesOptionsInput {
     editOptions.setOnAction(_ -> editOptionsAction(owner, services));
 
     this.addOptions = new Button();
-    addOptions.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    addOptions.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.BUTTON)
         .ifPresent(addOptions::setGraphic);
@@ -93,7 +94,7 @@ public final class RecentChangesOptionsInput {
     addOptions.setOnAction(_ -> addOptionsAction(owner, services));
 
     this.removeOptions = new Button();
-    removeOptions.setStyle("-fx-background-color: transparent; -fx-padding: 1px;");
+    removeOptions.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.BUTTON)
         .ifPresent(removeOptions::setGraphic);

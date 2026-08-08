@@ -31,8 +31,7 @@ class RecentChangesSettingsTest {
     JsonUtils.writeValue(file, settings);
 
     final String jsonContent = Files.readString(file.toPath());
-    Assertions.assertThat(jsonContent).contains("Options1");
-    Assertions.assertThat(jsonContent).contains("Filter1");
+    Assertions.assertThat(jsonContent).contains("Options1").contains("Filter1");
 
     final RecentChangesSettings loadedSettings =
         JsonUtils.readValue(jsonContent, RecentChangesSettings.class);

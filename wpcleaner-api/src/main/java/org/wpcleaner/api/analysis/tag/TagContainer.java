@@ -28,18 +28,16 @@ public class TagContainer {
   }
 
   public List<TagElement> getTags() {
-    if (!done) {
-      lock.lock();
-      try {
-        if (!done) {
-          final TextBrowser textBrowser = new TextBrowser(text);
-          textBrowser.addExclusions(comments.getComments());
-          tags.addAll(TagAnalyzer.analyze(text, textBrowser));
-          done = true;
-        }
-      } finally {
-        lock.unlock();
+    lock.lock();
+    try {
+      if (!done) {
+        final TextBrowser textBrowser = new TextBrowser(text);
+        textBrowser.addExclusions(comments.getComments());
+        tags.addAll(TagAnalyzer.analyze(text, textBrowser));
+        done = true;
       }
+    } finally {
+      lock.unlock();
     }
     return tags;
   }

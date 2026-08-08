@@ -9,6 +9,6 @@ import org.wpcleaner.api.analysis.Element;
 
 public record CommentElement(int begin, int end) implements Element {
 
-  public static final String START = "<!--";
-  public static final String END = "-->";
+  public static final String TOKEN_START = "<!--";
+  public static final String TOKEN_END = "-->";
 }

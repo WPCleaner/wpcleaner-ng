@@ -63,7 +63,7 @@ public final class RecentChangesListPanel extends VBox {
         .selectedProperty()
         .addListener(
             (_, _, isSelected) -> {
-              if (isSelected) {
+              if (Boolean.TRUE.equals(isSelected)) {
                 refresher.refreshList(true);
                 timeline.play();
               } else {
