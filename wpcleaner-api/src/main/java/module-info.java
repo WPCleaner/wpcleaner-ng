@@ -20,6 +20,7 @@ module org.wpcleaner.api {
   requires jdk.net;
   requires org.slf4j;
   requires org.yaml.snakeyaml;
+  exports org.wpcleaner.api.analysis.category;
   exports org.wpcleaner.api.analysis.comment;
   exports org.wpcleaner.api.analysis.internallink;
   exports org.wpcleaner.api.analysis.tag;
@@ -42,6 +43,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.utils;
   exports org.wpcleaner.api.wiki.builder;
   exports org.wpcleaner.api.wiki.definition;
+  opens org.wpcleaner.api.analysis.category;
   opens org.wpcleaner.api.analysis.comment;
   opens org.wpcleaner.api.analysis.internallink;
   opens org.wpcleaner.api.analysis.tag;

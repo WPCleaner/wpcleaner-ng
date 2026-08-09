@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PageAnalysisStylePropertiesInitializer implements StylePropertiesInitializer {
 
+  public static final String CATEGORY = "pageAnalysis.category";
   public static final String COMMENT = "pageAnalysis.comment";
   public static final String INTERNAL_LINK = "pageAnalysis.internalLink";
   public static final String TAG = "pageAnalysis.tag";
@@ -19,6 +20,12 @@ public class PageAnalysisStylePropertiesInitializer implements StylePropertiesIn
   @Override
   public Map<String, StyleProperties> getDefaultStyles() {
     return Map.ofEntries(
+        Map.entry(
+            CATEGORY,
+            StyleProperties.builder()
+                .withBackground(true)
+                .withBackgroundColor(new Color(153, 255, 153))
+                .build()),
         Map.entry(
             COMMENT,
             StyleProperties.builder()

@@ -6,6 +6,7 @@ package org.wpcleaner.api.analysis;
  */
 
 import java.util.List;
+import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
@@ -13,7 +14,6 @@ import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
 
-@SuppressWarnings("PMD.DataClass")
 public final class PageAnalysis {
 
   private final String title;
@@ -48,5 +48,9 @@ public final class PageAnalysis {
 
   public List<InternalLinkElement> getInternalLinks() {
     return wikiElements.getInternalLinks();
+  }
+
+  public List<CategoryElement> getCategories() {
+    return wikiElements.getCategories();
   }
 }

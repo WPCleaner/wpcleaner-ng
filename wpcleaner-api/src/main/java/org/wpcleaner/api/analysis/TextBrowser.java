@@ -115,7 +115,12 @@ public final class TextBrowser {
       final Cursor cursor = new Cursor();
       cursor.index = index;
       cursor.jump = false;
-      cursor.currentExclude = currentExclude;
+      cursor.currentExclude = 0;
+      for (int exclusion = 0; exclusion < exclusions.size(); exclusion++) {
+        if (index > exclusions.get(exclusion).begin()) {
+          cursor.currentExclude = exclusion + 1;
+        }
+      }
       return cursor;
     }
 
