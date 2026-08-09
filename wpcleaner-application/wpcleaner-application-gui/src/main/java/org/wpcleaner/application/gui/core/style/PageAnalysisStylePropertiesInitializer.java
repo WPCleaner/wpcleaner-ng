@@ -12,20 +12,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class PageAnalysisStylePropertiesInitializer implements StylePropertiesInitializer {
 
-  public static final String COMMENT = "pageanalysis.comment";
-  public static final String TAG = "pageanalysis.tag";
+  public static final String COMMENT = "pageAnalysis.comment";
+  public static final String INTERNAL_LINK = "pageAnalysis.internalLink";
+  public static final String TAG = "pageAnalysis.tag";
 
   @Override
   public Map<String, StyleProperties> getDefaultStyles() {
     return Map.ofEntries(
         Map.entry(
             COMMENT,
-            StyleProperties.builder().withForeground(true).withForegroundColor(Color.GRAY).build()),
+            StyleProperties.builder()
+                .withForeground(true)
+                .withForegroundColor(Color.GRAY)
+                .withItalic(true)
+                .build()),
+        Map.entry(
+            INTERNAL_LINK,
+            StyleProperties.builder()
+                .withBackground(true)
+                .withBackgroundColor(new Color(204, 255, 255))
+                .build()),
         Map.entry(
             TAG,
             StyleProperties.builder()
                 .withForeground(true)
-                .withForegroundColor(new Color(154, 0, 154))
+                .withForegroundColor(new Color(96, 0, 96))
+                .withItalic(true)
                 .build()));
   }
 }

@@ -15,7 +15,6 @@ public final class PageAnalysisArea extends InlineCssTextArea {
   public PageAnalysisArea(final PageSyntaxColorizer colorizer) {
     super();
     this.colorizer = colorizer;
-    setEditable(false);
     setWrapText(true);
 
     textProperty()

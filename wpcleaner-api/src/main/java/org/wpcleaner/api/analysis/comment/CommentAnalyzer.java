@@ -10,11 +10,13 @@ import java.util.List;
 
 final class CommentAnalyzer {
 
-  private CommentAnalyzer() {
-    // Utility class
+  private final String text;
+
+  CommentAnalyzer(final String text) {
+    this.text = text;
   }
 
-  static List<CommentElement> analyze(final String text) {
+  List<CommentElement> analyze() {
     final List<CommentElement> result = new ArrayList<>();
     int begin = text.indexOf(CommentElement.TOKEN_START);
     while (begin >= 0) {

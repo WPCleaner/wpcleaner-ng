@@ -45,6 +45,6 @@ public record JavaFxStylePropertiesRegistry(StylePropertiesRegistry registry) {
   }
 
   private String toCssColor(final Color color) {
-    return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue() * 255);
+    return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
   }
 }

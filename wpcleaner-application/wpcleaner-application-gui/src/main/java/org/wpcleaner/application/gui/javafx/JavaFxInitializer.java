@@ -5,6 +5,7 @@
 
 package org.wpcleaner.application.gui.javafx;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.application.Platform;
 import org.slf4j.Logger;
@@ -13,7 +14,8 @@ import org.wpcleaner.application.gui.core.desktop.DesktopService;
 
 public final class JavaFxInitializer {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JavaFxInitializer.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final AtomicBoolean STARTED = new AtomicBoolean(false);
 
   private JavaFxInitializer() {

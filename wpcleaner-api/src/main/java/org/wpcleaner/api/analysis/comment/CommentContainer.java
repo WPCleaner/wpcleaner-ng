@@ -27,7 +27,7 @@ public class CommentContainer {
     lock.lock();
     try {
       if (!done) {
-        comments.addAll(CommentAnalyzer.analyze(text));
+        comments.addAll(new CommentAnalyzer(text).analyze());
         done = true;
       }
     } finally {

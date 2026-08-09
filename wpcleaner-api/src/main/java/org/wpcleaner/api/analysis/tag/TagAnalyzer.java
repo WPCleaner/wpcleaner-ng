@@ -13,20 +13,24 @@ import org.wpcleaner.api.analysis.TextBrowser;
 
 final class TagAnalyzer {
 
-  private TagAnalyzer() {
-    // Utility class
+  private final String text;
+  private final TextBrowser textBrowser;
+
+  TagAnalyzer(final String text, final TextBrowser textBrowser) {
+    this.text = text;
+    this.textBrowser = textBrowser;
   }
 
-  static List<TagElement> analyze(final String text, final TextBrowser textBrowser) {
+  List<TagElement> analyze() {
     final List<TagElement> result = new ArrayList<>();
     final TextBrowser.Cursor cursor = textBrowser.cursor();
     while (cursor.getIndex() < text.length()) {
-      analyze(text, cursor).ifPresent(result::add);
+      analyze(cursor).ifPresent(result::add);
     }
     return result;
   }
 
-  private static Optional<TagElement> analyze(final String text, final TextBrowser.Cursor cursor) {
+  private Optional<TagElement> analyze(final TextBrowser.Cursor cursor) {
     final int begin = cursor.getIndex();
     if (TagElement.TOKEN_START != text.charAt(begin)) {
       cursor.moveNext();
@@ -34,12 +38,12 @@ final class TagAnalyzer {
     }
     cursor.moveNext();
     passOptionalSlash(text, cursor);
-    final String tagName = extractTagName(text, cursor);
+    final String tagName = extractTagName(cursor);
     if (tagName == null) {
       return Optional.empty();
     }
     cursor.moveAfterWhitespace();
-    passAttributes(text, cursor);
+    passAttributes(cursor);
     passOptionalSlash(text, cursor);
     if (cursor.getIndex() >= text.length()
         || TagElement.TOKEN_END != text.charAt(cursor.getIndex())) {
@@ -51,7 +55,7 @@ final class TagAnalyzer {
   }
 
   @Nullable
-  private static String extractTagName(final String text, final TextBrowser.Cursor cursor) {
+  private String extractTagName(final TextBrowser.Cursor cursor) {
     final int startName = cursor.getIndex();
     while (cursor.getIndex() < text.length()
         && Character.isLetterOrDigit(text.charAt(cursor.getIndex()))
@@ -64,7 +68,7 @@ final class TagAnalyzer {
     return text.substring(startName, cursor.getIndex());
   }
 
-  private static void passAttributes(final String text, final TextBrowser.Cursor cursor) {
+  private void passAttributes(final TextBrowser.Cursor cursor) {
     final int startAttribute = cursor.getIndex();
     final String excludedChar = " \n<>/";
     while (cursor.getIndex() < text.length()
@@ -77,18 +81,18 @@ final class TagAnalyzer {
       return;
     }
     if (text.charAt(cursor.getIndex()) != TagElement.TOKEN_ATTRIBUTE_VALUE) {
-      passAttributes(text, cursor);
+      passAttributes(cursor);
       return;
     }
     cursor.moveNext();
     if (cursor.getIndex() >= text.length()) {
       return;
     }
-    passAttributeValue(text, cursor);
-    passAttributes(text, cursor);
+    passAttributeValue(cursor);
+    passAttributes(cursor);
   }
 
-  private static void passAttributeValue(final String text, final TextBrowser.Cursor cursor) {
+  private void passAttributeValue(final TextBrowser.Cursor cursor) {
     final char startValueChar = text.charAt(cursor.getIndex());
     if (startValueChar == '"' || startValueChar == '\'') {
       final String excludedChars = "<>" + startValueChar;
