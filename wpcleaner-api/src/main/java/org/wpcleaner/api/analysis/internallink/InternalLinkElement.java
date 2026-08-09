@@ -7,12 +7,4 @@ package org.wpcleaner.api.analysis.internallink;
 
 import org.wpcleaner.api.analysis.Element;
 
-@SuppressWarnings("PMD.DataClass")
-public record InternalLinkElement(int begin, int end) implements Element {
-
-  public static final char TOKEN_START = '[';
-  public static final int START_COUNT = 2;
-  public static final char TOKEN_END = ']';
-  public static final int END_COUNT = 2;
-  public static final char TOKEN_SEPARATOR = '|';
-}
+public record InternalLinkElement(int begin, int end) implements Element {}

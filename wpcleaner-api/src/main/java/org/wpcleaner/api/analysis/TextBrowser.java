@@ -63,9 +63,9 @@ public final class TextBrowser {
       }
     }
 
-    public void moveAfterWhile(final String authorized) {
+    public void moveAfterWhile(final char authorized) {
       jump = false;
-      while (index < text.length() && authorized.indexOf(text.charAt(index)) >= 0) {
+      while (index < text.length() && text.charAt(index) == authorized) {
         index = computeAfter(index);
       }
     }

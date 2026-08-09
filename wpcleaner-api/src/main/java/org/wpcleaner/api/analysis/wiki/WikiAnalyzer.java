@@ -12,6 +12,15 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 
 final class WikiAnalyzer {
 
+  private static final char PIPE = '|';
+  private static final char SQUARE_BRACKET_CLOSE = ']';
+  private static final char SQUARE_BRACKET_OPEN = '[';
+  private static final String LINK_UNAUTHORIZED_AFTER_START =
+      new String(new char[] {SQUARE_BRACKET_OPEN, PIPE, SQUARE_BRACKET_CLOSE, '\n'});
+  private static final String LINK_UNAUTHORIZED_AFTER_PIPE =
+      new String(new char[] {SQUARE_BRACKET_OPEN, SQUARE_BRACKET_CLOSE});
+  private static final int TWO = 2;
+
   private final String text;
   private final TextBrowser textBrowser;
   private final List<InternalLinkElement> internalLinks;
@@ -28,7 +37,7 @@ final class WikiAnalyzer {
       final int currentIndex = cursor.getIndex();
       final char currentChar = text.charAt(cursor.getIndex());
       switch (currentChar) {
-        case '[' -> analyzeSquareBracket(cursor);
+        case SQUARE_BRACKET_OPEN -> analyzeSquareBracket(cursor);
         case '{' -> analyzeCurlyBracket(cursor);
         case '=' -> analyzeEqual(cursor);
         case '_' -> analyzeUnderscore(cursor);
@@ -49,29 +58,39 @@ final class WikiAnalyzer {
     final TextBrowser.ReverseCursor temporaryCursor = reverseCursor.copy();
     int firstOpeningBracket = lastOpeningBracket;
     while (temporaryCursor.getIndex() >= 0
-        && text.charAt(temporaryCursor.getIndex()) == InternalLinkElement.TOKEN_START
+        && text.charAt(temporaryCursor.getIndex()) == SQUARE_BRACKET_OPEN
         && temporaryCursor.samePart()) {
       firstOpeningBracket = temporaryCursor.getIndex();
       temporaryCursor.movePrevious();
     }
-    if (lastOpeningBracket + 1 - firstOpeningBracket != InternalLinkElement.START_COUNT) {
-      return;
+    final int openingBracketsCount = lastOpeningBracket - firstOpeningBracket + 1;
+    if (openingBracketsCount == TWO) {
+      analyze2SquareBrackets(firstOpeningBracket, reverseCursor);
     }
+  }
+
+  private void analyze2SquareBrackets(
+      final int firstOpeningBracket, final TextBrowser.ReverseCursor reverseCursor) {
     final TextBrowser.Cursor cursor = reverseCursor.toCursor();
-    cursor.moveAfterUntil("|]\n");
-    if (text.charAt(cursor.getIndex()) == InternalLinkElement.TOKEN_SEPARATOR) {
+    cursor.moveNext();
+    cursor.moveAfterUntil(LINK_UNAUTHORIZED_AFTER_START);
+    if (cursor.getIndex() < text.length() && text.charAt(cursor.getIndex()) == PIPE) {
       cursor.moveNext();
-      cursor.moveAfterUntil("]");
+      cursor.moveAfterUntil(LINK_UNAUTHORIZED_AFTER_PIPE);
     }
-    if (text.charAt(cursor.getIndex()) != InternalLinkElement.TOKEN_END) {
+    if (cursor.getIndex() >= text.length()
+        || text.charAt(cursor.getIndex()) != SQUARE_BRACKET_CLOSE) {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
-    cursor.moveAfterWhile("]");
-    if (cursor.getIndex() - firstClosingBracket != InternalLinkElement.END_COUNT) {
+    cursor.moveAfterWhile(SQUARE_BRACKET_CLOSE);
+    if (cursor.getIndex() - firstClosingBracket != TWO) {
       return;
     }
     internalLinks.add(new InternalLinkElement(firstOpeningBracket, cursor.getIndex()));
+    while (reverseCursor.getIndex() >= firstOpeningBracket) {
+      reverseCursor.movePrevious();
+    }
   }
 
   @SuppressWarnings({"unused", "UnusedVariable"})
