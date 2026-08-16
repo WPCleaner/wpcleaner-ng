@@ -15,7 +15,10 @@ import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.api.query.meta.siteinfo.ApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
+import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.tag.TagRepository;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
@@ -41,14 +44,18 @@ public class LoginHook {
     this.tagsProperties = EnumSet.noneOf(TagsParameters.Properties.class);
   }
 
-  public void executeHook(final WikiDefinition wiki) {
+  public void executeHook(final WikiDefinition wiki, final ProgressTracker tracker) {
     if (!siteInfoProperties.isEmpty()) {
-      siteInfoExtractor.extract(
-          apiSiteInfo.requestSiteInfo(wiki, siteInfoProperties, null, null, null));
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving site information"))) {
+        siteInfoExtractor.extract(
+            apiSiteInfo.requestSiteInfo(wiki, siteInfoProperties, null, null, null));
+      }
     }
     if (!tagsProperties.isEmpty()) {
-      final List<Tag> tags = apiTags.retrieveTags(wiki, Limit.max(), null, tagsProperties);
-      tagRepository.addTags(tags);
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving tags"))) {
+        final List<Tag> tags = apiTags.retrieveTags(wiki, Limit.max(), null, tagsProperties);
+        tagRepository.addTags(tags);
+      }
     }
   }
 

@@ -17,9 +17,9 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
+import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.base.processor.ProgressStep;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 
 public final class RecentChangesListRefresher {

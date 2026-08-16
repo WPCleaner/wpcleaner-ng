@@ -25,6 +25,7 @@ public class PageAnalysisStylePropertiesInitializer implements StylePropertiesIn
             StyleProperties.builder()
                 .withBackground(true)
                 .withBackgroundColor(new Color(153, 255, 153))
+                .withItalic(true)
                 .build()),
         Map.entry(
             COMMENT,

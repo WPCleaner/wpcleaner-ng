@@ -49,7 +49,7 @@ class ApiRandomTest {
     final RandomQuery options =
         RandomQuery.emptyBuilder()
             .limit(Limit.of(2))
-            .namespace(Set.of(new Namespace(0, "Main", "")))
+            .namespace(Set.of(Namespace.MAIN))
             .filterRedirect(RandomParameters.FilterRedirect.NON_REDIRECTS)
             .build();
 

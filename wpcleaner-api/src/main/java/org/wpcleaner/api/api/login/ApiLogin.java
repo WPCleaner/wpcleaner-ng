@@ -22,7 +22,6 @@ import org.wpcleaner.api.api.ApiResponse;
 import org.wpcleaner.api.api.ApiRestClient;
 import org.wpcleaner.api.api.ApiUriBuilder;
 import org.wpcleaner.api.api.ApiUtils;
-import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -30,11 +29,9 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 public class ApiLogin {
 
   private final ApiRestClient restClient;
-  private final LoginHook loginHook;
 
-  public ApiLogin(final ApiRestClient restClient, final LoginHook loginHook) {
+  public ApiLogin(final ApiRestClient restClient) {
     this.restClient = restClient;
-    this.loginHook = loginHook;
   }
 
   public Login login(
@@ -47,10 +44,10 @@ public class ApiLogin {
           GT._T("Login has been aborted"),
           GT._T(
               """
-          You're probably trying to login using your main account password instead of a bot password.<br/>
-          You should create a bot password and use it instead of your main account password.<br/>
-          See <a href="%s">Special:Botpasswords</a> for creating your bot password.
-          """,
+              You're probably trying to login using your main account password instead of a bot password.<br/>
+              You should create a bot password and use it instead of your main account password.<br/>
+              See <a href="%s">Special:Botpasswords</a> for creating your bot password.
+              """,
               wiki.pageUrl("Special:Botpasswords")));
     }
     if (Objects.equals(login.result(), Login.RESULT_FAILED)) {
@@ -58,15 +55,14 @@ public class ApiLogin {
           GT._T("Login failed"),
           GT._T(
               """
-          You've probably used an incorrect username or password.<br/>
-          Please try again.
-          """));
+              You've probably used an incorrect username or password.<br/>
+              Please try again.
+              """));
     }
     if (!Objects.equals(login.result(), Login.RESULT_SUCCESS)) {
       throw new ApiException(
           GT._T("Login failed"), GT._T("Result returned was %s", login.result()));
     }
-    loginHook.executeHook(wiki);
     return login;
   }
 

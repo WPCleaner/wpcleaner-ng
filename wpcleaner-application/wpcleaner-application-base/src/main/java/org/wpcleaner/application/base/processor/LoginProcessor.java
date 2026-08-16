@@ -16,6 +16,9 @@ import org.wpcleaner.api.api.query.list.users.User;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.Tokens;
 import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
+import org.wpcleaner.api.hook.login.LoginHook;
+import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -26,16 +29,19 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
   private final ApiTokens apiTokens;
   private final ApiUsers apiUsers;
   private final CurrentUserService currentUserService;
+  private final LoginHook loginHook;
 
   public LoginProcessor(
       final ApiLogin apiLogin,
       final ApiTokens apiTokens,
       final ApiUsers apiUsers,
-      final CurrentUserService currentUserService) {
+      final CurrentUserService currentUserService,
+      final LoginHook loginHook) {
     this.apiLogin = apiLogin;
     this.apiTokens = apiTokens;
     this.apiUsers = apiUsers;
     this.currentUserService = currentUserService;
+    this.loginHook = loginHook;
   }
 
   @Override
@@ -55,6 +61,7 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
             Objects.requireNonNull(tokens.login(), GT._T("Login token is null")));
       }
     }
+    loginHook.executeHook(input.wiki, tracker);
     final String compactUsername = compactUsername(input.username);
     currentUserService.login(input.wiki(), compactUsername, input.demo());
     try (ProgressStep _ =

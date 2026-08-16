@@ -1,4 +1,4 @@
-package org.wpcleaner.application.base.processor;
+package org.wpcleaner.api.progress;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>

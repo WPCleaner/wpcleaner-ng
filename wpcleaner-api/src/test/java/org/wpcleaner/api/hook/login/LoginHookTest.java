@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.wpcleaner.api.TestCallingMWApi;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
+import org.wpcleaner.api.progress.DefaultProgressTracker;
 import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
@@ -43,7 +44,7 @@ class LoginHookTest {
             TagsParameters.Properties.DISPLAY_NAME));
 
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META);
+    loginHook.executeHook(WikimediaDefinitions.META, new DefaultProgressTracker(_ -> {}));
 
     // THEN
     final List<Tag> tags = tagRepository.getTags();

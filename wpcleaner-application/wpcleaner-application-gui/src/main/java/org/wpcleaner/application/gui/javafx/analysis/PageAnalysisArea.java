@@ -6,6 +6,7 @@ package org.wpcleaner.application.gui.javafx.analysis;
  */
 
 import org.fxmisc.richtext.InlineCssTextArea;
+import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.application.gui.javafx.analysis.coloration.PageSyntaxColorizer;
 
 public final class PageAnalysisArea extends InlineCssTextArea {
@@ -16,9 +17,10 @@ public final class PageAnalysisArea extends InlineCssTextArea {
     super();
     this.colorizer = colorizer;
     setWrapText(true);
+  }
 
-    textProperty()
-        .addListener(
-            (_, _, newText) -> setStyleSpans(0, this.colorizer.computeStyleSpans(newText)));
+  public void updateAnalysis(final PageAnalysis analysis) {
+    super.replaceText(analysis.getText());
+    setStyleSpans(0, colorizer.computeStyleSpans(analysis));
   }
 }

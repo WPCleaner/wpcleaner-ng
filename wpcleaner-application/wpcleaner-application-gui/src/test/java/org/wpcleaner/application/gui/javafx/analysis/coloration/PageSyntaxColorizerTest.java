@@ -10,6 +10,9 @@ import org.assertj.core.api.Assertions;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.wpcleaner.api.analysis.PageAnalysis;
+import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
@@ -30,10 +33,12 @@ class PageSyntaxColorizerTest {
         new PageSyntaxColorizer(List.of(commentRule), javaFxStyleRegistry);
 
     // Given
+    final PageAnalysisFactory factory = new PageAnalysisFactory(new NamespaceRepository());
     final String text = "Hello <!-- world --> !";
+    final PageAnalysis analysis = factory.analysis("Title", text);
 
     // When
-    final StyleSpans<String> spans = colorizer.computeStyleSpans(text);
+    final StyleSpans<String> spans = colorizer.computeStyleSpans(analysis);
 
     // Then
     Assertions.assertThat(spans.getSpanCount()).isEqualTo(3);

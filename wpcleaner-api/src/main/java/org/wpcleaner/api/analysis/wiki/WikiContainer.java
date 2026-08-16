@@ -13,18 +13,24 @@ import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 
 public class WikiContainer {
 
   private final String text;
+  private final NamespaceRepository namespaceRepository;
   private final CommentContainer comments;
   private final List<CategoryElement> categories;
   private final List<InternalLinkElement> internalLinks;
   private final Lock lock = new ReentrantLock();
   private boolean done;
 
-  public WikiContainer(final String text, final CommentContainer comments) {
+  public WikiContainer(
+      final String text,
+      final CommentContainer comments,
+      final NamespaceRepository namespaceRepository) {
     this.text = text;
+    this.namespaceRepository = namespaceRepository;
     this.comments = comments;
     this.categories = new ArrayList<>();
     this.internalLinks = new ArrayList<>();
@@ -47,7 +53,8 @@ public class WikiContainer {
       if (!done) {
         final TextBrowser textBrowser = new TextBrowser(text);
         textBrowser.addExclusions(comments.getComments());
-        final WikiAnalyzer analyzer = new WikiAnalyzer(text, textBrowser);
+        final WikiAnalyzer analyzer =
+            new WikiAnalyzer(text, textBrowser, namespaceRepository.getNamespaces());
         analyzer.analyze();
         categories.addAll(analyzer.getCategories());
         internalLinks.addAll(analyzer.getInternalLinks());

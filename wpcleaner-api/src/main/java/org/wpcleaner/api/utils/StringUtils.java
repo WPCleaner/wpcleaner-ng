@@ -25,6 +25,13 @@ public final class StringUtils {
     return original.substring(0, 1).toLowerCase(Locale.ROOT) + original.substring(1);
   }
 
+  public static String firstLetterUpperCase(final String original) {
+    if (original.isEmpty()) {
+      return original;
+    }
+    return original.substring(0, 1).toUpperCase(Locale.ROOT) + original.substring(1);
+  }
+
   public static String joinWithEllipsis(final Collection<String> items, final int maxItems) {
     if (items.size() > maxItems) {
       return Stream.concat(items.stream().limit(maxItems), Stream.of("…"))

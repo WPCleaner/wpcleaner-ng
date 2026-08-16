@@ -22,11 +22,11 @@ import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.list.random.RandomPage;
 import org.wpcleaner.api.api.query.list.random.RandomQuery;
+import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.base.processor.ProgressStep;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
@@ -155,10 +155,7 @@ public class PageInput {
       final JavaFxProgressTracker progressTracker) {
     try (ProgressStep _ = progressTracker.start(GT._T("Retrieving random page"))) {
       final RandomQuery query =
-          RandomQuery.emptyBuilder()
-              .limit(Limit.of(1))
-              .namespace(Set.of(new Namespace(0, "Main", "Main")))
-              .build();
+          RandomQuery.emptyBuilder().limit(Limit.of(1)).namespace(Set.of(Namespace.MAIN)).build();
       final List<RandomPage> pages = apiRandom.retrieveRandomPages(wiki, query);
       Platform.runLater(
           () -> {

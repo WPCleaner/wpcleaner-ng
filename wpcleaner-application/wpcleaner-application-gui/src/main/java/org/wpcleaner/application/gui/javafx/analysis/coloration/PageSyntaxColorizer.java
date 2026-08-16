@@ -28,14 +28,13 @@ public class PageSyntaxColorizer {
     this.styleRegistry = styleRegistry;
   }
 
-  public StyleSpans<String> computeStyleSpans(final String text) {
+  public StyleSpans<String> computeStyleSpans(final PageAnalysis pageAnalysis) {
     final StyleSpansBuilder<String> spansBuilder = new StyleSpansBuilder<>();
+    final String text = pageAnalysis.getText();
     if (text.isEmpty()) {
       spansBuilder.add("", 0);
       return spansBuilder.create();
     }
-
-    final PageAnalysis pageAnalysis = new PageAnalysis("", text);
 
     final List<StyledRange> ranges = new ArrayList<>();
     for (final PageSyntaxRule rule : rules) {

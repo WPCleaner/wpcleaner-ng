@@ -13,6 +13,7 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
+import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 
 public final class PageAnalysis {
 
@@ -22,12 +23,13 @@ public final class PageAnalysis {
   private final TagContainer tags;
   private final WikiContainer wikiElements;
 
-  public PageAnalysis(final String title, final String text) {
+  public PageAnalysis(
+      final String title, final String text, final NamespaceRepository namespaceRepository) {
     this.title = title;
     this.text = text;
     this.comments = new CommentContainer(text);
     this.tags = new TagContainer(text, comments);
-    this.wikiElements = new WikiContainer(text, comments);
+    this.wikiElements = new WikiContainer(text, comments, namespaceRepository);
   }
 
   public String getTitle() {

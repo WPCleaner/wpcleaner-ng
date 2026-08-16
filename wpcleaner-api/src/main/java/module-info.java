@@ -37,8 +37,10 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.api;
   exports org.wpcleaner.api.hook.login;
   exports org.wpcleaner.api.language;
+  exports org.wpcleaner.api.progress;
   exports org.wpcleaner.api.repository.namespace;
   exports org.wpcleaner.api.repository.tag;
+  exports org.wpcleaner.api.repository;
   exports org.wpcleaner.api.settings;
   exports org.wpcleaner.api.utils;
   exports org.wpcleaner.api.wiki.builder;
@@ -60,8 +62,10 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.api;
   opens org.wpcleaner.api.hook.login;
   opens org.wpcleaner.api.language;
+  opens org.wpcleaner.api.progress;
   opens org.wpcleaner.api.repository.namespace;
   opens org.wpcleaner.api.repository.tag;
+  opens org.wpcleaner.api.repository;
   opens org.wpcleaner.api.settings;
   opens org.wpcleaner.api.utils;
   opens org.wpcleaner.api.wiki.builder;

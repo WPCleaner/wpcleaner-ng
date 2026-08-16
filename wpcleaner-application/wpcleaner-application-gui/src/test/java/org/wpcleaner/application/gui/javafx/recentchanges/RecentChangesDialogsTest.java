@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.tags.Tag;
+import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
@@ -54,8 +55,8 @@ class RecentChangesDialogsTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final Namespace ns0 = new Namespace(0, "Main", "Main");
-          final Namespace ns1 = new Namespace(1, "Talk", "Talk");
+          final Namespace ns0 = new Namespace(0, "Main", "Main", List.of(), CaseType.FIRST_LETTER);
+          final Namespace ns1 = new Namespace(1, "Talk", "Talk", List.of(), CaseType.FIRST_LETTER);
           final Tag tag1 = new Tag(false, false, null, null, null, "tag1", List.of());
           final RecentChangesFilter filterWithSeverity =
               new RecentChangesFilter(
@@ -102,7 +103,7 @@ class RecentChangesDialogsTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final Namespace ns0 = new Namespace(0, "Main", "Main");
+          final Namespace ns0 = Namespace.MAIN;
           final Tag tag1 = new Tag(false, false, null, null, null, "tag1", List.of());
           final RecentChangesOptions options = getRecentChangesOptions();
 
