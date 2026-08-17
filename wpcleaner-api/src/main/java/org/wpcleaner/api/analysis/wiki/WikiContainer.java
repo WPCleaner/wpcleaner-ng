@@ -13,10 +13,12 @@ import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 
+@SuppressWarnings("PMD.DataClass")
 public class WikiContainer {
 
   private final String text;
@@ -25,6 +27,7 @@ public class WikiContainer {
   private final CommentContainer comments;
   private final List<CategoryElement> categories;
   private final List<InternalLinkElement> internalLinks;
+  private final List<InterwikiLinkElement> interwikiLinks;
   private final List<LanguageLinkElement> languageLinks;
   private final Lock lock = new ReentrantLock();
   private boolean done;
@@ -40,6 +43,7 @@ public class WikiContainer {
     this.comments = comments;
     this.categories = new ArrayList<>();
     this.internalLinks = new ArrayList<>();
+    this.interwikiLinks = new ArrayList<>();
     this.languageLinks = new ArrayList<>();
     this.done = false;
   }
@@ -52,6 +56,11 @@ public class WikiContainer {
   public List<InternalLinkElement> getInternalLinks() {
     ensureAnalyzed();
     return internalLinks;
+  }
+
+  public List<InterwikiLinkElement> getInterwikiLinks() {
+    ensureAnalyzed();
+    return interwikiLinks;
   }
 
   public List<LanguageLinkElement> getLanguageLinks() {
@@ -74,6 +83,7 @@ public class WikiContainer {
         analyzer.analyze();
         categories.addAll(analyzer.getCategories());
         internalLinks.addAll(analyzer.getInternalLinks());
+        interwikiLinks.addAll(analyzer.getInterwikiLinks());
         languageLinks.addAll(analyzer.getLanguageLinks());
         done = true;
       }

@@ -9,6 +9,7 @@ import java.util.List;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -53,6 +54,10 @@ final class WikiAnalyzer {
 
   List<InternalLinkElement> getInternalLinks() {
     return squareBracketAnalyzer.getInternalLinks();
+  }
+
+  List<InterwikiLinkElement> getInterwikiLinks() {
+    return squareBracketAnalyzer.getInterwikiLinks();
   }
 
   List<LanguageLinkElement> getLanguageLinks() {

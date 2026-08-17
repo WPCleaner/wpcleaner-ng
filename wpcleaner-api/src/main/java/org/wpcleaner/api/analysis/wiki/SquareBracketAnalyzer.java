@@ -12,6 +12,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -31,8 +32,9 @@ final class SquareBracketAnalyzer {
   private final String text;
   @Nullable private final Namespace categoryNamespace;
   private final List<Interwiki> interwikis;
-  private final List<InternalLinkElement> internalLinks;
   private final List<CategoryElement> categories;
+  private final List<InternalLinkElement> internalLinks;
+  private final List<InterwikiLinkElement> interwikiLinks;
   private final List<LanguageLinkElement> languageLinks;
 
   SquareBracketAnalyzer(
@@ -41,8 +43,9 @@ final class SquareBracketAnalyzer {
     this.categoryNamespace =
         Namespace.findNamespace(namespaces, CommonNamespaces.CATEGORY.id).orElse(null);
     this.interwikis = interwikis;
-    this.internalLinks = new ArrayList<>();
     this.categories = new ArrayList<>();
+    this.internalLinks = new ArrayList<>();
+    this.interwikiLinks = new ArrayList<>();
     this.languageLinks = new ArrayList<>();
   }
 
@@ -93,8 +96,12 @@ final class SquareBracketAnalyzer {
     }
     final String beforeColumn = target.substring(0, column);
     final Optional<Interwiki> interwikiOpt = Interwiki.findInterwiki(interwikis, beforeColumn);
-    if (interwikiOpt.isPresent() && interwikiOpt.get().language() != null) {
-      languageLinks.add(new LanguageLinkElement(begin, end));
+    if (interwikiOpt.isPresent()) {
+      if (interwikiOpt.get().language() != null) {
+        languageLinks.add(new LanguageLinkElement(begin, end));
+      } else {
+        interwikiLinks.add(new InterwikiLinkElement(begin, end));
+      }
     } else if (categoryNamespace != null && categoryNamespace.isPossibleName(beforeColumn)) {
       categories.add(new CategoryElement(begin, end));
     } else {
@@ -135,12 +142,16 @@ final class SquareBracketAnalyzer {
     return text.substring(beginValue, cursorIndex);
   }
 
+  List<CategoryElement> getCategories() {
+    return categories;
+  }
+
   List<InternalLinkElement> getInternalLinks() {
     return internalLinks;
   }
 
-  List<CategoryElement> getCategories() {
-    return categories;
+  List<InterwikiLinkElement> getInterwikiLinks() {
+    return interwikiLinks;
   }
 
   List<LanguageLinkElement> getLanguageLinks() {

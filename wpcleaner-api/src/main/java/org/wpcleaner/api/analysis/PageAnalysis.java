@@ -10,6 +10,7 @@ import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
@@ -49,19 +50,23 @@ public final class PageAnalysis {
     return comments.getComments();
   }
 
-  public List<TagElement> getTags() {
-    return tags.getTags();
+  public List<CategoryElement> getCategories() {
+    return wikiElements.getCategories();
   }
 
   public List<InternalLinkElement> getInternalLinks() {
     return wikiElements.getInternalLinks();
   }
 
-  public List<CategoryElement> getCategories() {
-    return wikiElements.getCategories();
+  public List<InterwikiLinkElement> getInterwikiLinks() {
+    return wikiElements.getInterwikiLinks();
   }
 
   public List<LanguageLinkElement> getLanguageLinks() {
     return wikiElements.getLanguageLinks();
+  }
+
+  public List<TagElement> getTags() {
+    return tags.getTags();
   }
 }

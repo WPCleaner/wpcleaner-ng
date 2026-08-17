@@ -99,9 +99,9 @@ class PageAnalysisTest {
     Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
   }
 
-  @DisplayName("should analyze internal link when interwiki has null language attribute")
+  @DisplayName("should analyze interwiki link when interwiki has null language attribute")
   @Test
-  void analyzeInternalLinkWithNullLanguageInterwiki() {
+  void analyzeInterwikiLinkWithNullLanguageInterwiki() {
     // GIVEN
     final String text = "[[fr:Bonjour]]";
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
@@ -115,8 +115,8 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getLanguageLinks()).isEmpty();
-    Assertions.assertThat(analysis.getInternalLinks()).hasSize(1);
-    Assertions.assertThat(analysis.getInternalLinks().getFirst().begin()).isZero();
-    Assertions.assertThat(analysis.getInternalLinks().getFirst().end()).isEqualTo(text.length());
+    Assertions.assertThat(analysis.getInterwikiLinks()).hasSize(1);
+    Assertions.assertThat(analysis.getInterwikiLinks().getFirst().begin()).isZero();
+    Assertions.assertThat(analysis.getInterwikiLinks().getFirst().end()).isEqualTo(text.length());
   }
 }
