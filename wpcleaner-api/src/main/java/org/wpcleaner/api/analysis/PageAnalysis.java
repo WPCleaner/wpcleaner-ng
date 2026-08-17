@@ -10,9 +10,11 @@ import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
+import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 
 public final class PageAnalysis {
@@ -24,12 +26,15 @@ public final class PageAnalysis {
   private final WikiContainer wikiElements;
 
   public PageAnalysis(
-      final String title, final String text, final NamespaceRepository namespaceRepository) {
+      final String title,
+      final String text,
+      final NamespaceRepository namespaceRepository,
+      final InterwikiRepository interwikiRepository) {
     this.title = title;
     this.text = text;
     this.comments = new CommentContainer(text);
     this.tags = new TagContainer(text, comments);
-    this.wikiElements = new WikiContainer(text, comments, namespaceRepository);
+    this.wikiElements = new WikiContainer(text, comments, namespaceRepository, interwikiRepository);
   }
 
   public String getTitle() {
@@ -54,5 +59,9 @@ public final class PageAnalysis {
 
   public List<CategoryElement> getCategories() {
     return wikiElements.getCategories();
+  }
+
+  public List<LanguageLinkElement> getLanguageLinks() {
+    return wikiElements.getLanguageLinks();
   }
 }

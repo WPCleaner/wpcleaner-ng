@@ -18,6 +18,8 @@ import org.wpcleaner.api.TestCallingMWApi;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.progress.DefaultProgressTracker;
+import org.wpcleaner.api.repository.interwiki.Interwiki;
+import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
@@ -25,6 +27,7 @@ import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 @TestCallingMWApi
 class LoginHookTest {
 
+  @Autowired private InterwikiRepository interwikiRepository;
   @Autowired private LoginHook loginHook;
   @Autowired private TagRepository tagRepository;
 
@@ -52,6 +55,21 @@ class LoginHookTest {
     for (final Tag tag : tags) {
       Assertions.assertThat(tag.name()).as("name").isNotNull().isNotEmpty();
       Assertions.assertThat(tag.description()).as("description").isNotNull();
+    }
+  }
+
+  @DisplayName("Execute login hook and populate InterwikiRepository")
+  @Test
+  void executeHookPopulatesInterwikiRepository() {
+    // WHEN
+    loginHook.executeHook(WikimediaDefinitions.META, new DefaultProgressTracker(_ -> {}));
+
+    // THEN
+    final List<Interwiki> interwikis = interwikiRepository.getInterwikis();
+    Assertions.assertThat(interwikis).as("interwikis").isNotEmpty();
+    for (final Interwiki interwiki : interwikis) {
+      Assertions.assertThat(interwiki.prefix()).as("prefix").isNotNull().isNotEmpty();
+      Assertions.assertThat(interwiki.url()).as("url").isNotNull().isNotEmpty();
     }
   }
 }

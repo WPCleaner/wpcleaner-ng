@@ -6,18 +6,23 @@ package org.wpcleaner.api.analysis;
  */
 
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 
 @Service
 public class PageAnalysisFactory {
 
+  private final InterwikiRepository interwikiRepository;
   private final NamespaceRepository namespaceRepository;
 
-  public PageAnalysisFactory(final NamespaceRepository namespaceRepository) {
+  public PageAnalysisFactory(
+      final InterwikiRepository interwikiRepository,
+      final NamespaceRepository namespaceRepository) {
+    this.interwikiRepository = interwikiRepository;
     this.namespaceRepository = namespaceRepository;
   }
 
   public PageAnalysis analysis(final String title, final String text) {
-    return new PageAnalysis(title, text, namespaceRepository);
+    return new PageAnalysis(title, text, namespaceRepository, interwikiRepository);
   }
 }

@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jspecify.annotations.Nullable;
 
 public record Interwiki(
+    @JsonProperty("deprecated") @Nullable String deprecated,
+    @JsonProperty("language") @Nullable String language,
     @JsonProperty("local") @Nullable Boolean local,
     @JsonProperty("prefix") String prefix,
     @JsonProperty("url") String url) {}

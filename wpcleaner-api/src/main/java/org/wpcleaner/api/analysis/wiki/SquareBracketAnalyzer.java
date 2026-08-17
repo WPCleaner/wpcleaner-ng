@@ -7,10 +7,13 @@ package org.wpcleaner.api.analysis.wiki;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 
@@ -27,15 +30,20 @@ final class SquareBracketAnalyzer {
 
   private final String text;
   @Nullable private final Namespace categoryNamespace;
+  private final List<Interwiki> interwikis;
   private final List<InternalLinkElement> internalLinks;
   private final List<CategoryElement> categories;
+  private final List<LanguageLinkElement> languageLinks;
 
-  SquareBracketAnalyzer(final String text, final List<Namespace> namespaces) {
+  SquareBracketAnalyzer(
+      final String text, final List<Namespace> namespaces, final List<Interwiki> interwikis) {
     this.text = text;
     this.categoryNamespace =
         Namespace.findNamespace(namespaces, CommonNamespaces.CATEGORY.id).orElse(null);
+    this.interwikis = interwikis;
     this.internalLinks = new ArrayList<>();
     this.categories = new ArrayList<>();
+    this.languageLinks = new ArrayList<>();
   }
 
   void analyzeSquareBracket(final TextBrowser.ReverseCursor reverseCursor) {
@@ -84,7 +92,10 @@ final class SquareBracketAnalyzer {
       return;
     }
     final String beforeColumn = target.substring(0, column);
-    if (categoryNamespace != null && categoryNamespace.isPossibleName(beforeColumn)) {
+    final Optional<Interwiki> interwikiOpt = Interwiki.findInterwiki(interwikis, beforeColumn);
+    if (interwikiOpt.isPresent() && interwikiOpt.get().language() != null) {
+      languageLinks.add(new LanguageLinkElement(begin, end));
+    } else if (categoryNamespace != null && categoryNamespace.isPossibleName(beforeColumn)) {
       categories.add(new CategoryElement(begin, end));
     } else {
       internalLinks.add(new InternalLinkElement(begin, end));
@@ -130,5 +141,9 @@ final class SquareBracketAnalyzer {
 
   List<CategoryElement> getCategories() {
     return categories;
+  }
+
+  List<LanguageLinkElement> getLanguageLinks() {
+    return languageLinks;
   }
 }

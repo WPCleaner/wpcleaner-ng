@@ -11,13 +11,17 @@ import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 @Service
 public class SiteInfoExtractor {
 
+  private final InterwikiExtractor interwikiExtractor;
   private final NamespaceExtractor namespaceExtractor;
 
-  public SiteInfoExtractor(final NamespaceExtractor namespaceExtractor) {
+  public SiteInfoExtractor(
+      final InterwikiExtractor interwikiExtractor, final NamespaceExtractor namespaceExtractor) {
+    this.interwikiExtractor = interwikiExtractor;
     this.namespaceExtractor = namespaceExtractor;
   }
 
   public void extract(final SiteInfo siteInfo) {
     namespaceExtractor.extract(siteInfo);
+    interwikiExtractor.extract(siteInfo);
   }
 }

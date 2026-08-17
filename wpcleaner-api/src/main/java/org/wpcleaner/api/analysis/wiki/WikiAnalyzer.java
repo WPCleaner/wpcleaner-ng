@@ -9,6 +9,8 @@ import java.util.List;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.Namespace;
 
 final class WikiAnalyzer {
@@ -17,10 +19,14 @@ final class WikiAnalyzer {
   private final TextBrowser textBrowser;
   private final SquareBracketAnalyzer squareBracketAnalyzer;
 
-  WikiAnalyzer(final String text, final TextBrowser textBrowser, final List<Namespace> namespaces) {
+  WikiAnalyzer(
+      final String text,
+      final TextBrowser textBrowser,
+      final List<Namespace> namespaces,
+      final List<Interwiki> interwikis) {
     this.text = text;
     this.textBrowser = textBrowser;
-    this.squareBracketAnalyzer = new SquareBracketAnalyzer(text, namespaces);
+    this.squareBracketAnalyzer = new SquareBracketAnalyzer(text, namespaces, interwikis);
   }
 
   void analyze() {
@@ -41,12 +47,16 @@ final class WikiAnalyzer {
     }
   }
 
+  List<CategoryElement> getCategories() {
+    return squareBracketAnalyzer.getCategories();
+  }
+
   List<InternalLinkElement> getInternalLinks() {
     return squareBracketAnalyzer.getInternalLinks();
   }
 
-  List<CategoryElement> getCategories() {
-    return squareBracketAnalyzer.getCategories();
+  List<LanguageLinkElement> getLanguageLinks() {
+    return squareBracketAnalyzer.getLanguageLinks();
   }
 
   @SuppressWarnings({"unused", "UnusedVariable"})

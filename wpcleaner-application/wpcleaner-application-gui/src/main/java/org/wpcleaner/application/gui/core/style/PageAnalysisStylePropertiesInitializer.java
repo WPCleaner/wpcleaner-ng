@@ -15,6 +15,7 @@ public class PageAnalysisStylePropertiesInitializer implements StylePropertiesIn
   public static final String CATEGORY = "pageAnalysis.category";
   public static final String COMMENT = "pageAnalysis.comment";
   public static final String INTERNAL_LINK = "pageAnalysis.internalLink";
+  public static final String LANGUAGE_LINK = "pageAnalysis.languageLink";
   public static final String TAG = "pageAnalysis.tag";
 
   @Override
@@ -39,6 +40,13 @@ public class PageAnalysisStylePropertiesInitializer implements StylePropertiesIn
             StyleProperties.builder()
                 .withBackground(true)
                 .withBackgroundColor(new Color(204, 255, 255))
+                .build()),
+        Map.entry(
+            LANGUAGE_LINK,
+            StyleProperties.builder()
+                .withBackground(true)
+                .withBackgroundColor(new Color(214, 214, 214))
+                .withItalic(true)
                 .build()),
         Map.entry(
             TAG,

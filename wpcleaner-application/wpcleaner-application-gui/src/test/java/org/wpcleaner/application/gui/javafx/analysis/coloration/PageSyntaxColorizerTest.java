@@ -12,6 +12,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import org.wpcleaner.api.repository.interwiki.Interwiki;
+import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
@@ -33,7 +35,8 @@ class PageSyntaxColorizerTest {
         new PageSyntaxColorizer(List.of(commentRule), javaFxStyleRegistry);
 
     // Given
-    final PageAnalysisFactory factory = new PageAnalysisFactory(new NamespaceRepository());
+    final PageAnalysisFactory factory =
+        new PageAnalysisFactory(new InterwikiRepository(), new NamespaceRepository());
     final String text = "Hello <!-- world --> !";
     final PageAnalysis analysis = factory.analysis("Title", text);
 
@@ -51,6 +54,49 @@ class PageSyntaxColorizerTest {
     Assertions.assertThat(spans.getStyleSpan(1).getLength()).isEqualTo(14);
     Assertions.assertThat(spans.getStyleSpan(1).getStyle())
         .isEqualTo(javaFxStyleRegistry.getStyle(PageAnalysisStylePropertiesInitializer.COMMENT));
+
+    // Third span: " !" -> length 2, no style
+    Assertions.assertThat(spans.getStyleSpan(2).getLength()).isEqualTo(2);
+    Assertions.assertThat(spans.getStyleSpan(2).getStyle()).isEmpty();
+  }
+
+  @DisplayName("computeStyleSpans colors language links and leaves normal text unstyled")
+  @Test
+  void testComputeStyleSpansWithLanguageLink() {
+    // Set up style dependencies
+    final StylePropertiesRegistry stylePropertiesRegistry =
+        new StylePropertiesRegistry(List.of(new PageAnalysisStylePropertiesInitializer()));
+    final JavaFxStylePropertiesRegistry javaFxStyleRegistry =
+        new JavaFxStylePropertiesRegistry(stylePropertiesRegistry);
+
+    final LanguageLinkSyntaxRule languageLinkRule = new LanguageLinkSyntaxRule();
+    final PageSyntaxColorizer colorizer =
+        new PageSyntaxColorizer(List.of(languageLinkRule), javaFxStyleRegistry);
+
+    // Given
+    final InterwikiRepository interwikiRepository = new InterwikiRepository();
+    interwikiRepository.addInterwiki(
+        new Interwiki("en", true, "https://en.wikipedia.org/wiki/$1", "English", null));
+    final PageAnalysisFactory factory =
+        new PageAnalysisFactory(interwikiRepository, new NamespaceRepository());
+    final String text = "Hello [[en:World]] !";
+    final PageAnalysis analysis = factory.analysis("Title", text);
+
+    // When
+    final StyleSpans<String> spans = colorizer.computeStyleSpans(analysis);
+
+    // Then
+    Assertions.assertThat(spans.getSpanCount()).isEqualTo(3);
+
+    // First span: "Hello " -> length 6, no style
+    Assertions.assertThat(spans.getStyleSpan(0).getLength()).isEqualTo(6);
+    Assertions.assertThat(spans.getStyleSpan(0).getStyle()).isEmpty();
+
+    // Second span: "[[en:World]]" -> length 12, LANGUAGE_LINK style
+    Assertions.assertThat(spans.getStyleSpan(1).getLength()).isEqualTo(12);
+    Assertions.assertThat(spans.getStyleSpan(1).getStyle())
+        .isEqualTo(
+            javaFxStyleRegistry.getStyle(PageAnalysisStylePropertiesInitializer.LANGUAGE_LINK));
 
     // Third span: " !" -> length 2, no style
     Assertions.assertThat(spans.getStyleSpan(2).getLength()).isEqualTo(2);
