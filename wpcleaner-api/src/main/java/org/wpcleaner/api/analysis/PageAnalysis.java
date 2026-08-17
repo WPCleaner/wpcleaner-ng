@@ -9,6 +9,7 @@ import java.util.List;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.comment.CommentElement;
+import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
@@ -17,6 +18,7 @@ import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
+import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 
 public final class PageAnalysis {
 
@@ -29,13 +31,16 @@ public final class PageAnalysis {
   public PageAnalysis(
       final String title,
       final String text,
+      final InterwikiRepository interwikiRepository,
       final NamespaceRepository namespaceRepository,
-      final InterwikiRepository interwikiRepository) {
+      final ProtocolRepository protocolRepository) {
     this.title = title;
     this.text = text;
     this.comments = new CommentContainer(text);
     this.tags = new TagContainer(text, comments);
-    this.wikiElements = new WikiContainer(text, comments, namespaceRepository, interwikiRepository);
+    this.wikiElements =
+        new WikiContainer(
+            text, comments, interwikiRepository, namespaceRepository, protocolRepository);
   }
 
   public String getTitle() {
@@ -52,6 +57,10 @@ public final class PageAnalysis {
 
   public List<CategoryElement> getCategories() {
     return wikiElements.getCategories();
+  }
+
+  public List<ExternalLinkElement> getExternalLinks() {
+    return wikiElements.getExternalLinks();
   }
 
   public List<InternalLinkElement> getInternalLinks() {

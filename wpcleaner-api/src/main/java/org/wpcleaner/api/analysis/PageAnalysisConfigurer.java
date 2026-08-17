@@ -18,6 +18,7 @@ class PageAnalysisConfigurer {
         Set.of(
             SiteInfoParameters.Properties.INTERWIKI_MAP,
             SiteInfoParameters.Properties.NAMESPACES,
-            SiteInfoParameters.Properties.NAMESPACE_ALIASES));
+            SiteInfoParameters.Properties.NAMESPACE_ALIASES,
+            SiteInfoParameters.Properties.PROTOCOLS));
   }
 }

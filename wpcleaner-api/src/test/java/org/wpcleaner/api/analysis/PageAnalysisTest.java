@@ -15,6 +15,8 @@ import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
+import org.wpcleaner.api.repository.protocol.Protocol;
+import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 
 class PageAnalysisTest {
 
@@ -64,6 +66,34 @@ class PageAnalysisTest {
     Assertions.assertThat(analysis.getCategories().getFirst().end()).isEqualTo(text.length());
   }
 
+  @DisplayName("should analyze external link when protocol is known")
+  @Test
+  void analyzeExternalLink() {
+    // GIVEN
+    final String text = "[https://example.com/ Hello]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getExternalLinks()).hasSize(1);
+    Assertions.assertThat(analysis.getExternalLinks().getFirst().begin()).isZero();
+    Assertions.assertThat(analysis.getExternalLinks().getFirst().end()).isEqualTo(text.length());
+  }
+
+  @DisplayName("should not analyze external link when protocol is unknown")
+  @Test
+  void analyzeExternalLinkWithUnknownProtocol() {
+    // GIVEN
+    final String text = "[ftp://example.com/ Hello]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getExternalLinks()).isEmpty();
+  }
+
   private PageAnalysis createPageAnalysis(final String text) {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     namespaceRepository.addNamespace(
@@ -73,7 +103,11 @@ class PageAnalysisTest {
             "Catégorie",
             List.of("Catégories"),
             CaseType.FIRST_LETTER));
-    return new PageAnalysis("Title", text, namespaceRepository, new InterwikiRepository());
+    final ProtocolRepository protocolRepository = new ProtocolRepository();
+    protocolRepository.addProtocol(new Protocol("https://"));
+    protocolRepository.addProtocol(new Protocol("http://"));
+    return new PageAnalysis(
+        "Title", text, new InterwikiRepository(), namespaceRepository, protocolRepository);
   }
 
   @DisplayName("should analyze language link when interwiki has language attribute")
@@ -84,13 +118,14 @@ class PageAnalysisTest {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("en", true, "https://en.wikipedia.org/wiki/$1", "English", null));
+        new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
     interwikiRepository.addInterwiki(
-        new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/$1", null, null));
+        new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
 
     // WHEN
     final PageAnalysis analysis =
-        new PageAnalysis("Title", text, namespaceRepository, interwikiRepository);
+        new PageAnalysis(
+            "Title", text, interwikiRepository, namespaceRepository, new ProtocolRepository());
 
     // THEN
     Assertions.assertThat(analysis.getLanguageLinks()).hasSize(1);
@@ -107,11 +142,12 @@ class PageAnalysisTest {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/$1", null, null));
+        new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
 
     // WHEN
     final PageAnalysis analysis =
-        new PageAnalysis("Title", text, namespaceRepository, interwikiRepository);
+        new PageAnalysis(
+            "Title", text, interwikiRepository, namespaceRepository, new ProtocolRepository());
 
     // THEN
     Assertions.assertThat(analysis.getLanguageLinks()).isEmpty();

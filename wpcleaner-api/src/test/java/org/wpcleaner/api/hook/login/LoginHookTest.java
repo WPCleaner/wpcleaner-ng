@@ -20,6 +20,8 @@ import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.progress.DefaultProgressTracker;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.protocol.Protocol;
+import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
@@ -29,6 +31,7 @@ class LoginHookTest {
 
   @Autowired private InterwikiRepository interwikiRepository;
   @Autowired private LoginHook loginHook;
+  @Autowired private ProtocolRepository protocolRepository;
   @Autowired private TagRepository tagRepository;
 
   @ComponentScan(basePackages = "org.wpcleaner")
@@ -70,6 +73,20 @@ class LoginHookTest {
     for (final Interwiki interwiki : interwikis) {
       Assertions.assertThat(interwiki.prefix()).as("prefix").isNotNull().isNotEmpty();
       Assertions.assertThat(interwiki.url()).as("url").isNotNull().isNotEmpty();
+    }
+  }
+
+  @DisplayName("Execute login hook and populate ProtocolRepository")
+  @Test
+  void executeHookPopulatesProtocolRepository() {
+    // WHEN
+    loginHook.executeHook(WikimediaDefinitions.META, new DefaultProgressTracker(_ -> {}));
+
+    // THEN
+    final List<Protocol> protocols = protocolRepository.getProtocols();
+    Assertions.assertThat(protocols).as("protocols").isNotEmpty();
+    for (final Protocol protocol : protocols) {
+      Assertions.assertThat(protocol.value()).as("value").isNotNull().isNotEmpty();
     }
   }
 }

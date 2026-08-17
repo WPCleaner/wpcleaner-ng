@@ -8,11 +8,13 @@ package org.wpcleaner.api.analysis.wiki;
 import java.util.List;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.Namespace;
+import org.wpcleaner.api.repository.protocol.Protocol;
 
 final class WikiAnalyzer {
 
@@ -23,11 +25,12 @@ final class WikiAnalyzer {
   WikiAnalyzer(
       final String text,
       final TextBrowser textBrowser,
+      final List<Interwiki> interwikis,
       final List<Namespace> namespaces,
-      final List<Interwiki> interwikis) {
+      final List<Protocol> protocols) {
     this.text = text;
     this.textBrowser = textBrowser;
-    this.squareBracketAnalyzer = new SquareBracketAnalyzer(text, namespaces, interwikis);
+    this.squareBracketAnalyzer = new SquareBracketAnalyzer(text, interwikis, namespaces, protocols);
   }
 
   void analyze() {
@@ -50,6 +53,10 @@ final class WikiAnalyzer {
 
   List<CategoryElement> getCategories() {
     return squareBracketAnalyzer.getCategories();
+  }
+
+  List<ExternalLinkElement> getExternalLinks() {
+    return squareBracketAnalyzer.getExternalLinks();
   }
 
   List<InternalLinkElement> getInternalLinks() {

@@ -13,15 +13,20 @@ public class SiteInfoExtractor {
 
   private final InterwikiExtractor interwikiExtractor;
   private final NamespaceExtractor namespaceExtractor;
+  private final ProtocolExtractor protocolExtractor;
 
   public SiteInfoExtractor(
-      final InterwikiExtractor interwikiExtractor, final NamespaceExtractor namespaceExtractor) {
+      final InterwikiExtractor interwikiExtractor,
+      final NamespaceExtractor namespaceExtractor,
+      final ProtocolExtractor protocolExtractor) {
     this.interwikiExtractor = interwikiExtractor;
     this.namespaceExtractor = namespaceExtractor;
+    this.protocolExtractor = protocolExtractor;
   }
 
   public void extract(final SiteInfo siteInfo) {
     namespaceExtractor.extract(siteInfo);
     interwikiExtractor.extract(siteInfo);
+    protocolExtractor.extract(siteInfo);
   }
 }

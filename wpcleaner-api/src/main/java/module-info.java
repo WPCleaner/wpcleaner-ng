@@ -22,6 +22,7 @@ module org.wpcleaner.api {
   requires org.yaml.snakeyaml;
   exports org.wpcleaner.api.analysis.category;
   exports org.wpcleaner.api.analysis.comment;
+  exports org.wpcleaner.api.analysis.externallink;
   exports org.wpcleaner.api.analysis.internallink;
   exports org.wpcleaner.api.analysis.interwikilink;
   exports org.wpcleaner.api.analysis.languagelink;
@@ -42,6 +43,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.progress;
   exports org.wpcleaner.api.repository.interwiki;
   exports org.wpcleaner.api.repository.namespace;
+  exports org.wpcleaner.api.repository.protocol;
   exports org.wpcleaner.api.repository.tag;
   exports org.wpcleaner.api.repository;
   exports org.wpcleaner.api.settings;
@@ -50,6 +52,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.wiki.definition;
   opens org.wpcleaner.api.analysis.category;
   opens org.wpcleaner.api.analysis.comment;
+  opens org.wpcleaner.api.analysis.externallink;
   opens org.wpcleaner.api.analysis.internallink;
   opens org.wpcleaner.api.analysis.interwikilink;
   opens org.wpcleaner.api.analysis.languagelink;
@@ -70,6 +73,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.progress;
   opens org.wpcleaner.api.repository.interwiki;
   opens org.wpcleaner.api.repository.namespace;
+  opens org.wpcleaner.api.repository.protocol;
   opens org.wpcleaner.api.repository.tag;
   opens org.wpcleaner.api.repository;
   opens org.wpcleaner.api.settings;
