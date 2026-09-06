@@ -1,6 +1,6 @@
 plugins {
   id("wpcleaner.quality")
-  id("org.sonarqube") version "7.4.0.8496"
+  id("org.sonarqube") version "7.5.0.8588"
 }
 
 allprojects {
