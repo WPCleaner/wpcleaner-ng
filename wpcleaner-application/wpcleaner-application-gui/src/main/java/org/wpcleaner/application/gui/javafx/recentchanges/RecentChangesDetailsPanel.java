@@ -75,7 +75,7 @@ public final class RecentChangesDetailsPanel extends VBox {
 
     final RecentChangesDetailsToolBar navigationToolBar =
         new RecentChangesDetailsToolBar(
-            imageLoader, services.actionServices(), tabPane, differencesTab, differencesPanel);
+            imageLoader, services, tabPane, differencesTab, differencesPanel);
     navigationToolBar.currentRecentChangeProperty().bind(selectedRecentChange);
 
     getChildren().addAll(navigationToolBar, tabPane);

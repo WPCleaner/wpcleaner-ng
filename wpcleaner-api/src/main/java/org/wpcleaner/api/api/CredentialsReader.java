@@ -5,12 +5,12 @@ package org.wpcleaner.api.api;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.wpcleaner.api.settings.SettingsPersistence;
 
 public interface CredentialsReader {
 
@@ -21,8 +21,7 @@ public interface CredentialsReader {
     if (resource.exists() && resource.isFile() && resource.isReadable()) {
       return Optional.of(resource);
     }
-    resource =
-        new FileSystemResource(Path.of(System.getProperty("user.home"), ".wpcleaner", filename));
+    resource = new FileSystemResource(SettingsPersistence.getFolder().resolve(filename));
     if (resource.exists() && resource.isFile() && resource.isReadable()) {
       return Optional.of(resource);
     }

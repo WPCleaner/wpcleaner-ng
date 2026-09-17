@@ -21,8 +21,8 @@ import javafx.scene.layout.Priority;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
+import org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting.UserPageHostingAction;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -33,7 +33,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
 
   public RecentChangesDetailsToolBar(
       final JavaFxImageLoader imageLoader,
-      final JavaFxActionServices actionServices,
+      final JavaFxRecentChangesWindowServices services,
       final TabPane tabPane,
       final Tab differencesTab,
       final RecentChangesDifferencesPanel differencesPanel) {
@@ -61,7 +61,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
         _ -> {
           final FilteredRecentChange rc = currentRecentChange.get();
           if (rc != null && rc.pageURI() != null) {
-            actionServices.browse(rc.pageURI().toString());
+            services.actionServices().browse(rc.pageURI().toString());
           }
         });
 
@@ -76,7 +76,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
         _ -> {
           final FilteredRecentChange rc = currentRecentChange.get();
           if (rc != null && rc.diffURI() != null) {
-            actionServices.browse(rc.diffURI().toString());
+            services.actionServices().browse(rc.diffURI().toString());
           }
         });
 
@@ -132,6 +132,22 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
           differencesPanel.selectLastDelta();
         });
 
+    final RecentChangesAction userPageHostingAction = new UserPageHostingAction(services);
+    final Button userPageHostingButton = new Button();
+    userPageHostingButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
+    imageLoader
+        .getImageView(ImageCollection.HOSTING, ImageSize.BUTTON)
+        .ifPresent(userPageHostingButton::setGraphic);
+    userPageHostingButton.setTooltip(new Tooltip(GT._T("Prevent user page being used as hosting")));
+    userPageHostingButton.setDisable(true);
+    userPageHostingButton.setOnAction(
+        _ -> {
+          final FilteredRecentChange rc = currentRecentChange.get();
+          if (rc != null && userPageHostingAction.canApply(rc)) {
+            userPageHostingAction.apply(rc);
+          }
+        });
+
     final Separator separator = new Separator();
 
     getItems()
@@ -142,6 +158,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
             goPreviousButton,
             goNextButton,
             goLastButton,
+            userPageHostingButton,
             separator,
             pageLabel,
             titleField);
@@ -156,6 +173,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
           goPreviousButton.setDisable(!hasRc);
           goNextButton.setDisable(!hasRc);
           goLastButton.setDisable(!hasRc);
+          userPageHostingButton.setDisable(rc == null || !userPageHostingAction.canApply(rc));
         });
   }
 

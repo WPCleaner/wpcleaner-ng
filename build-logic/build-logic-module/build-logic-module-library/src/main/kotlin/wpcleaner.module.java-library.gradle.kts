@@ -45,6 +45,7 @@ tasks.withType<Test>().configureEach {
   jvmArgs(
     "-XX:+ShowCodeDetailsInExceptionMessages",
     "-Duser.language=US",
+    "-Xshare:off",
     "--enable-native-access=ALL-UNNAMED",
     "--sun-misc-unsafe-memory-access=allow"
   )

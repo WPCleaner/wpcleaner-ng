@@ -32,6 +32,7 @@ public enum ImageCollection {
   HELP("commons/help-browser.png"),
   HELP_ABOUT("commons/breathe-help-about.png"),
   HELP_FAQ("commons/gnome-help-faq.png"),
+  HOSTING("commons/cib-nextdoor-coreui-icons-v1.0.0.png"),
   LANGUAGE("commons/nuvola-unknown-flag.png"),
   LANGUAGE_ADD("commons/add-language.png"),
   LANGUAGE_EN("commons/nuvola-english-language-flag.png"),

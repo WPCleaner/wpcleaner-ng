@@ -39,7 +39,7 @@ public class SettingsPersistence {
     return getFolder().resolve("%s.json".formatted(VersionedSettings.name(clazz)));
   }
 
-  private Path getFolder() {
+  public static Path getFolder() {
     final Path path = Paths.get(System.getProperty("user.home")).resolve(".wpcleaner");
     try {
       Files.createDirectories(path);
