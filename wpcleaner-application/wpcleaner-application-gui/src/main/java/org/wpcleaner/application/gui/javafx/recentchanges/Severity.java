@@ -5,43 +5,58 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.image.ImageCollection;
 
 public enum Severity {
-  NOTICE_0(0, GT._T("Notice, green"), ImageCollection.NOTICE_SUCCESS),
-  NOTICE_1(1, GT._T("Notice, black"), ImageCollection.NOTICE),
-  NOTICE_2(2, GT._T("Notice, grey"), ImageCollection.NOTICE_PLACEHOLDER),
-  NOTICE_3(3, GT._T("Notice, blue"), ImageCollection.NOTICE_PROGRESSIVE),
-  NOTICE_4(4, GT._T("Notice, gold"), ImageCollection.NOTICE_WARNING),
-  NOTICE_5(5, GT._T("Notice, red"), ImageCollection.ERROR),
-  ALERT_0(10, GT._T("Alert, green"), ImageCollection.ALERT_SUCCESS),
-  ALERT_1(11, GT._T("Alert, black"), ImageCollection.ALERT),
-  ALERT_2(12, GT._T("Alert, grey"), ImageCollection.ALERT_PLACEHOLDER),
-  ALERT_3(13, GT._T("Alert, blue"), ImageCollection.ALERT_PROGRESSIVE),
-  ALERT_4(14, GT._T("Alert, gold"), ImageCollection.ALERT_WARNING),
-  ALERT_5(15, GT._T("Alert, yellow"), ImageCollection.ALERT_YELLOW),
-  ALERT_6(16, GT._T("Alert, orange"), ImageCollection.ALERT_ORANGE),
-  ALERT_7(17, GT._T("Alert, red"), ImageCollection.ALERT_ERROR),
-  ERROR_0(20, GT._T("Error, green"), ImageCollection.ERROR_SUCCESS),
-  ERROR_1(21, GT._T("Error, black"), ImageCollection.ERROR),
-  ERROR_2(22, GT._T("Error, grey"), ImageCollection.ERROR_PLACEHOLDER),
-  ERROR_3(23, GT._T("Error, blue"), ImageCollection.ERROR_PROGRESSIVE),
-  ERROR_4(24, GT._T("Error, gold"), ImageCollection.ERROR_WARNING),
-  ERROR_5(25, GT._T("Error, red"), ImageCollection.ERROR_ERROR);
+  @JsonProperty("notice_0")
+  NOTICE_0(GT._T("Notice, green"), ImageCollection.NOTICE_SUCCESS),
+  @JsonProperty("notice_1")
+  NOTICE_1(GT._T("Notice, black"), ImageCollection.NOTICE),
+  @JsonProperty("notice_2")
+  NOTICE_2(GT._T("Notice, grey"), ImageCollection.NOTICE_PLACEHOLDER),
+  @JsonProperty("notice_3")
+  NOTICE_3(GT._T("Notice, blue"), ImageCollection.NOTICE_PROGRESSIVE),
+  @JsonProperty("notice_4")
+  NOTICE_4(GT._T("Notice, gold"), ImageCollection.NOTICE_WARNING),
+  @JsonProperty("notice_5")
+  NOTICE_5(GT._T("Notice, red"), ImageCollection.ERROR),
+  @JsonProperty("alert_0")
+  ALERT_0(GT._T("Alert, green"), ImageCollection.ALERT_SUCCESS),
+  @JsonProperty("alert_1")
+  ALERT_1(GT._T("Alert, black"), ImageCollection.ALERT),
+  @JsonProperty("alert_2")
+  ALERT_2(GT._T("Alert, grey"), ImageCollection.ALERT_PLACEHOLDER),
+  @JsonProperty("alert_3")
+  ALERT_3(GT._T("Alert, blue"), ImageCollection.ALERT_PROGRESSIVE),
+  @JsonProperty("alert_4")
+  ALERT_4(GT._T("Alert, gold"), ImageCollection.ALERT_WARNING),
+  @JsonProperty("alert_5")
+  ALERT_5(GT._T("Alert, yellow"), ImageCollection.ALERT_YELLOW),
+  @JsonProperty("alert_6")
+  ALERT_6(GT._T("Alert, orange"), ImageCollection.ALERT_ORANGE),
+  @JsonProperty("alert_7")
+  ALERT_7(GT._T("Alert, red"), ImageCollection.ALERT_ERROR),
+  @JsonProperty("error_0")
+  ERROR_0(GT._T("Error, green"), ImageCollection.ERROR_SUCCESS),
+  @JsonProperty("error_1")
+  ERROR_1(GT._T("Error, black"), ImageCollection.ERROR),
+  @JsonProperty("error_2")
+  ERROR_2(GT._T("Error, grey"), ImageCollection.ERROR_PLACEHOLDER),
+  @JsonProperty("error_3")
+  ERROR_3(GT._T("Error, blue"), ImageCollection.ERROR_PROGRESSIVE),
+  @JsonProperty("error_4")
+  ERROR_4(GT._T("Error, gold"), ImageCollection.ERROR_WARNING),
+  @JsonProperty("error_5")
+  ERROR_5(GT._T("Error, red"), ImageCollection.ERROR_ERROR);
 
-  private final int id;
   private final String name;
   private final ImageCollection image;
 
-  Severity(final int id, final String name, final ImageCollection image) {
-    this.id = id;
+  Severity(final String name, final ImageCollection image) {
     this.name = name;
     this.image = image;
-  }
-
-  public int getId() {
-    return id;
   }
 
   public String getName() {

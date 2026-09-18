@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,10 +33,11 @@ public record RecentChangesOptions(
           false,
           List.of());
 
-  public Optional<RecentChangesFilter> matchesFilters(final RecentChange rc) {
+  public Optional<RecentChangesFilter> matchesFilters(
+      final RecentChange rc, final Collection<RecentChange> recentChanges) {
     if (filters.isEmpty()) {
       return Optional.of(RecentChangesFilter.ACCEPT_ALL);
     }
-    return filters.stream().filter(filter -> filter.matches(rc)).findFirst();
+    return filters.stream().filter(filter -> filter.matches(rc, recentChanges)).findFirst();
   }
 }

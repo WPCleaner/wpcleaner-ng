@@ -5,6 +5,8 @@ package org.wpcleaner.api.api.query.list.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum RecentChangesParameters {
   CONTINUE("rccontinue"),
   DIRECTION("rcdir"),
@@ -67,18 +69,31 @@ public enum RecentChangesParameters {
   }
 
   public enum Show {
+    @JsonProperty("anon")
     ANON("anon"),
+    @JsonProperty("autopatrolled")
     AUTOPATROLLED("autopatrolled"),
+    @JsonProperty("bot")
     BOT("bot"),
+    @JsonProperty("minor")
     MINOR("minor"),
+    @JsonProperty("not_anon")
     NOT_ANON("!anon"),
+    @JsonProperty("not_autopatrolled")
     NOT_AUTOPATROLLED("!autopatrolled"),
+    @JsonProperty("not_bot")
     NOT_BOT("!bot"),
+    @JsonProperty("not_minor")
     NOT_MINOR("!minor"),
+    @JsonProperty("not_patrolled")
     NOT_PATROLLED("!patrolled"),
+    @JsonProperty("not_redirect")
     NOT_REDIRECT("!redirect"),
+    @JsonProperty("patrolled")
     PATROLLED("patrolled"),
+    @JsonProperty("redirect")
     REDIRECT("redirect"),
+    @JsonProperty("unpatrolled")
     UNPATROLLED("unpatrolled"),
     ;
 
@@ -101,10 +116,15 @@ public enum RecentChangesParameters {
   }
 
   public enum Type {
+    @JsonProperty("categorize")
     CATEGORIZE("categorize"),
+    @JsonProperty("edit")
     EDIT("edit"),
+    @JsonProperty("external")
     EXTERNAL("external"),
+    @JsonProperty("log")
     LOG("log"),
+    @JsonProperty("new")
     NEW("new"),
     ;
 

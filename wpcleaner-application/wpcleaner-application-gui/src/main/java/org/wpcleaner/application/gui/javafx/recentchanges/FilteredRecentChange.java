@@ -7,9 +7,11 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
@@ -32,7 +34,15 @@ public record FilteredRecentChange(
 
   public static Optional<FilteredRecentChange> of(
       final RecentChange rc, final WikiDefinition wiki, final RecentChangesOptions options) {
-    final Optional<RecentChangesFilter> filter = options.matchesFilters(rc);
+    return of(rc, wiki, options, Set.of());
+  }
+
+  public static Optional<FilteredRecentChange> of(
+      final RecentChange rc,
+      final WikiDefinition wiki,
+      final RecentChangesOptions options,
+      final Collection<RecentChange> recentChanges) {
+    final Optional<RecentChangesFilter> filter = options.matchesFilters(rc, recentChanges);
     if (filter.isEmpty()) {
       return Optional.empty();
     }

@@ -23,7 +23,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Window;
 import org.jspecify.annotations.Nullable;
-import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
@@ -37,7 +36,7 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
   private final TextField nameField;
   private final NamespaceCheckComboBox namespaceCheckComboBox;
   private final TagCheckComboBox tagCheckComboBox;
-  private final TypeCheckComboBox typeCheckComboBox;
+  private final FilterTypeCheckComboBox typeCheckComboBox;
   private final ComboBox<@Nullable Severity> severityComboBox;
 
   public RecentChangesFilterDialog(
@@ -113,7 +112,7 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
                     tagCheckComboBox.getCheckModel().getCheckedItems().stream()
                         .map(Tag::name)
                         .toList());
-            final Set<RecentChangesParameters.Type> typeSet =
+            final Set<RecentChangesFilter.Type> typeSet =
                 Set.copyOf(typeCheckComboBox.getCheckModel().getCheckedItems().stream().toList());
             final Severity severity = severityComboBox.getSelectionModel().getSelectedItem();
             final RecentChangesFilter.SubPages subPages =
@@ -151,9 +150,9 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
     return comboBox;
   }
 
-  private TypeCheckComboBox createTypeCheckComboBox(
+  private FilterTypeCheckComboBox createTypeCheckComboBox(
       @Nullable final RecentChangesFilter initialFilter) {
-    final TypeCheckComboBox comboBox = new TypeCheckComboBox();
+    final FilterTypeCheckComboBox comboBox = new FilterTypeCheckComboBox();
     comboBox.setup(initialFilter != null ? initialFilter.type() : Set.of());
     return comboBox;
   }

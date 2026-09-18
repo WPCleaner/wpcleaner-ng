@@ -55,7 +55,7 @@ class RecentChangesSettingsTest {
     Assertions.assertThat(loadedFilter.namespace()).containsExactlyInAnyOrder(0, 1);
     Assertions.assertThat(loadedFilter.severity()).isEqualTo(Severity.ALERT_4);
     Assertions.assertThat(loadedFilter.tag()).containsExactly("tag1");
-    Assertions.assertThat(loadedFilter.type()).containsExactly(RecentChangesParameters.Type.EDIT);
+    Assertions.assertThat(loadedFilter.type()).containsExactly(RecentChangesFilter.Type.EDIT);
     Assertions.assertThat(loadedFilter.subPages())
         .isEqualTo(RecentChangesFilter.SubPages.SUB_PAGES);
   }
@@ -67,7 +67,7 @@ class RecentChangesSettingsTest {
             Set.of(0, 1),
             Severity.ALERT_4,
             Set.of("tag1"),
-            Set.of(RecentChangesParameters.Type.EDIT),
+            Set.of(RecentChangesFilter.Type.EDIT),
             RecentChangesFilter.SubPages.SUB_PAGES);
 
     final RecentChangesOptions options =

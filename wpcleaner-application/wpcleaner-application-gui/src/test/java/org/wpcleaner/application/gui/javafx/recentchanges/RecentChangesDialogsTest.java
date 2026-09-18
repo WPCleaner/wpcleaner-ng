@@ -64,7 +64,7 @@ class RecentChangesDialogsTest {
                   Set.of(0),
                   Severity.ALERT_4,
                   Set.of("tag1"),
-                  Set.of(RecentChangesParameters.Type.EDIT),
+                  Set.of(RecentChangesFilter.Type.EDIT),
                   null);
 
           final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);
@@ -86,7 +86,7 @@ class RecentChangesDialogsTest {
                   Set.of(0),
                   null,
                   Set.of("tag1"),
-                  Set.of(RecentChangesParameters.Type.EDIT),
+                  Set.of(RecentChangesFilter.Type.EDIT),
                   null);
 
           final RecentChangesFilterDialog dialogWithNullSeverity =
@@ -127,7 +127,7 @@ class RecentChangesDialogsTest {
             Set.of(0),
             null,
             Set.of("tag1"),
-            Set.of(RecentChangesParameters.Type.EDIT),
+            Set.of(RecentChangesFilter.Type.EDIT),
             null);
     return new RecentChangesOptions(
         "My Options",

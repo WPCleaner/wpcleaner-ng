@@ -15,6 +15,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.Limit;
+import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesQuery;
 import org.wpcleaner.api.progress.ProgressStep;
@@ -94,9 +95,11 @@ public final class RecentChangesListRefresher {
       final RecentChangesOptions options,
       final boolean showProgress) {
     try {
+      final List<RecentChange> rawRecentChanges =
+          services.apiRecentChanges().retrieveRecentChanges(wiki, query);
       final List<FilteredRecentChange> recentChanges =
-          services.apiRecentChanges().retrieveRecentChanges(wiki, query).stream()
-              .map(rc -> FilteredRecentChange.of(rc, wiki, options))
+          rawRecentChanges.stream()
+              .map(rc -> FilteredRecentChange.of(rc, wiki, options, rawRecentChanges))
               .filter(Optional::isPresent)
               .map(Optional::get)
               .sorted(FilteredRecentChangeComparator.INSTANCE)
