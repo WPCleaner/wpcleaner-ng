@@ -91,7 +91,14 @@ public final class UserPageHostingAction implements RecentChangesAction {
     final String userTalkPageContent = retrievePageContent(wiki, userTalkPageTitle);
 
     final UserPageHostingActionDialog actionDialog =
-        new UserPageHostingActionDialog(config, userPageContent, userTalkPageContent);
+        new UserPageHostingActionDialog(
+            config,
+            rc.title(),
+            userPageContent,
+            userTalkPageTitle,
+            userTalkPageContent,
+            services.colorizer(),
+            services.pageAnalysisFactory());
     final Optional<UserPageHostingActionParams> actionParamsOpt = actionDialog.showAndWait();
     if (actionParamsOpt.isEmpty()) {
       return;

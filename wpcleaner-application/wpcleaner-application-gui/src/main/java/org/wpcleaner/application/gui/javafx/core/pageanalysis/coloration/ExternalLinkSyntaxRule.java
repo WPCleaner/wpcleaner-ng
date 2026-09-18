@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.analysis.coloration;
+package org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -11,17 +11,17 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 
 @Component
-public class CategorySyntaxRule implements PageSyntaxRule {
+public class ExternalLinkSyntaxRule implements PageSyntaxRule {
 
   @Override
   public String getStyleName() {
-    return PageAnalysisStylePropertiesInitializer.CATEGORY;
+    return PageAnalysisStylePropertiesInitializer.EXTERNAL_LINK;
   }
 
   @Override
   public List<RuleRange> getRanges(final PageAnalysis pageAnalysis) {
-    return pageAnalysis.getCategories().stream()
-        .map(category -> new RuleRange(category.begin(), category.end()))
+    return pageAnalysis.getExternalLinks().stream()
+        .map(link -> new RuleRange(link.begin(), link.end()))
         .toList();
   }
 }

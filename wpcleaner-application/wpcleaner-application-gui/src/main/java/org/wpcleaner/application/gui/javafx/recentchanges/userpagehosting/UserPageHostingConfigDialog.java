@@ -137,7 +137,7 @@ final class UserPageHostingConfigDialog extends Dialog<@Nullable UserPageHosting
     labelCol.setCellFactory(TextFieldTableCell.forTableColumn());
     labelCol.setPrefWidth(120);
 
-    final TableColumn<TalkPageTextModel, String> textCol = new TableColumn<>(GT._T("Static Text"));
+    final TableColumn<TalkPageTextModel, String> textCol = new TableColumn<>(GT._T("Static text"));
     textCol.setCellValueFactory(data -> data.getValue().textProperty());
     textCol.setCellFactory(_ -> new TextAreaTableCell<>());
 

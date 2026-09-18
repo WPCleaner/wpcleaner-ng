@@ -20,8 +20,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import org.fxmisc.flowless.VirtualizedScrollPane;
-import org.fxmisc.richtext.InlineCssTextArea;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +30,8 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
 
 public final class RecentChangesDetailsPanel extends VBox {
 
@@ -41,7 +41,7 @@ public final class RecentChangesDetailsPanel extends VBox {
   private final JavaFxRecentChangesWindowServices services;
   private final JavaFxProgressTracker progressTracker;
   private final BooleanProperty loading;
-  private final InlineCssTextArea contentArea;
+  private final PageAnalysisArea contentArea;
   private final RecentChangesDifferencesPanel differencesPanel;
   private final ObjectProperty<@Nullable FilteredRecentChange> selectedRecentChange =
       new SimpleObjectProperty<>(this, "selectedRecentChange");
@@ -56,12 +56,9 @@ public final class RecentChangesDetailsPanel extends VBox {
     this.progressTracker = progressTracker;
     this.loading = loading;
 
-    this.contentArea = new InlineCssTextArea();
-    this.contentArea.setEditable(false);
-    this.contentArea.setWrapText(true);
-    this.contentArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-    final VirtualizedScrollPane<InlineCssTextArea> contentAreaScrollPane =
-        new VirtualizedScrollPane<>(contentArea);
+    final PageAnalysisScrollPane contentAreaScrollPane =
+        new PageAnalysisScrollPane(services.colorizer());
+    this.contentArea = contentAreaScrollPane.getArea();
 
     this.differencesPanel = new RecentChangesDifferencesPanel(services.stylePropertiesRegistry());
 
@@ -114,8 +111,12 @@ public final class RecentChangesDetailsPanel extends VBox {
       Platform.runLater(
           () -> {
             if (content != null) {
-              contentArea.replaceText(content);
-              contentArea.setStyle(0, content.length(), "");
+              final FilteredRecentChange rc = selectedRecentChange.get();
+              if (rc != null) {
+                contentArea.updateText(rc.title(), content, services.pageAnalysisFactory());
+              } else {
+                contentArea.replaceText(content);
+              }
             }
             differencesPanel.updateContents(content, oldContent, deltas);
           });

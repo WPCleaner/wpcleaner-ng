@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.analysis.coloration;
+package org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>

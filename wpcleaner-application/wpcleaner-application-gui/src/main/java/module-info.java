@@ -9,6 +9,7 @@ module org.wpcleaner.application.gui {
   requires transitive java.desktop;
   requires transitive javafx.controls;
   requires transitive org.controlsfx.controls;
+  requires transitive org.fxmisc.flowless;
   requires transitive org.fxmisc.richtext;
   requires transitive org.jspecify;
   requires transitive org.wpcleaner.api;
@@ -20,7 +21,6 @@ module org.wpcleaner.application.gui {
   requires transitive spring.core;
   requires com.fasterxml.jackson.databind;
   requires java.management;
-  requires org.fxmisc.flowless;
   requires org.slf4j;
   requires spring.web;
   requires static org.jetbrains.annotations;
@@ -30,6 +30,8 @@ module org.wpcleaner.application.gui {
   exports org.wpcleaner.application.gui.core.style;
   exports org.wpcleaner.application.gui.javafx.core.action;
   exports org.wpcleaner.application.gui.javafx.core.control;
+  exports org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
+  exports org.wpcleaner.application.gui.javafx.core.pageanalysis;
   exports org.wpcleaner.application.gui.javafx.core.style;
   exports org.wpcleaner.application.gui.javafx.login;
   exports org.wpcleaner.application.gui.javafx.main;
@@ -46,6 +48,8 @@ module org.wpcleaner.application.gui {
   opens org.wpcleaner.application.gui.core.style;
   opens org.wpcleaner.application.gui.javafx.core.action;
   opens org.wpcleaner.application.gui.javafx.core.control;
+  opens org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
+  opens org.wpcleaner.application.gui.javafx.core.pageanalysis;
   opens org.wpcleaner.application.gui.javafx.core.style;
   opens org.wpcleaner.application.gui.javafx.login;
   opens org.wpcleaner.application.gui.javafx.main;

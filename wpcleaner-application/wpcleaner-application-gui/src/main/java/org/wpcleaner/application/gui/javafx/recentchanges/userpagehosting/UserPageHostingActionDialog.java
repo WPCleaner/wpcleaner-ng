@@ -22,7 +22,11 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.utils.GT;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 
 final class UserPageHostingActionDialog extends Dialog<@Nullable UserPageHostingActionParams> {
 
@@ -34,8 +38,12 @@ final class UserPageHostingActionDialog extends Dialog<@Nullable UserPageHosting
 
   public UserPageHostingActionDialog(
       final UserPageHostingConfig config,
+      final String userPageTitle,
       final String userPageContent,
-      final String userTalkPageContent) {
+      final String userTalkPageTitle,
+      final String userTalkPageContent,
+      final PageSyntaxColorizer colorizer,
+      final PageAnalysisFactory pageAnalysisFactory) {
     super();
     setTitle(GT._T("Confirm User Page Hosting Action"));
 
@@ -48,17 +56,19 @@ final class UserPageHostingActionDialog extends Dialog<@Nullable UserPageHosting
 
     final Tab userPageTab = new Tab(GT._T("User page"));
     userPageTab.setClosable(false);
-    final TextArea userPagePreviewArea = new TextArea(userPageContent);
-    userPagePreviewArea.setEditable(false);
-    userPagePreviewArea.setPrefRowCount(8);
-    userPageTab.setContent(userPagePreviewArea);
+    final PageAnalysisScrollPane userPageScrollPane = new PageAnalysisScrollPane(colorizer);
+    final PageAnalysisArea userPagePreviewArea = userPageScrollPane.getArea();
+    userPagePreviewArea.setPrefHeight(350);
+    userPagePreviewArea.updateText(userPageTitle, userPageContent, pageAnalysisFactory);
+    userPageTab.setContent(userPageScrollPane);
 
     final Tab userTalkPageTab = new Tab(GT._T("User talk page"));
     userTalkPageTab.setClosable(false);
-    final TextArea userTalkPagePreviewArea = new TextArea(userTalkPageContent);
-    userTalkPagePreviewArea.setEditable(false);
-    userTalkPagePreviewArea.setPrefRowCount(8);
-    userTalkPageTab.setContent(userTalkPagePreviewArea);
+    final PageAnalysisScrollPane userTalkPageScrollPane = new PageAnalysisScrollPane(colorizer);
+    final PageAnalysisArea userTalkPagePreviewArea = userTalkPageScrollPane.getArea();
+    userTalkPagePreviewArea.setPrefHeight(350);
+    userTalkPagePreviewArea.updateText(userTalkPageTitle, userTalkPageContent, pageAnalysisFactory);
+    userTalkPageTab.setContent(userTalkPageScrollPane);
 
     previewTabPane.getTabs().addAll(userPageTab, userTalkPageTab);
 
@@ -68,7 +78,7 @@ final class UserPageHostingActionDialog extends Dialog<@Nullable UserPageHosting
     mainBox.getChildren().add(previewTabPane);
 
     dialogPane.setContent(mainBox);
-    dialogPane.setPrefWidth(750);
+    dialogPane.setPrefWidth(950);
 
     final Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
     okButton.addEventFilter(

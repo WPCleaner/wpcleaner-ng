@@ -14,7 +14,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.Revision;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
@@ -23,25 +22,28 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
 
 public final class PageAnalysisPanel extends StackPane {
 
   private final JavaFxAnalysisWindowServices services;
   private final String pageName;
+  private final PageAnalysisScrollPane scrollPane;
   private final PageAnalysisArea analysisArea;
   private final BooleanProperty loading = new SimpleBooleanProperty(true);
 
   public PageAnalysisPanel(final JavaFxAnalysisWindowServices services, final String pageName) {
     this.services = services;
     this.pageName = pageName;
-    this.analysisArea = new PageAnalysisArea(services.colorizer());
+    this.scrollPane = new PageAnalysisScrollPane(services.colorizer());
+    this.analysisArea = scrollPane.getArea();
+    this.analysisArea.setEditable(true);
     initialize();
   }
 
   private void initialize() {
     final VBox mainContainer = new VBox();
-    final VirtualizedScrollPane<PageAnalysisArea> scrollPane =
-        new VirtualizedScrollPane<>(analysisArea);
     VBox.setVgrow(scrollPane, Priority.ALWAYS);
     mainContainer.getChildren().add(scrollPane);
     getChildren().add(mainContainer);
