@@ -5,10 +5,12 @@ package org.wpcleaner.application.gui.javafx.core.action;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import javafx.stage.Window;
+import javafx.stage.Stage;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.application.gui.settings.windows.WindowSettings;
 import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 
 @Service
@@ -22,17 +24,20 @@ public record JavaFxActionServices(
     JavaFxInitializer.browse(desktopService, url);
   }
 
-  public void positionWindow(final Window window, final String name) {
+  public void positionWindow(final JavaFxWindow<?> window) {
     windowsSettings
         .getCurrentSettings()
-        .getWindowSettings(name)
+        .getWindowSettings(window.getName())
         .ifPresentOrElse(
-            windowSettings -> {
-              window.setX(windowSettings.x());
-              window.setY(windowSettings.y());
-              window.setWidth(windowSettings.width());
-              window.setHeight(windowSettings.height());
-            },
-            window::sizeToScene);
+            windowSettings -> positionWindow(window, windowSettings),
+            () -> window.getStage().sizeToScene());
+  }
+
+  public void positionWindow(final JavaFxWindow<?> window, final WindowSettings settings) {
+    final Stage stage = window.getStage();
+    stage.setX(settings.x());
+    stage.setY(settings.y());
+    stage.setWidth(settings.width());
+    stage.setHeight(settings.height());
   }
 }

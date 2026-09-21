@@ -109,10 +109,10 @@ class JavaFxMainWindowTest {
 
           final JavaFxMainWindow mainWindow = new JavaFxMainWindow(services);
 
-          Assertions.assertThat(mainWindow.getTitle()).isEqualTo("WPCleaner");
+          Assertions.assertThat(mainWindow.getStage().getTitle()).isEqualTo("WPCleaner");
 
-          final javafx.scene.Parent rootPane = mainWindow.getScene().getRoot();
-          final VBox mainContainer = (VBox) rootPane.getChildrenUnmodifiable().get(0);
+          final javafx.scene.Parent rootPane = mainWindow.getStage().getScene().getRoot();
+          final VBox mainContainer = (VBox) rootPane.getChildrenUnmodifiable().getFirst();
           final ToolBar feedbacksToolBar = (ToolBar) mainContainer.getChildren().get(2);
           final List<Button> buttons =
               feedbacksToolBar.getItems().stream()

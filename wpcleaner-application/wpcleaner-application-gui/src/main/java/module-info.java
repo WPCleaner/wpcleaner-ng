@@ -33,6 +33,7 @@ module org.wpcleaner.application.gui {
   exports org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
   exports org.wpcleaner.application.gui.javafx.core.pageanalysis;
   exports org.wpcleaner.application.gui.javafx.core.style;
+  exports org.wpcleaner.application.gui.javafx.core.window;
   exports org.wpcleaner.application.gui.javafx.login;
   exports org.wpcleaner.application.gui.javafx.main;
   exports org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
@@ -51,6 +52,7 @@ module org.wpcleaner.application.gui {
   opens org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
   opens org.wpcleaner.application.gui.javafx.core.pageanalysis;
   opens org.wpcleaner.application.gui.javafx.core.style;
+  opens org.wpcleaner.application.gui.javafx.core.window;
   opens org.wpcleaner.application.gui.javafx.login;
   opens org.wpcleaner.application.gui.javafx.main;
   opens org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;

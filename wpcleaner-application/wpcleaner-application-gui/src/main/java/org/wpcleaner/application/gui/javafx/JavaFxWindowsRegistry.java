@@ -7,20 +7,20 @@ package org.wpcleaner.application.gui.javafx;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.stage.Window;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 @Service
 public class JavaFxWindowsRegistry {
 
-  private final List<Window> windows = new ArrayList<>();
+  private final List<JavaFxWindow<?>> windows = new ArrayList<>();
 
-  public void register(final Window window) {
+  public void register(final JavaFxWindow<?> window) {
     windows.add(window);
-    window.setOnHidden(_ -> windows.remove(window));
+    window.getStage().setOnHidden(_ -> windows.remove(window));
   }
 
-  public List<Window> getVisibleWindows() {
-    return windows.stream().filter(Window::isShowing).toList();
+  public List<JavaFxWindow<?>> getVisibleWindows() {
+    return windows.stream().filter(window -> window.getStage().isShowing()).toList();
   }
 }

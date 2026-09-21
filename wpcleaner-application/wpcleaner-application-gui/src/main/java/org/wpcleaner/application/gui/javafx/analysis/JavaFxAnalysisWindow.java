@@ -10,34 +10,29 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
-public final class JavaFxAnalysisWindow extends Stage {
+public final class JavaFxAnalysisWindow extends JavaFxWindow<JavaFxAnalysisWindowServices> {
 
-  private final JavaFxAnalysisWindowServices services;
-  private final JavaFxImageLoader imageLoader;
   private final TabPane tabPane;
 
   public JavaFxAnalysisWindow(final JavaFxAnalysisWindowServices services) {
-    super();
-    this.services = services;
-    this.imageLoader = new JavaFxImageLoader(services.imageLoader());
+    super(services);
     this.tabPane = new TabPane();
     initialize();
+    stage.show();
   }
 
-  private void initialize() {
-    setTitle("WPCleaner - Analysis");
-    imageLoader.setWindowIcon(this);
-    services.windowsRegistry().register(this);
+  @Override
+  public String getName() {
+    return "analysis";
+  }
 
+  @Override
+  protected Scene createScene() {
     VBox.setVgrow(tabPane, Priority.ALWAYS);
     final VBox root = new VBox(tabPane);
-
-    final Scene scene = new Scene(root, 800, 600);
-    setScene(scene);
-    services.actionServices().positionWindow(this, "analysis");
+    return new Scene(root, 800, 600);
   }
 
   public void analyze(final String pageName) {

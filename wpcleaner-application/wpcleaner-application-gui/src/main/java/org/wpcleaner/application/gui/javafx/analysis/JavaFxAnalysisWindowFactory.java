@@ -24,11 +24,10 @@ public class JavaFxAnalysisWindowFactory implements AnalysisWindowFactory {
   public void displayAnalysisWindow(final String pageName) {
     Platform.runLater(
         () -> {
-          if (window == null || !window.isShowing()) {
+          if (window == null || !window.getStage().isShowing()) {
             window = new JavaFxAnalysisWindow(services);
-            window.show();
           } else {
-            window.toFront();
+            window.getStage().toFront();
           }
           window.analyze(pageName);
         });

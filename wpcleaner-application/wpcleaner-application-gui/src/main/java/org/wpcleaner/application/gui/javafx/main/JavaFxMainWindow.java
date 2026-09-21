@@ -17,34 +17,32 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
-public final class JavaFxMainWindow extends Stage {
+public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowServices> {
 
-  private final JavaFxMainWindowServices services;
-  private final JavaFxImageLoader imageLoader;
   private final ConnectedUser user;
 
   public JavaFxMainWindow(final JavaFxMainWindowServices services) {
-    super();
-    this.services = services;
-    this.imageLoader = new JavaFxImageLoader(services.imageLoader());
+    super(services);
     this.user = services.user().getCurrentUser();
     initialize();
+    stage.show();
   }
 
-  private void initialize() {
-    setTitle("WPCleaner");
-    imageLoader.setWindowIcon(this);
-    services.windowsRegistry().register(this);
+  @Override
+  public String getName() {
+    return "main";
+  }
 
+  @Override
+  protected Scene createScene() {
     final StackPane root = new StackPane();
     final VBox mainContainer = new VBox(15);
     mainContainer.setPadding(new Insets(10, 15, 10, 15));
@@ -93,10 +91,7 @@ public final class JavaFxMainWindow extends Stage {
 
     mainContainer.getChildren().addAll(welcomeContainer, tabPane, feedbacks);
     root.getChildren().add(mainContainer);
-
-    final Scene scene = new Scene(root, 650, 450);
-    setScene(scene);
-    services.actionServices().positionWindow(this, "main");
+    return new Scene(root, 650, 450);
   }
 
   private ToolBar createFeedbacksToolbar() {
@@ -109,7 +104,7 @@ public final class JavaFxMainWindow extends Stage {
     imageLoader
         .getImageView(ImageCollection.USER, ImageSize.BUTTON)
         .ifPresent(userButton::setGraphic);
-    userButton.setOnAction(_ -> new UserInformationDialog(this, user).showAndWait());
+    userButton.setOnAction(_ -> new UserInformationDialog(stage, user).showAndWait());
 
     feedbacks.getItems().add(userButton);
     return feedbacks;

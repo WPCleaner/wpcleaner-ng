@@ -7,12 +7,9 @@ package org.wpcleaner.application.gui.javafx.login;
 
 import java.util.Objects;
 import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.ColumnConstraints;
@@ -21,34 +18,27 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
-public final class JavaFxLoginWindow extends Stage {
-
-  private final JavaFxLoginWindowServices services;
-  private final JavaFxImageLoader imageLoader;
-  private final BooleanProperty loading;
-  private final JavaFxProgressTracker progressTracker;
+public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServices> {
 
   public JavaFxLoginWindow(final JavaFxLoginWindowServices services) {
-    this.services = services;
-    this.imageLoader = new JavaFxImageLoader(services.imageLoader());
-    this.loading = new SimpleBooleanProperty(false);
-    this.progressTracker = JavaFxProgressTracker.forObservable(loading);
+    super(services);
     initialize();
+    stage.show();
   }
 
-  private void initialize() {
-    setTitle("WPCleaner");
-    imageLoader.setWindowIcon(this);
-    services.windowsRegistry().register(this);
+  @Override
+  public String getName() {
+    return "login";
+  }
 
+  @Override
+  protected Scene createScene() {
     final StackPane root = new StackPane();
     final VBox mainContainer = new VBox(10);
     mainContainer.setPadding(new Insets(6, 15, 6, 15));
@@ -75,9 +65,6 @@ public final class JavaFxLoginWindow extends Stage {
 
     root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
 
-    final Scene scene = new Scene(root, 650, 240);
-    setScene(scene);
-
     wiki.addSelectionListener(
         (_, _, newVal) -> {
           if (newVal != null) {
@@ -91,8 +78,7 @@ public final class JavaFxLoginWindow extends Stage {
                     });
           }
         });
-
-    services.actionServices().positionWindow(this, "login");
+    return new Scene(root, 650, 240);
   }
 
   private GridPane createFormGrid(
@@ -267,22 +253,6 @@ public final class JavaFxLoginWindow extends Stage {
 
   private void displayMainWindow() {
     services.main().displayMainWindow();
-    close();
-  }
-
-  private void showWarning(final String title, final String content) {
-    final Alert alert = new Alert(Alert.AlertType.WARNING);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(content);
-    alert.showAndWait();
-  }
-
-  private void showError(final String title, final String header, final String content) {
-    final Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.setTitle(title);
-    alert.setHeaderText(header);
-    alert.setContentText(content);
-    alert.showAndWait();
+    stage.close();
   }
 }

@@ -34,10 +34,6 @@ public class JavaFxRecentChangesWindowFactory implements RecentChangesWindowFact
   @Override
   public void displayRecentChangesWindow() {
     JavaFxInitializer.initialize();
-    Platform.runLater(
-        () -> {
-          final JavaFxRecentChangesWindow window = new JavaFxRecentChangesWindow(services);
-          window.show();
-        });
+    Platform.runLater(() -> new JavaFxRecentChangesWindow(services));
   }
 }

@@ -22,10 +22,6 @@ public class JavaFxMainWindowFactory implements MainWindowFactory {
   @Override
   public void displayMainWindow() {
     JavaFxInitializer.initialize();
-    Platform.runLater(
-        () -> {
-          final JavaFxMainWindow window = new JavaFxMainWindow(services);
-          window.show();
-        });
+    Platform.runLater(() -> new JavaFxMainWindow(services));
   }
 }
