@@ -15,7 +15,7 @@ import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChange;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
-import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesFilter;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
 
 class UserPageHostingActionTest {
 

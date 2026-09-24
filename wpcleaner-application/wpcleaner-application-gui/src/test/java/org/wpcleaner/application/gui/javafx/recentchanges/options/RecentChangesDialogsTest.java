@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.recentchanges;
+package org.wpcleaner.application.gui.javafx.recentchanges.options;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>

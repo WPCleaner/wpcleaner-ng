@@ -26,6 +26,8 @@ import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.control.UrlTableCell;
 import org.wpcleaner.application.gui.javafx.core.control.UrlTableColumn;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.Severity;
 
 class RecentChangesTableViewTest {
 

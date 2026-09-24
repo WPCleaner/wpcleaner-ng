@@ -10,6 +10,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.Tooltip;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.Severity;
 import org.wpcleaner.lib.image.ImageSize;
 
 public final class SeverityTableCell<S> extends TableCell<S, @Nullable Severity> {

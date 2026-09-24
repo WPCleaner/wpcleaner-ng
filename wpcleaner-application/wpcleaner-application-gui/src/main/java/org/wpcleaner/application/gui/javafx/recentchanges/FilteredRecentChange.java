@@ -16,6 +16,8 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChange;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptions;
 
 public record FilteredRecentChange(
     String comment,

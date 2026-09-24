@@ -24,6 +24,7 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.control.ImageToggleButton;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptionsInput;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 

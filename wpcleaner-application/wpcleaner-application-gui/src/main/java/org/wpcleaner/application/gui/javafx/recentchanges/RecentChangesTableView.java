@@ -22,6 +22,7 @@ import org.wpcleaner.application.gui.javafx.core.control.IconListStringTableColu
 import org.wpcleaner.application.gui.javafx.core.control.SignedIntegerTableColumn;
 import org.wpcleaner.application.gui.javafx.core.control.TimeTableColumn;
 import org.wpcleaner.application.gui.javafx.core.control.UrlTableColumn;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.Severity;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 

@@ -18,6 +18,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.utils.JsonUtils;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptions;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.Severity;
 import org.wpcleaner.application.gui.settings.recentchanges.RecentChangesSettings;
 
 class RecentChangesSettingsTest {

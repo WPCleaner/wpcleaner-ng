@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.recentchanges;
+package org.wpcleaner.application.gui.javafx.recentchanges.options;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -18,6 +18,7 @@ import javafx.stage.Window;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
+import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.application.gui.settings.recentchanges.RecentChangesSettings;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;

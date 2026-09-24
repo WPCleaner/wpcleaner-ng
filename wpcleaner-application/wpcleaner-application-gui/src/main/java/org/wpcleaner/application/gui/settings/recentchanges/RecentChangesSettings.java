@@ -8,7 +8,7 @@ package org.wpcleaner.application.gui.settings.recentchanges;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.settings.VersionedSettings;
-import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesOptions;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptions;
 
 public record RecentChangesSettings(
     int version, List<RecentChangesOptions> options, @Nullable String selectedOption)

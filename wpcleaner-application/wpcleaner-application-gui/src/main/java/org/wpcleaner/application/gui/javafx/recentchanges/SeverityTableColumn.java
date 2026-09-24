@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableColumn;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.Severity;
 
 public final class SeverityTableColumn<S> extends TableColumn<S, @Nullable Severity> {
 
