@@ -44,12 +44,7 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
     mainContainer.setPadding(new Insets(6, 15, 6, 15));
     mainContainer.setAlignment(Pos.CENTER);
 
-    final WikiInput wiki =
-        new WikiInput(
-            services.knownDefinitions(),
-            services.apiSiteInfo(),
-            imageLoader,
-            services.actionServices());
+    final WikiInput wiki = new WikiInput(this, services, imageLoader);
     final LanguageInput language = new LanguageInput(imageLoader, services.actionServices());
     final UserInput user = new UserInput(imageLoader, services.actionServices());
     final PasswordInput password = new PasswordInput(imageLoader, services.actionServices());

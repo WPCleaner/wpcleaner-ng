@@ -7,26 +7,25 @@ package org.wpcleaner.application.gui.javafx.login;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
-import org.wpcleaner.api.api.query.meta.siteinfo.ApiSiteInfo;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.builder.FandomBuilder;
 import org.wpcleaner.api.wiki.builder.WikiBuilder;
@@ -38,11 +37,10 @@ import org.wpcleaner.api.wiki.builder.WikiversityBuilder;
 import org.wpcleaner.api.wiki.builder.WikivoyageBuilder;
 import org.wpcleaner.api.wiki.builder.WiktionaryBuilder;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
-final class WikiDefinitionDialog extends Dialog<@Nullable WikiDefinition> {
+public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowServices> {
 
-  private final ApiSiteInfo apiSiteInfo;
   private final ComboBox<WikiBuilderType> builderTypeComboBox;
   private final TextField nameField;
   private final TextField languageField;
@@ -52,15 +50,26 @@ final class WikiDefinitionDialog extends Dialog<@Nullable WikiDefinition> {
   private final TextField indexPathField;
   private final TextField wikiPathField;
   private final TextField codeField;
+  private final Consumer<WikiDefinition> onWikiAdded;
 
-  public WikiDefinitionDialog(
-      @Nullable final Window owner,
-      final JavaFxImageLoader imageLoader,
-      final ApiSiteInfo apiSiteInfo) {
-    super();
-    this.apiSiteInfo = apiSiteInfo;
-    initOwner(owner);
-    setTitle(GT._T("Add wiki"));
+  public WikiDefinitionWindow(
+      final JavaFxLoginWindowServices services, @Nullable final Stage owner) {
+    this(services, owner, _ -> {});
+  }
+
+  public WikiDefinitionWindow(
+      final JavaFxLoginWindowServices services, final Consumer<WikiDefinition> onWikiAdded) {
+    this(services, null, onWikiAdded);
+  }
+
+  public WikiDefinitionWindow(
+      final JavaFxLoginWindowServices services,
+      @Nullable final Stage owner,
+      final Consumer<WikiDefinition> onWikiAdded) {
+    super(services, owner);
+    stage.initModality(Modality.WINDOW_MODAL);
+    this.onWikiAdded = onWikiAdded;
+    stage.setTitle(GT._T("Add wiki"));
 
     builderTypeComboBox = new ComboBox<>();
     builderTypeComboBox.getItems().addAll(WikiBuilderType.values());
@@ -77,31 +86,32 @@ final class WikiDefinitionDialog extends Dialog<@Nullable WikiDefinition> {
     wikiPathField = new TextField("/wiki");
     codeField = new TextField();
 
-    setupLayout();
-
-    final ButtonType okButtonType = new ButtonType(GT._T("OK"), ButtonBar.ButtonData.OK_DONE);
-    final ButtonType cancelButtonType =
-        new ButtonType(GT._T("Cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-    getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
-
-    setupValidation(okButtonType);
-    setupResultConverter(okButtonType);
+    initialize();
+    stage.show();
   }
 
-  private void setupLayout() {
-    final VBox content = new VBox(10);
-    content.setPadding(new Insets(15, 15, 15, 15));
-    content.setPrefWidth(400);
+  @Override
+  public String getName() {
+    return "wikiDefinition";
+  }
 
-    content.getChildren().add(createRow(GT._T("Wiki Family:"), builderTypeComboBox));
-    content.getChildren().add(createRow(GT._T("Name:"), nameField));
-    content.getChildren().add(createRow(GT._T("Language:"), languageField));
-    content.getChildren().add(createRow(GT._T("Subdomain:"), subdomainField));
-    content.getChildren().add(createRow(GT._T("Main Host:"), mainHostField));
-    content.getChildren().add(createRow(GT._T("API Path:"), apiPathField));
-    content.getChildren().add(createRow(GT._T("Index Path:"), indexPathField));
-    content.getChildren().add(createRow(GT._T("Wiki Path:"), wikiPathField));
-    content.getChildren().add(createRow(GT._T("Code:"), codeField));
+  @Override
+  protected Scene createScene() {
+    final StackPane root = new StackPane();
+    final VBox mainContainer = new VBox(15);
+    mainContainer.setPadding(new Insets(15, 15, 15, 15));
+    mainContainer.setPrefWidth(400);
+
+    final VBox form = new VBox(10);
+    form.getChildren().add(createRow(GT._T("Wiki Family:"), builderTypeComboBox));
+    form.getChildren().add(createRow(GT._T("Name:"), nameField));
+    form.getChildren().add(createRow(GT._T("Language:"), languageField));
+    form.getChildren().add(createRow(GT._T("Subdomain:"), subdomainField));
+    form.getChildren().add(createRow(GT._T("Main Host:"), mainHostField));
+    form.getChildren().add(createRow(GT._T("API Path:"), apiPathField));
+    form.getChildren().add(createRow(GT._T("Index Path:"), indexPathField));
+    form.getChildren().add(createRow(GT._T("Wiki Path:"), wikiPathField));
+    form.getChildren().add(createRow(GT._T("Code:"), codeField));
 
     final BooleanBinding fandom =
         Bindings.createBooleanBinding(
@@ -137,78 +147,82 @@ final class WikiDefinitionDialog extends Dialog<@Nullable WikiDefinition> {
             (_, _, _) ->
                 Platform.runLater(
                     () -> {
-                      if (getDialogPane().getScene() != null
-                          && getDialogPane().getScene().getWindow() != null) {
-                        getDialogPane().getScene().getWindow().sizeToScene();
+                      if (stage.getScene() != null) {
+                        stage.sizeToScene();
                       }
                     }));
 
-    getDialogPane().setContent(content);
+    final Button okButton = new Button(GT._T("OK"));
+    okButton.setDefaultButton(true);
+    okButton.setOnAction(_ -> handleOk());
+
+    final Button cancelButton = new Button(GT._T("Cancel"));
+    cancelButton.setCancelButton(true);
+    cancelButton.setOnAction(_ -> stage.close());
+
+    final HBox buttons = new HBox(10, okButton, cancelButton);
+    buttons.setAlignment(Pos.CENTER_RIGHT);
+
+    mainContainer.getChildren().addAll(form, buttons);
+
+    form.disableProperty().bind(loading);
+    buttons.disableProperty().bind(loading);
+
+    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    return new Scene(root);
   }
 
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void setupValidation(final ButtonType okButtonType) {
-    final Button okButton = (Button) getDialogPane().lookupButton(okButtonType);
-    okButton.addEventFilter(
-        ActionEvent.ACTION,
-        event -> {
-          final String name = nameField.getText().trim();
+  private void handleOk() {
+    final String name = nameField.getText().trim();
 
-          if (isInputInvalid(name)) {
-            event.consume();
-            return;
-          }
+    if (isInputInvalid(name)) {
+      return;
+    }
 
-          final WikiDefinition candidate = buildWikiDefinition();
-          try {
-            apiSiteInfo.requestSiteInfo(candidate, List.of(), null, null, null);
-          } catch (final Exception e) {
-            event.consume();
-            final String message =
-                Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName());
-            showError(GT._T("The wiki could not be reached or is invalid: %s", message));
-          }
-        });
+    final WikiDefinition candidate = buildWikiDefinition();
+    try {
+      services.apiSiteInfo().requestSiteInfo(candidate, List.of(), null, null, null);
+    } catch (final Exception e) {
+      final String message =
+          Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName());
+      showError(GT._T("Error"), GT._T("The wiki could not be reached or is invalid: %s", message));
+      return;
+    }
+
+    services.knownDefinitions().addDefinition(candidate);
+    onWikiAdded.accept(candidate);
+    stage.close();
   }
 
   private boolean isInputInvalid(final String name) {
     if (name.isEmpty()) {
-      showError(GT._T("The name cannot be empty."));
+      showError(GT._T("Error"), GT._T("The name cannot be empty."));
       return true;
     }
 
     if (subdomainField.isVisible()) {
       final String subdomain = subdomainField.getText().trim();
       if (subdomain.isEmpty()) {
-        showError(GT._T("The subdomain cannot be empty."));
+        showError(GT._T("Error"), GT._T("The subdomain cannot be empty."));
         return true;
       }
     }
     if (mainHostField.isVisible()) {
       final String mainHost = mainHostField.getText().trim();
       if (mainHost.isEmpty()) {
-        showError(GT._T("The main host cannot be empty."));
+        showError(GT._T("Error"), GT._T("The main host cannot be empty."));
         return true;
       }
     }
     if (languageField.isVisible()) {
       final String language = languageField.getText().trim();
       if (language.isEmpty()) {
-        showError(GT._T("The language cannot be empty."));
+        showError(GT._T("Error"), GT._T("The language cannot be empty."));
         return true;
       }
     }
     return false;
-  }
-
-  private void setupResultConverter(final ButtonType okButtonType) {
-    setResultConverter(
-        dialogButton -> {
-          if (Objects.equals(dialogButton, okButtonType)) {
-            return buildWikiDefinition();
-          }
-          return null;
-        });
   }
 
   private WikiDefinition buildWikiDefinition() {
@@ -277,14 +291,5 @@ final class WikiDefinitionDialog extends Dialog<@Nullable WikiDefinition> {
     row.visibleProperty().bind(control.visibleProperty());
     row.managedProperty().bind(control.managedProperty());
     return row;
-  }
-
-  private void showError(final String message) {
-    final Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.initOwner(getDialogPane().getScene().getWindow());
-    alert.setTitle(GT._T("Error"));
-    alert.setHeaderText(null);
-    alert.setContentText(message);
-    alert.showAndWait();
   }
 }

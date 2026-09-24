@@ -6,11 +6,15 @@ package org.wpcleaner.application.gui.javafx.core.window;
  */
 
 import java.util.Arrays;
+import java.util.Optional;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -25,6 +29,10 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
   protected final Stage stage;
 
   protected JavaFxWindow(final S services) {
+    this(services, null);
+  }
+
+  protected JavaFxWindow(final S services, @Nullable final Stage owner) {
     this.services = services;
     this.imageLoader = new JavaFxImageLoader(services.imageLoader());
     this.loading = new SimpleBooleanProperty(false);
@@ -33,6 +41,7 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
     stage.setTitle("WPCleaner");
     stage.getIcons().clear();
     Arrays.stream(ImageSize.values()).forEach(this::setIcon);
+    Optional.ofNullable(owner).ifPresent(stage::initOwner);
   }
 
   protected void initialize() {
@@ -49,20 +58,36 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
 
   protected abstract Scene createScene();
 
-  protected void showWarning(final String title, final String content) {
-    final Alert alert = new Alert(Alert.AlertType.WARNING);
-    alert.setTitle(title);
-    alert.setHeaderText(null);
-    alert.setContentText(content);
-    alert.showAndWait();
+  public final void showConfirmation(final String content, final Runnable okAction) {
+    show(Alert.AlertType.CONFIRMATION, GT._T("Confirmation"), null, content)
+        .filter(ButtonType.OK::equals)
+        .ifPresent(_ -> okAction.run());
   }
 
-  protected void showError(final String title, final String header, final String content) {
-    final Alert alert = new Alert(Alert.AlertType.ERROR);
+  protected void showError(final String title, final String content) {
+    showError(title, null, content);
+  }
+
+  protected void showError(
+      final String title, @Nullable final String header, final String content) {
+    show(Alert.AlertType.ERROR, title, header, content);
+  }
+
+  public final void showWarning(final String title, final String content) {
+    show(Alert.AlertType.WARNING, title, null, content);
+  }
+
+  private Optional<ButtonType> show(
+      final Alert.AlertType type,
+      final String title,
+      @Nullable final String header,
+      final String content) {
+    final Alert alert = new Alert(type);
+    alert.initOwner(stage);
     alert.setTitle(title);
     alert.setHeaderText(header);
     alert.setContentText(content);
-    alert.showAndWait();
+    return alert.showAndWait();
   }
 
   private void setIcon(final ImageSize size) {
