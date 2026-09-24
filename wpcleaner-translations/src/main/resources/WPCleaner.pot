@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-09-24 13:47+0200\n"
+"POT-Creation-Date: 2026-09-24 15:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,6 +75,31 @@ msgstr ""
 msgid "Recent changes"
 msgstr ""
 
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationWindow.java:45
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:108
+msgid "User information"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationWindow.java:75
+msgid "Username:"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationWindow.java:82
+msgid "Wiki:"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationWindow.java:89
+msgid "Groups:"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationWindow.java:98
+msgid "Rights:"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationWindow.java:116
+msgid "Close"
+msgstr ""
+
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:73
 msgid "Analysis"
 msgstr ""
@@ -87,45 +112,20 @@ msgstr ""
 msgid "The page name cannot be empty."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationDialog.java:26
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:102
-msgid "User information"
-msgstr ""
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationDialog.java:34
-msgid "Username:"
-msgstr ""
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationDialog.java:40
-msgid "Wiki:"
-msgstr ""
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationDialog.java:46
-msgid "Groups:"
-msgstr ""
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationDialog.java:54
-msgid "Rights:"
-msgstr ""
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationDialog.java:70
-msgid "Close"
-msgstr ""
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:55
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:61
 #, java-printf-format
 msgid "Welcome %s on WPCleaner Next Generation!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:64
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:70
 msgid "You are currently in demo mode, you won't be able to save your modifications"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:73
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:79
 msgid "By page"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:85
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:91
 msgid "Projects"
 msgstr ""
 
@@ -161,65 +161,65 @@ msgstr ""
 msgid "Forget user"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:133
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:138
 msgid "Login"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:138
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:143
 msgid "Demo"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:158
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:210
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:163
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:215
 msgid "Missing wiki"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:158
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:163
 msgid "You must select a wiki before login!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:163
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:216
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:168
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:221
 msgid "Missing username"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:163
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:168
 msgid "You must input your username before login!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:169
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:174
 msgid "Missing password"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:170
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:175
 msgid "You must input your password before login!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:172
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:177
 msgid "If you prefer to test WPCleaner first, you can use the Demo mode."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:199
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:204
 msgid "Login Failed"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:200
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:205
 msgid "An error occurred during login"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:210
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:215
 msgid "You must select a wiki before starting demo mode!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:217
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:222
 msgid "You must input your username before starting demo mode!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:242
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:247
 msgid "Demo Mode Failed"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:243
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:248
 msgid "An error occurred during demo startup"
 msgstr ""
 
@@ -231,66 +231,66 @@ msgstr ""
 msgid "Add language"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:76
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:72
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiInput.java:88
 msgid "Add wiki"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:110
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:106
 msgid "Wiki Family:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:111
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:107
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:63
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:58
 msgid "Name:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:112
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:108
 msgid "Language:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:113
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:109
 msgid "Subdomain:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:114
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:110
 msgid "Main Host:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:115
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:111
 msgid "API Path:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:116
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:112
 msgid "Index Path:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:117
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:113
 msgid "Wiki Path:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:118
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:114
 msgid "Code:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:159
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:155
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:96
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:81
 msgid "OK"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:163
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:159
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:98
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:83
 msgid "Cancel"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:193
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:204
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:211
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:218
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:225
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:189
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:200
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:207
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:214
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:221
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:229
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsDialog.java:109
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesFilterDialog.java:94
@@ -298,24 +298,24 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:193
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:189
 #, java-printf-format
 msgid "The wiki could not be reached or is invalid: %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:204
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:200
 msgid "The name cannot be empty."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:211
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:207
 msgid "The subdomain cannot be empty."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:218
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:214
 msgid "The main host cannot be empty."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:225
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:221
 msgid "The language cannot be empty."
 msgstr ""
 

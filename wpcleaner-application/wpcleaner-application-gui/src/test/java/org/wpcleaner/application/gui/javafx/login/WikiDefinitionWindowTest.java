@@ -91,6 +91,8 @@ class WikiDefinitionWindowTest {
 
           Assertions.assertThat(cancelButton.getText()).isEqualTo("Cancel");
           Assertions.assertThat(added).isFalse();
+
+          window.getStage().close();
         });
   }
 
@@ -118,6 +120,9 @@ class WikiDefinitionWindowTest {
 
           Assertions.assertThat(window.getStage().getModality()).isEqualTo(Modality.WINDOW_MODAL);
           Assertions.assertThat(window.getStage().getOwner()).isEqualTo(ownerStage);
+
+          window.getStage().close();
+          ownerStage.close();
         });
   }
 }

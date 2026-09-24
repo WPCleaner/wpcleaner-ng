@@ -29,6 +29,11 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
   public JavaFxLoginWindow(final JavaFxLoginWindowServices services) {
     super(services);
     initialize();
+    stage.setOnCloseRequest(
+        event -> {
+          event.consume();
+          Platform.runLater(Platform::exit);
+        });
     stage.show();
   }
 

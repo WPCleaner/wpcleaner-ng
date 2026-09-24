@@ -2,6 +2,7 @@ import net.ltgt.gradle.errorprone.CheckSeverity
 import net.ltgt.gradle.errorprone.errorprone
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
+import java.io.File
 import java.nio.charset.StandardCharsets
 
 plugins {
@@ -42,6 +43,12 @@ tasks.compileJava { options.javaModuleVersion.set(provider { version as String }
 tasks.test { useJUnitPlatform() }
 
 tasks.withType<Test>().configureEach {
+  val envDisplay = System.getenv("DISPLAY")
+  if (!envDisplay.isNullOrBlank()) {
+    environment("DISPLAY", envDisplay)
+  } else if (File("/tmp/.X11-unix/X0").exists()) {
+    environment("DISPLAY", ":0")
+  }
   jvmArgs(
     "-XX:+ShowCodeDetailsInExceptionMessages",
     "-Duser.language=US",

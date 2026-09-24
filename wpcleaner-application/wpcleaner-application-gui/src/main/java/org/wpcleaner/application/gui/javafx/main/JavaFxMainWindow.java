@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.javafx.main;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -33,6 +34,11 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
     super(services);
     this.user = services.user().getCurrentUser();
     initialize();
+    stage.setOnCloseRequest(
+        event -> {
+          event.consume();
+          Platform.runLater(Platform::exit);
+        });
     stage.show();
   }
 
@@ -104,7 +110,7 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
     imageLoader
         .getImageView(ImageCollection.USER, ImageSize.BUTTON)
         .ifPresent(userButton::setGraphic);
-    userButton.setOnAction(_ -> new UserInformationDialog(stage, user).showAndWait());
+    userButton.setOnAction(_ -> new UserInformationWindow(services, stage, user));
 
     feedbacks.getItems().add(userButton);
     return feedbacks;

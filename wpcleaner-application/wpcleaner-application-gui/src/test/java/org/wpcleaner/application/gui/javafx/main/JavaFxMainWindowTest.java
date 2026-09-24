@@ -110,6 +110,7 @@ class JavaFxMainWindowTest {
           final JavaFxMainWindow mainWindow = new JavaFxMainWindow(services);
 
           Assertions.assertThat(mainWindow.getStage().getTitle()).isEqualTo("WPCleaner");
+          Assertions.assertThat(mainWindow.getStage().getOnCloseRequest()).isNotNull();
 
           final javafx.scene.Parent rootPane = mainWindow.getStage().getScene().getRoot();
           final VBox mainContainer = (VBox) rootPane.getChildrenUnmodifiable().getFirst();
@@ -129,6 +130,7 @@ class JavaFxMainWindowTest {
                   .findFirst();
 
           Assertions.assertThat(userButton).isPresent();
+          mainWindow.getStage().close();
         });
   }
 }

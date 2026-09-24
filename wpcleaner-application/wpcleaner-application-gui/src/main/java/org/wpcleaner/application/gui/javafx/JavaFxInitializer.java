@@ -25,7 +25,7 @@ public final class JavaFxInitializer {
   public static void initialize() {
     if (STARTED.compareAndSet(false, true)) {
       try {
-        Platform.startup(() -> {});
+        Platform.startup(() -> Platform.setImplicitExit(false));
       } catch (final IllegalStateException e) {
         LOGGER.debug("JavaFX platform already started", e);
       }
