@@ -6,11 +6,8 @@ package org.wpcleaner.application.gui.javafx.main;
  */
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -23,39 +20,17 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.lib.image.ImageLoader;
 
-class UserInformationWindowTest {
-
-  @BeforeAll
-  static void setUpClass() {
-    JavaFxInitializer.initialize();
-  }
-
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void runOnJavaFx(final Runnable runnable)
-      throws InterruptedException, ExecutionException, TimeoutException {
-    final CompletableFuture<Void> future = new CompletableFuture<>();
-    Platform.runLater(
-        () -> {
-          try {
-            runnable.run();
-            future.complete(null);
-          } catch (final AssertionError | Exception e) {
-            future.completeExceptionally(e);
-          }
-        });
-    future.get(5, TimeUnit.SECONDS);
-  }
+class UserInformationWindowTest extends JavaFxTest {
 
   @DisplayName("UserInformationWindow initializes and displays user information correctly")
   @Test

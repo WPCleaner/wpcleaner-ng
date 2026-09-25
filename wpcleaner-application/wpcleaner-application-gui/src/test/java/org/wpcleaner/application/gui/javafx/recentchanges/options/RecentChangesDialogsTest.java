@@ -8,14 +8,10 @@ package org.wpcleaner.application.gui.javafx.recentchanges.options;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import javafx.application.Platform;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -24,30 +20,9 @@ import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.JavaFxTest;
 
-class RecentChangesDialogsTest {
-
-  @BeforeAll
-  static void setUpClass() {
-    JavaFxInitializer.initialize();
-  }
-
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void runOnJavaFx(final Runnable runnable)
-      throws InterruptedException, ExecutionException, TimeoutException {
-    final CompletableFuture<Void> future = new CompletableFuture<>();
-    Platform.runLater(
-        () -> {
-          try {
-            runnable.run();
-            future.complete(null);
-          } catch (final AssertionError | Exception e) {
-            future.completeExceptionally(e);
-          }
-        });
-    future.get(5, TimeUnit.SECONDS);
-  }
+class RecentChangesDialogsTest extends JavaFxTest {
 
   @DisplayName("RecentChangesFilterDialog initializes controls with correct values")
   @Test

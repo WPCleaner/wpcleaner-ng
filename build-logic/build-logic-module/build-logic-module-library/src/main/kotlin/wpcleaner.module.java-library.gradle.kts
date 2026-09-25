@@ -50,9 +50,11 @@ tasks.withType<Test>().configureEach {
     environment("DISPLAY", ":0")
   }
   jvmArgs(
-    "-XX:+ShowCodeDetailsInExceptionMessages",
+    "-Dprism.forceGPU=false",
+    "-Dprism.order=sw",
     "-Duser.language=US",
     "-Xshare:off",
+    "-XX:+ShowCodeDetailsInExceptionMessages",
     "--enable-native-access=ALL-UNNAMED",
     "--sun-misc-unsafe-memory-access=allow"
   )
