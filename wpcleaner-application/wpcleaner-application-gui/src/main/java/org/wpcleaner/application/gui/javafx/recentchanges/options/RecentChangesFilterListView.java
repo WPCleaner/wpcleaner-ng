@@ -5,7 +5,6 @@ package org.wpcleaner.application.gui.javafx.recentchanges.options;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.List;
 import java.util.Optional;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Button;
@@ -15,9 +14,8 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
-import org.wpcleaner.api.api.query.list.tags.Tag;
-import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
@@ -25,17 +23,18 @@ import org.wpcleaner.application.gui.javafx.core.control.MoveDownButton;
 import org.wpcleaner.application.gui.javafx.core.control.MoveFirstButton;
 import org.wpcleaner.application.gui.javafx.core.control.MoveLastButton;
 import org.wpcleaner.application.gui.javafx.core.control.MoveUpButton;
+import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
 public final class RecentChangesFilterListView extends ListView<@Nullable RecentChangesFilter> {
 
+  private final JavaFxImageLoader imageLoader;
+
   public RecentChangesFilterListView(
-      final JavaFxImageLoader imageLoader,
-      final List<Namespace> availableNamespaces,
-      final List<Tag> availableTags,
-      final ToolBar toolbar) {
+      final JavaFxRecentChangesWindowServices services, final Stage owner, final ToolBar toolbar) {
     super();
+    this.imageLoader = new JavaFxImageLoader(services.imageLoader());
     setPrefHeight(150);
     setPrefWidth(250);
     setCellFactory(
@@ -61,9 +60,8 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
               }
             });
 
-    final Button addFilterButton = createAddButton(imageLoader, availableNamespaces, availableTags);
-    final Button editFilterButton =
-        createEditButton(imageLoader, availableNamespaces, availableTags);
+    final Button addFilterButton = createAddButton(services, owner);
+    final Button editFilterButton = createEditButton(services, owner);
     final Button removeFilterButton = createRemoveButton(imageLoader);
 
     final Button moveFirstButton = new MoveFirstButton<>(imageLoader, this);
@@ -85,9 +83,7 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
   }
 
   private Button createAddButton(
-      final JavaFxImageLoader imageLoader,
-      final List<Namespace> availableNamespaces,
-      final List<Tag> availableTags) {
+      final JavaFxRecentChangesWindowServices services, final Stage owner) {
     final Button button = new Button();
     button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
@@ -95,23 +91,14 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
         .ifPresent(button::setGraphic);
     button.setTooltip(new Tooltip(GT._T("Add")));
     button.setOnAction(
-        _ -> {
-          if (getScene() != null) {
-            final javafx.stage.Window window = getScene().getWindow();
-            if (window != null) {
-              RecentChangesFilterDialog.showDialog(
-                      window, imageLoader, availableNamespaces, availableTags, null)
-                  .ifPresent(newFilter -> getItems().add(newFilter));
-            }
-          }
-        });
+        _ ->
+            new RecentChangesFilterWindow(
+                services, owner, null, newFilter -> getItems().add(newFilter)));
     return button;
   }
 
   private Button createEditButton(
-      final JavaFxImageLoader imageLoader,
-      final List<Namespace> availableNamespaces,
-      final List<Tag> availableTags) {
+      final JavaFxRecentChangesWindowServices services, final Stage owner) {
     final Button button = new Button();
     button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader.getImageView(ImageCollection.EDIT, ImageSize.BUTTON).ifPresent(button::setGraphic);
@@ -120,14 +107,13 @@ public final class RecentChangesFilterListView extends ListView<@Nullable Recent
     button.setOnAction(
         _ -> {
           final RecentChangesFilter selectedFilter = getSelectionModel().getSelectedItem();
-          if (selectedFilter != null && getScene() != null) {
-            final javafx.stage.Window window = getScene().getWindow();
-            if (window != null) {
-              final int selectedIndex = getSelectionModel().getSelectedIndex();
-              RecentChangesFilterDialog.showDialog(
-                      window, imageLoader, availableNamespaces, availableTags, selectedFilter)
-                  .ifPresent(editedFilter -> getItems().set(selectedIndex, editedFilter));
-            }
+          if (selectedFilter != null) {
+            final int selectedIndex = getSelectionModel().getSelectedIndex();
+            new RecentChangesFilterWindow(
+                services,
+                owner,
+                selectedFilter,
+                editedFilter -> getItems().set(selectedIndex, editedFilter));
           }
         });
     return button;

@@ -39,12 +39,7 @@ public final class JavaFxRecentChangesWindow
 
     final RecentChangesListPanel upperPanel =
         new RecentChangesListPanel(
-            stage,
-            services,
-            imageLoader,
-            progressTracker,
-            loading,
-            detailsPanel::viewModifications);
+            this, services, imageLoader, progressTracker, loading, detailsPanel::viewModifications);
 
     final SplitPane splitPane = new SplitPane();
     splitPane.setOrientation(Orientation.VERTICAL);

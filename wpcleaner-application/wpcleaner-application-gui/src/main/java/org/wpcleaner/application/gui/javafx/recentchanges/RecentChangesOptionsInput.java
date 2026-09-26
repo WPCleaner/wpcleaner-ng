@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.recentchanges.options;
+package org.wpcleaner.application.gui.javafx.recentchanges;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -7,18 +7,16 @@ package org.wpcleaner.application.gui.javafx.recentchanges.options;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
-import javafx.stage.Window;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
-import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptions;
+import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptionsWindow;
 import org.wpcleaner.application.gui.settings.recentchanges.RecentChangesSettings;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -29,13 +27,11 @@ public final class RecentChangesOptionsInput {
   private final Button editOptions;
   private final Button addOptions;
   private final Button removeOptions;
-  private final JavaFxImageLoader imageLoader;
 
   public RecentChangesOptionsInput(
-      final Window owner,
+      final JavaFxWindow<?> owner,
       final JavaFxRecentChangesWindowServices services,
       final JavaFxImageLoader imageLoader) {
-    this.imageLoader = imageLoader;
     this.comboBox = new ComboBox<>();
     this.comboBox.setCellFactory(
         _ ->
@@ -134,15 +130,11 @@ public final class RecentChangesOptionsInput {
   }
 
   private void addOptionsAction(
-      final Window owner, final JavaFxRecentChangesWindowServices services) {
-    final Optional<RecentChangesOptions> result =
-        RecentChangesOptionsDialog.showDialog(
-            owner,
-            imageLoader,
-            services.namespaceRepository().getNamespaces(),
-            services.tagRepository().getTags(),
-            getSelectedOptions());
-    result.ifPresent(
+      final JavaFxWindow<?> owner, final JavaFxRecentChangesWindowServices services) {
+    new RecentChangesOptionsWindow(
+        services,
+        owner.getStage(),
+        getSelectedOptions(),
         newOptions -> {
           comboBox.getItems().add(newOptions);
           comboBox.getSelectionModel().select(newOptions);
@@ -151,20 +143,16 @@ public final class RecentChangesOptionsInput {
   }
 
   private void editOptionsAction(
-      final Window owner, final JavaFxRecentChangesWindowServices services) {
+      final JavaFxWindow<?> owner, final JavaFxRecentChangesWindowServices services) {
     final RecentChangesOptions selected = getSelectedOptions();
     if (Objects.equals(selected, RecentChangesOptions.DEFAULT_OPTIONS)) {
-      showErrorAlert(owner, GT._T("The default options cannot be edited."));
+      owner.showError(GT._T("Error"), GT._T("The default options cannot be edited."));
       return;
     }
-    final Optional<RecentChangesOptions> result =
-        RecentChangesOptionsDialog.showDialog(
-            owner,
-            imageLoader,
-            services.namespaceRepository().getNamespaces(),
-            services.tagRepository().getTags(),
-            selected);
-    result.ifPresent(
+    new RecentChangesOptionsWindow(
+        services,
+        owner.getStage(),
+        selected,
         newOptions -> {
           final int index = comboBox.getSelectionModel().getSelectedIndex();
           if (index >= 0) {
@@ -177,23 +165,19 @@ public final class RecentChangesOptionsInput {
   }
 
   private void removeOptionsAction(
-      final Window owner, final JavaFxRecentChangesWindowServices services) {
+      final JavaFxWindow<?> owner, final JavaFxRecentChangesWindowServices services) {
     final RecentChangesOptions selected = getSelectedOptions();
     if (Objects.equals(selected, RecentChangesOptions.DEFAULT_OPTIONS)) {
-      showErrorAlert(owner, GT._T("The default options cannot be deleted."));
+      owner.showError(GT._T("Error"), GT._T("The default options cannot be deleted."));
       return;
     }
-    final Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-    alert.initOwner(owner);
-    alert.setTitle(GT._T("Confirm deletion"));
-    alert.setHeaderText(null);
-    alert.setContentText(
-        GT._T("Are you sure you want to delete the options \"%s\"?", selected.name()));
-    final Optional<ButtonType> result = alert.showAndWait();
-    if (result.isPresent() && result.get() == ButtonType.OK) {
-      comboBox.getItems().remove(selected);
-      saveOptions(services);
-    }
+    owner.showConfirmation(
+        GT._T("Confirm deletion"),
+        GT._T("Are you sure you want to delete the options \"%s\"?", selected.name()),
+        () -> {
+          comboBox.getItems().remove(selected);
+          saveOptions(services);
+        });
   }
 
   private void saveOptions(final JavaFxRecentChangesWindowServices services) {
@@ -222,14 +206,5 @@ public final class RecentChangesOptionsInput {
       editOptions.setTooltip(new Tooltip(GT._T("Edit selected options")));
       removeOptions.setTooltip(new Tooltip(GT._T("Remove selected options")));
     }
-  }
-
-  private void showErrorAlert(final Window owner, final String message) {
-    final Alert alert = new Alert(Alert.AlertType.ERROR);
-    alert.initOwner(owner);
-    alert.setTitle(GT._T("Error"));
-    alert.setHeaderText(null);
-    alert.setContentText(message);
-    alert.showAndWait();
   }
 }

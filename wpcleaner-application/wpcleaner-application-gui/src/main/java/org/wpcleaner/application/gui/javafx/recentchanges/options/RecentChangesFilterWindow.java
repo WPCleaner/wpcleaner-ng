@@ -6,22 +6,24 @@ package org.wpcleaner.application.gui.javafx.recentchanges.options;
  */
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Window;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -29,100 +31,125 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.NamespaceCheckComboBox;
 import org.wpcleaner.application.gui.javafx.core.control.TagCheckComboBox;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 
 @SuppressWarnings("PMD.CouplingBetweenObjects")
-public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChangesFilter> {
+public final class RecentChangesFilterWindow
+    extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
   private final TextField nameField;
   private final NamespaceCheckComboBox namespaceCheckComboBox;
   private final TagCheckComboBox tagCheckComboBox;
   private final FilterTypeCheckComboBox typeCheckComboBox;
   private final ComboBox<@Nullable Severity> severityComboBox;
+  private final ToggleGroup subPagesGroup;
+  private final HBox subPagesBox;
+  private final Consumer<RecentChangesFilter> onFilterValidated;
 
-  public RecentChangesFilterDialog(
-      @Nullable final Window owner,
-      final JavaFxImageLoader imageLoader,
-      final List<Namespace> availableNamespaces,
-      final List<Tag> availableTags,
-      @Nullable final RecentChangesFilter initialFilter) {
-    super();
-    initOwner(owner);
-    setTitle(GT._T("Recent changes filter"));
+  public RecentChangesFilterWindow(
+      final JavaFxRecentChangesWindowServices services,
+      final Stage owner,
+      @Nullable final RecentChangesFilter initialFilter,
+      final Consumer<RecentChangesFilter> onFilterValidated) {
+    super(services, owner);
+    stage.initModality(Modality.WINDOW_MODAL);
+    this.onFilterValidated = Objects.requireNonNull(onFilterValidated);
+    stage.setTitle(GT._T("Recent changes filter"));
+
+    final List<Namespace> availableNamespaces = services.namespaceRepository().getNamespaces();
+    final List<Tag> availableTags = services.tagRepository().getTags();
+
+    nameField = createNameField(initialFilter);
+    namespaceCheckComboBox = createNamespaceCheckComboBox(availableNamespaces, initialFilter);
+    tagCheckComboBox = createTagCheckComboBox(availableTags, initialFilter);
+    typeCheckComboBox = createTypeCheckComboBox(initialFilter);
+    severityComboBox = createSeverityComboBox(imageLoader, initialFilter);
+    subPagesGroup = new ToggleGroup();
+    subPagesBox = createSubPagesBox(subPagesGroup, initialFilter);
+
+    initialize();
+    stage.show();
+  }
+
+  @Override
+  public String getName() {
+    return "recentChangesFilter";
+  }
+
+  @Override
+  protected Scene createScene() {
+    final StackPane root = new StackPane();
+    final VBox mainContainer = new VBox(15);
+    mainContainer.setPadding(new Insets(15, 15, 15, 15));
 
     final GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(10);
-    grid.setPadding(new Insets(15, 15, 15, 15));
 
-    nameField = createNameField(initialFilter);
     grid.add(new Label(GT._T("Name:")), 0, 0);
     grid.add(nameField, 1, 0);
 
-    namespaceCheckComboBox = createNamespaceCheckComboBox(availableNamespaces, initialFilter);
     grid.add(new Label(GT._T("Namespaces:")), 0, 1);
     grid.add(namespaceCheckComboBox, 1, 1);
 
-    tagCheckComboBox = createTagCheckComboBox(availableTags, initialFilter);
     grid.add(new Label(GT._T("Tags:")), 0, 2);
     grid.add(tagCheckComboBox, 1, 2);
 
-    typeCheckComboBox = createTypeCheckComboBox(initialFilter);
     grid.add(new Label(GT._T("Types:")), 0, 3);
     grid.add(typeCheckComboBox, 1, 3);
 
-    severityComboBox = createSeverityComboBox(imageLoader, initialFilter);
     grid.add(new Label(GT._T("Severity:")), 0, 4);
     grid.add(severityComboBox, 1, 4);
 
-    final ToggleGroup subPagesGroup = setupSubPagesGroup(grid, initialFilter);
+    grid.add(new Label(GT._T("Sub-pages:")), 0, 5);
+    grid.add(subPagesBox, 1, 5);
 
-    getDialogPane().setContent(grid);
+    final Button okButton = new Button(GT._T("OK"));
+    okButton.setDefaultButton(true);
+    okButton.setOnAction(_ -> handleOk());
 
-    final ButtonType okButtonType = new ButtonType(GT._T("OK"), ButtonBar.ButtonData.OK_DONE);
-    final ButtonType cancelButtonType =
-        new ButtonType(GT._T("Cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-    getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
+    final Button cancelButton = new Button(GT._T("Cancel"));
+    cancelButton.setCancelButton(true);
+    cancelButton.setOnAction(_ -> stage.close());
 
-    final Button okButton = (Button) getDialogPane().lookupButton(okButtonType);
-    okButton.addEventFilter(
-        javafx.event.ActionEvent.ACTION,
-        event -> {
-          if (nameField.getText().isBlank()) {
-            event.consume();
-            final Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.initOwner(getDialogPane().getScene().getWindow());
-            alert.setTitle(GT._T("Error"));
-            alert.setHeaderText(null);
-            alert.setContentText(GT._T("The filter name cannot be empty or blank."));
-            alert.showAndWait();
-          }
-        });
+    final HBox buttons = new HBox(10, okButton, cancelButton);
+    buttons.setAlignment(Pos.CENTER_RIGHT);
 
-    setResultConverter(
-        dialogButton -> {
-          if (okButtonType.equals(dialogButton)) {
-            final String name = nameField.getText().trim();
-            final Set<Integer> namespaceSet =
-                Set.copyOf(
-                    namespaceCheckComboBox.getCheckModel().getCheckedItems().stream()
-                        .map(Namespace::id)
-                        .toList());
-            final Set<String> tagSet =
-                Set.copyOf(
-                    tagCheckComboBox.getCheckModel().getCheckedItems().stream()
-                        .map(Tag::name)
-                        .toList());
-            final Set<RecentChangesFilter.Type> typeSet =
-                Set.copyOf(typeCheckComboBox.getCheckModel().getCheckedItems().stream().toList());
-            final Severity severity = severityComboBox.getSelectionModel().getSelectedItem();
-            final RecentChangesFilter.SubPages subPages =
-                subPagesGroup.getSelectedToggle() != null
-                    ? (RecentChangesFilter.SubPages) subPagesGroup.getSelectedToggle().getUserData()
-                    : RecentChangesFilter.SubPages.BOTH;
-            return new RecentChangesFilter(name, namespaceSet, severity, tagSet, typeSet, subPages);
-          }
-          return null;
-        });
+    mainContainer.getChildren().addAll(grid, buttons);
+
+    grid.disableProperty().bind(loading);
+    buttons.disableProperty().bind(loading);
+
+    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    return new Scene(root);
+  }
+
+  private void handleOk() {
+    if (nameField.getText().isBlank()) {
+      showError(GT._T("Error"), GT._T("The filter name cannot be empty or blank."));
+      return;
+    }
+    final String name = nameField.getText().trim();
+    final Set<Integer> namespaceSet =
+        Set.copyOf(
+            namespaceCheckComboBox.getCheckModel().getCheckedItems().stream()
+                .map(Namespace::id)
+                .toList());
+    final Set<String> tagSet =
+        Set.copyOf(
+            tagCheckComboBox.getCheckModel().getCheckedItems().stream().map(Tag::name).toList());
+    final Set<RecentChangesFilter.Type> typeSet =
+        Set.copyOf(typeCheckComboBox.getCheckModel().getCheckedItems().stream().toList());
+    final Severity severity = severityComboBox.getSelectionModel().getSelectedItem();
+    final RecentChangesFilter.SubPages subPages =
+        subPagesGroup.getSelectedToggle() != null
+            ? (RecentChangesFilter.SubPages) subPagesGroup.getSelectedToggle().getUserData()
+            : RecentChangesFilter.SubPages.BOTH;
+    final RecentChangesFilter filter =
+        new RecentChangesFilter(name, namespaceSet, severity, tagSet, typeSet, subPages);
+    onFilterValidated.accept(filter);
+    stage.close();
   }
 
   private TextField createNameField(@Nullable final RecentChangesFilter initialFilter) {
@@ -173,10 +200,8 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
     return comboBox;
   }
 
-  private ToggleGroup setupSubPagesGroup(
-      final GridPane grid, @Nullable final RecentChangesFilter initialFilter) {
-    final ToggleGroup group = new ToggleGroup();
-
+  private HBox createSubPagesBox(
+      final ToggleGroup group, @Nullable final RecentChangesFilter initialFilter) {
     final RadioButton bothRadio = new RadioButton(GT._T("Both"));
     bothRadio.setToggleGroup(group);
     bothRadio.setUserData(RecentChangesFilter.SubPages.BOTH);
@@ -196,25 +221,10 @@ public final class RecentChangesFilterDialog extends Dialog<@Nullable RecentChan
       case TOP_PAGES -> topPagesRadio.setSelected(true);
       case SUB_PAGES -> subPagesRadio.setSelected(true);
     }
-
-    grid.add(new Label(GT._T("Sub-pages:")), 0, 5);
-    grid.add(new HBox(bothRadio, topPagesRadio, subPagesRadio), 1, 5);
-    return group;
+    return new HBox(10, bothRadio, topPagesRadio, subPagesRadio);
   }
 
   @Nullable Severity getSelectedSeverity() {
     return severityComboBox.getSelectionModel().getSelectedItem();
-  }
-
-  public static Optional<RecentChangesFilter> showDialog(
-      final Window owner,
-      final JavaFxImageLoader imageLoader,
-      final List<Namespace> availableNamespaces,
-      final List<Tag> availableTags,
-      @Nullable final RecentChangesFilter initialFilter) {
-    final RecentChangesFilterDialog dialog =
-        new RecentChangesFilterDialog(
-            owner, imageLoader, availableNamespaces, availableTags, initialFilter);
-    return dialog.showAndWait();
   }
 }

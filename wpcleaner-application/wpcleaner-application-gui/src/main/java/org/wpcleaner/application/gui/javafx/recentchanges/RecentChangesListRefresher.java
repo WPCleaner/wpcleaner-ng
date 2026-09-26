@@ -23,7 +23,6 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptions;
-import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptionsInput;
 
 public final class RecentChangesListRefresher {
 

@@ -59,17 +59,21 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
   protected abstract Scene createScene();
 
   public final void showConfirmation(final String content, final Runnable okAction) {
-    show(Alert.AlertType.CONFIRMATION, GT._T("Confirmation"), null, content)
+    showConfirmation(GT._T("Confirmation"), content, okAction);
+  }
+
+  public final void showConfirmation(
+      final String title, final String content, final Runnable okAction) {
+    show(Alert.AlertType.CONFIRMATION, title, null, content)
         .filter(ButtonType.OK::equals)
         .ifPresent(_ -> okAction.run());
   }
 
-  protected void showError(final String title, final String content) {
+  public void showError(final String title, final String content) {
     showError(title, null, content);
   }
 
-  protected void showError(
-      final String title, @Nullable final String header, final String content) {
+  public void showError(final String title, @Nullable final String header, final String content) {
     show(Alert.AlertType.ERROR, title, header, content);
   }
 

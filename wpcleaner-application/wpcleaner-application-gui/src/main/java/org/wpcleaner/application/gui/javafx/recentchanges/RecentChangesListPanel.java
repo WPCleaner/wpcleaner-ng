@@ -18,13 +18,12 @@ import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Window;
 import javafx.util.Duration;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.control.ImageToggleButton;
-import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesOptionsInput;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -33,7 +32,7 @@ public final class RecentChangesListPanel extends VBox {
   private final Timeline timeline;
 
   public RecentChangesListPanel(
-      final Window owner,
+      final JavaFxWindow<?> owner,
       final JavaFxRecentChangesWindowServices services,
       final JavaFxImageLoader imageLoader,
       final JavaFxProgressTracker progressTracker,
