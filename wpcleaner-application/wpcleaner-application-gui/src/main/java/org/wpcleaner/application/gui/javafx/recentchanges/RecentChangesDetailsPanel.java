@@ -148,6 +148,7 @@ public final class RecentChangesDetailsPanel extends VBox {
         .filter(Objects::nonNull)
         .map(RevisionSlot::content)
         .filter(Objects::nonNull)
+        .map(content -> content.replace("\r", ""))
         .findFirst()
         .orElse(null);
   }
