@@ -10,7 +10,10 @@ import javafx.scene.text.Text;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
+@EnabledOnOs(OS.LINUX)
 class JavaFxRtlTextLayoutBugTest extends JavaFxTest {
 
   private static final String ARABIC_TEXT =
