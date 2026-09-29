@@ -11,9 +11,13 @@ import java.util.List;
 import java.util.function.Consumer;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
@@ -28,6 +32,8 @@ import org.wpcleaner.lib.image.ImageSize;
 
 public final class RecentChangesTableView extends TableView<FilteredRecentChange> {
 
+  private static final int DOUBLE_CLICK_COUNT = 2;
+
   public RecentChangesTableView(
       final ObservableList<FilteredRecentChange> items,
       final JavaFxImageLoader imageLoader,
@@ -41,24 +47,29 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
 
     final TableColumn<FilteredRecentChange, @Nullable Instant> timeCol =
         new TimeTableColumn<>(GT._T("Time"), FilteredRecentChange::timestamp);
+    enableViewActionOnDoubleClick(timeCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> titleCol = new TableColumn<>(GT._T("Title"));
     titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().title()));
     titleCol.setPrefWidth(200);
+    enableViewActionOnDoubleClick(titleCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> userCol = new TableColumn<>(GT._T("User"));
     userCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().user()));
     userCol.setPrefWidth(120);
     userCol.setResizable(false);
+    enableViewActionOnDoubleClick(userCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> deltaCol =
         new SignedIntegerTableColumn<>("+/-", FilteredRecentChange::delta);
+    enableViewActionOnDoubleClick(deltaCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> commentCol =
         new TableColumn<>(GT._T("Comment"));
     commentCol.setCellValueFactory(
         cellData -> new SimpleStringProperty(cellData.getValue().comment()));
     commentCol.setPrefWidth(400);
+    enableViewActionOnDoubleClick(commentCol, viewAction);
 
     final Image tagIcon = imageLoader.getImage(ImageCollection.TAG, ImageSize.BUTTON).orElse(null);
     final TableColumn<FilteredRecentChange, List<String>> tagsCol =
@@ -95,5 +106,44 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
     getColumns().add(pageURICol);
     getColumns().add(diffURICol);
     getColumns().add(viewCol);
+  }
+
+  private static <T> void enableViewActionOnDoubleClick(
+      final TableColumn<FilteredRecentChange, @Nullable T> column,
+      final Consumer<FilteredRecentChange> viewAction) {
+    final Callback<
+            TableColumn<FilteredRecentChange, @Nullable T>,
+            TableCell<FilteredRecentChange, @Nullable T>>
+        originalCellFactory = column.getCellFactory();
+    column.setCellFactory(
+        col -> {
+          final TableCell<FilteredRecentChange, @Nullable T> cell = originalCellFactory.call(col);
+          cell.setOnMouseClicked(event -> handleCellMouseClicked(event, cell, viewAction));
+          return cell;
+        });
+  }
+
+  private static void handleCellMouseClicked(
+      final MouseEvent event,
+      final TableCell<FilteredRecentChange, ?> cell,
+      final Consumer<FilteredRecentChange> viewAction) {
+    if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == DOUBLE_CLICK_COUNT) {
+      final FilteredRecentChange item = getRowItem(cell);
+      if (item != null) {
+        viewAction.accept(item);
+      }
+    }
+  }
+
+  private static @Nullable FilteredRecentChange getRowItem(
+      final TableCell<FilteredRecentChange, ?> cell) {
+    final TableView<FilteredRecentChange> tableView = cell.getTableView();
+    if (tableView != null) {
+      final int index = cell.getIndex();
+      if (index >= 0 && index < tableView.getItems().size()) {
+        return tableView.getItems().get(index);
+      }
+    }
+    return null;
   }
 }
