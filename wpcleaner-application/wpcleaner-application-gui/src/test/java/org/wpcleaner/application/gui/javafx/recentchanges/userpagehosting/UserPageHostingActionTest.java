@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChange;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
@@ -24,7 +25,8 @@ class UserPageHostingActionTest {
   void testCanApply() {
     final JavaFxRecentChangesWindowServices services =
         Mockito.mock(JavaFxRecentChangesWindowServices.class);
-    final RecentChangesAction action = new UserPageHostingAction(services);
+    final JavaFxWindow<?> owner = Mockito.mock(JavaFxWindow.class);
+    final RecentChangesAction action = new UserPageHostingAction(services, owner);
 
     final FilteredRecentChange userPage =
         createRecentChange(CommonNamespaces.USER.id, "User:NicoV");

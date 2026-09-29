@@ -77,6 +77,11 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
     show(Alert.AlertType.ERROR, title, header, content);
   }
 
+  public void showInformation(
+      final String title, @Nullable final String header, final String content) {
+    show(Alert.AlertType.INFORMATION, title, header, content);
+  }
+
   public final void showWarning(final String title, final String content) {
     show(Alert.AlertType.WARNING, title, null, content);
   }

@@ -21,8 +21,7 @@ public final class JavaFxRecentChangesWindow
 
   public JavaFxRecentChangesWindow(final JavaFxRecentChangesWindowServices services) {
     super(services);
-    this.detailsPanel =
-        new RecentChangesDetailsPanel(services, imageLoader, progressTracker, loading);
+    this.detailsPanel = new RecentChangesDetailsPanel(this, services, progressTracker, loading);
     initialize();
     stage.show();
   }

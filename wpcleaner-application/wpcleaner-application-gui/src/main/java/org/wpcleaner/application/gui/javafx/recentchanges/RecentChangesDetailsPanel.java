@@ -28,10 +28,10 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 public final class RecentChangesDetailsPanel extends VBox {
 
@@ -47,8 +47,8 @@ public final class RecentChangesDetailsPanel extends VBox {
       new SimpleObjectProperty<>(this, "selectedRecentChange");
 
   public RecentChangesDetailsPanel(
+      final JavaFxWindow<?> owner,
       final JavaFxRecentChangesWindowServices services,
-      final JavaFxImageLoader imageLoader,
       final JavaFxProgressTracker progressTracker,
       final BooleanProperty loading) {
     super(10);
@@ -71,8 +71,7 @@ public final class RecentChangesDetailsPanel extends VBox {
     tabPane.getTabs().addAll(newTextTab, differencesTab);
 
     final RecentChangesDetailsToolBar navigationToolBar =
-        new RecentChangesDetailsToolBar(
-            imageLoader, services, tabPane, differencesTab, differencesPanel);
+        new RecentChangesDetailsToolBar(owner, services, tabPane, differencesTab, differencesPanel);
     navigationToolBar.currentRecentChangeProperty().bind(selectedRecentChange);
 
     getChildren().addAll(navigationToolBar, tabPane);

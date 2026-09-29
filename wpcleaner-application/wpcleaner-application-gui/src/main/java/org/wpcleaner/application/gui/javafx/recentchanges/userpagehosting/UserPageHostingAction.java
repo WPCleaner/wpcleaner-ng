@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
 import org.wpcleaner.api.api.edit.EditQueryCommon;
 import org.wpcleaner.api.api.query.list.tags.Tag;
@@ -31,7 +29,7 @@ import org.wpcleaner.api.settings.SettingsPersistence;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.utils.JsonUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChange;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
@@ -39,9 +37,12 @@ import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
 public final class UserPageHostingAction implements RecentChangesAction {
 
   private final JavaFxRecentChangesWindowServices services;
+  private final JavaFxWindow<?> owner;
 
-  public UserPageHostingAction(final JavaFxRecentChangesWindowServices services) {
+  public UserPageHostingAction(
+      final JavaFxRecentChangesWindowServices services, final JavaFxWindow<?> owner) {
     this.services = services;
+    this.owner = Objects.requireNonNull(owner);
   }
 
   @Override
@@ -62,22 +63,26 @@ public final class UserPageHostingAction implements RecentChangesAction {
     final WikiDefinition wiki = services.user().getCurrentUser().wiki();
     final String wikiCode = wiki.code();
 
-    Optional<UserPageHostingConfig> configOpt = loadConfig(wikiCode);
+    final Optional<UserPageHostingConfig> configOpt = loadConfig(wikiCode);
     if (configOpt.isEmpty() || !configOpt.get().isComplete()) {
-      final UserPageHostingConfigDialog configDialog =
-          new UserPageHostingConfigDialog(
-              new JavaFxImageLoader(services.imageLoader()), configOpt.orElse(null));
-      final Optional<UserPageHostingConfig> newConfig = configDialog.showAndWait();
-      if (newConfig.isPresent()) {
-        saveConfig(wikiCode, newConfig.get());
-        configOpt = newConfig;
-      } else {
-        return;
-      }
+      new UserPageHostingConfigWindow(
+          services,
+          owner.getStage(),
+          configOpt.orElse(null),
+          newConfig -> {
+            saveConfig(wikiCode, newConfig);
+            promptActionWindow(rc, wiki, newConfig);
+          });
+      return;
     }
 
-    final UserPageHostingConfig config = configOpt.get();
+    promptActionWindow(rc, wiki, configOpt.get());
+  }
 
+  private void promptActionWindow(
+      final FilteredRecentChange rc,
+      final WikiDefinition wiki,
+      final UserPageHostingConfig config) {
     final int colon = rc.title().indexOf(':');
     final String username = colon >= 0 ? rc.title().substring(colon + 1) : rc.title();
     final Namespace userTalkNamespace =
@@ -90,22 +95,23 @@ public final class UserPageHostingAction implements RecentChangesAction {
     final String userPageContent = retrievePageContent(wiki, rc.title());
     final String userTalkPageContent = retrievePageContent(wiki, userTalkPageTitle);
 
-    final UserPageHostingActionDialog actionDialog =
-        new UserPageHostingActionDialog(
-            config,
-            rc.title(),
-            userPageContent,
-            userTalkPageTitle,
-            userTalkPageContent,
-            services.colorizer(),
-            services.pageAnalysisFactory());
-    final Optional<UserPageHostingActionParams> actionParamsOpt = actionDialog.showAndWait();
-    if (actionParamsOpt.isEmpty()) {
-      return;
-    }
+    new UserPageHostingActionWindow(
+        services,
+        owner.getStage(),
+        config,
+        rc.title(),
+        userPageContent,
+        userTalkPageTitle,
+        userTalkPageContent,
+        actionParams -> executeAction(wiki, rc.title(), userTalkPageTitle, config, actionParams));
+  }
 
-    final UserPageHostingActionParams actionParams = actionParamsOpt.get();
-
+  private void executeAction(
+      final WikiDefinition wiki,
+      final String userPageTitle,
+      final String userTalkPageTitle,
+      final UserPageHostingConfig config,
+      final UserPageHostingActionParams actionParams) {
     final List<Tag> wikiTags = services.tagRepository().getTags();
     final Optional<String> wpcleanerTag =
         wikiTags.stream().map(Tag::name).filter("wpcleaner"::equalsIgnoreCase).findFirst();
@@ -115,15 +121,13 @@ public final class UserPageHostingAction implements RecentChangesAction {
         services.apiTokens().requestTokens(wiki, List.of(TokensParameters.Type.CSRF));
     final String csrfToken = tokens.csrf();
     if (csrfToken == null) {
-      final Alert alert = new Alert(AlertType.ERROR);
-      alert.setTitle(GT._T("Error"));
-      alert.setHeaderText(GT._T("Unable to retrieve CSRF token"));
-      alert.setContentText(GT._T("Please check your connection and login status."));
-      alert.showAndWait();
+      owner.showError(
+          GT._T("Error"),
+          GT._T("Unable to retrieve CSRF token"),
+          GT._T("Please check your connection and login status."));
       return;
     }
 
-    final String userPageTitle = rc.title();
     services
         .apiEdit()
         .edit(
@@ -154,11 +158,10 @@ public final class UserPageHostingAction implements RecentChangesAction {
                       .build()));
     }
 
-    final Alert alert = new Alert(AlertType.INFORMATION);
-    alert.setTitle(GT._T("Success"));
-    alert.setHeaderText(GT._T("Action completed successfully"));
-    alert.setContentText(GT._T("The user page has been replaced and the talk page updated."));
-    alert.showAndWait();
+    owner.showInformation(
+        GT._T("Success"),
+        GT._T("Action completed successfully"),
+        GT._T("The user page has been replaced and the talk page updated."));
   }
 
   private File getConfigFile(final String wikiCode) {

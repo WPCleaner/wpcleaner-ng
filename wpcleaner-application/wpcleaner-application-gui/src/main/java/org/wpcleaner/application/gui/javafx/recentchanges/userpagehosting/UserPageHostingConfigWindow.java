@@ -7,14 +7,16 @@ package org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TableColumn;
@@ -28,62 +30,100 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
-final class UserPageHostingConfigDialog extends Dialog<@Nullable UserPageHostingConfig> {
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"})
+final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
   private static final double LABEL_WIDTH = 120.0;
 
-  private final JavaFxImageLoader imageLoader;
   private final TextArea userPageTextArea = new TextArea();
   private final TextField userPageSummaryField = new TextField();
   private final TextField userTalkPageSummaryField = new TextField();
   private final TableView<@Nullable TalkPageTextModel> tableView = new TableView<>();
   private final ObservableList<TalkPageTextModel> models = FXCollections.observableArrayList();
+  private final Consumer<UserPageHostingConfig> onConfigValidated;
 
-  public UserPageHostingConfigDialog(
-      final JavaFxImageLoader imageLoader, @Nullable final UserPageHostingConfig initialConfig) {
-    super();
-    this.imageLoader = imageLoader;
-    setTitle(GT._T("Configure User Page Hosting Prevention"));
+  public UserPageHostingConfigWindow(
+      final JavaFxRecentChangesWindowServices services,
+      final Stage owner,
+      @Nullable final UserPageHostingConfig initialConfig,
+      final Consumer<UserPageHostingConfig> onConfigValidated) {
+    super(services, Objects.requireNonNull(owner));
+    stage.initModality(Modality.WINDOW_MODAL);
+    this.onConfigValidated = Objects.requireNonNull(onConfigValidated);
+    stage.setTitle(GT._T("Configure User Page Hosting Prevention"));
 
-    final DialogPane dialogPane = getDialogPane();
-    dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+    if (initialConfig != null) {
+      userPageSummaryField.setText(initialConfig.userPageSummary());
+      userPageTextArea.setText(initialConfig.userPageText());
+      userTalkPageSummaryField.setText(initialConfig.userTalkPageSummary());
+      for (final UserTalkPageTextConfig text : initialConfig.userTalkPageTexts()) {
+        models.add(new TalkPageTextModel(text.label(), text.text(), text.addedByDefault()));
+      }
+    }
 
-    final VBox mainBox = new VBox(10);
-    mainBox.getChildren().add(createUserPageGroup(initialConfig));
-    mainBox.getChildren().add(createUserTalkPageGroup(initialConfig));
-
-    dialogPane.setContent(mainBox);
-    dialogPane.setPrefWidth(750);
-
-    final Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
-    okButton.addEventFilter(
-        javafx.event.ActionEvent.ACTION,
-        event -> {
-          if (userPageTextArea.getText().isBlank()
-              || userPageSummaryField.getText().isBlank()
-              || userTalkPageSummaryField.getText().isBlank()) {
-            event.consume();
-          }
-        });
-
-    setResultConverter(
-        buttonType -> {
-          if (buttonType == ButtonType.OK) {
-            return convertResult();
-          }
-          return null;
-        });
+    initialize();
+    stage.show();
   }
 
-  private TitledPane createUserPageGroup(@Nullable final UserPageHostingConfig config) {
+  @Override
+  public String getName() {
+    return "userPageHostingConfig";
+  }
+
+  @Override
+  protected Scene createScene() {
+    final StackPane root = new StackPane();
+    final VBox mainContainer = new VBox(10);
+    mainContainer.setPadding(new Insets(10, 15, 10, 15));
+    mainContainer.setPrefWidth(750);
+
+    mainContainer.getChildren().add(createUserPageGroup());
+    mainContainer.getChildren().add(createUserTalkPageGroup());
+
+    final Button okButton = new Button(GT._T("OK"));
+    okButton.setDefaultButton(true);
+    okButton.setOnAction(_ -> handleOk());
+
+    final Button cancelButton = new Button(GT._T("Cancel"));
+    cancelButton.setCancelButton(true);
+    cancelButton.setOnAction(_ -> stage.close());
+
+    final HBox buttons = new HBox(10, okButton, cancelButton);
+    buttons.setAlignment(Pos.CENTER_RIGHT);
+
+    mainContainer.getChildren().add(buttons);
+
+    mainContainer.disableProperty().bind(loading);
+
+    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    return new Scene(root);
+  }
+
+  private void handleOk() {
+    if (userPageTextArea.getText().isBlank()
+        || userPageSummaryField.getText().isBlank()
+        || userTalkPageSummaryField.getText().isBlank()) {
+      showError(GT._T("Error"), GT._T("Please fill in all mandatory fields."));
+      return;
+    }
+    final UserPageHostingConfig config = convertResult();
+    onConfigValidated.accept(config);
+    stage.close();
+  }
+
+  private TitledPane createUserPageGroup() {
     final GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(10);
@@ -103,17 +143,12 @@ final class UserPageHostingConfigDialog extends Dialog<@Nullable UserPageHosting
     grid.add(userPageTextArea, 1, 1);
     GridPane.setHgrow(userPageTextArea, Priority.ALWAYS);
 
-    if (config != null) {
-      userPageSummaryField.setText(config.userPageSummary());
-      userPageTextArea.setText(config.userPageText());
-    }
-
     final TitledPane titledPane = new TitledPane(GT._T("User page"), grid);
     titledPane.setCollapsible(false);
     return titledPane;
   }
 
-  private TitledPane createUserTalkPageGroup(@Nullable final UserPageHostingConfig config) {
+  private TitledPane createUserTalkPageGroup() {
     final GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(10);
@@ -152,12 +187,6 @@ final class UserPageHostingConfigDialog extends Dialog<@Nullable UserPageHosting
     tableView.getColumns().add(labelCol);
     tableView.getColumns().add(textCol);
 
-    if (config != null) {
-      userTalkPageSummaryField.setText(config.userTalkPageSummary());
-      for (final UserTalkPageTextConfig text : config.userTalkPageTexts()) {
-        models.add(new TalkPageTextModel(text.label(), text.text(), text.addedByDefault()));
-      }
-    }
     tableView.setItems(models);
 
     final HBox buttonsBox =
@@ -329,6 +358,6 @@ final class UserPageHostingConfigDialog extends Dialog<@Nullable UserPageHosting
         userPageSummaryField.getText(),
         userPageTextArea.getText(),
         userTalkPageSummaryField.getText(),
-        texts);
+        List.copyOf(texts));
   }
 }

@@ -7,11 +7,13 @@ package org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -19,87 +21,126 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import org.jspecify.annotations.Nullable;
-import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
-import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 
-final class UserPageHostingActionDialog extends Dialog<@Nullable UserPageHostingActionParams> {
+@SuppressWarnings("PMD.CouplingBetweenObjects")
+final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
   private static final double LABEL_WIDTH = 120.0;
 
+  private final UserPageHostingConfig config;
+  private final String userPageTitle;
+  private final String userPageContent;
+  private final String userTalkPageTitle;
+  private final String userTalkPageContent;
+  private final Consumer<UserPageHostingActionParams> onActionConfirmed;
   private final TextArea userPageTextArea = new TextArea();
   private final TextField userPageCommentField = new TextField();
   private final TextField userTalkPageCommentField = new TextField();
+  private final List<CheckBox> checkBoxes = new ArrayList<>();
 
-  public UserPageHostingActionDialog(
+  public UserPageHostingActionWindow(
+      final JavaFxRecentChangesWindowServices services,
+      final Stage owner,
       final UserPageHostingConfig config,
       final String userPageTitle,
       final String userPageContent,
       final String userTalkPageTitle,
       final String userTalkPageContent,
-      final PageSyntaxColorizer colorizer,
-      final PageAnalysisFactory pageAnalysisFactory) {
-    super();
-    setTitle(GT._T("Confirm User Page Hosting Action"));
+      final Consumer<UserPageHostingActionParams> onActionConfirmed) {
+    super(services, Objects.requireNonNull(owner));
+    stage.initModality(Modality.WINDOW_MODAL);
+    this.config = Objects.requireNonNull(config);
+    this.userPageTitle = Objects.requireNonNull(userPageTitle);
+    this.userPageContent = Objects.requireNonNull(userPageContent);
+    this.userTalkPageTitle = Objects.requireNonNull(userTalkPageTitle);
+    this.userTalkPageContent = Objects.requireNonNull(userTalkPageContent);
+    this.onActionConfirmed = Objects.requireNonNull(onActionConfirmed);
+    stage.setTitle(GT._T("Confirm User Page Hosting Action"));
 
-    final DialogPane dialogPane = getDialogPane();
-    dialogPane.getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+    initialize();
+    stage.show();
+  }
 
-    final List<CheckBox> checkBoxes = new ArrayList<>();
+  @Override
+  public String getName() {
+    return "userPageHostingAction";
+  }
+
+  @Override
+  protected Scene createScene() {
+    final StackPane root = new StackPane();
+    final VBox mainContainer = new VBox(10);
+    mainContainer.setPadding(new Insets(10, 15, 10, 15));
+    mainContainer.setPrefWidth(950);
 
     final TabPane previewTabPane = new TabPane();
 
     final Tab userPageTab = new Tab(GT._T("User page"));
     userPageTab.setClosable(false);
-    final PageAnalysisScrollPane userPageScrollPane = new PageAnalysisScrollPane(colorizer);
+    final PageAnalysisScrollPane userPageScrollPane =
+        new PageAnalysisScrollPane(services.colorizer());
     final PageAnalysisArea userPagePreviewArea = userPageScrollPane.getArea();
     userPagePreviewArea.setPrefHeight(350);
-    userPagePreviewArea.updateText(userPageTitle, userPageContent, pageAnalysisFactory);
+    userPagePreviewArea.updateText(userPageTitle, userPageContent, services.pageAnalysisFactory());
     userPageTab.setContent(userPageScrollPane);
 
     final Tab userTalkPageTab = new Tab(GT._T("User talk page"));
     userTalkPageTab.setClosable(false);
-    final PageAnalysisScrollPane userTalkPageScrollPane = new PageAnalysisScrollPane(colorizer);
+    final PageAnalysisScrollPane userTalkPageScrollPane =
+        new PageAnalysisScrollPane(services.colorizer());
     final PageAnalysisArea userTalkPagePreviewArea = userTalkPageScrollPane.getArea();
     userTalkPagePreviewArea.setPrefHeight(350);
-    userTalkPagePreviewArea.updateText(userTalkPageTitle, userTalkPageContent, pageAnalysisFactory);
+    userTalkPagePreviewArea.updateText(
+        userTalkPageTitle, userTalkPageContent, services.pageAnalysisFactory());
     userTalkPageTab.setContent(userTalkPageScrollPane);
 
     previewTabPane.getTabs().addAll(userPageTab, userTalkPageTab);
 
-    final VBox mainBox = new VBox(10);
-    mainBox.getChildren().add(createUserPageGroup(config));
-    mainBox.getChildren().add(createUserTalkPageGroup(config, checkBoxes));
-    mainBox.getChildren().add(previewTabPane);
+    mainContainer.getChildren().add(createUserPageGroup(config));
+    mainContainer.getChildren().add(createUserTalkPageGroup(config, checkBoxes));
+    mainContainer.getChildren().add(previewTabPane);
 
-    dialogPane.setContent(mainBox);
-    dialogPane.setPrefWidth(950);
+    final Button okButton = new Button(GT._T("OK"));
+    okButton.setDefaultButton(true);
+    okButton.setOnAction(_ -> handleOk());
 
-    final Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
-    okButton.addEventFilter(
-        javafx.event.ActionEvent.ACTION,
-        event -> {
-          if (userPageCommentField.getText().isBlank()
-              || userTalkPageCommentField.getText().isBlank()) {
-            event.consume();
-          }
-        });
+    final Button cancelButton = new Button(GT._T("Cancel"));
+    cancelButton.setCancelButton(true);
+    cancelButton.setOnAction(_ -> stage.close());
 
-    setResultConverter(
-        buttonType -> {
-          if (buttonType == ButtonType.OK) {
-            return new UserPageHostingActionParams(
-                userPageCommentField.getText(),
-                userTalkPageCommentField.getText(),
-                getSelectedTexts(checkBoxes));
-          }
-          return null;
-        });
+    final HBox buttons = new HBox(10, okButton, cancelButton);
+    buttons.setAlignment(Pos.CENTER_RIGHT);
+    mainContainer.getChildren().add(buttons);
+
+    mainContainer.disableProperty().bind(loading);
+
+    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    return new Scene(root);
+  }
+
+  private void handleOk() {
+    if (userPageCommentField.getText().isBlank() || userTalkPageCommentField.getText().isBlank()) {
+      showError(GT._T("Error"), GT._T("Please provide comments for both user page and talk page."));
+      return;
+    }
+    final UserPageHostingActionParams params =
+        new UserPageHostingActionParams(
+            userPageCommentField.getText(),
+            userTalkPageCommentField.getText(),
+            List.copyOf(getSelectedTexts(checkBoxes)));
+    onActionConfirmed.accept(params);
+    stage.close();
   }
 
   private TitledPane createUserPageGroup(final UserPageHostingConfig config) {

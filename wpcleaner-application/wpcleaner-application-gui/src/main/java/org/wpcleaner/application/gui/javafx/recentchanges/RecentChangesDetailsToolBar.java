@@ -22,6 +22,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting.UserPageHostingAction;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -32,12 +33,13 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
       new SimpleObjectProperty<>(this, "currentRecentChange");
 
   public RecentChangesDetailsToolBar(
-      final JavaFxImageLoader imageLoader,
+      final JavaFxWindow<?> owner,
       final JavaFxRecentChangesWindowServices services,
       final TabPane tabPane,
       final Tab differencesTab,
       final RecentChangesDifferencesPanel differencesPanel) {
     super();
+    final JavaFxImageLoader imageLoader = new JavaFxImageLoader(services.imageLoader());
     setStyle("-fx-background-color: transparent; -fx-padding: 0; -fx-spacing: 1px;");
 
     final Label pageLabel = new Label(GT._T("Page:"));
@@ -132,7 +134,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
           differencesPanel.selectLastDelta();
         });
 
-    final RecentChangesAction userPageHostingAction = new UserPageHostingAction(services);
+    final RecentChangesAction userPageHostingAction = new UserPageHostingAction(services, owner);
     final Button userPageHostingButton = new Button();
     userPageHostingButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
