@@ -55,6 +55,7 @@ public enum ImageCollection {
   MOVE_DOWN("commons/gnome-go-down.png"),
   MOVE_FIRST("commons/gnome-go-top.png"),
   MOVE_LAST("commons/gnome-go-bottom.png"),
+  MOVE_PAGE("commons/visualeditor-icon-table-move-column-rtl.png"),
   MOVE_UP("commons/gnome-go-up.png"),
   NOTICE("commons/codex-icon-notice.png"),
   NOTICE_ERROR("commons/codex-icon-notice-color-error.png"),
@@ -74,7 +75,6 @@ public enum ImageCollection {
   TAG("commons/codex-icon-tag-color-progressive.png"),
   USER("commons/gnome-face-cool.png"),
   WARNING("commons/gnome-dialog-warning.png");
-
   private final String filename;
 
   ImageCollection(final String filename) {
