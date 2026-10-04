@@ -12,6 +12,8 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
@@ -46,8 +48,27 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
 
   protected void initialize() {
     services.windowsRegistry().register(this);
-    stage.setScene(createScene());
+    final Scene scene = createScene();
+    scene.addEventFilter(
+        KeyEvent.KEY_PRESSED,
+        event -> {
+          if (KeyCode.F1.equals(event.getCode())) {
+            event.consume();
+            displayHelp();
+          }
+        });
+    stage.setScene(scene);
     services.actionServices().positionWindow(this);
+  }
+
+  public void displayHelp() {
+    services.actionServices().displayHelp(this);
+  }
+
+  @Nullable
+  @SuppressWarnings("PMD.EmptyMethodInAbstractClassShouldBeAbstract")
+  public String getHelpPage() {
+    return null;
   }
 
   public abstract String getName();

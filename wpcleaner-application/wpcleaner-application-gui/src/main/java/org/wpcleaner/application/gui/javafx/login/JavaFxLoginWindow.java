@@ -38,6 +38,11 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
   }
 
   @Override
+  public String getHelpPage() {
+    return "Login";
+  }
+
+  @Override
   public String getName() {
     return "login";
   }

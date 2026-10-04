@@ -16,12 +16,17 @@ import org.wpcleaner.application.gui.settings.windows.WindowsSettingsManager;
 @Service
 public record JavaFxActionServices(
     DesktopService desktopService,
+    JavaFxHelpAction helpAction,
     JavaFxNotImplementedAction notImplemented,
     JavaFxSaveWindowsPositionAction saveWindowsPosition,
     WindowsSettingsManager windowsSettings) {
 
   public void browse(final String url) {
     JavaFxInitializer.browse(desktopService, url);
+  }
+
+  public void displayHelp(final JavaFxWindow<?> window) {
+    helpAction.displayHelp(window);
   }
 
   public void positionWindow(final JavaFxWindow<?> window) {

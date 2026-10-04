@@ -54,6 +54,7 @@ public enum QueryParameters {
   }
 
   public enum Properties {
+    LANGLINKS("langlinks"),
     REVISIONS("revisions");
 
     public final String value;

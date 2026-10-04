@@ -11,6 +11,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -83,7 +85,13 @@ class JavaFxMainWindowTest extends JavaFxTest {
           final JavaFxMainWindow mainWindow = new JavaFxMainWindow(services);
 
           Assertions.assertThat(mainWindow.getStage().getTitle()).isEqualTo("WPCleaner");
+          Assertions.assertThat(mainWindow.getHelpPage()).isEqualTo("Main");
           Assertions.assertThat(mainWindow.getStage().getOnCloseRequest()).isNotNull();
+
+          final KeyEvent f1 =
+              new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
+          mainWindow.getStage().getScene().getRoot().fireEvent(f1);
+          Mockito.verify(actionServices).displayHelp(mainWindow);
 
           final javafx.scene.Parent rootPane = mainWindow.getStage().getScene().getRoot();
           final VBox mainContainer = (VBox) rootPane.getChildrenUnmodifiable().getFirst();

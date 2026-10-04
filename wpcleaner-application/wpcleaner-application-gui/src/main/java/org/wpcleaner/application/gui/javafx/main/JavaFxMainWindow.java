@@ -43,6 +43,11 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
   }
 
   @Override
+  public String getHelpPage() {
+    return "Main";
+  }
+
+  @Override
   public String getName() {
     return "main";
   }

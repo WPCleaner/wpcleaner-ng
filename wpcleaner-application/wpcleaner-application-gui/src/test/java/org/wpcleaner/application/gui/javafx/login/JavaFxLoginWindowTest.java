@@ -9,6 +9,8 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,8 +63,14 @@ class JavaFxLoginWindowTest extends JavaFxTest {
 
           Assertions.assertThat(window.getStage().getTitle()).isEqualTo("WPCleaner");
           Assertions.assertThat(window.getName()).isEqualTo("login");
+          Assertions.assertThat(window.getHelpPage()).isEqualTo("Login");
           Assertions.assertThat(window.getStage().getScene()).isNotNull();
           Assertions.assertThat(window.getStage().getOnCloseRequest()).isNotNull();
+
+          final KeyEvent f1 =
+              new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
+          window.getStage().getScene().getRoot().fireEvent(f1);
+          Mockito.verify(actionServices).displayHelp(window);
 
           window.getStage().close();
         });

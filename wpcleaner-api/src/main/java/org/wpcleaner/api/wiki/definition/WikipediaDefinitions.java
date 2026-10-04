@@ -13,7 +13,7 @@ import org.wpcleaner.api.wiki.builder.WikipediaBuilder;
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @SuppressWarnings({"PMD.DataClass", "SpellCheckingInspection", "unused"})
-final class WikipediaDefinitions implements WikiDefinitions {
+public final class WikipediaDefinitions implements WikiDefinitions {
 
   public static final WikiDefinition AF = ltr("af", "Afrikaans Wikipedia");
   public static final WikiDefinition ALS = ltr("als", "Alemannisch Wikipedia");
