@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
@@ -23,6 +28,7 @@ import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
@@ -83,6 +89,32 @@ class UserPageHostingActionWindowTest extends JavaFxTest {
           Assertions.assertThat(window.getStage().isShowing()).isTrue();
           Assertions.assertThat(window.getStage().getModality()).isEqualTo(Modality.WINDOW_MODAL);
           Assertions.assertThat(window.getStage().getOwner()).isEqualTo(ownerStage);
+
+          final StackPane root = (StackPane) window.getStage().getScene().getRoot();
+          final VBox mainContainer = (VBox) root.getChildren().getFirst();
+          Assertions.assertThat(mainContainer.getPrefWidth()).isEqualTo(1900.0);
+
+          final HBox previewsBox = (HBox) mainContainer.getChildren().get(2);
+          Assertions.assertThat(previewsBox.getChildren()).hasSize(2);
+
+          final VBox userPageBox = (VBox) previewsBox.getChildren().getFirst();
+          final Label userPageLabel = (Label) userPageBox.getChildren().getFirst();
+          Assertions.assertThat(userPageLabel.getText()).isEqualTo("User page");
+          final PageAnalysisScrollPane userPageScrollPane =
+              (PageAnalysisScrollPane) userPageBox.getChildren().get(1);
+          Assertions.assertThat(userPageScrollPane.getArea().getPrefHeight()).isEqualTo(700.0);
+
+          final VBox userTalkPageBox = (VBox) previewsBox.getChildren().get(1);
+          final Label userTalkPageLabel = (Label) userTalkPageBox.getChildren().getFirst();
+          Assertions.assertThat(userTalkPageLabel.getText()).isEqualTo("User talk page");
+          final PageAnalysisScrollPane userTalkPageScrollPane =
+              (PageAnalysisScrollPane) userTalkPageBox.getChildren().get(1);
+          Assertions.assertThat(userTalkPageScrollPane.getArea().getPrefHeight()).isEqualTo(700.0);
+
+          Assertions.assertThat(userPageBox.getPrefWidth())
+              .isEqualTo(userTalkPageBox.getPrefWidth());
+          Assertions.assertThat(HBox.getHgrow(userPageBox)).isEqualTo(Priority.ALWAYS);
+          Assertions.assertThat(HBox.getHgrow(userTalkPageBox)).isEqualTo(Priority.ALWAYS);
 
           window.getStage().close();
           ownerStage.close();

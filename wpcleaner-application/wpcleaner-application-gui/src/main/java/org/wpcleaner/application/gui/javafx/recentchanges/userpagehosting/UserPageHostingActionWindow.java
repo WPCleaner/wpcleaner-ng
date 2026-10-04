@@ -15,8 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -82,34 +80,38 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
     final StackPane root = new StackPane();
     final VBox mainContainer = new VBox(10);
     mainContainer.setPadding(new Insets(10, 15, 10, 15));
-    mainContainer.setPrefWidth(950);
+    mainContainer.setPrefWidth(1900);
 
-    final TabPane previewTabPane = new TabPane();
-
-    final Tab userPageTab = new Tab(GT._T("User page"));
-    userPageTab.setClosable(false);
+    final Label userPageLabel = new Label(GT._T("User page"));
     final PageAnalysisScrollPane userPageScrollPane =
         new PageAnalysisScrollPane(services.colorizer());
     final PageAnalysisArea userPagePreviewArea = userPageScrollPane.getArea();
-    userPagePreviewArea.setPrefHeight(350);
+    userPagePreviewArea.setPrefHeight(700);
     userPagePreviewArea.updateText(userPageTitle, userPageContent, services.pageAnalysisFactory());
-    userPageTab.setContent(userPageScrollPane);
+    final VBox userPageBox = new VBox(5, userPageLabel, userPageScrollPane);
+    userPageBox.setPrefWidth(0);
+    userPageBox.setMaxWidth(Double.MAX_VALUE);
+    VBox.setVgrow(userPageScrollPane, Priority.ALWAYS);
+    HBox.setHgrow(userPageBox, Priority.ALWAYS);
 
-    final Tab userTalkPageTab = new Tab(GT._T("User talk page"));
-    userTalkPageTab.setClosable(false);
+    final Label userTalkPageLabel = new Label(GT._T("User talk page"));
     final PageAnalysisScrollPane userTalkPageScrollPane =
         new PageAnalysisScrollPane(services.colorizer());
     final PageAnalysisArea userTalkPagePreviewArea = userTalkPageScrollPane.getArea();
-    userTalkPagePreviewArea.setPrefHeight(350);
+    userTalkPagePreviewArea.setPrefHeight(700);
     userTalkPagePreviewArea.updateText(
         userTalkPageTitle, userTalkPageContent, services.pageAnalysisFactory());
-    userTalkPageTab.setContent(userTalkPageScrollPane);
+    final VBox userTalkPageBox = new VBox(5, userTalkPageLabel, userTalkPageScrollPane);
+    userTalkPageBox.setPrefWidth(0);
+    userTalkPageBox.setMaxWidth(Double.MAX_VALUE);
+    VBox.setVgrow(userTalkPageScrollPane, Priority.ALWAYS);
+    HBox.setHgrow(userTalkPageBox, Priority.ALWAYS);
 
-    previewTabPane.getTabs().addAll(userPageTab, userTalkPageTab);
+    final HBox previewsBox = new HBox(10, userPageBox, userTalkPageBox);
 
     mainContainer.getChildren().add(createUserPageGroup(config));
     mainContainer.getChildren().add(createUserTalkPageGroup(config, checkBoxes));
-    mainContainer.getChildren().add(previewTabPane);
+    mainContainer.getChildren().add(previewsBox);
 
     final Button okButton = new Button(GT._T("OK"));
     okButton.setDefaultButton(true);
