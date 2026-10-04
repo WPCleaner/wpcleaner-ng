@@ -90,12 +90,12 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
         .ifPresent(_ -> okAction.run());
   }
 
-  public void showError(final String title, final String content) {
-    showError(title, null, content);
+  public void showError(final String content) {
+    showError(null, content);
   }
 
-  public void showError(final String title, @Nullable final String header, final String content) {
-    show(Alert.AlertType.ERROR, title, header, content);
+  public void showError(@Nullable final String header, final String content) {
+    show(Alert.AlertType.ERROR, GT._T("Error"), header, content);
   }
 
   public void showInformation(

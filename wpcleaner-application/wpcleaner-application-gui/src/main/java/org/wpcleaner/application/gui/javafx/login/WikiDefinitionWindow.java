@@ -186,7 +186,7 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
     } catch (final Exception e) {
       final String message =
           Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName());
-      showError(GT._T("Error"), GT._T("The wiki could not be reached or is invalid: %s", message));
+      showError(GT._T("The wiki could not be reached or is invalid: %s", message));
       return;
     }
 
@@ -197,28 +197,28 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
 
   private boolean isInputInvalid(final String name) {
     if (name.isEmpty()) {
-      showError(GT._T("Error"), GT._T("The name cannot be empty."));
+      showError(GT._T("The name cannot be empty."));
       return true;
     }
 
     if (subdomainField.isVisible()) {
       final String subdomain = subdomainField.getText().trim();
       if (subdomain.isEmpty()) {
-        showError(GT._T("Error"), GT._T("The subdomain cannot be empty."));
+        showError(GT._T("The subdomain cannot be empty."));
         return true;
       }
     }
     if (mainHostField.isVisible()) {
       final String mainHost = mainHostField.getText().trim();
       if (mainHost.isEmpty()) {
-        showError(GT._T("Error"), GT._T("The main host cannot be empty."));
+        showError(GT._T("The main host cannot be empty."));
         return true;
       }
     }
     if (languageField.isVisible()) {
       final String language = languageField.getText().trim();
       if (language.isEmpty()) {
-        showError(GT._T("Error"), GT._T("The language cannot be empty."));
+        showError(GT._T("The language cannot be empty."));
         return true;
       }
     }

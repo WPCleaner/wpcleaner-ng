@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-10-04 19:04+0200\n"
+"POT-Creation-Date: 2026-10-04 19:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -178,7 +178,7 @@ msgid "Demo"
 msgstr "Démonstration"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:168
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:220
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:219
 msgid "Missing wiki"
 msgstr "Wiki absent"
 
@@ -187,7 +187,7 @@ msgid "You must select a wiki before login!"
 msgstr "Vous devez sélectionner un wiki avant de vous connecter!"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:173
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:226
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:225
 msgid "Missing username"
 msgstr "Nom d'utilisateur manquant"
 
@@ -208,26 +208,18 @@ msgid "If you prefer to test WPCleaner first, you can use the Demo mode."
 msgstr "Si vous préférez d'abord essayer WPCleaner, vous pouvez utilise le mode Démonstration."
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:209
-msgid "Login Failed"
-msgstr "Échec de connexion"
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:210
 msgid "An error occurred during login"
 msgstr "Une erreur est survenue durant la connexion"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:220
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:219
 msgid "You must select a wiki before starting demo mode!"
 msgstr "Vous devez sélectionner un wiki avant de commencer le mode démonstration!"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:227
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:226
 msgid "You must input your username before starting demo mode!"
 msgstr "Vous devez saisir un nom d'utilisateur avant de commencer le mode démonstration!"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:252
-msgid "Demo Mode Failed"
-msgstr "Échec du mode Démonstration"
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:253
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:251
 msgid "An error occurred during demo startup"
 msgstr "Une erreur est survenue durant le démarrage du mode démonstration"
 
@@ -297,20 +289,6 @@ msgstr "OK"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingConfigWindow.java:99
 msgid "Cancel"
 msgstr "Annuler"
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:189
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:200
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:207
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:214
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:221
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:149
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesOptionsInput.java:171
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/options/RecentChangesFilterWindow.java:142
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/options/RecentChangesOptionsWindow.java:139
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:136
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingConfigWindow.java:118
-msgid "Error"
-msgstr "Erreur"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:189
 #, java-printf-format
@@ -430,6 +408,10 @@ msgstr "Monter d'un cran"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/window/JavaFxWindow.java:83
 msgid "Confirmation"
 msgstr "Confirmation"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/window/JavaFxWindow.java:98
+msgid "Error"
+msgstr "Erreur"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:19
 msgid "Not implemented"

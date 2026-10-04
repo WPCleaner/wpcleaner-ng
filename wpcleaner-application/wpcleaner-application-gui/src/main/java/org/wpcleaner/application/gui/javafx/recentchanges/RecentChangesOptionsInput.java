@@ -146,7 +146,7 @@ public final class RecentChangesOptionsInput {
       final JavaFxWindow<?> owner, final JavaFxRecentChangesWindowServices services) {
     final RecentChangesOptions selected = getSelectedOptions();
     if (Objects.equals(selected, RecentChangesOptions.DEFAULT_OPTIONS)) {
-      owner.showError(GT._T("Error"), GT._T("The default options cannot be edited."));
+      owner.showError(GT._T("The default options cannot be edited."));
       return;
     }
     new RecentChangesOptionsWindow(
@@ -168,7 +168,7 @@ public final class RecentChangesOptionsInput {
       final JavaFxWindow<?> owner, final JavaFxRecentChangesWindowServices services) {
     final RecentChangesOptions selected = getSelectedOptions();
     if (Objects.equals(selected, RecentChangesOptions.DEFAULT_OPTIONS)) {
-      owner.showError(GT._T("Error"), GT._T("The default options cannot be deleted."));
+      owner.showError(GT._T("The default options cannot be deleted."));
       return;
     }
     owner.showConfirmation(

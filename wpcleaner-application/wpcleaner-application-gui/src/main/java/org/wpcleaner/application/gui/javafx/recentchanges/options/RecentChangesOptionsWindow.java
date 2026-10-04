@@ -136,7 +136,7 @@ public final class RecentChangesOptionsWindow
 
   private void handleOk() {
     if (nameField.getText().isBlank()) {
-      showError(GT._T("Error"), GT._T("The option name cannot be empty or blank."));
+      showError(GT._T("The option name cannot be empty or blank."));
       return;
     }
     final String name = nameField.getText().trim();

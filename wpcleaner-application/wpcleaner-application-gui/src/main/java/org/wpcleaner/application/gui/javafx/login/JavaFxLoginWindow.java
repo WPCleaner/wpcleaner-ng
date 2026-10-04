@@ -206,7 +206,6 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
           () -> {
             loading.set(false);
             showError(
-                GT._T("Login Failed"),
                 GT._T("An error occurred during login"),
                 Objects.requireNonNullElseGet(e.getMessage(), e::toString));
           });
@@ -249,7 +248,6 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
           () -> {
             loading.set(false);
             showError(
-                GT._T("Demo Mode Failed"),
                 GT._T("An error occurred during demo startup"),
                 Objects.requireNonNullElseGet(e.getMessage(), e::toString));
           });

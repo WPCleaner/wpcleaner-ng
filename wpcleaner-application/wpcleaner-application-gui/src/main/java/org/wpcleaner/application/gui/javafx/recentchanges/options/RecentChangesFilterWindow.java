@@ -139,7 +139,7 @@ public final class RecentChangesFilterWindow
 
   private void handleOk() {
     if (nameField.getText().isBlank()) {
-      showError(GT._T("Error"), GT._T("The filter name cannot be empty or blank."));
+      showError(GT._T("The filter name cannot be empty or blank."));
       return;
     }
     final String name = nameField.getText().trim();

@@ -133,7 +133,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
 
   private void handleOk() {
     if (userPageCommentField.getText().isBlank() || userTalkPageCommentField.getText().isBlank()) {
-      showError(GT._T("Error"), GT._T("Please provide comments for both user page and talk page."));
+      showError(GT._T("Please provide comments for both user page and talk page."));
       return;
     }
     final UserPageHostingActionParams params =

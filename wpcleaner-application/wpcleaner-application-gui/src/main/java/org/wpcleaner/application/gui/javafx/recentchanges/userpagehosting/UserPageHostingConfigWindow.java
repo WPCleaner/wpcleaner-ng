@@ -115,7 +115,7 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
     if (userPageTextArea.getText().isBlank()
         || userPageSummaryField.getText().isBlank()
         || userTalkPageSummaryField.getText().isBlank()) {
-      showError(GT._T("Error"), GT._T("Please fill in all mandatory fields."));
+      showError(GT._T("Please fill in all mandatory fields."));
       return;
     }
     final UserPageHostingConfig config = convertResult();
