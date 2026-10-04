@@ -23,7 +23,7 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
-import org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting.UserPageHostingAction;
+import org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting.UserPageHostingButton;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -134,21 +134,8 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
           differencesPanel.selectLastDelta();
         });
 
-    final RecentChangesAction userPageHostingAction = new UserPageHostingAction(services, owner);
-    final Button userPageHostingButton = new Button();
-    userPageHostingButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
-    imageLoader
-        .getImageView(ImageCollection.HOSTING, ImageSize.BUTTON)
-        .ifPresent(userPageHostingButton::setGraphic);
-    userPageHostingButton.setTooltip(new Tooltip(GT._T("Prevent user page being used as hosting")));
-    userPageHostingButton.setDisable(true);
-    userPageHostingButton.setOnAction(
-        _ -> {
-          final FilteredRecentChange rc = currentRecentChange.get();
-          if (rc != null && userPageHostingAction.canApply(rc)) {
-            userPageHostingAction.apply(rc);
-          }
-        });
+    final UserPageHostingButton userPageHostingButton =
+        new UserPageHostingButton(services, owner, currentRecentChange);
 
     final Separator separator = new Separator();
 
@@ -175,7 +162,6 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
           goPreviousButton.setDisable(!hasRc);
           goNextButton.setDisable(!hasRc);
           goLastButton.setDisable(!hasRc);
-          userPageHostingButton.setDisable(rc == null || !userPageHostingAction.canApply(rc));
         });
   }
 

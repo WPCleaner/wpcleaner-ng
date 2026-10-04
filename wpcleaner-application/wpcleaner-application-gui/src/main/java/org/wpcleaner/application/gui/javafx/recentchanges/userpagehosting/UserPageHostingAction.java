@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
 import org.wpcleaner.api.api.edit.EditQueryCommon;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
@@ -62,18 +64,33 @@ public final class UserPageHostingAction implements RecentChangesAction {
 
     final Optional<UserPageHostingConfig> configOpt = loadConfig(wikiCode);
     if (configOpt.isEmpty() || !configOpt.get().isComplete()) {
-      new UserPageHostingConfigWindow(
-          services,
-          owner.getStage(),
-          configOpt.orElse(null),
-          newConfig -> {
-            saveConfig(wikiCode, newConfig);
-            promptActionWindow(rc, wiki, newConfig);
-          });
+      showConfigWindow(
+          wikiCode, configOpt.orElse(null), newConfig -> promptActionWindow(rc, wiki, newConfig));
       return;
     }
 
     promptActionWindow(rc, wiki, configOpt.get());
+  }
+
+  public void configure() {
+    final WikiDefinition wiki = services.user().getCurrentUser().wiki();
+    final String wikiCode = wiki.code();
+    final Optional<UserPageHostingConfig> configOpt = loadConfig(wikiCode);
+    showConfigWindow(wikiCode, configOpt.orElse(null), _ -> {});
+  }
+
+  private void showConfigWindow(
+      final String wikiCode,
+      @Nullable final UserPageHostingConfig initialConfig,
+      final Consumer<UserPageHostingConfig> afterSave) {
+    new UserPageHostingConfigWindow(
+        services,
+        owner.getStage(),
+        initialConfig,
+        newConfig -> {
+          saveConfig(wikiCode, newConfig);
+          afterSave.accept(newConfig);
+        });
   }
 
   private void promptActionWindow(
