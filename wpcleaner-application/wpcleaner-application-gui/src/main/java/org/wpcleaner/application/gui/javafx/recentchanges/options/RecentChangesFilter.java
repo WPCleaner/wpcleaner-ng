@@ -18,6 +18,7 @@ import org.wpcleaner.api.utils.GT;
 public record RecentChangesFilter(
     String name,
     Set<Integer> namespace,
+    boolean reject,
     @Nullable Severity severity,
     Set<String> tag,
     Set<Type> type,
@@ -26,7 +27,13 @@ public record RecentChangesFilter(
 
   public static final RecentChangesFilter ACCEPT_ALL =
       new RecentChangesFilter(
-          GT._T("Accept all"), Set.of(), null, Set.of(), Set.of(), Set.of(), SubPages.BOTH);
+          GT._T("Accept all"), Set.of(), false, null, Set.of(), Set.of(), Set.of(), SubPages.BOTH);
+
+  public enum Result {
+    MATCH,
+    NO_MATCH,
+    REJECTED
+  }
 
   public enum SubPages {
     @JsonProperty("both")
@@ -61,6 +68,7 @@ public record RecentChangesFilter(
   public RecentChangesFilter(
       final String name,
       @Nullable final Set<Integer> namespace,
+      final boolean reject,
       @Nullable final Severity severity,
       @Nullable final Set<String> tag,
       @Nullable final Set<Type> type,
@@ -68,6 +76,7 @@ public record RecentChangesFilter(
       @Nullable final SubPages subPages) {
     this.name = name;
     this.namespace = Objects.requireNonNullElse(namespace, Set.of());
+    this.reject = reject;
     this.severity = severity;
     this.tag = Objects.requireNonNullElse(tag, Set.of());
     this.type = Objects.requireNonNullElse(type, Set.of());
@@ -75,7 +84,26 @@ public record RecentChangesFilter(
     this.subPages = Objects.requireNonNullElse(subPages, SubPages.BOTH);
   }
 
-  public boolean matches(final RecentChange rc, final Collection<RecentChange> recentChanges) {
+  public RecentChangesFilter(
+      final String name,
+      @Nullable final Set<Integer> namespace,
+      @Nullable final Severity severity,
+      @Nullable final Set<String> tag,
+      @Nullable final Set<Type> type,
+      @Nullable final Set<String> user,
+      @Nullable final SubPages subPages) {
+    this(name, namespace, false, severity, tag, type, user, subPages);
+  }
+
+  public Result matches(final RecentChange rc, final Collection<RecentChange> recentChanges) {
+    if (!matchesInternal(rc, recentChanges)) {
+      return Result.NO_MATCH;
+    }
+    return reject ? Result.REJECTED : Result.MATCH;
+  }
+
+  private boolean matchesInternal(
+      final RecentChange rc, final Collection<RecentChange> recentChanges) {
     return matchesNamespace(rc)
         && matchesTag(rc)
         && matchesType(rc, recentChanges)

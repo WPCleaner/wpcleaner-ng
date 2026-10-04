@@ -13,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -44,6 +45,7 @@ public final class RecentChangesFilterWindow
   private final TagCheckComboBox tagCheckComboBox;
   private final FilterTypeCheckComboBox typeCheckComboBox;
   private final TextArea usersArea;
+  private final CheckBox rejectCheckBox;
   private final ComboBox<@Nullable Severity> severityComboBox;
   private final ToggleGroup subPagesGroup;
   private final HBox subPagesBox;
@@ -67,6 +69,7 @@ public final class RecentChangesFilterWindow
     tagCheckComboBox = createTagCheckComboBox(availableTags, initialFilter);
     typeCheckComboBox = createTypeCheckComboBox(initialFilter);
     usersArea = createUsersArea(initialFilter);
+    rejectCheckBox = createRejectCheckBox(initialFilter);
     severityComboBox = createSeverityComboBox(imageLoader, initialFilter);
     subPagesGroup = new ToggleGroup();
     subPagesBox = createSubPagesBox(subPagesGroup, initialFilter);
@@ -105,11 +108,14 @@ public final class RecentChangesFilterWindow
     grid.add(new Label(GT._T("Users:")), 0, 4);
     grid.add(usersArea, 1, 4);
 
-    grid.add(new Label(GT._T("Severity:")), 0, 5);
-    grid.add(severityComboBox, 1, 5);
+    grid.add(new Label(GT._T("Reject:")), 0, 5);
+    grid.add(rejectCheckBox, 1, 5);
 
-    grid.add(new Label(GT._T("Sub-pages:")), 0, 6);
-    grid.add(subPagesBox, 1, 6);
+    grid.add(new Label(GT._T("Severity:")), 0, 6);
+    grid.add(severityComboBox, 1, 6);
+
+    grid.add(new Label(GT._T("Sub-pages:")), 0, 7);
+    grid.add(subPagesBox, 1, 7);
 
     final Button okButton = new Button(GT._T("OK"));
     okButton.setDefaultButton(true);
@@ -148,13 +154,15 @@ public final class RecentChangesFilterWindow
     final Set<RecentChangesFilter.Type> typeSet =
         Set.copyOf(typeCheckComboBox.getCheckModel().getCheckedItems().stream().toList());
     final Set<String> userSet = getSelectedUsers();
+    final boolean reject = rejectCheckBox.isSelected();
     final Severity severity = severityComboBox.getSelectionModel().getSelectedItem();
     final RecentChangesFilter.SubPages subPages =
         subPagesGroup.getSelectedToggle() != null
             ? (RecentChangesFilter.SubPages) subPagesGroup.getSelectedToggle().getUserData()
             : RecentChangesFilter.SubPages.BOTH;
     final RecentChangesFilter filter =
-        new RecentChangesFilter(name, namespaceSet, severity, tagSet, typeSet, userSet, subPages);
+        new RecentChangesFilter(
+            name, namespaceSet, reject, severity, tagSet, typeSet, userSet, subPages);
     onFilterValidated.accept(filter);
     stage.close();
   }
@@ -189,6 +197,14 @@ public final class RecentChangesFilterWindow
     final FilterTypeCheckComboBox comboBox = new FilterTypeCheckComboBox();
     comboBox.setup(initialFilter != null ? initialFilter.type() : Set.of());
     return comboBox;
+  }
+
+  private CheckBox createRejectCheckBox(@Nullable final RecentChangesFilter initialFilter) {
+    final CheckBox checkBox = new CheckBox();
+    if (initialFilter != null) {
+      checkBox.setSelected(initialFilter.reject());
+    }
+    return checkBox;
   }
 
   private ComboBox<@Nullable Severity> createSeverityComboBox(
@@ -239,6 +255,10 @@ public final class RecentChangesFilterWindow
       area.setText(String.join("\n", initialFilter.user().stream().sorted().toList()));
     }
     return area;
+  }
+
+  boolean isRejectSelected() {
+    return rejectCheckBox.isSelected();
   }
 
   @Nullable Severity getSelectedSeverity() {

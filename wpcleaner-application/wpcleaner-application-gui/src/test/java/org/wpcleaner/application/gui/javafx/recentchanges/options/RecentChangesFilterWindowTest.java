@@ -75,12 +75,33 @@ class RecentChangesFilterWindowTest extends JavaFxTest {
           Assertions.assertThat(windowWithSeverity.getName()).isEqualTo("recentChangesFilter");
           Assertions.assertThat(windowWithSeverity.getStage().getScene()).isNotNull();
           Assertions.assertThat(windowWithSeverity.getStage().isShowing()).isTrue();
+          Assertions.assertThat(windowWithSeverity.isRejectSelected()).isFalse();
           Assertions.assertThat(windowWithSeverity.getSelectedSeverity())
               .isEqualTo(Severity.ALERT_4);
           Assertions.assertThat(windowWithSeverity.getSelectedUsers())
               .containsExactlyInAnyOrder("User1", "User2");
 
           windowWithSeverity.getStage().close();
+
+          final RecentChangesFilter filterWithReject =
+              new RecentChangesFilter(
+                  "My Filter Reject",
+                  Set.of(0),
+                  true,
+                  null,
+                  Set.of("tag1"),
+                  Set.of(RecentChangesFilter.Type.EDIT),
+                  Set.of(),
+                  null);
+
+          final RecentChangesFilterWindow windowWithReject =
+              new RecentChangesFilterWindow(services, ownerStage, filterWithReject, _ -> {});
+
+          Assertions.assertThat(windowWithReject.isRejectSelected()).isTrue();
+          Assertions.assertThat(windowWithReject.getSelectedSeverity()).isNull();
+          Assertions.assertThat(windowWithReject.getSelectedUsers()).isEmpty();
+
+          windowWithReject.getStage().close();
 
           final RecentChangesFilter filterWithNullSeverity =
               new RecentChangesFilter(
@@ -95,6 +116,7 @@ class RecentChangesFilterWindowTest extends JavaFxTest {
           final RecentChangesFilterWindow windowWithNullSeverity =
               new RecentChangesFilterWindow(services, ownerStage, filterWithNullSeverity, _ -> {});
 
+          Assertions.assertThat(windowWithNullSeverity.isRejectSelected()).isFalse();
           Assertions.assertThat(windowWithNullSeverity.getSelectedSeverity()).isNull();
           Assertions.assertThat(windowWithNullSeverity.getSelectedUsers()).isEmpty();
 

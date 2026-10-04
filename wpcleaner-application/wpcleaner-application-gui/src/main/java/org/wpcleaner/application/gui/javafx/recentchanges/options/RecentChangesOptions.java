@@ -38,6 +38,15 @@ public record RecentChangesOptions(
     if (filters.isEmpty()) {
       return Optional.of(RecentChangesFilter.ACCEPT_ALL);
     }
-    return filters.stream().filter(filter -> filter.matches(rc, recentChanges)).findFirst();
+    for (final RecentChangesFilter filter : filters) {
+      final RecentChangesFilter.Result result = filter.matches(rc, recentChanges);
+      if (result != RecentChangesFilter.Result.NO_MATCH) {
+        if (result == RecentChangesFilter.Result.REJECTED) {
+          return Optional.empty();
+        }
+        return Optional.of(filter);
+      }
+    }
+    return Optional.empty();
   }
 }

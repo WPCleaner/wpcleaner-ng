@@ -104,13 +104,17 @@ class RecentChangesFilterTest {
     final List<RecentChange> recentChanges =
         List.of(newPageRc, editPageRcWithTitle, editPageRcWithPageId, editUnrelatedRc);
 
-    Assertions.assertThat(filter.matches(editPageRcWithTitle, recentChanges)).isTrue();
-    Assertions.assertThat(filter.matches(editPageRcWithPageId, recentChanges)).isTrue();
-    Assertions.assertThat(filter.matches(editUnrelatedRc, recentChanges)).isFalse();
-    Assertions.assertThat(filter.matches(newPageRc, recentChanges)).isFalse();
+    Assertions.assertThat(filter.matches(editPageRcWithTitle, recentChanges))
+        .isEqualTo(RecentChangesFilter.Result.MATCH);
+    Assertions.assertThat(filter.matches(editPageRcWithPageId, recentChanges))
+        .isEqualTo(RecentChangesFilter.Result.MATCH);
+    Assertions.assertThat(filter.matches(editUnrelatedRc, recentChanges))
+        .isEqualTo(RecentChangesFilter.Result.NO_MATCH);
+    Assertions.assertThat(filter.matches(newPageRc, recentChanges))
+        .isEqualTo(RecentChangesFilter.Result.NO_MATCH);
   }
 
-  @DisplayName("matches returns true when user set is empty")
+  @DisplayName("matches returns MATCH when user set is empty")
   @Test
   void testMatchesUserWhenEmpty() {
     final RecentChangesFilter filter =
@@ -126,11 +130,13 @@ class RecentChangesFilterTest {
     final RecentChange rcWithUser = createRecentChangeWithUser("Alice");
     final RecentChange rcNullUser = createRecentChangeWithUser(null);
 
-    Assertions.assertThat(filter.matches(rcWithUser, List.of())).isTrue();
-    Assertions.assertThat(filter.matches(rcNullUser, List.of())).isTrue();
+    Assertions.assertThat(filter.matches(rcWithUser, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.MATCH);
+    Assertions.assertThat(filter.matches(rcNullUser, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.MATCH);
   }
 
-  @DisplayName("matches returns true only when recent change user is in the non-empty user set")
+  @DisplayName("matches returns MATCH only when recent change user is in the non-empty user set")
   @Test
   void testMatchesUserWhenNonEmpty() {
     final RecentChangesFilter filter =
@@ -148,10 +154,37 @@ class RecentChangesFilterTest {
     final RecentChange rcCharlie = createRecentChangeWithUser("Charlie");
     final RecentChange rcNullUser = createRecentChangeWithUser(null);
 
-    Assertions.assertThat(filter.matches(rcAlice, List.of())).isTrue();
-    Assertions.assertThat(filter.matches(rcBob, List.of())).isTrue();
-    Assertions.assertThat(filter.matches(rcCharlie, List.of())).isFalse();
-    Assertions.assertThat(filter.matches(rcNullUser, List.of())).isFalse();
+    Assertions.assertThat(filter.matches(rcAlice, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.MATCH);
+    Assertions.assertThat(filter.matches(rcBob, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.MATCH);
+    Assertions.assertThat(filter.matches(rcCharlie, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.NO_MATCH);
+    Assertions.assertThat(filter.matches(rcNullUser, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.NO_MATCH);
+  }
+
+  @DisplayName("matches returns REJECTED when reject is true and internal criteria match")
+  @Test
+  void testMatchesRejectWhenMatching() {
+    final RecentChangesFilter filter =
+        new RecentChangesFilter(
+            "RejectFilter",
+            Set.of(),
+            true,
+            null,
+            Set.of(),
+            Set.of(),
+            Set.of("Spammer"),
+            RecentChangesFilter.SubPages.BOTH);
+
+    final RecentChange matchingRc = createRecentChangeWithUser("Spammer");
+    final RecentChange nonMatchingRc = createRecentChangeWithUser("LegitUser");
+
+    Assertions.assertThat(filter.matches(matchingRc, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.REJECTED);
+    Assertions.assertThat(filter.matches(nonMatchingRc, List.of()))
+        .isEqualTo(RecentChangesFilter.Result.NO_MATCH);
   }
 
   private RecentChange createRecentChangeWithUser(final String user) {
