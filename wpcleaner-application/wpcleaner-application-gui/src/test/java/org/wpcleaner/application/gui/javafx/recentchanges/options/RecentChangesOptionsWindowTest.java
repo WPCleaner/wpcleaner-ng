@@ -115,6 +115,7 @@ class RecentChangesOptionsWindowTest extends JavaFxTest {
             null,
             Set.of("tag1"),
             Set.of(RecentChangesFilter.Type.EDIT),
+            Set.of(),
             null);
     return new RecentChangesOptions(
         "My Options",

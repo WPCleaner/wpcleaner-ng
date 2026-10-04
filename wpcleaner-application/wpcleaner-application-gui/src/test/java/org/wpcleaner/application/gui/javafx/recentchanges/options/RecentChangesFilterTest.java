@@ -19,7 +19,13 @@ class RecentChangesFilterTest {
   void testMatchesSubPagesBoth() {
     final RecentChangesFilter filter =
         new RecentChangesFilter(
-            "Test", Set.of(), null, Set.of(), Set.of(), RecentChangesFilter.SubPages.BOTH);
+            "Test",
+            Set.of(),
+            null,
+            Set.of(),
+            Set.of(),
+            Set.of(),
+            RecentChangesFilter.SubPages.BOTH);
 
     final RecentChange rcNoSlash = createRecentChange("MainPage");
     final RecentChange rcWithSlash = createRecentChange("MainPage/SubPage");
@@ -36,7 +42,13 @@ class RecentChangesFilterTest {
   void testMatchesSubPagesTopPages() {
     final RecentChangesFilter filter =
         new RecentChangesFilter(
-            "Test", Set.of(), null, Set.of(), Set.of(), RecentChangesFilter.SubPages.TOP_PAGES);
+            "Test",
+            Set.of(),
+            null,
+            Set.of(),
+            Set.of(),
+            Set.of(),
+            RecentChangesFilter.SubPages.TOP_PAGES);
 
     final RecentChange rcNoSlash = createRecentChange("MainPage");
     final RecentChange rcWithSlash = createRecentChange("MainPage/SubPage");
@@ -53,7 +65,13 @@ class RecentChangesFilterTest {
   void testMatchesSubPagesSubPages() {
     final RecentChangesFilter filter =
         new RecentChangesFilter(
-            "Test", Set.of(), null, Set.of(), Set.of(), RecentChangesFilter.SubPages.SUB_PAGES);
+            "Test",
+            Set.of(),
+            null,
+            Set.of(),
+            Set.of(),
+            Set.of(),
+            RecentChangesFilter.SubPages.SUB_PAGES);
 
     final RecentChange rcNoSlash = createRecentChange("MainPage");
     final RecentChange rcWithSlash = createRecentChange("MainPage/SubPage");
@@ -75,6 +93,7 @@ class RecentChangesFilterTest {
             null,
             Set.of(),
             Set.of(RecentChangesFilter.Type.EDIT_NEW),
+            Set.of(),
             RecentChangesFilter.SubPages.BOTH);
 
     final RecentChange newPageRc = createRecentChange("NewPage", "new", 42);
@@ -89,6 +108,79 @@ class RecentChangesFilterTest {
     Assertions.assertThat(filter.matches(editPageRcWithPageId, recentChanges)).isTrue();
     Assertions.assertThat(filter.matches(editUnrelatedRc, recentChanges)).isFalse();
     Assertions.assertThat(filter.matches(newPageRc, recentChanges)).isFalse();
+  }
+
+  @DisplayName("matches returns true when user set is empty")
+  @Test
+  void testMatchesUserWhenEmpty() {
+    final RecentChangesFilter filter =
+        new RecentChangesFilter(
+            "Test",
+            Set.of(),
+            null,
+            Set.of(),
+            Set.of(),
+            Set.of(),
+            RecentChangesFilter.SubPages.BOTH);
+
+    final RecentChange rcWithUser = createRecentChangeWithUser("Alice");
+    final RecentChange rcNullUser = createRecentChangeWithUser(null);
+
+    Assertions.assertThat(filter.matches(rcWithUser, List.of())).isTrue();
+    Assertions.assertThat(filter.matches(rcNullUser, List.of())).isTrue();
+  }
+
+  @DisplayName("matches returns true only when recent change user is in the non-empty user set")
+  @Test
+  void testMatchesUserWhenNonEmpty() {
+    final RecentChangesFilter filter =
+        new RecentChangesFilter(
+            "Test",
+            Set.of(),
+            null,
+            Set.of(),
+            Set.of(),
+            Set.of("Alice", "Bob"),
+            RecentChangesFilter.SubPages.BOTH);
+
+    final RecentChange rcAlice = createRecentChangeWithUser("Alice");
+    final RecentChange rcBob = createRecentChangeWithUser("Bob");
+    final RecentChange rcCharlie = createRecentChangeWithUser("Charlie");
+    final RecentChange rcNullUser = createRecentChangeWithUser(null);
+
+    Assertions.assertThat(filter.matches(rcAlice, List.of())).isTrue();
+    Assertions.assertThat(filter.matches(rcBob, List.of())).isTrue();
+    Assertions.assertThat(filter.matches(rcCharlie, List.of())).isFalse();
+    Assertions.assertThat(filter.matches(rcNullUser, List.of())).isFalse();
+  }
+
+  private RecentChange createRecentChangeWithUser(final String user) {
+    return new RecentChange(
+        false,
+        false,
+        null,
+        null,
+        null,
+        null,
+        null,
+        false,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        false,
+        null,
+        false,
+        null,
+        null,
+        List.of(),
+        null,
+        "MainPage",
+        null,
+        user,
+        null);
   }
 
   private RecentChange createRecentChange(

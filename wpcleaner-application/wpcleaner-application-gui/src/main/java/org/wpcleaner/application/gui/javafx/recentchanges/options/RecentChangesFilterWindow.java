@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
@@ -42,6 +43,7 @@ public final class RecentChangesFilterWindow
   private final NamespaceCheckComboBox namespaceCheckComboBox;
   private final TagCheckComboBox tagCheckComboBox;
   private final FilterTypeCheckComboBox typeCheckComboBox;
+  private final TextArea usersArea;
   private final ComboBox<@Nullable Severity> severityComboBox;
   private final ToggleGroup subPagesGroup;
   private final HBox subPagesBox;
@@ -64,6 +66,7 @@ public final class RecentChangesFilterWindow
     namespaceCheckComboBox = createNamespaceCheckComboBox(availableNamespaces, initialFilter);
     tagCheckComboBox = createTagCheckComboBox(availableTags, initialFilter);
     typeCheckComboBox = createTypeCheckComboBox(initialFilter);
+    usersArea = createUsersArea(initialFilter);
     severityComboBox = createSeverityComboBox(imageLoader, initialFilter);
     subPagesGroup = new ToggleGroup();
     subPagesBox = createSubPagesBox(subPagesGroup, initialFilter);
@@ -99,11 +102,14 @@ public final class RecentChangesFilterWindow
     grid.add(new Label(GT._T("Types:")), 0, 3);
     grid.add(typeCheckComboBox, 1, 3);
 
-    grid.add(new Label(GT._T("Severity:")), 0, 4);
-    grid.add(severityComboBox, 1, 4);
+    grid.add(new Label(GT._T("Users:")), 0, 4);
+    grid.add(usersArea, 1, 4);
 
-    grid.add(new Label(GT._T("Sub-pages:")), 0, 5);
-    grid.add(subPagesBox, 1, 5);
+    grid.add(new Label(GT._T("Severity:")), 0, 5);
+    grid.add(severityComboBox, 1, 5);
+
+    grid.add(new Label(GT._T("Sub-pages:")), 0, 6);
+    grid.add(subPagesBox, 1, 6);
 
     final Button okButton = new Button(GT._T("OK"));
     okButton.setDefaultButton(true);
@@ -141,13 +147,14 @@ public final class RecentChangesFilterWindow
             tagCheckComboBox.getCheckModel().getCheckedItems().stream().map(Tag::name).toList());
     final Set<RecentChangesFilter.Type> typeSet =
         Set.copyOf(typeCheckComboBox.getCheckModel().getCheckedItems().stream().toList());
+    final Set<String> userSet = getSelectedUsers();
     final Severity severity = severityComboBox.getSelectionModel().getSelectedItem();
     final RecentChangesFilter.SubPages subPages =
         subPagesGroup.getSelectedToggle() != null
             ? (RecentChangesFilter.SubPages) subPagesGroup.getSelectedToggle().getUserData()
             : RecentChangesFilter.SubPages.BOTH;
     final RecentChangesFilter filter =
-        new RecentChangesFilter(name, namespaceSet, severity, tagSet, typeSet, subPages);
+        new RecentChangesFilter(name, namespaceSet, severity, tagSet, typeSet, userSet, subPages);
     onFilterValidated.accept(filter);
     stage.close();
   }
@@ -224,7 +231,22 @@ public final class RecentChangesFilterWindow
     return new HBox(10, bothRadio, topPagesRadio, subPagesRadio);
   }
 
+  private TextArea createUsersArea(@Nullable final RecentChangesFilter initialFilter) {
+    final TextArea area = new TextArea();
+    area.setPrefRowCount(3);
+    area.setPrefWidth(250);
+    if (initialFilter != null && !initialFilter.user().isEmpty()) {
+      area.setText(String.join("\n", initialFilter.user().stream().sorted().toList()));
+    }
+    return area;
+  }
+
   @Nullable Severity getSelectedSeverity() {
     return severityComboBox.getSelectionModel().getSelectedItem();
+  }
+
+  Set<String> getSelectedUsers() {
+    return Set.copyOf(
+        usersArea.getText().lines().map(String::trim).filter(s -> !s.isBlank()).toList());
   }
 }

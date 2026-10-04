@@ -64,6 +64,7 @@ class RecentChangesFilterWindowTest extends JavaFxTest {
                   Severity.ALERT_4,
                   Set.of("tag1"),
                   Set.of(RecentChangesFilter.Type.EDIT),
+                  Set.of("User1", "User2"),
                   null);
 
           final RecentChangesFilterWindow windowWithSeverity =
@@ -76,6 +77,8 @@ class RecentChangesFilterWindowTest extends JavaFxTest {
           Assertions.assertThat(windowWithSeverity.getStage().isShowing()).isTrue();
           Assertions.assertThat(windowWithSeverity.getSelectedSeverity())
               .isEqualTo(Severity.ALERT_4);
+          Assertions.assertThat(windowWithSeverity.getSelectedUsers())
+              .containsExactlyInAnyOrder("User1", "User2");
 
           windowWithSeverity.getStage().close();
 
@@ -86,12 +89,14 @@ class RecentChangesFilterWindowTest extends JavaFxTest {
                   null,
                   Set.of("tag1"),
                   Set.of(RecentChangesFilter.Type.EDIT),
+                  Set.of(),
                   null);
 
           final RecentChangesFilterWindow windowWithNullSeverity =
               new RecentChangesFilterWindow(services, ownerStage, filterWithNullSeverity, _ -> {});
 
           Assertions.assertThat(windowWithNullSeverity.getSelectedSeverity()).isNull();
+          Assertions.assertThat(windowWithNullSeverity.getSelectedUsers()).isEmpty();
 
           windowWithNullSeverity.getStage().close();
           ownerStage.close();

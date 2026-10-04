@@ -21,11 +21,12 @@ public record RecentChangesFilter(
     @Nullable Severity severity,
     Set<String> tag,
     Set<Type> type,
+    Set<String> user,
     SubPages subPages) {
 
   public static final RecentChangesFilter ACCEPT_ALL =
       new RecentChangesFilter(
-          GT._T("Accept all"), Set.of(), null, Set.of(), Set.of(), SubPages.BOTH);
+          GT._T("Accept all"), Set.of(), null, Set.of(), Set.of(), Set.of(), SubPages.BOTH);
 
   public enum SubPages {
     @JsonProperty("both")
@@ -59,16 +60,18 @@ public record RecentChangesFilter(
 
   public RecentChangesFilter(
       final String name,
-      final Set<Integer> namespace,
+      @Nullable final Set<Integer> namespace,
       @Nullable final Severity severity,
-      final Set<String> tag,
-      final Set<Type> type,
+      @Nullable final Set<String> tag,
+      @Nullable final Set<Type> type,
+      @Nullable final Set<String> user,
       @Nullable final SubPages subPages) {
     this.name = name;
-    this.namespace = namespace;
+    this.namespace = Objects.requireNonNullElse(namespace, Set.of());
     this.severity = severity;
-    this.tag = tag;
-    this.type = type;
+    this.tag = Objects.requireNonNullElse(tag, Set.of());
+    this.type = Objects.requireNonNullElse(type, Set.of());
+    this.user = Objects.requireNonNullElse(user, Set.of());
     this.subPages = Objects.requireNonNullElse(subPages, SubPages.BOTH);
   }
 
@@ -76,6 +79,7 @@ public record RecentChangesFilter(
     return matchesNamespace(rc)
         && matchesTag(rc)
         && matchesType(rc, recentChanges)
+        && matchesUser(rc)
         && matchesSubPages(rc);
   }
 
@@ -109,6 +113,10 @@ public record RecentChangesFilter(
                   }
                   return Objects.equals(t.value, rc.type());
                 });
+  }
+
+  private boolean matchesUser(final RecentChange rc) {
+    return user.isEmpty() || (rc.user() != null && user.contains(rc.user()));
   }
 
   private boolean matchNewFor(
