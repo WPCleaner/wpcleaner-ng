@@ -38,6 +38,6 @@ public class TagRepository {
   }
 
   public Optional<Tag> getSimilarTag(final String name) {
-    return tags.stream().filter(tag -> Objects.equals(name, tag.name())).findFirst();
+    return tags.stream().filter(tag -> name.equalsIgnoreCase(tag.name())).findFirst();
   }
 }
