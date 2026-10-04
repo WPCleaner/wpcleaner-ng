@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 
@@ -34,5 +35,9 @@ public class TagRepository {
 
   public List<Tag> getTags() {
     return List.copyOf(tags);
+  }
+
+  public Optional<Tag> getSimilarTag(final String name) {
+    return tags.stream().filter(tag -> Objects.equals(name, tag.name())).findFirst();
   }
 }

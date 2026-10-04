@@ -7,10 +7,13 @@
 module org.wpcleaner.application.base {
   requires transitive org.jspecify;
   requires transitive org.wpcleaner.api;
+  requires transitive spring.beans;
   requires transitive spring.context;
   requires transitive spring.core;
   exports org.wpcleaner.application.base.processor;
   exports org.wpcleaner.application.base.utils.url;
+  exports org.wpcleaner.application.base.utils;
   opens org.wpcleaner.application.base.processor;
   opens org.wpcleaner.application.base.utils.url;
+  opens org.wpcleaner.application.base.utils;
 }

@@ -46,6 +46,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.repository.namespace;
   exports org.wpcleaner.api.repository.protocol;
   exports org.wpcleaner.api.repository.tag;
+  exports org.wpcleaner.api.repository.token;
   exports org.wpcleaner.api.repository;
   exports org.wpcleaner.api.settings;
   exports org.wpcleaner.api.utils;
@@ -77,6 +78,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.repository.namespace;
   opens org.wpcleaner.api.repository.protocol;
   opens org.wpcleaner.api.repository.tag;
+  opens org.wpcleaner.api.repository.token;
   opens org.wpcleaner.api.repository;
   opens org.wpcleaner.api.settings;
   opens org.wpcleaner.api.utils;

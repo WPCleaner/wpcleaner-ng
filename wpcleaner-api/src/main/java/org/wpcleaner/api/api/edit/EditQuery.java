@@ -8,4 +8,8 @@ package org.wpcleaner.api.api.edit;
 public sealed interface EditQuery permits EditQueryByTitle, EditQueryByPageId {
 
   EditQueryCommon common();
+
+  EditQuery withCommon(EditQueryCommon common);
+
+  String description();
 }

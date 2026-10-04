@@ -5,4 +5,14 @@ package org.wpcleaner.api.api.edit;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public record EditQueryByPageId(Integer pageId, EditQueryCommon common) implements EditQuery {}
+public record EditQueryByPageId(Integer pageId, EditQueryCommon common) implements EditQuery {
+  @Override
+  public EditQuery withCommon(final EditQueryCommon common) {
+    return new EditQueryByPageId(pageId, common);
+  }
+
+  @Override
+  public String description() {
+    return "id %s".formatted(pageId);
+  }
+}

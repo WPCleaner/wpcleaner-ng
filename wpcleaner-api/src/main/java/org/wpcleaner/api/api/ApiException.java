@@ -20,6 +20,11 @@ public class ApiException extends RuntimeException {
     this.details = details;
   }
 
+  public ApiException(final String message, final Throwable cause, final String details) {
+    super(message, cause);
+    this.details = details;
+  }
+
   public ApiException(final String message, final List<ApiError> errors) {
     super(message);
     this.details = buildDetails(errors);

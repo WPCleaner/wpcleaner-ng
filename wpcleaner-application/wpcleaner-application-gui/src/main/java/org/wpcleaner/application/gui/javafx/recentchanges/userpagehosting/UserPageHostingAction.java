@@ -16,9 +16,6 @@ import java.util.Optional;
 import java.util.Set;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
 import org.wpcleaner.api.api.edit.EditQueryCommon;
-import org.wpcleaner.api.api.query.list.tags.Tag;
-import org.wpcleaner.api.api.query.meta.tokens.Tokens;
-import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
@@ -112,22 +109,6 @@ public final class UserPageHostingAction implements RecentChangesAction {
       final String userTalkPageTitle,
       final UserPageHostingConfig config,
       final UserPageHostingActionParams actionParams) {
-    final List<Tag> wikiTags = services.tagRepository().getTags();
-    final Optional<String> wpcleanerTag =
-        wikiTags.stream().map(Tag::name).filter("wpcleaner"::equalsIgnoreCase).findFirst();
-    final List<String> tagsToUse = wpcleanerTag.map(List::of).orElse(null);
-
-    final Tokens tokens =
-        services.apiTokens().requestTokens(wiki, List.of(TokensParameters.Type.CSRF));
-    final String csrfToken = tokens.csrf();
-    if (csrfToken == null) {
-      owner.showError(
-          GT._T("Error"),
-          GT._T("Unable to retrieve CSRF token"),
-          GT._T("Please check your connection and login status."));
-      return;
-    }
-
     services
         .apiEdit()
         .edit(
@@ -137,8 +118,6 @@ public final class UserPageHostingAction implements RecentChangesAction {
                 EditQueryCommon.emptyBuilder()
                     .text(config.userPageText())
                     .summary(actionParams.userPageComment())
-                    .token(csrfToken)
-                    .tags(tagsToUse)
                     .build()));
 
     if (!actionParams.selectedTalkPageTexts().isEmpty()) {
@@ -153,8 +132,6 @@ public final class UserPageHostingAction implements RecentChangesAction {
                   EditQueryCommon.emptyBuilder()
                       .appendText(textToAppend)
                       .summary(actionParams.userTalkPageComment())
-                      .token(csrfToken)
-                      .tags(tagsToUse)
                       .build()));
     }
 
