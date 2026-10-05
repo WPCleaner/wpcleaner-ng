@@ -6,6 +6,10 @@ package org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
  */
 
 import java.util.List;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 record UserPageHostingActionParams(
-    String userPageComment, String userTalkPageComment, List<String> selectedTalkPageTexts) {}
+    JavaFxWindow<?> owner,
+    String userPageComment,
+    String userTalkPageComment,
+    List<String> selectedTalkPageTexts) {}

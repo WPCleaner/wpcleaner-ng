@@ -138,6 +138,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
     }
     final UserPageHostingActionParams params =
         new UserPageHostingActionParams(
+            this,
             userPageCommentField.getText(),
             userTalkPageCommentField.getText(),
             List.copyOf(getSelectedTexts(checkBoxes)));

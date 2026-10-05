@@ -25,6 +25,9 @@ import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
+import org.wpcleaner.api.progress.LongRunningTask;
+import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.settings.SettingsPersistence;
@@ -115,11 +118,49 @@ public final class UserPageHostingAction implements RecentChangesAction {
     final String userTalkPageTitle =
         userTalkNamespace.name() + ":" + userTalkNamespace.caseType().normalize(username);
 
-    final Map<String, String> pagesContent =
-        retrievePagesContent(wiki, List.of(userPageTitle, userTalkPageTitle));
-    final String userPageContent = pagesContent.getOrDefault(userPageTitle, "");
-    final String userTalkPageContent = pagesContent.getOrDefault(userTalkPageTitle, "");
+    owner.executeAsync(
+        new RetrievePagesContentTask(wiki, List.of(userPageTitle, userTalkPageTitle)),
+        pagesContent ->
+            displayActionWindow(
+                rc,
+                wiki,
+                config,
+                userTalkPageTitle,
+                pagesContent.getOrDefault(userPageTitle, ""),
+                pagesContent.getOrDefault(userTalkPageTitle, "")),
+        e ->
+            owner.showError(
+                GT._T(
+                    "Error loading page contents: %s",
+                    Objects.requireNonNullElseGet(
+                        e.getMessage(), () -> e.getClass().getSimpleName()))));
+  }
 
+  private final class RetrievePagesContentTask implements LongRunningTask<Map<String, String>> {
+
+    private final WikiDefinition wiki;
+    private final List<String> titles;
+
+    RetrievePagesContentTask(final WikiDefinition wiki, final List<String> titles) {
+      this.wiki = wiki;
+      this.titles = titles;
+    }
+
+    @Override
+    public Map<String, String> call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving page contents"))) {
+        return retrievePagesContent(wiki, titles);
+      }
+    }
+  }
+
+  private void displayActionWindow(
+      final FilteredRecentChange rc,
+      final WikiDefinition wiki,
+      final UserPageHostingConfig config,
+      final String userTalkPageTitle,
+      final String userPageContent,
+      final String userTalkPageContent) {
     new UserPageHostingActionWindow(
         services,
         owner.getStage(),
@@ -137,18 +178,76 @@ public final class UserPageHostingAction implements RecentChangesAction {
       final String userTalkPageTitle,
       final UserPageHostingConfig config,
       final UserPageHostingActionParams actionParams) {
-    services
-        .apiEdit()
-        .edit(
-            wiki,
-            new EditQueryByTitle(
-                userPageTitle,
-                EditQueryCommon.emptyBuilder()
-                    .text(config.userPageText())
-                    .summary(actionParams.userPageComment())
-                    .build()));
+    actionParams
+        .owner()
+        .executeAsync(
+            new ExecuteActionTask(wiki, userPageTitle, userTalkPageTitle, config, actionParams),
+            _ ->
+                actionParams
+                    .owner()
+                    .showInformation(
+                        GT._T("Success"),
+                        GT._T("Action completed successfully"),
+                        GT._T("The user page has been replaced and the talk page updated.")),
+            e ->
+                actionParams
+                    .owner()
+                    .showError(
+                        GT._T(
+                            "Error updating pages: %s",
+                            Objects.requireNonNullElseGet(
+                                e.getMessage(), () -> e.getClass().getSimpleName()))));
+  }
 
-    if (!actionParams.selectedTalkPageTexts().isEmpty()) {
+  private final class ExecuteActionTask implements LongRunningTask<Void> {
+
+    private final WikiDefinition wiki;
+    private final String userPageTitle;
+    private final String userTalkPageTitle;
+    private final UserPageHostingConfig config;
+    private final UserPageHostingActionParams actionParams;
+
+    ExecuteActionTask(
+        final WikiDefinition wiki,
+        final String userPageTitle,
+        final String userTalkPageTitle,
+        final UserPageHostingConfig config,
+        final UserPageHostingActionParams actionParams) {
+      this.wiki = wiki;
+      this.userPageTitle = userPageTitle;
+      this.userTalkPageTitle = userTalkPageTitle;
+      this.config = config;
+      this.actionParams = actionParams;
+    }
+
+    @Override
+    public Void call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Updating user page"))) {
+        updateUserPage();
+      }
+
+      if (!actionParams.selectedTalkPageTexts().isEmpty()) {
+        try (ProgressStep _ = tracker.start(GT._T("Updating user talk page"))) {
+          updateUserTalkPage();
+        }
+      }
+      return null;
+    }
+
+    private void updateUserPage() {
+      services
+          .apiEdit()
+          .edit(
+              wiki,
+              new EditQueryByTitle(
+                  userPageTitle,
+                  EditQueryCommon.emptyBuilder()
+                      .text(config.userPageText())
+                      .summary(actionParams.userPageComment())
+                      .build()));
+    }
+
+    private void updateUserTalkPage() {
       final String textToAppend =
           "\n\n" + String.join("\n\n", actionParams.selectedTalkPageTexts());
       services
@@ -162,11 +261,6 @@ public final class UserPageHostingAction implements RecentChangesAction {
                       .summary(actionParams.userTalkPageComment())
                       .build()));
     }
-
-    owner.showInformation(
-        GT._T("Success"),
-        GT._T("Action completed successfully"),
-        GT._T("The user page has been replaced and the talk page updated."));
   }
 
   private File getConfigFile(final String wikiCode) {

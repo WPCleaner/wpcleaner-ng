@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +28,8 @@ import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.Revision;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
+import org.wpcleaner.api.progress.LongRunningTask;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -230,6 +233,16 @@ class UserPageHostingActionTest extends JavaFxTest {
             final JavaFxWindow<?> owner = Mockito.mock(JavaFxWindow.class);
             final Stage ownerStage = new Stage();
             Mockito.when(owner.getStage()).thenReturn(ownerStage);
+            Mockito.doAnswer(
+                    invocation -> {
+                      final LongRunningTask<?> task = invocation.getArgument(0);
+                      final Consumer<Object> afterTask = invocation.getArgument(1);
+                      final Object result = task.call(new ProgressTracker(_ -> {}));
+                      afterTask.accept(result);
+                      return null;
+                    })
+                .when(owner)
+                .executeAsync(Mockito.any(), Mockito.any(), Mockito.any());
 
             final UserPageHostingAction action = new UserPageHostingAction(services, owner);
             final FilteredRecentChange userPageRc =

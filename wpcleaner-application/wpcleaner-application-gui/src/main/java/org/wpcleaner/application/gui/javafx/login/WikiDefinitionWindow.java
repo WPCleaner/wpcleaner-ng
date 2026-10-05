@@ -26,6 +26,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
+import org.wpcleaner.api.progress.LongRunningTask;
+import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.builder.FandomBuilder;
 import org.wpcleaner.api.wiki.builder.WikiBuilder;
@@ -39,6 +43,7 @@ import org.wpcleaner.api.wiki.builder.WiktionaryBuilder;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
+@SuppressWarnings("PMD.ExcessiveImports")
 public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowServices> {
 
   private final ComboBox<WikiBuilderType> builderTypeComboBox;
@@ -172,7 +177,6 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
     return new Scene(root);
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   private void handleOk() {
     final String name = nameField.getText().trim();
 
@@ -181,18 +185,36 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
     }
 
     final WikiDefinition candidate = buildWikiDefinition();
-    try {
-      services.apiSiteInfo().requestSiteInfo(candidate, List.of(), null, null, null);
-    } catch (final Exception e) {
-      final String message =
-          Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName());
-      showError(GT._T("The wiki could not be reached or is invalid: %s", message));
-      return;
-    }
+    executeAsync(
+        new ValidateWikiTask(candidate),
+        _ -> onWikiValidated(candidate),
+        e -> {
+          final String message =
+              Objects.requireNonNullElseGet(e.getMessage(), () -> e.getClass().getSimpleName());
+          showError(GT._T("The wiki could not be reached or is invalid: %s", message));
+        });
+  }
 
+  private void onWikiValidated(final WikiDefinition candidate) {
     services.knownDefinitions().addDefinition(candidate);
     onWikiAdded.accept(candidate);
     stage.close();
+  }
+
+  private final class ValidateWikiTask implements LongRunningTask<SiteInfo> {
+
+    private final WikiDefinition wiki;
+
+    ValidateWikiTask(final WikiDefinition wiki) {
+      this.wiki = wiki;
+    }
+
+    @Override
+    public SiteInfo call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Checking wiki definition"))) {
+        return services.apiSiteInfo().requestSiteInfo(wiki, List.of(), null, null, null);
+      }
+    }
   }
 
   private boolean isInputInvalid(final String name) {

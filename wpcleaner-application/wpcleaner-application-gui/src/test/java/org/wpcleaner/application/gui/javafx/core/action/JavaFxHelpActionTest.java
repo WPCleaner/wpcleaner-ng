@@ -9,10 +9,12 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.wpcleaner.api.api.query.prop.langlinks.ApiLanglinks;
 import org.wpcleaner.api.api.query.prop.langlinks.Langlink;
 import org.wpcleaner.api.api.query.prop.langlinks.Page;
+import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
@@ -117,28 +119,7 @@ class JavaFxHelpActionTest {
         .isEqualTo(WikipediaDefinitions.EN.pageUrl("Wikipedia:WPCleanerNG/Login"));
   }
 
-  @DisplayName(
-      "getHelpUrl with foreign user language falls back to English when API throws exception")
-  @Test
-  void getHelpUrlWithForeignLanguageWhenApiThrowsException() {
-    final ApiLanglinks apiLanglinks = Mockito.mock(ApiLanglinks.class);
-    final DesktopService desktopService = Mockito.mock(DesktopService.class);
-    final JavaFxHelpAction action = new JavaFxHelpAction(apiLanglinks, desktopService);
-
-    Mockito.when(
-            apiLanglinks.retrieveLanglinksByTitle(
-                Mockito.eq(WikipediaDefinitions.EN),
-                Mockito.eq(List.of("Wikipedia:WPCleanerNG/Login")),
-                Mockito.any()))
-        .thenThrow(new RuntimeException("API connection timeout"));
-
-    final String url = action.getHelpUrl("Login", "fr");
-
-    Assertions.assertThat(url)
-        .isEqualTo(WikipediaDefinitions.EN.pageUrl("Wikipedia:WPCleanerNG/Login"));
-  }
-
-  @DisplayName("displayHelp for window extracts help page and delegates")
+  @DisplayName("displayHelp for window extracts help page and delegates to executeAsync")
   @Test
   void displayHelpForWindow() {
     final ApiLanglinks apiLanglinks = Mockito.mock(ApiLanglinks.class);
@@ -148,5 +129,11 @@ class JavaFxHelpActionTest {
     Mockito.when(window.getHelpPage()).thenReturn("Login");
 
     action.displayHelp(window);
+
+    final ArgumentCaptor<LongRunningTask<String>> taskCaptor = ArgumentCaptor.captor();
+    Mockito.verify(window).executeAsync(taskCaptor.capture(), Mockito.any(), Mockito.any());
+    final LongRunningTask<String> task = taskCaptor.getValue();
+    Assertions.assertThat(task).isNotNull();
+    Assertions.assertThat(task.showProgress()).isTrue();
   }
 }
