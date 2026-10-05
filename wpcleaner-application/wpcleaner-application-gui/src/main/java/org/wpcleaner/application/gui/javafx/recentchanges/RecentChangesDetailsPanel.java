@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Tab;
@@ -27,8 +25,10 @@ import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
+import org.wpcleaner.api.progress.LongRunningTask;
+import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
@@ -38,23 +38,18 @@ public final class RecentChangesDetailsPanel extends VBox {
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  private final JavaFxWindow<?> owner;
   private final JavaFxRecentChangesWindowServices services;
-  private final JavaFxProgressTracker progressTracker;
-  private final BooleanProperty loading;
   private final PageAnalysisArea contentArea;
   private final RecentChangesDifferencesPanel differencesPanel;
   private final ObjectProperty<@Nullable FilteredRecentChange> selectedRecentChange =
       new SimpleObjectProperty<>(this, "selectedRecentChange");
 
   public RecentChangesDetailsPanel(
-      final JavaFxWindow<?> owner,
-      final JavaFxRecentChangesWindowServices services,
-      final JavaFxProgressTracker progressTracker,
-      final BooleanProperty loading) {
+      final JavaFxWindow<?> owner, final JavaFxRecentChangesWindowServices services) {
     super(10);
+    this.owner = owner;
     this.services = services;
-    this.progressTracker = progressTracker;
-    this.loading = loading;
 
     final PageAnalysisScrollPane contentAreaScrollPane =
         new PageAnalysisScrollPane(services.colorizer());
@@ -86,44 +81,58 @@ public final class RecentChangesDetailsPanel extends VBox {
     if (revid == null) {
       return;
     }
-    loading.set(true);
-    final Thread thread = new Thread(() -> tryRetrieveRevisionContent(revid, rc.oldRevId()));
-    thread.setDaemon(true);
-    thread.start();
+    owner.executeAsync(
+        new RetrieveRevisionContentTask(revid, rc.oldRevId()),
+        this::updateContent,
+        e -> LOGGER.error("Error retrieving modifications", e));
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void tryRetrieveRevisionContent(final Integer revId, @Nullable final Integer oldRevId) {
-    try (AutoCloseable _ = progressTracker.start(GT._T("Retrieving modifications"))) {
-      final List<Page> pages = retrieveRevisionsContent(revId, oldRevId);
-      LOGGER.info("Retrieved {} pages for revId {} and oldRevId {}", pages.size(), revId, oldRevId);
-      final String content = extractContentForRevision(pages, revId);
-      final String oldContent = extractContentForRevision(pages, oldRevId);
-      LOGGER.info(
-          "Extracted content lengths - content: {}, oldContent: {}",
-          content != null ? Integer.toString(content.length()) : "null",
-          oldContent != null ? Integer.toString(oldContent.length()) : "null");
+  record RetrieveRevisionContentResult(
+      @Nullable String content,
+      @Nullable String oldContent,
+      List<AbstractDelta<Character>> deltas) {}
 
-      final List<AbstractDelta<Character>> deltas = computeDeltas(content, oldContent);
-      LOGGER.info("Computed {} deltas", deltas.size());
+  final class RetrieveRevisionContentTask
+      implements LongRunningTask<RetrieveRevisionContentResult> {
 
-      Platform.runLater(
-          () -> {
-            if (content != null) {
-              final FilteredRecentChange rc = selectedRecentChange.get();
-              if (rc != null) {
-                contentArea.updateText(rc.title(), content, services.pageAnalysisFactory());
-              } else {
-                contentArea.replaceText(content);
-              }
-            }
-            differencesPanel.updateContents(content, oldContent, deltas);
-          });
-    } catch (final Exception e) {
-      LOGGER.error("Error retrieving modifications", e);
-    } finally {
-      Platform.runLater(() -> loading.set(false));
+    private final Integer revId;
+    @Nullable private final Integer oldRevId;
+
+    RetrieveRevisionContentTask(final Integer revId, @Nullable final Integer oldRevId) {
+      this.revId = revId;
+      this.oldRevId = oldRevId;
     }
+
+    @Override
+    public RetrieveRevisionContentResult call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving modifications"))) {
+        final List<Page> pages = retrieveRevisionsContent(revId, oldRevId);
+        LOGGER.info(
+            "Retrieved {} pages for revId {} and oldRevId {}", pages.size(), revId, oldRevId);
+        final String content = extractContentForRevision(pages, revId);
+        final String oldContent = extractContentForRevision(pages, oldRevId);
+        LOGGER.info(
+            "Extracted content lengths - content: {}, oldContent: {}",
+            content != null ? Integer.toString(content.length()) : "null",
+            oldContent != null ? Integer.toString(oldContent.length()) : "null");
+
+        final List<AbstractDelta<Character>> deltas = computeDeltas(content, oldContent);
+        LOGGER.info("Computed {} deltas", deltas.size());
+        return new RetrieveRevisionContentResult(content, oldContent, deltas);
+      }
+    }
+  }
+
+  private void updateContent(final RetrieveRevisionContentResult result) {
+    if (result.content != null) {
+      final FilteredRecentChange rc = selectedRecentChange.get();
+      if (rc != null) {
+        contentArea.updateText(rc.title(), result.content, services.pageAnalysisFactory());
+      } else {
+        contentArea.replaceText(result.content);
+      }
+    }
+    differencesPanel.updateContents(result.content, result.oldContent, result.deltas);
   }
 
   private List<AbstractDelta<Character>> computeDeltas(

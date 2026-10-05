@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableView;
@@ -21,7 +20,6 @@ import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.control.ImageToggleButton;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -35,8 +33,6 @@ public final class RecentChangesListPanel extends VBox {
       final JavaFxWindow<?> owner,
       final JavaFxRecentChangesWindowServices services,
       final JavaFxImageLoader imageLoader,
-      final JavaFxProgressTracker progressTracker,
-      final BooleanProperty loading,
       final Consumer<FilteredRecentChange> viewAction) {
     super(10);
 
@@ -45,8 +41,7 @@ public final class RecentChangesListPanel extends VBox {
     final ObservableList<FilteredRecentChange> tableItems = FXCollections.observableArrayList();
 
     final RecentChangesListRefresher refresher =
-        new RecentChangesListRefresher(
-            services, optionsInput, tableItems, progressTracker, loading);
+        new RecentChangesListRefresher(owner, services, optionsInput, tableItems);
 
     this.timeline =
         new Timeline(new KeyFrame(Duration.seconds(60), _ -> refresher.refreshList(false)));

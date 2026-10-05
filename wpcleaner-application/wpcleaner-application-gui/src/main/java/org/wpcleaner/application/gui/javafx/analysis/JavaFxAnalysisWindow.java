@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
@@ -31,13 +32,15 @@ public final class JavaFxAnalysisWindow extends JavaFxWindow<JavaFxAnalysisWindo
   @Override
   protected Scene createScene() {
     VBox.setVgrow(tabPane, Priority.ALWAYS);
-    final VBox root = new VBox(tabPane);
+    final VBox mainContainer = new VBox(tabPane);
+    mainContainer.disableProperty().bind(loading);
+    final StackPane root = new StackPane(mainContainer, progressOverlay);
     return new Scene(root, 800, 600);
   }
 
   public void analyze(final String pageName) {
     final Tab tab = new Tab(pageName);
-    final PageAnalysisPanel panel = new PageAnalysisPanel(services, pageName);
+    final PageAnalysisPanel panel = new PageAnalysisPanel(this, services, pageName);
     tab.setContent(panel);
     tabPane.getTabs().add(tab);
     tabPane.getSelectionModel().select(tab);

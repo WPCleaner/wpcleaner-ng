@@ -127,7 +127,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
 
     mainContainer.disableProperty().bind(loading);
 
-    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    root.getChildren().addAll(mainContainer, progressOverlay);
     return new Scene(root);
   }
 

@@ -16,6 +16,7 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.core.factory.AnalysisWindowFactory;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
@@ -26,9 +27,11 @@ final class ByPagePanel extends GridPane {
   private final ApiRandom apiRandom;
   private final JavaFxImageLoader imageLoader;
   private final InterestingSettingsManager interestingSettings;
+  private final JavaFxWindow<?> owner;
   private final WikiDefinition wiki;
 
   ByPagePanel(
+      final JavaFxWindow<?> owner,
       final WikiDefinition wiki,
       final InterestingSettingsManager interestingSettings,
       final JavaFxImageLoader imageLoader,
@@ -38,6 +41,7 @@ final class ByPagePanel extends GridPane {
     this.apiRandom = apiRandom;
     this.imageLoader = imageLoader;
     this.interestingSettings = interestingSettings;
+    this.owner = owner;
     this.wiki = wiki;
     initialize();
   }
@@ -67,7 +71,7 @@ final class ByPagePanel extends GridPane {
 
     getColumnConstraints().addAll(colLabel, colIcon, colField, colToolbar);
 
-    final PageInput page = new PageInput(wiki, interestingSettings, imageLoader, apiRandom);
+    final PageInput page = new PageInput(owner, wiki, interestingSettings, imageLoader, apiRandom);
     setHgrow(page.comboBox, Priority.ALWAYS);
 
     final Button analysisButton = new Button(GT._T("Analysis"));

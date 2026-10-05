@@ -7,6 +7,11 @@ package org.wpcleaner.application.gui.javafx.core.window;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.Scene;
@@ -16,17 +21,28 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
 public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
 
+  private static final AtomicInteger THREAD_INDEX = new AtomicInteger();
+  private static final ExecutorService EXECUTOR =
+      Executors.newFixedThreadPool(
+          Runtime.getRuntime().availableProcessors(),
+          runnable -> {
+            final Thread thread =
+                new Thread(runnable, "JavaFxWindow-" + THREAD_INDEX.incrementAndGet());
+            thread.setDaemon(true);
+            return thread;
+          });
+
   protected final JavaFxImageLoader imageLoader;
   protected final BooleanProperty loading;
-  protected final JavaFxProgressTracker progressTracker;
+  protected final JavaFxProgressOverlay progressOverlay;
   protected final S services;
   protected final Stage stage;
 
@@ -38,7 +54,7 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
     this.services = services;
     this.imageLoader = new JavaFxImageLoader(services.imageLoader());
     this.loading = new SimpleBooleanProperty(false);
-    this.progressTracker = JavaFxProgressTracker.forObservable(loading);
+    this.progressOverlay = new JavaFxProgressOverlay(loading);
     this.stage = new Stage();
     stage.setTitle("WPCleaner");
     stage.getIcons().clear();
@@ -78,6 +94,29 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
   }
 
   protected abstract Scene createScene();
+
+  public final <T> void executeAsync(
+      final LongRunningTask<T> task,
+      final Consumer<T> afterTask,
+      final Consumer<Exception> onError) {
+    if (task.showProgress()) {
+      loading.set(true);
+    }
+    final JavaFxWindowTask<T> windowTask =
+        new JavaFxWindowTask<>(loading, progressOverlay, task, afterTask, onError);
+    try {
+      EXECUTOR.execute(windowTask);
+    } catch (final RejectedExecutionException e) {
+      if (task.showProgress()) {
+        loading.set(false);
+      }
+      onError.accept(e);
+    }
+  }
+
+  public static void shutdownExecutor() {
+    EXECUTOR.shutdownNow();
+  }
 
   public final void showConfirmation(final String content, final Runnable okAction) {
     showConfirmation(GT._T("Confirmation"), content, okAction);

@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.wpcleaner.api.TestCallingMWApi;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
-import org.wpcleaner.api.progress.DefaultProgressTracker;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
@@ -50,7 +50,7 @@ class LoginHookTest {
             TagsParameters.Properties.DISPLAY_NAME));
 
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new DefaultProgressTracker(_ -> {}));
+    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
 
     // THEN
     final List<Tag> tags = tagRepository.getTags();
@@ -65,7 +65,7 @@ class LoginHookTest {
   @Test
   void executeHookPopulatesInterwikiRepository() {
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new DefaultProgressTracker(_ -> {}));
+    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
 
     // THEN
     final List<Interwiki> interwikis = interwikiRepository.getInterwikis();
@@ -80,7 +80,7 @@ class LoginHookTest {
   @Test
   void executeHookPopulatesProtocolRepository() {
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new DefaultProgressTracker(_ -> {}));
+    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
 
     // THEN
     final List<Protocol> protocols = protocolRepository.getProtocols();

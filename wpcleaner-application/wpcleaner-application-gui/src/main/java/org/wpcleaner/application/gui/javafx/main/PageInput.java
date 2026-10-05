@@ -7,9 +7,6 @@ package org.wpcleaner.application.gui.javafx.main;
 
 import java.util.List;
 import java.util.Set;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -17,19 +14,20 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.list.random.RandomPage;
 import org.wpcleaner.api.api.query.list.random.RandomQuery;
+import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.settings.interesting.InterestingByWikiSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -37,6 +35,7 @@ import org.wpcleaner.lib.image.ImageSize;
 
 public class PageInput {
 
+  final JavaFxWindow<?> owner;
   final WikiDefinition wiki;
   final InterestingSettingsManager settingsManager;
   final ApiRandom apiRandom;
@@ -46,10 +45,12 @@ public class PageInput {
   final ToolBar toolBar;
 
   PageInput(
+      final JavaFxWindow<?> owner,
       final WikiDefinition wiki,
       final InterestingSettingsManager settingsManager,
       final JavaFxImageLoader imageLoader,
       final ApiRandom apiRandom) {
+    this.owner = owner;
     this.wiki = wiki;
     this.settingsManager = settingsManager;
     this.apiRandom = apiRandom;
@@ -134,43 +135,19 @@ public class PageInput {
   }
 
   private void retrieveRandomPage() {
-    if (comboBox.getScene() == null) {
-      return;
-    }
-    final StackPane root = (StackPane) comboBox.getScene().getRoot();
-    final BooleanProperty loading = new SimpleBooleanProperty(true);
-    final JavaFxProgressTracker progressTracker = JavaFxProgressTracker.forObservable(loading);
-
-    Platform.runLater(() -> root.getChildren().add(progressTracker.getProgressOverlay()));
-
-    final Thread thread = new Thread(() -> doRetrieveRandomPage(root, loading, progressTracker));
-    thread.setDaemon(true);
-    thread.start();
+    owner.executeAsync(new RetrieveRandomPageTask(), comboBox::setValue, _ -> {});
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void doRetrieveRandomPage(
-      final StackPane root,
-      final BooleanProperty loading,
-      final JavaFxProgressTracker progressTracker) {
-    try (ProgressStep _ = progressTracker.start(GT._T("Retrieving random page"))) {
-      final RandomQuery query =
-          RandomQuery.emptyBuilder().limit(Limit.of(1)).namespace(Set.of(Namespace.MAIN)).build();
-      final List<RandomPage> pages = apiRandom.retrieveRandomPages(wiki, query);
-      Platform.runLater(
-          () -> {
-            if (!pages.isEmpty()) {
-              comboBox.setValue(pages.getFirst().title());
-            }
-            root.getChildren().remove(progressTracker.getProgressOverlay());
-            loading.set(false);
-          });
-    } catch (final Exception _) {
-      Platform.runLater(
-          () -> {
-            root.getChildren().remove(progressTracker.getProgressOverlay());
-            loading.set(false);
-          });
+  final class RetrieveRandomPageTask implements LongRunningTask<String> {
+
+    @Override
+    public String call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving random page"))) {
+        final RandomQuery query =
+            RandomQuery.emptyBuilder().limit(Limit.of(1)).namespace(Set.of(Namespace.MAIN)).build();
+        final List<RandomPage> pages = apiRandom.retrieveRandomPages(wiki, query);
+        return pages.isEmpty() ? "" : pages.getFirst().title();
+      }
     }
   }
 }

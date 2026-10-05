@@ -168,7 +168,7 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
     form.disableProperty().bind(loading);
     buttons.disableProperty().bind(loading);
 
-    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    root.getChildren().addAll(mainContainer, progressOverlay);
     return new Scene(root);
   }
 

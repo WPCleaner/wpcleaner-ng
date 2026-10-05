@@ -123,7 +123,7 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
 
     mainContainer.getChildren().addAll(grid, buttons);
 
-    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    root.getChildren().addAll(mainContainer, progressOverlay);
     return new Scene(root, 650, 500);
   }
 }

@@ -37,6 +37,7 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
     stage.setOnCloseRequest(
         event -> {
           event.consume();
+          shutdownExecutor();
           Platform.runLater(Platform::exit);
         });
     stage.show();
@@ -87,6 +88,7 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
         .ifPresent(byPageTab::setGraphic);
     byPageTab.setContent(
         new ByPagePanel(
+            this,
             user.wiki(),
             services.interestingSettings(),
             imageLoader,
@@ -101,7 +103,8 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
     final ToolBar feedbacks = createFeedbacksToolbar();
 
     mainContainer.getChildren().addAll(welcomeContainer, tabPane, feedbacks);
-    root.getChildren().add(mainContainer);
+    mainContainer.disableProperty().bind(loading);
+    root.getChildren().addAll(mainContainer, progressOverlay);
     return new Scene(root, 650, 450);
   }
 

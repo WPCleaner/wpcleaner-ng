@@ -5,9 +5,44 @@ package org.wpcleaner.api.progress;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public interface ProgressTracker {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
-  ProgressStep start(String description);
+public final class ProgressTracker {
 
-  void end(ProgressStep step);
+  private final List<ProgressStep> currentSteps = new ArrayList<>();
+  private final Consumer<List<String>> tracked;
+  private final ReentrantLock lock = new ReentrantLock();
+
+  public ProgressTracker(final Consumer<List<String>> tracked) {
+    this.tracked = tracked;
+  }
+
+  public ProgressStep start(final String description) {
+    final ProgressStep step = new ProgressStep(this, description);
+    lock.lock();
+    try {
+      currentSteps.add(step);
+      notifyTracked();
+    } finally {
+      lock.unlock();
+    }
+    return step;
+  }
+
+  public void end(final ProgressStep step) {
+    lock.lock();
+    try {
+      currentSteps.remove(step);
+      notifyTracked();
+    } finally {
+      lock.unlock();
+    }
+  }
+
+  private void notifyTracked() {
+    tracked.accept(currentSteps.stream().map(ProgressStep::getDescription).toList());
+  }
 }

@@ -5,6 +5,7 @@
 
 package org.wpcleaner.application.gui.javafx.login;
 
+import java.util.Arrays;
 import java.util.Objects;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -18,9 +19,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.wpcleaner.api.progress.LongRunningTask;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
+import org.wpcleaner.application.base.processor.LoginResult;
 import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
@@ -32,6 +36,7 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
     stage.setOnCloseRequest(
         event -> {
           event.consume();
+          shutdownExecutor();
           Platform.runLater(Platform::exit);
         });
     stage.show();
@@ -68,7 +73,7 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
     grid.disableProperty().bind(loading);
     buttons.disableProperty().bind(loading);
 
-    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    root.getChildren().addAll(mainContainer, progressOverlay);
 
     wiki.addSelectionListener(
         (_, _, newVal) -> {
@@ -183,32 +188,33 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
       return;
     }
 
-    loading.set(true);
-    final Thread thread = new Thread(() -> processLogin(selectedWiki, userVal, passwordVal));
-    thread.setDaemon(true);
-    thread.start();
-  }
-
-  @SuppressWarnings({"PMD.AvoidCatchingGenericException", "PMD.UseVarargs"})
-  private void processLogin(
-      final WikiDefinition selectedWiki, final String userVal, final char[] passwordVal) {
-    try {
-      final LoginProcessor.Input input =
-          LoginProcessor.Input.forLogin(selectedWiki, userVal, passwordVal);
-      services.loginProcessor().execute(input, progressTracker);
-      Platform.runLater(
-          () -> {
-            loading.set(false);
-            displayMainWindow();
-          });
-    } catch (final Exception e) {
-      Platform.runLater(
-          () -> {
-            loading.set(false);
+    executeAsync(
+        new LoginTask(selectedWiki, userVal, passwordVal),
+        _ -> displayMainWindow(),
+        e ->
             showError(
                 GT._T("An error occurred during login"),
-                Objects.requireNonNullElseGet(e.getMessage(), e::toString));
-          });
+                Objects.requireNonNullElseGet(e.getMessage(), e::toString)));
+  }
+
+  private class LoginTask implements LongRunningTask<LoginResult> {
+
+    private final WikiDefinition selectedWiki;
+    private final String userVal;
+    private final char[] passwordVal;
+
+    @SuppressWarnings("PMD.UseVarargs")
+    LoginTask(final WikiDefinition selectedWiki, final String userVal, final char[] passwordVal) {
+      this.selectedWiki = selectedWiki;
+      this.userVal = userVal;
+      this.passwordVal = Arrays.copyOf(passwordVal, passwordVal.length);
+    }
+
+    @Override
+    public LoginResult call(final ProgressTracker tracker) {
+      final LoginProcessor.Input input =
+          LoginProcessor.Input.forLogin(selectedWiki, userVal, passwordVal);
+      return services.loginProcessor().execute(input, tracker);
     }
   }
 
@@ -227,30 +233,29 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
       return;
     }
 
-    loading.set(true);
-    final Thread thread = new Thread(() -> processDemo(selectedWiki, userVal));
-    thread.setDaemon(true);
-    thread.start();
-  }
-
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void processDemo(final WikiDefinition selectedWiki, final String userVal) {
-    try {
-      final LoginProcessor.Input input = LoginProcessor.Input.forDemo(selectedWiki, userVal);
-      services.loginProcessor().execute(input, progressTracker);
-      Platform.runLater(
-          () -> {
-            loading.set(false);
-            displayMainWindow();
-          });
-    } catch (final Exception e) {
-      Platform.runLater(
-          () -> {
-            loading.set(false);
+    executeAsync(
+        new DemoTask(selectedWiki, userVal),
+        _ -> displayMainWindow(),
+        e ->
             showError(
                 GT._T("An error occurred during demo startup"),
-                Objects.requireNonNullElseGet(e.getMessage(), e::toString));
-          });
+                Objects.requireNonNullElseGet(e.getMessage(), e::toString)));
+  }
+
+  private class DemoTask implements LongRunningTask<LoginResult> {
+
+    private final WikiDefinition selectedWiki;
+    private final String userVal;
+
+    DemoTask(final WikiDefinition selectedWiki, final String userVal) {
+      this.selectedWiki = selectedWiki;
+      this.userVal = userVal;
+    }
+
+    @Override
+    public LoginResult call(final ProgressTracker tracker) {
+      final LoginProcessor.Input input = LoginProcessor.Input.forDemo(selectedWiki, userVal);
+      return services.loginProcessor().execute(input, tracker);
     }
   }
 

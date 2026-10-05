@@ -17,6 +17,7 @@ import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.settings.interesting.InterestingByWikiSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
@@ -31,6 +32,7 @@ class PageInputTest {
   @DisplayName("PageInput initializes with correct pages and options")
   @Test
   void testPageInputInitialization() {
+    final JavaFxWindow<?> owner = Mockito.mock(JavaFxWindow.class);
     final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
     final InterestingSettingsManager settingsManager =
         Mockito.mock(InterestingSettingsManager.class);
@@ -47,7 +49,8 @@ class PageInputTest {
 
     Platform.runLater(
         () -> {
-          final PageInput pageInput = new PageInput(wiki, settingsManager, imageLoader, apiRandom);
+          final PageInput pageInput =
+              new PageInput(owner, wiki, settingsManager, imageLoader, apiRandom);
 
           Assertions.assertThat(pageInput.comboBox.getItems()).containsExactly("Page1", "Page2");
           Assertions.assertThat(pageInput.getPage()).isEmpty();
@@ -60,6 +63,7 @@ class PageInputTest {
   @DisplayName("PageInput add and remove page buttons")
   @Test
   void testPageInputAddRemoveButtons() {
+    final JavaFxWindow<?> owner = Mockito.mock(JavaFxWindow.class);
     final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
     final InterestingSettingsManager settingsManager =
         Mockito.mock(InterestingSettingsManager.class);
@@ -79,7 +83,8 @@ class PageInputTest {
 
     Platform.runLater(
         () -> {
-          final PageInput pageInput = new PageInput(wiki, settingsManager, imageLoader, apiRandom);
+          final PageInput pageInput =
+              new PageInput(owner, wiki, settingsManager, imageLoader, apiRandom);
 
           // Get the buttons
           final javafx.scene.control.Button addPageButton =

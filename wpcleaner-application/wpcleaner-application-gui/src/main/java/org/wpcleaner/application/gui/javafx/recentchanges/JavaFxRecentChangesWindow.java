@@ -21,7 +21,7 @@ public final class JavaFxRecentChangesWindow
 
   public JavaFxRecentChangesWindow(final JavaFxRecentChangesWindowServices services) {
     super(services);
-    this.detailsPanel = new RecentChangesDetailsPanel(this, services, progressTracker, loading);
+    this.detailsPanel = new RecentChangesDetailsPanel(this, services);
     initialize();
     stage.show();
   }
@@ -37,8 +37,7 @@ public final class JavaFxRecentChangesWindow
     mainContainer.setPadding(new Insets(10, 15, 10, 15));
 
     final RecentChangesListPanel upperPanel =
-        new RecentChangesListPanel(
-            this, services, imageLoader, progressTracker, loading, detailsPanel::viewModifications);
+        new RecentChangesListPanel(this, services, imageLoader, detailsPanel::viewModifications);
 
     final SplitPane splitPane = new SplitPane();
     splitPane.setOrientation(Orientation.VERTICAL);
@@ -51,7 +50,7 @@ public final class JavaFxRecentChangesWindow
     mainContainer.disableProperty().bind(loading);
 
     final StackPane root = new StackPane();
-    root.getChildren().addAll(mainContainer, progressTracker.getProgressOverlay());
+    root.getChildren().addAll(mainContainer, progressOverlay);
     stage.setOnCloseRequest(_ -> upperPanel.stop());
     return new Scene(root, 1200, 600);
   }

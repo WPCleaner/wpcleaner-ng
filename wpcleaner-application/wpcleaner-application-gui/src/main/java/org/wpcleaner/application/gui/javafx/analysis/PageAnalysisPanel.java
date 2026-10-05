@@ -7,9 +7,6 @@ package org.wpcleaner.application.gui.javafx.analysis;
 
 import java.util.List;
 import java.util.Set;
-import javafx.application.Platform;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -19,21 +16,27 @@ import org.wpcleaner.api.api.query.prop.revisions.Revision;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
+import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.javafx.JavaFxProgressTracker;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 public final class PageAnalysisPanel extends StackPane {
 
+  private final JavaFxWindow<?> owner;
   private final JavaFxAnalysisWindowServices services;
   private final String pageName;
   private final PageAnalysisScrollPane scrollPane;
   private final PageAnalysisArea analysisArea;
-  private final BooleanProperty loading = new SimpleBooleanProperty(true);
 
-  public PageAnalysisPanel(final JavaFxAnalysisWindowServices services, final String pageName) {
+  public PageAnalysisPanel(
+      final JavaFxWindow<?> owner,
+      final JavaFxAnalysisWindowServices services,
+      final String pageName) {
+    this.owner = owner;
     this.services = services;
     this.pageName = pageName;
     this.scrollPane = new PageAnalysisScrollPane(services.colorizer());
@@ -52,40 +55,25 @@ public final class PageAnalysisPanel extends StackPane {
   }
 
   private void loadPageContent() {
-    final JavaFxProgressTracker progressTracker = JavaFxProgressTracker.forObservable(loading);
-    getChildren().add(progressTracker.getProgressOverlay());
-
-    final Thread thread = new Thread(() -> doLoadPageContent(progressTracker));
-    thread.setDaemon(true);
-    thread.start();
+    owner.executeAsync(
+        new LoadPageContentTask(), this::updateAnalysisArea, this::updateAnalysisAreaWithError);
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingGenericException")
-  private void doLoadPageContent(final JavaFxProgressTracker progressTracker) {
-    try (ProgressStep _ = progressTracker.start(GT._T("Retrieving page content"))) {
-      final RevisionsQuery query =
-          RevisionsQuery.emptyBuilder()
-              .properties(Set.of(RevisionsParameters.Properties.CONTENT))
-              .slots(Set.of("main"))
-              .build();
+  private final class LoadPageContentTask implements LongRunningTask<List<Page>> {
 
-      final List<Page> pages =
-          services
-              .apiRevisions()
-              .retrieveRevisionsByTitle(
-                  services.user().getCurrentUser().wiki(), List.of(pageName), query);
-
-      Platform.runLater(
-          () -> {
-            updateAnalysisArea(pages);
-            finishLoading(progressTracker);
-          });
-    } catch (final Exception e) {
-      Platform.runLater(
-          () -> {
-            updateAnalysisAreaWithError(e);
-            finishLoading(progressTracker);
-          });
+    @Override
+    public List<Page> call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving page content"))) {
+        final RevisionsQuery query =
+            RevisionsQuery.emptyBuilder()
+                .properties(Set.of(RevisionsParameters.Properties.CONTENT))
+                .slots(Set.of("main"))
+                .build();
+        return services
+            .apiRevisions()
+            .retrieveRevisionsByTitle(
+                services.user().getCurrentUser().wiki(), List.of(pageName), query);
+      }
     }
   }
 
@@ -115,11 +103,6 @@ public final class PageAnalysisPanel extends StackPane {
     showWarning(
         GT._T("Error loading the page"),
         GT._T("Error retrieving page content: %s", String.valueOf(e.getMessage())));
-  }
-
-  private void finishLoading(final JavaFxProgressTracker progressTracker) {
-    getChildren().remove(progressTracker.getProgressOverlay());
-    loading.set(false);
   }
 
   private void showWarning(final String title, final String content) {
