@@ -11,10 +11,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
 import org.wpcleaner.api.api.edit.EditQueryCommon;
@@ -97,17 +100,25 @@ public final class UserPageHostingAction implements RecentChangesAction {
       final FilteredRecentChange rc,
       final WikiDefinition wiki,
       final UserPageHostingConfig config) {
+    final Namespace userNamespace =
+        Namespace.findNamespace(
+                services.namespaceRepository().getNamespaces(), CommonNamespaces.USER.id)
+            .orElseThrow(() -> new IllegalStateException("USER namespace not found"));
     final int colon = rc.title().indexOf(':');
     final String username = colon >= 0 ? rc.title().substring(colon + 1) : rc.title();
+    final String userPageTitle =
+        userNamespace.name() + ":" + userNamespace.caseType().normalize(username);
     final Namespace userTalkNamespace =
-        services.namespaceRepository().getNamespaces().stream()
-            .filter(ns -> ns.id() == CommonNamespaces.USER_TALK.id)
-            .findFirst()
+        Namespace.findNamespace(
+                services.namespaceRepository().getNamespaces(), CommonNamespaces.USER_TALK.id)
             .orElseThrow(() -> new IllegalStateException("USER_TALK namespace not found"));
-    final String userTalkPageTitle = userTalkNamespace.name() + ":" + username;
+    final String userTalkPageTitle =
+        userTalkNamespace.name() + ":" + userTalkNamespace.caseType().normalize(username);
 
-    final String userPageContent = retrievePageContent(wiki, rc.title());
-    final String userTalkPageContent = retrievePageContent(wiki, userTalkPageTitle);
+    final Map<String, String> pagesContent =
+        retrievePagesContent(wiki, List.of(userPageTitle, userTalkPageTitle));
+    final String userPageContent = pagesContent.getOrDefault(userPageTitle, "");
+    final String userTalkPageContent = pagesContent.getOrDefault(userTalkPageTitle, "");
 
     new UserPageHostingActionWindow(
         services,
@@ -186,19 +197,29 @@ public final class UserPageHostingAction implements RecentChangesAction {
     JsonUtils.writeValue(file, config);
   }
 
-  private String retrievePageContent(final WikiDefinition wiki, final String title) {
+  private Map<String, String> retrievePagesContent(
+      final WikiDefinition wiki, final List<String> titles) {
     final RevisionsQuery query =
         RevisionsQuery.emptyBuilder()
             .properties(
                 Set.of(RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.IDS))
             .slots(Set.of("main"))
             .build();
-    final List<Page> pages =
-        services.apiRevisions().retrieveRevisionsByTitle(wiki, List.of(title), query);
-    if (pages.isEmpty()) {
-      return "";
-    }
-    return pages.getFirst().revisions().stream()
+    final List<Page> pages = services.apiRevisions().retrieveRevisionsByTitle(wiki, titles, query);
+    return titles.stream()
+        .collect(
+            Collectors.toMap(
+                Function.identity(),
+                title ->
+                    pages.stream()
+                        .filter(page -> Objects.equals(page.title(), title))
+                        .findFirst()
+                        .map(this::extractContent)
+                        .orElse("")));
+  }
+
+  private String extractContent(final Page page) {
+    return page.revisions().stream()
         .findFirst()
         .map(revision -> revision.slots().get("main"))
         .filter(Objects::nonNull)
