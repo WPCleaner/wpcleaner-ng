@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -34,8 +35,13 @@ public class WPCleaner {
     }
 
     try (ConfigurableApplicationContext ctx =
-        new SpringApplicationBuilder(WPCleaner.class).headless(false).run(args)) {
-      ctx.getBean(LoginWindowFactory.class).displayLoginWindow();
+        new SpringApplicationBuilder(WPCleaner.class)
+            .web(WebApplicationType.NONE)
+            .headless(false)
+            .run(args)) {
+      final LoginWindowFactory loginWindowFactory = ctx.getBean(LoginWindowFactory.class);
+      loginWindowFactory.displayLoginWindow();
+      loginWindowFactory.waitForExit();
     }
   }
 
@@ -72,8 +78,13 @@ public class WPCleaner {
       System.exit(process.waitFor());
     } catch (final Exception e) {
       try (ConfigurableApplicationContext ctx =
-          new SpringApplicationBuilder(WPCleaner.class).headless(false).run(args)) {
-        ctx.getBean(LoginWindowFactory.class).displayLoginWindow();
+          new SpringApplicationBuilder(WPCleaner.class)
+              .web(WebApplicationType.NONE)
+              .headless(false)
+              .run(args)) {
+        final LoginWindowFactory loginWindowFactory = ctx.getBean(LoginWindowFactory.class);
+        loginWindowFactory.displayLoginWindow();
+        loginWindowFactory.waitForExit();
       } catch (final Exception ex) {
         e.addSuppressed(ex);
         throw new IllegalStateException("Failed to launch application", e);

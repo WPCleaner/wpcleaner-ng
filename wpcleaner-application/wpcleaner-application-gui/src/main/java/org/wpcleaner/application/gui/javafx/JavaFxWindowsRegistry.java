@@ -7,6 +7,7 @@ package org.wpcleaner.application.gui.javafx;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.stage.WindowEvent;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
@@ -17,10 +18,14 @@ public class JavaFxWindowsRegistry {
 
   public void register(final JavaFxWindow<?> window) {
     windows.add(window);
-    window.getStage().setOnHidden(_ -> windows.remove(window));
+    window.getStage().addEventHandler(WindowEvent.WINDOW_HIDDEN, _ -> windows.remove(window));
   }
 
   public List<JavaFxWindow<?>> getVisibleWindows() {
     return windows.stream().filter(window -> window.getStage().isShowing()).toList();
+  }
+
+  public void closeAllWindows() {
+    getVisibleWindows().forEach(window -> window.getStage().close());
   }
 }

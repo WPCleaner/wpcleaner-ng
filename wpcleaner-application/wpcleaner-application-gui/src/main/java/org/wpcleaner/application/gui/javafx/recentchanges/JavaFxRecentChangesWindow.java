@@ -12,6 +12,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 public final class JavaFxRecentChangesWindow
@@ -52,6 +53,7 @@ public final class JavaFxRecentChangesWindow
     final StackPane root = new StackPane();
     root.getChildren().addAll(mainContainer, progressOverlay);
     stage.setOnCloseRequest(_ -> upperPanel.stop());
+    stage.addEventHandler(WindowEvent.WINDOW_HIDDEN, _ -> upperPanel.stop());
     return new Scene(root, 1200, 600);
   }
 }

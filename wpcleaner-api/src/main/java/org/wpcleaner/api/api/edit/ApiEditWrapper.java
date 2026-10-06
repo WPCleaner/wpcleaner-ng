@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.ApiException;
 import org.wpcleaner.api.api.ConnectedUser;
@@ -29,7 +30,7 @@ import org.wpcleaner.api.repository.token.TokenRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
-public class ApiEditWrapper {
+public class ApiEditWrapper implements DisposableBean {
 
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -55,7 +56,13 @@ public class ApiEditWrapper {
     this.tokenRepository = tokenRepository;
     this.user = user;
     this.callTimes = new ArrayDeque<>();
-    this.executor = Executors.newSingleThreadExecutor();
+    this.executor =
+        Executors.newSingleThreadExecutor(
+            runnable -> {
+              final Thread thread = new Thread(runnable, "ApiEditWrapper");
+              thread.setDaemon(true);
+              return thread;
+            });
     this.tags = new ArrayList<>();
     this.prefixWithoutTags = "";
     this.prefixWithTag = "";
@@ -133,5 +140,10 @@ public class ApiEditWrapper {
       return Integer.MAX_VALUE;
     }
     return 4;
+  }
+
+  @Override
+  public void destroy() {
+    executor.shutdownNow();
   }
 }

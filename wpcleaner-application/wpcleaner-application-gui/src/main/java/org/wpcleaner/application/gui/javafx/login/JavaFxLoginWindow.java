@@ -7,7 +7,6 @@ package org.wpcleaner.application.gui.javafx.login;
 
 import java.util.Arrays;
 import java.util.Objects;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,6 +24,7 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
 import org.wpcleaner.application.base.processor.LoginResult;
+import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
 import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
@@ -36,8 +36,7 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
     stage.setOnCloseRequest(
         event -> {
           event.consume();
-          shutdownExecutor();
-          Platform.runLater(Platform::exit);
+          JavaFxInitializer.exit(services.windowsRegistry());
         });
     stage.show();
   }

@@ -24,4 +24,9 @@ public class JavaFxLoginWindowFactory implements LoginWindowFactory {
     JavaFxInitializer.initialize();
     Platform.runLater(() -> new JavaFxLoginWindow(services));
   }
+
+  @Override
+  public void waitForExit() {
+    JavaFxInitializer.waitForExit();
+  }
 }

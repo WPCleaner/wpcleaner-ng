@@ -5,7 +5,6 @@ package org.wpcleaner.application.gui.javafx.main;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,6 +19,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.utils.GT;
+import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.javafx.core.control.FeedbacksToolBar;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
@@ -37,8 +37,7 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
     stage.setOnCloseRequest(
         event -> {
           event.consume();
-          shutdownExecutor();
-          Platform.runLater(Platform::exit);
+          JavaFxInitializer.exit(services.windowsRegistry());
         });
     stage.show();
   }
