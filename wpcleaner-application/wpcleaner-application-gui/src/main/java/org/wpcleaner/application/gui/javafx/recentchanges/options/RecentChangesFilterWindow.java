@@ -79,6 +79,11 @@ public final class RecentChangesFilterWindow
   }
 
   @Override
+  public String getHelpPage() {
+    return "Recent changes";
+  }
+
+  @Override
   public String getName() {
     return "recentChangesFilter";
   }

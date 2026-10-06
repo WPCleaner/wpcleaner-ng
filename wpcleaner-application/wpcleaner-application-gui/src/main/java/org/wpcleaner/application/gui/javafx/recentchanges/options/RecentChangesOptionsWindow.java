@@ -78,6 +78,11 @@ public final class RecentChangesOptionsWindow
   }
 
   @Override
+  public String getHelpPage() {
+    return "Recent changes";
+  }
+
+  @Override
   public String getName() {
     return "recentChangesOptions";
   }

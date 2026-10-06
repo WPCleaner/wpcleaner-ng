@@ -58,16 +58,6 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
   private final Consumer<WikiDefinition> onWikiAdded;
 
   public WikiDefinitionWindow(
-      final JavaFxLoginWindowServices services, @Nullable final Stage owner) {
-    this(services, owner, _ -> {});
-  }
-
-  public WikiDefinitionWindow(
-      final JavaFxLoginWindowServices services, final Consumer<WikiDefinition> onWikiAdded) {
-    this(services, null, onWikiAdded);
-  }
-
-  public WikiDefinitionWindow(
       final JavaFxLoginWindowServices services,
       @Nullable final Stage owner,
       final Consumer<WikiDefinition> onWikiAdded) {
@@ -93,6 +83,11 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
 
     initialize();
     stage.show();
+  }
+
+  @Override
+  public String getHelpPage() {
+    return "Login";
   }
 
   @Override

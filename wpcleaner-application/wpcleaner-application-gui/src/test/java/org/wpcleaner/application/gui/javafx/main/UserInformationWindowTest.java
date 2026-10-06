@@ -55,7 +55,7 @@ class UserInformationWindowTest extends JavaFxTest {
           Mockito.when(user.groups()).thenReturn(List.of("sysop", "bureaucrat"));
           Mockito.when(user.rights()).thenReturn(List.of("read", "edit", "upload"));
 
-          final UserInformationWindow window = new UserInformationWindow(services, user);
+          final UserInformationWindow window = new UserInformationWindow(services, null, user);
 
           Assertions.assertThat(window.getStage().getTitle()).isEqualTo("User information");
           Assertions.assertThat(window.getName()).isEqualTo("userInformation");

@@ -78,6 +78,11 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
   }
 
   @Override
+  public String getHelpPage() {
+    return "User page hosting";
+  }
+
+  @Override
   public String getName() {
     return "userPageHostingConfig";
   }

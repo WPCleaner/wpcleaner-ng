@@ -31,10 +31,6 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
 
   private final ConnectedUser user;
 
-  UserInformationWindow(final JavaFxMainWindowServices services, final ConnectedUser user) {
-    this(services, null, user);
-  }
-
   UserInformationWindow(
       final JavaFxMainWindowServices services,
       @Nullable final Stage owner,
@@ -45,6 +41,11 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
     stage.setTitle(GT._T("User information"));
     initialize();
     stage.show();
+  }
+
+  @Override
+  public String getHelpPage() {
+    return "Main";
   }
 
   @Override

@@ -54,7 +54,7 @@ class WikiDefinitionWindowTest extends JavaFxTest {
 
           final AtomicBoolean added = new AtomicBoolean(false);
           final WikiDefinitionWindow window =
-              new WikiDefinitionWindow(services, _ -> added.set(true));
+              new WikiDefinitionWindow(services, null, _ -> added.set(true));
 
           Assertions.assertThat(window.getStage().getTitle()).isEqualTo("Add wiki");
           Assertions.assertThat(window.getName()).isEqualTo("wikiDefinition");
@@ -96,7 +96,8 @@ class WikiDefinitionWindowTest extends JavaFxTest {
           Mockito.when(services.knownDefinitions()).thenReturn(knownDefinitions);
 
           final Stage ownerStage = new Stage();
-          final WikiDefinitionWindow window = new WikiDefinitionWindow(services, ownerStage);
+          final WikiDefinitionWindow window =
+              new WikiDefinitionWindow(services, ownerStage, _ -> {});
 
           Assertions.assertThat(window.getStage().getModality()).isEqualTo(Modality.WINDOW_MODAL);
           Assertions.assertThat(window.getStage().getOwner()).isEqualTo(ownerStage);
@@ -138,7 +139,7 @@ class WikiDefinitionWindowTest extends JavaFxTest {
               .thenReturn(siteInfo);
 
           final WikiDefinitionWindow window =
-              new WikiDefinitionWindow(services, addedFuture::complete);
+              new WikiDefinitionWindow(services, null, addedFuture::complete);
 
           final StackPane stackPane = (StackPane) window.getStage().getScene().getRoot();
           final VBox mainContainer = (VBox) stackPane.getChildren().getFirst();

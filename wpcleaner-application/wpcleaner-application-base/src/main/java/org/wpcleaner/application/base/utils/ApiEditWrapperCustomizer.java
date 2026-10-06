@@ -17,7 +17,7 @@ public class ApiEditWrapperCustomizer {
 
   public ApiEditWrapperCustomizer(
       final ApiEditWrapper wrapper, @Value("${version.prefix}") final String versionPrefix) {
-    wrapper.setPrefixes("WPCleanerNG " + versionPrefix, versionPrefix);
+    wrapper.setPrefixes("WPCleanerNG v" + versionPrefix, "v" + versionPrefix);
     wrapper.setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
   }
 }
