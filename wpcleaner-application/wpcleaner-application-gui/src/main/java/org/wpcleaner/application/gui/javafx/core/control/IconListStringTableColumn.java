@@ -34,5 +34,6 @@ public final class IconListStringTableColumn<S> extends TableColumn<S, List<Stri
     setCellFactory(_ -> new IconListStringTableCell<>(tooltipText + ":", image));
     setPrefWidth(50);
     setResizable(false);
+    setSortable(false);
   }
 }

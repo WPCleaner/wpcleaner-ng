@@ -20,5 +20,6 @@ public final class ViewModificationTableColumn
     setCellFactory(_ -> new ViewModificationTableCell(imageLoader, viewAction));
     setPrefWidth(30);
     setResizable(false);
+    setSortable(false);
   }
 }

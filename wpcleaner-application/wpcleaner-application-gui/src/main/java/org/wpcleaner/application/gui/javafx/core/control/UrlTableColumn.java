@@ -28,5 +28,6 @@ public final class UrlTableColumn<S> extends TableColumn<S, @Nullable URI> {
     setCellFactory(_ -> new UrlTableCell<>(imageLoader, actionServices, icon, tooltipText));
     setPrefWidth(30);
     setResizable(false);
+    setSortable(false);
   }
 }

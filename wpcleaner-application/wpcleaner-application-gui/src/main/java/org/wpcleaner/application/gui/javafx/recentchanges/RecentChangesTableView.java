@@ -44,24 +44,29 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
 
     final TableColumn<FilteredRecentChange, @Nullable Severity> severityCol =
         new SeverityTableColumn<>("", imageLoader, item -> item.filter().severity());
+    severityCol.setSortable(false);
 
     final TableColumn<FilteredRecentChange, @Nullable Instant> timeCol =
         new TimeTableColumn<>(GT._T("Time"), FilteredRecentChange::timestamp);
+    timeCol.setSortable(false);
     enableViewActionOnDoubleClick(timeCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> titleCol = new TableColumn<>(GT._T("Title"));
     titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().title()));
     titleCol.setPrefWidth(200);
+    titleCol.setSortable(false);
     enableViewActionOnDoubleClick(titleCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> userCol = new TableColumn<>(GT._T("User"));
     userCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().user()));
     userCol.setPrefWidth(120);
     userCol.setResizable(false);
+    userCol.setSortable(false);
     enableViewActionOnDoubleClick(userCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> deltaCol =
         new SignedIntegerTableColumn<>("+/-", FilteredRecentChange::delta);
+    deltaCol.setSortable(false);
     enableViewActionOnDoubleClick(deltaCol, viewAction);
 
     final TableColumn<FilteredRecentChange, String> commentCol =
@@ -69,6 +74,7 @@ public final class RecentChangesTableView extends TableView<FilteredRecentChange
     commentCol.setCellValueFactory(
         cellData -> new SimpleStringProperty(cellData.getValue().comment()));
     commentCol.setPrefWidth(400);
+    commentCol.setSortable(false);
     enableViewActionOnDoubleClick(commentCol, viewAction);
 
     final Image tagIcon = imageLoader.getImage(ImageCollection.TAG, ImageSize.BUTTON).orElse(null);
