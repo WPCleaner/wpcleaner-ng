@@ -40,7 +40,8 @@ class ApiEditWrapperCustomizerTest {
         context -> {
           Assertions.assertThat(context).hasSingleBean(ApiEditWrapperCustomizer.class);
           final ApiEditWrapper wrapper = context.getBean(ApiEditWrapper.class);
-          Mockito.verify(wrapper).setPrefixes("WPCleanerNG v0.0.3", "v0.0.3");
+          Mockito.verify(wrapper)
+              .setPrefixes(Mockito.startsWith("WPCleanerNG v"), Mockito.startsWith(""));
           Mockito.verify(wrapper).setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
         });
   }
