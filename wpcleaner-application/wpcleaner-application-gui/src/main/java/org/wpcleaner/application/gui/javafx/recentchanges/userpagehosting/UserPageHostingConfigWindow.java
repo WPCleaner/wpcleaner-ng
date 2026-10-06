@@ -89,8 +89,14 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
     mainContainer.setPadding(new Insets(10, 15, 10, 15));
     mainContainer.setPrefWidth(750);
 
-    mainContainer.getChildren().add(createUserPageGroup());
-    mainContainer.getChildren().add(createUserTalkPageGroup());
+    final TitledPane userPageGroup = createUserPageGroup();
+    final TitledPane userTalkPageGroup = createUserTalkPageGroup();
+
+    VBox.setVgrow(userPageGroup, Priority.ALWAYS);
+    VBox.setVgrow(userTalkPageGroup, Priority.ALWAYS);
+
+    mainContainer.getChildren().add(userPageGroup);
+    mainContainer.getChildren().add(userTalkPageGroup);
 
     final Button okButton = new Button(GT._T("OK"));
     okButton.setDefaultButton(true);
@@ -127,6 +133,7 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
     final GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(10);
+    grid.setMaxHeight(Double.MAX_VALUE);
 
     final Label summaryLabel = new Label(GT._T("Summary:"));
     summaryLabel.setMinWidth(LABEL_WIDTH);
@@ -142,9 +149,11 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
     grid.add(staticTextLabel, 0, 1);
     grid.add(userPageTextArea, 1, 1);
     GridPane.setHgrow(userPageTextArea, Priority.ALWAYS);
+    GridPane.setVgrow(userPageTextArea, Priority.ALWAYS);
 
     final TitledPane titledPane = new TitledPane(GT._T("User page"), grid);
     titledPane.setCollapsible(false);
+    titledPane.setMaxHeight(Double.MAX_VALUE);
     return titledPane;
   }
 
@@ -152,6 +161,7 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
     final GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(10);
+    grid.setMaxHeight(Double.MAX_VALUE);
 
     final Label summaryLabel = new Label(GT._T("Summary:"));
     summaryLabel.setMinWidth(LABEL_WIDTH);
@@ -165,6 +175,7 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
     staticTextsLabel.setPrefWidth(LABEL_WIDTH);
     tableView.setEditable(true);
     tableView.setPrefHeight(150);
+    tableView.setMaxHeight(Double.MAX_VALUE);
     tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
 
     final TableColumn<TalkPageTextModel, String> labelCol = new TableColumn<>(GT._T("Label"));
@@ -200,31 +211,45 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
             createMoveDownButton(),
             createMoveLastButton());
     final VBox tableBox = new VBox(5, tableView, buttonsBox);
+    VBox.setVgrow(tableView, Priority.ALWAYS);
     grid.add(staticTextsLabel, 0, 1);
     grid.add(tableBox, 1, 1);
     GridPane.setHgrow(tableBox, Priority.ALWAYS);
+    GridPane.setVgrow(tableBox, Priority.ALWAYS);
 
     final TitledPane titledPane = new TitledPane(GT._T("User talk page"), grid);
     titledPane.setCollapsible(false);
+    titledPane.setMaxHeight(Double.MAX_VALUE);
     return titledPane;
   }
 
   private Button createAddButton() {
-    final Button addButton = new Button(GT._T("Add"));
-    addButton.setOnAction(_ -> models.add(new TalkPageTextModel("", "", false)));
-    return addButton;
+    final Button button = new Button();
+    button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
+    imageLoader
+        .getImageView(ImageCollection.LIST_ADD, ImageSize.BUTTON)
+        .ifPresent(button::setGraphic);
+    button.setTooltip(new Tooltip(GT._T("Add")));
+    button.setOnAction(_ -> models.add(new TalkPageTextModel("", "", false)));
+    return button;
   }
 
   private Button createRemoveButton() {
-    final Button removeButton = new Button(GT._T("Remove"));
-    removeButton.setOnAction(
+    final Button button = new Button();
+    button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
+    imageLoader
+        .getImageView(ImageCollection.LIST_REMOVE, ImageSize.BUTTON)
+        .ifPresent(button::setGraphic);
+    button.setTooltip(new Tooltip(GT._T("Remove")));
+    button.disableProperty().bind(tableView.getSelectionModel().selectedItemProperty().isNull());
+    button.setOnAction(
         _ -> {
           final TalkPageTextModel selected = tableView.getSelectionModel().getSelectedItem();
           if (selected != null) {
             models.remove(selected);
           }
         });
-    return removeButton;
+    return button;
   }
 
   private Button createMoveFirstButton() {
