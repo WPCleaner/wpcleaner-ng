@@ -41,4 +41,5 @@ The WPCleaner-NG project is a modular Spring boot application that is responsibl
 - **Test Fixtures:** Use `testFixtures(project(...))` for shared test data across modules.
 
 ## File edition guidelines
-- Use only `printf` to write files
+- Use native `replace` for targeted edits and `write_file` for new files.
+- Never use `printf`, `echo`, or shell redirection (`>`) to edit or write files, as shell redirection triggers AST taint analysis and Critical Security Warnings.
