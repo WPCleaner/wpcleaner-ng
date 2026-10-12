@@ -24,6 +24,10 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.ApiException;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.api.api.move.ApiMove;
+import org.wpcleaner.api.api.move.Move;
+import org.wpcleaner.api.api.move.MoveQuery;
+import org.wpcleaner.api.api.move.MoveQueryCommon;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.tag.TagRepository;
 import org.wpcleaner.api.repository.token.TokenRepository;
@@ -37,6 +41,7 @@ public class ApiEditWrapper implements DisposableBean {
   private static final Duration THROTTLE_PERIOD = Duration.ofMinutes(1);
 
   private final ApiEdit apiEdit;
+  private final ApiMove apiMove;
   private final TagRepository tagRepository;
   private final TokenRepository tokenRepository;
   private final CurrentUserService user;
@@ -48,10 +53,12 @@ public class ApiEditWrapper implements DisposableBean {
 
   public ApiEditWrapper(
       final ApiEdit apiEdit,
+      final ApiMove apiMove,
       final TagRepository tagRepository,
       final TokenRepository tokenRepository,
       final CurrentUserService user) {
     this.apiEdit = apiEdit;
+    this.apiMove = apiMove;
     this.tagRepository = tagRepository;
     this.tokenRepository = tokenRepository;
     this.user = user;
@@ -99,6 +106,29 @@ public class ApiEditWrapper implements DisposableBean {
     }
     builder.token(tokenRepository.getCsrf(wiki));
     return apiEdit.edit(wiki, query.withCommon(builder.build()));
+  }
+
+  public Move move(final WikiDefinition wiki, final MoveQuery query) {
+    executor.execute(this::throttle);
+    try {
+      return executor.submit(() -> moveInternal(wiki, query)).get();
+    } catch (InterruptedException | ExecutionException e) {
+      final String message = "Error moving page with %s".formatted(query.description());
+      LOGGER.error(message, e);
+      throw new ApiException(message, e, Objects.requireNonNullElse(e.getMessage(), ""));
+    }
+  }
+
+  private Move moveInternal(final WikiDefinition wiki, final MoveQuery query) {
+    final MoveQueryCommon.Builder builder = query.common().builder();
+    final List<String> tagsToUse = computeTags();
+    builder.tags(tagsToUse);
+    final String prefix = tagsToUse.isEmpty() ? prefixWithoutTags : prefixWithTag;
+    if (!prefix.isBlank() && query.common().reason() != null) {
+      builder.reason("%s - %s".formatted(prefix, query.common().reason()));
+    }
+    builder.token(tokenRepository.getCsrf(wiki));
+    return apiMove.move(wiki, query.withCommon(builder.build()));
   }
 
   private List<String> computeTags() {

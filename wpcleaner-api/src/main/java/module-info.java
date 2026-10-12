@@ -30,6 +30,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.analysis;
   exports org.wpcleaner.api.api.edit;
   exports org.wpcleaner.api.api.login;
+  exports org.wpcleaner.api.api.move;
   exports org.wpcleaner.api.api.query.list.random;
   exports org.wpcleaner.api.api.query.list.recentchanges;
   exports org.wpcleaner.api.api.query.list.tags;
@@ -63,6 +64,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.analysis;
   opens org.wpcleaner.api.api.edit;
   opens org.wpcleaner.api.api.login;
+  opens org.wpcleaner.api.api.move;
   opens org.wpcleaner.api.api.query.list.random;
   opens org.wpcleaner.api.api.query.list.recentchanges;
   opens org.wpcleaner.api.api.query.list.tags;
