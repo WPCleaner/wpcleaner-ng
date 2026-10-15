@@ -11,20 +11,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
-import org.wpcleaner.api.api.edit.EditQueryByTitle;
-import org.wpcleaner.api.api.edit.EditQueryCommon;
-import org.wpcleaner.api.api.query.prop.revisions.Page;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.progress.ProgressTracker;
@@ -34,12 +24,13 @@ import org.wpcleaner.api.settings.SettingsPersistence;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.utils.JsonUtils;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.application.gui.javafx.core.action.content.RetrievePagesContentTask;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChange;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
-import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
+import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesConfigurableAction;
 
-public final class UserPageHostingAction implements RecentChangesAction {
+public final class UserPageHostingAction implements RecentChangesConfigurableAction {
 
   private final JavaFxRecentChangesWindowServices services;
   private final JavaFxWindow<?> owner;
@@ -51,8 +42,8 @@ public final class UserPageHostingAction implements RecentChangesAction {
   }
 
   @Override
-  public boolean canApply(final FilteredRecentChange rc) {
-    if (rc.ns() == null || rc.ns() != CommonNamespaces.USER.id) {
+  public boolean canApply(@Nullable final FilteredRecentChange rc) {
+    if (rc == null || rc.ns() == null || rc.ns() != CommonNamespaces.USER.id) {
       return false;
     }
     final int colon = rc.title().indexOf(':');
@@ -61,8 +52,8 @@ public final class UserPageHostingAction implements RecentChangesAction {
   }
 
   @Override
-  public void apply(final FilteredRecentChange rc) {
-    if (!canApply(rc)) {
+  public void apply(@Nullable final FilteredRecentChange rc) {
+    if (rc == null || !canApply(rc)) {
       return;
     }
     final WikiDefinition wiki = services.user().getCurrentUser().wiki();
@@ -78,6 +69,7 @@ public final class UserPageHostingAction implements RecentChangesAction {
     promptActionWindow(rc, wiki, configOpt.get());
   }
 
+  @Override
   public void configure() {
     final WikiDefinition wiki = services.user().getCurrentUser().wiki();
     final String wikiCode = wiki.code();
@@ -119,7 +111,8 @@ public final class UserPageHostingAction implements RecentChangesAction {
         userTalkNamespace.name() + ":" + userTalkNamespace.caseType().normalize(username);
 
     owner.executeAsync(
-        new RetrievePagesContentTask(wiki, List.of(userPageTitle, userTalkPageTitle)),
+        new RetrievePagesContentTask(
+            wiki, List.of(userPageTitle, userTalkPageTitle), services.apiRevisions()),
         pagesContent ->
             displayActionWindow(
                 rc,
@@ -136,24 +129,6 @@ public final class UserPageHostingAction implements RecentChangesAction {
                         e.getMessage(), () -> e.getClass().getSimpleName()))));
   }
 
-  private final class RetrievePagesContentTask implements LongRunningTask<Map<String, String>> {
-
-    private final WikiDefinition wiki;
-    private final List<String> titles;
-
-    RetrievePagesContentTask(final WikiDefinition wiki, final List<String> titles) {
-      this.wiki = wiki;
-      this.titles = titles;
-    }
-
-    @Override
-    public Map<String, String> call(final ProgressTracker tracker) {
-      try (ProgressStep _ = tracker.start(GT._T("Retrieving page contents"))) {
-        return retrievePagesContent(wiki, titles);
-      }
-    }
-  }
-
   private void displayActionWindow(
       final FilteredRecentChange rc,
       final WikiDefinition wiki,
@@ -164,24 +139,20 @@ public final class UserPageHostingAction implements RecentChangesAction {
     new UserPageHostingActionWindow(
         services,
         owner.getStage(),
+        wiki,
         config,
         rc.title(),
         userPageContent,
         userTalkPageTitle,
         userTalkPageContent,
-        actionParams -> executeAction(wiki, rc.title(), userTalkPageTitle, config, actionParams));
+        this::executeAction);
   }
 
-  private void executeAction(
-      final WikiDefinition wiki,
-      final String userPageTitle,
-      final String userTalkPageTitle,
-      final UserPageHostingConfig config,
-      final UserPageHostingActionParams actionParams) {
+  private void executeAction(final UserPageHostingActionParams actionParams) {
     actionParams
         .owner()
         .executeAsync(
-            new ExecuteActionTask(wiki, userPageTitle, userTalkPageTitle, config, actionParams),
+            new ExecuteActionTask(actionParams),
             _ ->
                 actionParams
                     .owner()
@@ -199,67 +170,24 @@ public final class UserPageHostingAction implements RecentChangesAction {
                                 e.getMessage(), () -> e.getClass().getSimpleName()))));
   }
 
-  private final class ExecuteActionTask implements LongRunningTask<Void> {
+  private static final class ExecuteActionTask implements LongRunningTask<Void> {
 
-    private final WikiDefinition wiki;
-    private final String userPageTitle;
-    private final String userTalkPageTitle;
-    private final UserPageHostingConfig config;
     private final UserPageHostingActionParams actionParams;
 
-    ExecuteActionTask(
-        final WikiDefinition wiki,
-        final String userPageTitle,
-        final String userTalkPageTitle,
-        final UserPageHostingConfig config,
-        final UserPageHostingActionParams actionParams) {
-      this.wiki = wiki;
-      this.userPageTitle = userPageTitle;
-      this.userTalkPageTitle = userTalkPageTitle;
-      this.config = config;
+    ExecuteActionTask(final UserPageHostingActionParams actionParams) {
       this.actionParams = actionParams;
     }
 
     @Override
     public Void call(final ProgressTracker tracker) {
       try (ProgressStep _ = tracker.start(GT._T("Updating user page"))) {
-        updateUserPage();
+        actionParams.userPageAction().execute();
       }
 
-      if (!actionParams.selectedTalkPageTexts().isEmpty()) {
-        try (ProgressStep _ = tracker.start(GT._T("Updating user talk page"))) {
-          updateUserTalkPage();
-        }
+      try (ProgressStep _ = tracker.start(GT._T("Updating user talk page"))) {
+        actionParams.userTalkPageAction().execute();
       }
       return null;
-    }
-
-    private void updateUserPage() {
-      services
-          .apiEdit()
-          .edit(
-              wiki,
-              new EditQueryByTitle(
-                  userPageTitle,
-                  EditQueryCommon.emptyBuilder()
-                      .text(config.userPageText())
-                      .summary(actionParams.userPageComment())
-                      .build()));
-    }
-
-    private void updateUserTalkPage() {
-      final String textToAppend =
-          "\n\n" + String.join("\n\n", actionParams.selectedTalkPageTexts());
-      services
-          .apiEdit()
-          .edit(
-              wiki,
-              new EditQueryByTitle(
-                  userTalkPageTitle,
-                  EditQueryCommon.emptyBuilder()
-                      .appendText(textToAppend)
-                      .summary(actionParams.userTalkPageComment())
-                      .build()));
     }
   }
 
@@ -289,35 +217,5 @@ public final class UserPageHostingAction implements RecentChangesAction {
   private void saveConfig(final String wikiCode, final UserPageHostingConfig config) {
     final File file = getConfigFile(wikiCode);
     JsonUtils.writeValue(file, config);
-  }
-
-  private Map<String, String> retrievePagesContent(
-      final WikiDefinition wiki, final List<String> titles) {
-    final RevisionsQuery query =
-        RevisionsQuery.emptyBuilder()
-            .properties(
-                Set.of(RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.IDS))
-            .slots(Set.of("main"))
-            .build();
-    final List<Page> pages = services.apiRevisions().retrieveRevisionsByTitle(wiki, titles, query);
-    return titles.stream()
-        .collect(
-            Collectors.toMap(
-                Function.identity(),
-                title ->
-                    pages.stream()
-                        .filter(page -> Objects.equals(page.title(), title))
-                        .findFirst()
-                        .map(this::extractContent)
-                        .orElse("")));
-  }
-
-  private String extractContent(final Page page) {
-    return page.revisions().stream()
-        .findFirst()
-        .map(revision -> revision.slots().get("main"))
-        .filter(Objects::nonNull)
-        .map(RevisionSlot::content)
-        .orElse("");
   }
 }

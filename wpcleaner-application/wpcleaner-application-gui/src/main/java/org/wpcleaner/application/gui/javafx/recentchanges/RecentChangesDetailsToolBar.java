@@ -23,7 +23,8 @@ import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
-import org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting.UserPageHostingButton;
+import org.wpcleaner.application.gui.javafx.recentchanges.userpagedraft.UserPageDraftAction;
+import org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting.UserPageHostingAction;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
@@ -134,8 +135,20 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
           differencesPanel.selectLastDelta();
         });
 
-    final UserPageHostingButton userPageHostingButton =
-        new UserPageHostingButton(services, owner, currentRecentChange);
+    final RecentChangesConfigurableActionButton userPageHostingButton =
+        new RecentChangesConfigurableActionButton(
+            services.imageLoader(),
+            ImageCollection.HOSTING,
+            GT._T("Prevent user page being used as hosting"),
+            new UserPageHostingAction(services, owner),
+            currentRecentChange);
+    final RecentChangesConfigurableActionButton userPageDraftButton =
+        new RecentChangesConfigurableActionButton(
+            services.imageLoader(),
+            ImageCollection.MOVE_PAGE,
+            GT._T("Move user page to draft"),
+            new UserPageDraftAction(services, owner),
+            currentRecentChange);
 
     final Separator separator = new Separator();
 
@@ -148,6 +161,7 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
             goNextButton,
             goLastButton,
             userPageHostingButton,
+            userPageDraftButton,
             separator,
             pageLabel,
             titleField);

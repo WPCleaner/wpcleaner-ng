@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
+package org.wpcleaner.application.gui.javafx.recentchanges;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -11,33 +11,25 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import org.jspecify.annotations.Nullable;
-import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
-import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
-import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChange;
-import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.lib.image.ImageCollection;
+import org.wpcleaner.lib.image.ImageLoader;
 import org.wpcleaner.lib.image.ImageSize;
 
-public final class UserPageHostingButton extends Button {
+public final class RecentChangesConfigurableActionButton extends Button {
 
-  public UserPageHostingButton(
-      final JavaFxRecentChangesWindowServices services,
-      final JavaFxWindow<?> owner,
-      final ObservableValue<@Nullable FilteredRecentChange> currentRecentChange) {
-    this(services, new UserPageHostingAction(services, owner), currentRecentChange);
-  }
-
-  UserPageHostingButton(
-      final JavaFxRecentChangesWindowServices services,
-      final UserPageHostingAction action,
+  public RecentChangesConfigurableActionButton(
+      final ImageLoader imageLoader,
+      final ImageCollection image,
+      final String tooltipText,
+      final RecentChangesConfigurableAction action,
       final ObservableValue<@Nullable FilteredRecentChange> currentRecentChange) {
     super();
-    final JavaFxImageLoader imageLoader = new JavaFxImageLoader(services.imageLoader());
+    final JavaFxImageLoader fxImageLoader = new JavaFxImageLoader(imageLoader);
     setStyle(DefaultStyles.TOOLBAR_ELEMENT);
-    imageLoader.getImageView(ImageCollection.HOSTING, ImageSize.BUTTON).ifPresent(this::setGraphic);
-    setTooltip(new Tooltip(GT._T("Prevent user page being used as hosting")));
+    fxImageLoader.getImageView(image, ImageSize.BUTTON).ifPresent(this::setGraphic);
+    setTooltip(new Tooltip(tooltipText));
     disableProperty()
         .bind(
             Bindings.createBooleanBinding(

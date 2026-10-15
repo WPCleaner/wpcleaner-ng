@@ -28,6 +28,9 @@ module org.wpcleaner.application.gui {
   exports org.wpcleaner.application.gui.core.desktop;
   exports org.wpcleaner.application.gui.core.factory;
   exports org.wpcleaner.application.gui.core.style;
+  exports org.wpcleaner.application.gui.javafx.core.action.content.append;
+  exports org.wpcleaner.application.gui.javafx.core.action.content.movetodraft;
+  exports org.wpcleaner.application.gui.javafx.core.action.content.replace;
   exports org.wpcleaner.application.gui.javafx.core.action;
   exports org.wpcleaner.application.gui.javafx.core.control;
   exports org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
@@ -37,6 +40,7 @@ module org.wpcleaner.application.gui {
   exports org.wpcleaner.application.gui.javafx.login;
   exports org.wpcleaner.application.gui.javafx.main;
   exports org.wpcleaner.application.gui.javafx.recentchanges.options;
+  exports org.wpcleaner.application.gui.javafx.recentchanges.userpagedraft;
   exports org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
   exports org.wpcleaner.application.gui.javafx.recentchanges;
   exports org.wpcleaner.application.gui.javafx;
@@ -48,6 +52,9 @@ module org.wpcleaner.application.gui {
   opens org.wpcleaner.application.gui.core.desktop;
   opens org.wpcleaner.application.gui.core.factory;
   opens org.wpcleaner.application.gui.core.style;
+  opens org.wpcleaner.application.gui.javafx.core.action.content.append;
+  opens org.wpcleaner.application.gui.javafx.core.action.content.movetodraft;
+  opens org.wpcleaner.application.gui.javafx.core.action.content.replace;
   opens org.wpcleaner.application.gui.javafx.core.action;
   opens org.wpcleaner.application.gui.javafx.core.control;
   opens org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
@@ -57,6 +64,7 @@ module org.wpcleaner.application.gui {
   opens org.wpcleaner.application.gui.javafx.login;
   opens org.wpcleaner.application.gui.javafx.main;
   opens org.wpcleaner.application.gui.javafx.recentchanges.options;
+  opens org.wpcleaner.application.gui.javafx.recentchanges.userpagedraft;
   opens org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
   opens org.wpcleaner.application.gui.javafx.recentchanges;
   opens org.wpcleaner.application.gui.javafx;

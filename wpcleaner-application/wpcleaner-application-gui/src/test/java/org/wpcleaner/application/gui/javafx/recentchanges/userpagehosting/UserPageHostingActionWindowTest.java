@@ -10,8 +10,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -24,10 +23,16 @@ import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendActionControl;
+import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfiguration;
+import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationText;
+import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceActionControl;
+import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfiguration;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
@@ -65,16 +70,17 @@ class UserPageHostingActionWindowTest extends JavaFxTest {
           final Stage ownerStage = new Stage();
           final UserPageHostingConfig config =
               new UserPageHostingConfig(
-                  "userPageSummary",
-                  "userPageText",
-                  "userTalkPageSummary",
-                  List.of(new UserTalkPageTextConfig("label1", "text1", true)));
+                  new ContentReplaceConfiguration("userPageSummary", "userPageText"),
+                  new ContentAppendConfiguration(
+                      "userTalkPageSummary",
+                      List.of(new ContentAppendConfigurationText(true, "label1", "text1"))));
 
           final AtomicReference<UserPageHostingActionParams> confirmed = new AtomicReference<>();
           final UserPageHostingActionWindow window =
               new UserPageHostingActionWindow(
                   services,
                   ownerStage,
+                  WikipediaDefinitions.EN,
                   config,
                   "User:Test",
                   "Initial user page",
@@ -94,27 +100,48 @@ class UserPageHostingActionWindowTest extends JavaFxTest {
           final VBox mainContainer = (VBox) root.getChildren().getFirst();
           Assertions.assertThat(mainContainer.getPrefWidth()).isEqualTo(1900.0);
 
-          final HBox previewsBox = (HBox) mainContainer.getChildren().get(2);
-          Assertions.assertThat(previewsBox.getChildren()).hasSize(2);
+          final GridPane matrix = (GridPane) mainContainer.getChildren().get(0);
+          Assertions.assertThat(matrix.getChildren()).hasSize(4);
+          Assertions.assertThat(matrix.getColumnConstraints()).hasSize(2);
+          Assertions.assertThat(matrix.getColumnConstraints().get(0).getPercentWidth())
+              .isEqualTo(50.0);
+          Assertions.assertThat(matrix.getColumnConstraints().get(1).getPercentWidth())
+              .isEqualTo(50.0);
 
-          final VBox userPageBox = (VBox) previewsBox.getChildren().getFirst();
+          final ContentReplaceActionControl userPageGroup =
+              (ContentReplaceActionControl) matrix.getChildren().get(0);
+          final ContentAppendActionControl userTalkPageGroup =
+              (ContentAppendActionControl) matrix.getChildren().get(1);
+          final VBox userPageBox = (VBox) matrix.getChildren().get(2);
+          final VBox userTalkPageBox = (VBox) matrix.getChildren().get(3);
+
+          Assertions.assertThat(GridPane.getColumnIndex(userPageGroup)).isEqualTo(0);
+          Assertions.assertThat(GridPane.getRowIndex(userPageGroup)).isEqualTo(0);
+          Assertions.assertThat(userPageGroup.getText()).isEqualTo("User page");
+          Assertions.assertThat(userPageGroup.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
+
+          Assertions.assertThat(GridPane.getColumnIndex(userTalkPageGroup)).isEqualTo(1);
+          Assertions.assertThat(GridPane.getRowIndex(userTalkPageGroup)).isEqualTo(0);
+          Assertions.assertThat(userTalkPageGroup.getText()).isEqualTo("User talk page");
+          Assertions.assertThat(userTalkPageGroup.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
+
+          Assertions.assertThat(GridPane.getColumnIndex(userPageBox)).isEqualTo(0);
+          Assertions.assertThat(GridPane.getRowIndex(userPageBox)).isEqualTo(1);
           final Label userPageLabel = (Label) userPageBox.getChildren().getFirst();
-          Assertions.assertThat(userPageLabel.getText()).isEqualTo("User page");
+          Assertions.assertThat(userPageLabel.getText()).isEqualTo("User:Test");
           final PageAnalysisScrollPane userPageScrollPane =
               (PageAnalysisScrollPane) userPageBox.getChildren().get(1);
           Assertions.assertThat(userPageScrollPane.getArea().getPrefHeight()).isEqualTo(700.0);
+          Assertions.assertThat(userPageBox.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
 
-          final VBox userTalkPageBox = (VBox) previewsBox.getChildren().get(1);
+          Assertions.assertThat(GridPane.getColumnIndex(userTalkPageBox)).isEqualTo(1);
+          Assertions.assertThat(GridPane.getRowIndex(userTalkPageBox)).isEqualTo(1);
           final Label userTalkPageLabel = (Label) userTalkPageBox.getChildren().getFirst();
-          Assertions.assertThat(userTalkPageLabel.getText()).isEqualTo("User talk page");
+          Assertions.assertThat(userTalkPageLabel.getText()).isEqualTo("User talk:Test");
           final PageAnalysisScrollPane userTalkPageScrollPane =
               (PageAnalysisScrollPane) userTalkPageBox.getChildren().get(1);
           Assertions.assertThat(userTalkPageScrollPane.getArea().getPrefHeight()).isEqualTo(700.0);
-
-          Assertions.assertThat(userPageBox.getPrefWidth())
-              .isEqualTo(userTalkPageBox.getPrefWidth());
-          Assertions.assertThat(HBox.getHgrow(userPageBox)).isEqualTo(Priority.ALWAYS);
-          Assertions.assertThat(HBox.getHgrow(userTalkPageBox)).isEqualTo(Priority.ALWAYS);
+          Assertions.assertThat(userTalkPageBox.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
 
           window.getStage().close();
           ownerStage.close();
