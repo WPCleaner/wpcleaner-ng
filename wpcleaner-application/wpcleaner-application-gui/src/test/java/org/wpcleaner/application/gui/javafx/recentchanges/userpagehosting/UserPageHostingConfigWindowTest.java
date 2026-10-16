@@ -27,6 +27,9 @@ import org.mockito.Mockito;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfiguration;
+import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationText;
+import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfiguration;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
@@ -53,10 +56,10 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
           final Stage ownerStage = new Stage();
           final UserPageHostingConfig initialConfig =
               new UserPageHostingConfig(
-                  "userPageSummary",
-                  "userPageText",
-                  "userTalkPageSummary",
-                  List.of(new UserTalkPageTextConfig("label1", "text1", true)));
+                  new ContentReplaceConfiguration("userPageSummary", "userPageText"),
+                  new ContentAppendConfiguration(
+                      "userTalkPageSummary",
+                      List.of(new ContentAppendConfigurationText(true, "label1", "text1"))));
 
           final AtomicReference<UserPageHostingConfig> validated = new AtomicReference<>();
           final UserPageHostingConfigWindow window =

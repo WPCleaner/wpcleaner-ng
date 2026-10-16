@@ -5,11 +5,11 @@ package org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.List;
+import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendAction;
+import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceAction;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 record UserPageHostingActionParams(
     JavaFxWindow<?> owner,
-    String userPageComment,
-    String userTalkPageComment,
-    List<String> selectedTalkPageTexts) {}
+    ContentReplaceAction userPageAction,
+    ContentAppendAction userTalkPageAction) {}
