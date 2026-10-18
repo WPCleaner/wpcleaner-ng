@@ -125,16 +125,20 @@ class UserPageHostingActionTest extends JavaFxTest {
       final String validConfig =
           """
           {
-            "userPageSummary": "Summary",
-            "userPageText": "Text",
-            "userTalkPageSummary": "Talk summary",
-            "userTalkPageTexts": [
-              {
-                "label": "Notice",
-                "text": "Notice text",
-                "defaultSelected": true
-              }
-            ]
+            "userPage": {
+              "summary": "Summary",
+              "text": "Text"
+            },
+            "userTalkPage": {
+              "summary": "Talk summary",
+              "texts": [
+                {
+                  "addedByDefault": true,
+                  "label": "Notice",
+                  "text": "Notice text"
+                }
+              ]
+            }
           }
           """;
       Files.writeString(configFile, validConfig, StandardCharsets.UTF_8);

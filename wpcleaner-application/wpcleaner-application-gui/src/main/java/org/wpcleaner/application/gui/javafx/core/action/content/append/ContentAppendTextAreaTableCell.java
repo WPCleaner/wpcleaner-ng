@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui.javafx.recentchanges.userpagehosting;
+package org.wpcleaner.application.gui.javafx.core.action.content.append;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -9,11 +9,11 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 
-final class TextAreaTableCell<S> extends TableCell<S, String> {
+public final class ContentAppendTextAreaTableCell<S> extends TableCell<S, String> {
 
   private final TextArea cellTextArea = new TextArea();
 
-  public TextAreaTableCell() {
+  public ContentAppendTextAreaTableCell() {
     super();
     cellTextArea.setPrefRowCount(3);
     cellTextArea.setWrapText(true);
@@ -36,6 +36,13 @@ final class TextAreaTableCell<S> extends TableCell<S, String> {
   }
 
   @Override
+  public void cancelEdit() {
+    super.cancelEdit();
+    setText(getItem());
+    setGraphic(null);
+  }
+
+  @Override
   public void startEdit() {
     if (!isEmpty()) {
       super.startEdit();
@@ -45,13 +52,6 @@ final class TextAreaTableCell<S> extends TableCell<S, String> {
       cellTextArea.selectAll();
       cellTextArea.requestFocus();
     }
-  }
-
-  @Override
-  public void cancelEdit() {
-    super.cancelEdit();
-    setText(getItem());
-    setGraphic(null);
   }
 
   @Override

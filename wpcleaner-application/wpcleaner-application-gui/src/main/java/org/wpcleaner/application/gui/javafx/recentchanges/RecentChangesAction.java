@@ -5,9 +5,11 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.jspecify.annotations.Nullable;
+
 public interface RecentChangesAction {
 
-  boolean canApply(FilteredRecentChange rc);
+  boolean canApply(@Nullable FilteredRecentChange rc);
 
-  void apply(FilteredRecentChange rc);
+  void apply(@Nullable FilteredRecentChange rc);
 }
