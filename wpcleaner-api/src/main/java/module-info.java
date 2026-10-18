@@ -17,7 +17,6 @@ module org.wpcleaner.api {
   requires transitive spring.web;
   requires com.fasterxml.jackson.datatype.jsr310;
   requires java.prefs;
-  requires jdk.net;
   requires org.slf4j;
   requires org.yaml.snakeyaml;
   exports org.wpcleaner.api.analysis.category;

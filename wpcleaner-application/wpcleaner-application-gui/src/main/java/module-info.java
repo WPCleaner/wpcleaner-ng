@@ -19,11 +19,8 @@ module org.wpcleaner.application.gui {
   requires transitive spring.boot;
   requires transitive spring.context;
   requires transitive spring.core;
-  requires com.fasterxml.jackson.databind;
   requires java.management;
   requires org.slf4j;
-  requires spring.web;
-  requires static org.jetbrains.annotations;
   exports org.wpcleaner.application.gui.core.action;
   exports org.wpcleaner.application.gui.core.desktop;
   exports org.wpcleaner.application.gui.core.factory;
