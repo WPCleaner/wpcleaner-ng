@@ -5,20 +5,16 @@ package org.wpcleaner.api.api.edit;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.ApiException;
@@ -36,8 +32,6 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @Service
 public class ApiEditWrapper implements DisposableBean {
 
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final Duration THROTTLE_PERIOD = Duration.ofMinutes(1);
 
   private final ApiEdit apiEdit;
@@ -90,9 +84,7 @@ public class ApiEditWrapper implements DisposableBean {
     try {
       return executor.submit(() -> editInternal(wiki, query)).get();
     } catch (InterruptedException | ExecutionException e) {
-      final String message = "Error editing page with %s".formatted(query.description());
-      LOGGER.error(message, e);
-      throw new ApiException(message, e, Objects.requireNonNullElse(e.getMessage(), ""));
+      throw ApiException.of(e, "Error editing page with %s".formatted(query.description()));
     }
   }
 
@@ -113,9 +105,7 @@ public class ApiEditWrapper implements DisposableBean {
     try {
       return executor.submit(() -> moveInternal(wiki, query)).get();
     } catch (InterruptedException | ExecutionException e) {
-      final String message = "Error moving page with %s".formatted(query.description());
-      LOGGER.error(message, e);
-      throw new ApiException(message, e, Objects.requireNonNullElse(e.getMessage(), ""));
+      throw ApiException.of(e, "Error moving page %s".formatted(query.description()));
     }
   }
 
@@ -156,8 +146,7 @@ public class ApiEditWrapper implements DisposableBean {
       Thread.sleep(wait);
       callTimes.add(Instant.now());
     } catch (InterruptedException e) {
-      throw new ApiException(
-          "Error waiting for throttle", e, Objects.requireNonNullElse(e.getMessage(), ""));
+      throw ApiException.of(e, "Error waiting for throttle");
     }
   }
 

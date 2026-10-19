@@ -206,7 +206,10 @@ final class UserPageDraftActionWindow extends JavaFxWindow<JavaFxRecentChangesWi
       }
       try (ProgressStep _ = tracker.start(GT._T("Updating user talk page"))) {
         userTalkPageAction.setVariable("__USER__", userName);
+        userTalkPageAction.setVariable("__USER_PAGE__", userName.replace(' ', '_'));
         userTalkPageAction.setVariable("__DRAFT__", moveToDraftAction.getSubPageName());
+        userTalkPageAction.setVariable(
+            "__DRAFT_PAGE__", moveToDraftAction.getSubPageName().replace(' ', '_'));
         userTalkPageAction.execute();
       }
       return null;
