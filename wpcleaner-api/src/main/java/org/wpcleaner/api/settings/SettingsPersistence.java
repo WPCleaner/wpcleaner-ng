@@ -20,6 +20,8 @@ import org.wpcleaner.api.utils.JsonUtils;
 @Service
 public class SettingsPersistence {
 
+  public static final String HOME_PROPERTY = "wpcleaner.home";
+
   private static final Logger LOGGER =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -40,7 +42,9 @@ public class SettingsPersistence {
   }
 
   public static Path getFolder() {
-    final Path path = Paths.get(System.getProperty("user.home")).resolve(".wpcleaner");
+    final Path path =
+        Paths.get(System.getProperty(HOME_PROPERTY, System.getProperty("user.home")))
+            .resolve(".wpcleaner");
     try {
       Files.createDirectories(path);
     } catch (IOException e) {

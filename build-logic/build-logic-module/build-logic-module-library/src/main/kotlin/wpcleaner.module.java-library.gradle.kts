@@ -58,6 +58,10 @@ tasks.withType<Test>().configureEach {
     "--enable-native-access=ALL-UNNAMED",
     "--sun-misc-unsafe-memory-access=allow"
   )
+  systemProperty(
+    "wpcleaner.home",
+    layout.buildDirectory.dir("wpcleaner-home/$name").get().asFile.absolutePath
+  )
   testLogging {
     events(TestLogEvent.FAILED)
     exceptionFormat = TestExceptionFormat.FULL

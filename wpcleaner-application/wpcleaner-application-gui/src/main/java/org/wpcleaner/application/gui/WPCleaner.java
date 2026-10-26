@@ -16,6 +16,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.wpcleaner.api.settings.SettingsPersistence;
 import org.wpcleaner.application.gui.core.factory.LoginWindowFactory;
 
 @SpringBootApplication(scanBasePackages = "org.wpcleaner")
@@ -102,6 +103,10 @@ public class WPCleaner {
       command.add("--enable-native-access=ALL-UNNAMED,javafx.graphics");
     }
     command.add("--sun-misc-unsafe-memory-access=allow");
+    final String wpcleanerHome = System.getProperty(SettingsPersistence.HOME_PROPERTY);
+    if (wpcleanerHome != null) {
+      command.add("-D%s=%s".formatted(SettingsPersistence.HOME_PROPERTY, wpcleanerHome));
+    }
 
     if (classPath != null && classPath.endsWith(".jar")) {
       command.add("-jar");
