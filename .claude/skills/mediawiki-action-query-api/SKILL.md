@@ -15,7 +15,7 @@ Read an existing, complete implementation and mirror its structure exactly (nami
 `ApiRestClient` / `ApiUriBuilder` usage, error handling, tests). Good references:
 
 - `wpcleaner-api/src/main/java/org/wpcleaner/api/api/query/list/random/`
-- `wpcleaner-api/src/test/java/org/wpcleaner/api/api/query/list/random/ApiRandomTest.java`
+- `wpcleaner-api/src/apiTest/java/org/wpcleaner/api/api/query/list/random/ApiRandomTest.java`
 - `wpcleaner-api/src/main/java/org/wpcleaner/api/api/query/QueryParameters.java`
 
 ## Steps
@@ -31,7 +31,7 @@ Read an existing, complete implementation and mirror its structure exactly (nami
    (`users` → `Users`, `deletedrevisions` → `DeletedRevisions`).
 
 3. **Package**: `org.wpcleaner.api.api.query.<actiontype>.<modulename>`
-   (e.g. `org.wpcleaner.api.api.query.list.users`). Test classes go in the same package under `src/test`.
+   (e.g. `org.wpcleaner.api.api.query.list.users`). Test classes go in the same package under `src/apiTest`.
 
 4. **Register the module** in the existing `QueryParameters`.
 
@@ -57,15 +57,15 @@ Read an existing, complete implementation and mirror its structure exactly (nami
 
 8. **Service class** `Api<ModuleName>` (e.g. `ApiUsers`).
 
-9. **Integration tests** `Api<ModuleName>Test`, annotated with `@TestCallingMWApi`.
+9. **Integration tests** `Api<ModuleName>Test`, in the `apiTest` source set.
 
 ## Verify
 
 ```bash
 ./gradlew :wpcleaner-api:spotlessApply
-./gradlew :wpcleaner-api:pmdMain :wpcleaner-api:pmdTest
+./gradlew :wpcleaner-api:pmdMain :wpcleaner-api:pmdTest :wpcleaner-api:pmdApiTest
 ./gradlew :wpcleaner-api:apiTest --tests org.wpcleaner.api.api.query.<actiontype>.<modulename>.Api<ModuleName>Test
 ```
 
-`apiTest` calls a real wiki; `@TestCallingMWApi` tests are excluded from the regular `test` task.
+`apiTest` calls a real wiki; its tests live in `src/apiTest` and are not run by `test` nor `build`.
 Fix every failure before reporting the work as done, and report the test results.

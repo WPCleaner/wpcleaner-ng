@@ -11,20 +11,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.wpcleaner.api.TestCallingMWApi;
+import org.wpcleaner.api.SpringBootTestConfig;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
-@SpringBootTest(classes = ApiTokensTest.SpringBootTestConfig.class)
-@TestCallingMWApi
+@SpringBootTest(classes = SpringBootTestConfig.class)
 class ApiTokensTest {
 
   @Autowired private ApiTokens apiTokens;
-
-  @ComponentScan(basePackages = "org.wpcleaner")
-  @Configuration
-  static class SpringBootTestConfig {}
 
   @DisplayName("Ask for tokens")
   @Test
@@ -57,7 +50,7 @@ class ApiTokensTest {
     // THEN
     Assertions.assertThat(tokens).as("tokens").isNotNull();
     Assertions.assertThat(tokens.createAccount()).as("createAccount").isNull();
-    Assertions.assertThat(tokens.csrf()).as("csrf").isNull();
+    Assertions.assertThat(tokens.csrf()).as("csrf").isNotNull();
     Assertions.assertThat(tokens.deleteGlobalAccount()).as("deleteGlobalAccount").isNull();
     Assertions.assertThat(tokens.login()).as("login").isNull();
     Assertions.assertThat(tokens.patrol()).as("patrol").isNull();

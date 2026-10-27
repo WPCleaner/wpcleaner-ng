@@ -11,20 +11,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.wpcleaner.api.TestCallingMWApi;
+import org.wpcleaner.api.SpringBootTestConfig;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
-@SpringBootTest(classes = ApiSiteInfoTest.SpringBootTestConfig.class)
-@TestCallingMWApi
+@SpringBootTest(classes = SpringBootTestConfig.class)
 class ApiSiteInfoTest {
 
   @Autowired private ApiSiteInfo apiSiteInfo;
-
-  @ComponentScan(basePackages = "org.wpcleaner")
-  @Configuration
-  static class SpringBootTestConfig {}
 
   @DisplayName("Ask for all site info properties")
   @Test

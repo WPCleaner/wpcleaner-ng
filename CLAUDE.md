@@ -27,7 +27,7 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 ## Commands
 
 - Single test: `./gradlew :<module>:test --tests <full.package.TestClass>`
-- Tests calling a real MediaWiki server (tagged `@TestCallingMWApi`, excluded from `test`):
+- Tests calling a real MediaWiki server (`src/apiTest` source set, not run by `test` nor `build`):
   `./gradlew :wpcleaner-api:apiTest --tests <full.package.TestClass>`
 - Format: `./gradlew :<module>:spotlessApply` (run before declaring work done)
 - Static analysis (mandatory, must pass): `./gradlew :<module>:pmdMain :<module>:pmdTest`

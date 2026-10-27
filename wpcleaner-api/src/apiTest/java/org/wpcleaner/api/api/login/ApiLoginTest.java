@@ -12,28 +12,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.wpcleaner.api.TestCallingMWApi;
+import org.springframework.test.annotation.DirtiesContext;
+import org.wpcleaner.api.SpringBootTestConfig;
+import org.wpcleaner.api.TestLogin;
 import org.wpcleaner.api.api.Credential;
-import org.wpcleaner.api.api.CredentialsProvider;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.Tokens;
 import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
-@SpringBootTest(classes = ApiLoginTest.SpringBootTestConfig.class)
-@TestCallingMWApi
+@DirtiesContext
+@SpringBootTest(classes = SpringBootTestConfig.class)
 class ApiLoginTest {
 
   @Autowired private ApiLogin apiLogin;
   @Autowired private ApiTokens apiTokens;
-  @Autowired private CredentialsProvider credentialsProvider;
-
-  @ComponentScan(basePackages = "org.wpcleaner")
-  @Configuration
-  static class SpringBootTestConfig {}
+  @Autowired private TestLogin testLogin;
 
   @DisplayName("Login")
   @Test
@@ -41,17 +36,7 @@ class ApiLoginTest {
     // GIVEN
     final WikiDefinition wiki = WikimediaDefinitions.META;
     final Tokens tokens = apiTokens.requestTokens(wiki, List.of(TokensParameters.Type.LOGIN));
-    final Credential credential =
-        credentialsProvider
-            .getCredential(wiki)
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        """
-                        No credential provided for wiki %s.
-                        Please provide a credentials.yaml or credentials.json file with usable credential.
-                        """
-                            .formatted(wiki.code())));
+    final Credential credential = testLogin.credential(wiki);
 
     // WHEN
     final Login login =
