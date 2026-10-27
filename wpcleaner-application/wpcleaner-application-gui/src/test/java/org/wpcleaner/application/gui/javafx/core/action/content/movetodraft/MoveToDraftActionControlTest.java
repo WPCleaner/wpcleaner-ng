@@ -16,7 +16,7 @@ import javafx.scene.layout.Priority;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -31,7 +31,7 @@ class MoveToDraftActionControlTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final AtomicBoolean refreshed = new AtomicBoolean(false);
           final MoveToDraftConfiguration initial =
               new MoveToDraftConfiguration("Draft", "Moving to draft");
@@ -67,7 +67,9 @@ class MoveToDraftActionControlTest extends JavaFxTest {
           Assertions.assertThat(refreshButton.getStyle()).isEqualTo(DefaultStyles.TOOLBAR_ELEMENT);
           Assertions.assertThat(refreshButton.getTooltip().getText())
               .isEqualTo("Refresh draft page content");
-          Mockito.verify(imageLoader).getImageResource(ImageCollection.REFRESH, ImageSize.BUTTON);
+          BDDMockito.then(imageLoader)
+              .should()
+              .getImageResource(ImageCollection.REFRESH, ImageSize.BUTTON);
 
           refreshButton.fire();
           Assertions.assertThat(refreshed.get()).isTrue();
@@ -84,7 +86,7 @@ class MoveToDraftActionControlTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final MoveToDraftActionControl pane =
               new MoveToDraftActionControl(
                   imageLoader, "Move Title", new MoveToDraftConfiguration("", ""), () -> {});
@@ -125,7 +127,7 @@ class MoveToDraftActionControlTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           Assertions.assertThatThrownBy(
                   () -> new MoveToDraftActionControl(imageLoader, "Move Title", null, () -> {}))
               .isInstanceOf(NullPointerException.class);

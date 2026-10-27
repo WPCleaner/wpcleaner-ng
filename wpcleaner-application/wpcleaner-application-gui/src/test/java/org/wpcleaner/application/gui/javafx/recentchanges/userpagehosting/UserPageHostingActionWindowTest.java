@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
@@ -47,10 +47,11 @@ class UserPageHostingActionWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
@@ -60,11 +61,11 @@ class UserPageHostingActionWindowTest extends JavaFxTest {
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.colorizer()).thenReturn(colorizer);
-          Mockito.when(services.pageAnalysisFactory()).thenReturn(pageAnalysisFactory);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.colorizer()).willReturn(colorizer);
+          BDDMockito.given(services.pageAnalysisFactory()).willReturn(pageAnalysisFactory);
 
           final Stage ownerStage = new Stage();
           final UserPageHostingConfig config =

@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
@@ -24,21 +24,23 @@ class ApiMoveTest {
   @SuppressWarnings("unchecked")
   @Test
   void testMoveCallsApi() {
-    final ApiRestClient apiRestClient = Mockito.mock(ApiRestClient.class);
-    final RestClient restClient = Mockito.mock(RestClient.class);
-    final RestClient.RequestBodyUriSpec uriSpec = Mockito.mock(RestClient.RequestBodyUriSpec.class);
-    final RestClient.RequestBodySpec bodySpec = Mockito.mock(RestClient.RequestBodySpec.class);
-    final RestClient.ResponseSpec responseSpec = Mockito.mock(RestClient.ResponseSpec.class);
-    final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+    final ApiRestClient apiRestClient = BDDMockito.mock(ApiRestClient.class);
+    final RestClient restClient = BDDMockito.mock(RestClient.class);
+    final RestClient.RequestBodyUriSpec uriSpec =
+        BDDMockito.mock(RestClient.RequestBodyUriSpec.class);
+    final RestClient.RequestBodySpec bodySpec = BDDMockito.mock(RestClient.RequestBodySpec.class);
+    final RestClient.ResponseSpec responseSpec = BDDMockito.mock(RestClient.ResponseSpec.class);
+    final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
 
-    Mockito.when(apiRestClient.getRestClient(wiki)).thenReturn(restClient);
-    Mockito.when(restClient.post()).thenReturn(uriSpec);
-    Mockito.when(uriSpec.uri(Mockito.any(Function.class))).thenReturn(bodySpec);
-    Mockito.when(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED)).thenReturn(bodySpec);
+    BDDMockito.given(apiRestClient.getRestClient(wiki)).willReturn(restClient);
+    BDDMockito.given(restClient.post()).willReturn(uriSpec);
+    BDDMockito.given(uriSpec.uri(BDDMockito.any(Function.class))).willReturn(bodySpec);
+    BDDMockito.given(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .willReturn(bodySpec);
 
     final ArgumentCaptor<MultiValueMap<String, Object>> bodyCaptor = ArgumentCaptor.captor();
-    Mockito.when(bodySpec.body(bodyCaptor.capture())).thenReturn(bodySpec);
-    Mockito.when(bodySpec.retrieve()).thenReturn(responseSpec);
+    BDDMockito.given(bodySpec.body(bodyCaptor.capture())).willReturn(bodySpec);
+    BDDMockito.given(bodySpec.retrieve()).willReturn(responseSpec);
 
     final ApiMove apiMove = new ApiMove(apiRestClient);
     final MoveQueryCommon common =
@@ -67,21 +69,23 @@ class ApiMoveTest {
   @SuppressWarnings("unchecked")
   @Test
   void testMoveByPageId() {
-    final ApiRestClient apiRestClient = Mockito.mock(ApiRestClient.class);
-    final RestClient restClient = Mockito.mock(RestClient.class);
-    final RestClient.RequestBodyUriSpec uriSpec = Mockito.mock(RestClient.RequestBodyUriSpec.class);
-    final RestClient.RequestBodySpec bodySpec = Mockito.mock(RestClient.RequestBodySpec.class);
-    final RestClient.ResponseSpec responseSpec = Mockito.mock(RestClient.ResponseSpec.class);
-    final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+    final ApiRestClient apiRestClient = BDDMockito.mock(ApiRestClient.class);
+    final RestClient restClient = BDDMockito.mock(RestClient.class);
+    final RestClient.RequestBodyUriSpec uriSpec =
+        BDDMockito.mock(RestClient.RequestBodyUriSpec.class);
+    final RestClient.RequestBodySpec bodySpec = BDDMockito.mock(RestClient.RequestBodySpec.class);
+    final RestClient.ResponseSpec responseSpec = BDDMockito.mock(RestClient.ResponseSpec.class);
+    final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
 
-    Mockito.when(apiRestClient.getRestClient(wiki)).thenReturn(restClient);
-    Mockito.when(restClient.post()).thenReturn(uriSpec);
-    Mockito.when(uriSpec.uri(Mockito.any(Function.class))).thenReturn(bodySpec);
-    Mockito.when(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED)).thenReturn(bodySpec);
+    BDDMockito.given(apiRestClient.getRestClient(wiki)).willReturn(restClient);
+    BDDMockito.given(restClient.post()).willReturn(uriSpec);
+    BDDMockito.given(uriSpec.uri(BDDMockito.any(Function.class))).willReturn(bodySpec);
+    BDDMockito.given(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        .willReturn(bodySpec);
 
     final ArgumentCaptor<MultiValueMap<String, Object>> bodyCaptor = ArgumentCaptor.captor();
-    Mockito.when(bodySpec.body(bodyCaptor.capture())).thenReturn(bodySpec);
-    Mockito.when(bodySpec.retrieve()).thenReturn(responseSpec);
+    BDDMockito.given(bodySpec.body(bodyCaptor.capture())).willReturn(bodySpec);
+    BDDMockito.given(bodySpec.retrieve()).willReturn(responseSpec);
 
     final ApiMove apiMove = new ApiMove(apiRestClient);
     final MoveQueryCommon common =

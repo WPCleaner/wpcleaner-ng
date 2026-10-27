@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
@@ -27,17 +27,17 @@ class WikiListCellTest {
   @DisplayName("WikiListCell formats name and code correctly")
   @Test
   void testWikiListCellFormatting() {
-    final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);
-    Mockito.when(mockImageLoader.getImageView(Mockito.any(), Mockito.any()))
-        .thenReturn(Optional.empty());
+    final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
+    BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
+        .willReturn(Optional.empty());
 
     Platform.runLater(
         () -> {
           final WikiListCell cell = new WikiListCell(mockImageLoader);
-          final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
-          Mockito.when(wiki.code()).thenReturn("en");
-          Mockito.when(wiki.name()).thenReturn("English Wikipedia");
-          Mockito.when(wiki.image()).thenReturn(ImageCollection.LOGO_WIKIPEDIA);
+          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
+          BDDMockito.given(wiki.code()).willReturn("en");
+          BDDMockito.given(wiki.name()).willReturn("English Wikipedia");
+          BDDMockito.given(wiki.image()).willReturn(ImageCollection.LOGO_WIKIPEDIA);
 
           cell.updateItem(wiki, false);
 
@@ -48,7 +48,7 @@ class WikiListCellTest {
   @DisplayName("WikiListCell handles null items correctly")
   @Test
   void testWikiListCellNullItem() {
-    final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);
+    final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
 
     Platform.runLater(
         () -> {

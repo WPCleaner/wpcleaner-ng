@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
@@ -38,22 +38,23 @@ class UserInformationWindowTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxMainWindowServices services = Mockito.mock(JavaFxMainWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+          final JavaFxMainWindowServices services = BDDMockito.mock(JavaFxMainWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
-          final ConnectedUser user = Mockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
-          Mockito.when(wiki.toString()).thenReturn("Wikipedia (en)");
-          Mockito.when(user.username()).thenReturn("TestUser");
-          Mockito.when(user.wiki()).thenReturn(wiki);
-          Mockito.when(user.groups()).thenReturn(List.of("sysop", "bureaucrat"));
-          Mockito.when(user.rights()).thenReturn(List.of("read", "edit", "upload"));
+          final ConnectedUser user = BDDMockito.mock(ConnectedUser.class);
+          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
+          BDDMockito.given(wiki.toString()).willReturn("Wikipedia (en)");
+          BDDMockito.given(user.username()).willReturn("TestUser");
+          BDDMockito.given(user.wiki()).willReturn(wiki);
+          BDDMockito.given(user.groups()).willReturn(List.of("sysop", "bureaucrat"));
+          BDDMockito.given(user.rights()).willReturn(List.of("read", "edit", "upload"));
 
           final UserInformationWindow window = new UserInformationWindow(services, null, user);
 
@@ -109,22 +110,23 @@ class UserInformationWindowTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxMainWindowServices services = Mockito.mock(JavaFxMainWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+          final JavaFxMainWindowServices services = BDDMockito.mock(JavaFxMainWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
-          final ConnectedUser user = Mockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
-          Mockito.when(wiki.toString()).thenReturn("Wikipedia (en)");
-          Mockito.when(user.username()).thenReturn("TestUser");
-          Mockito.when(user.wiki()).thenReturn(wiki);
-          Mockito.when(user.groups()).thenReturn(List.of());
-          Mockito.when(user.rights()).thenReturn(List.of());
+          final ConnectedUser user = BDDMockito.mock(ConnectedUser.class);
+          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
+          BDDMockito.given(wiki.toString()).willReturn("Wikipedia (en)");
+          BDDMockito.given(user.username()).willReturn("TestUser");
+          BDDMockito.given(user.wiki()).willReturn(wiki);
+          BDDMockito.given(user.groups()).willReturn(List.of());
+          BDDMockito.given(user.rights()).willReturn(List.of());
 
           final Stage ownerStage = new Stage();
           final UserInformationWindow window =

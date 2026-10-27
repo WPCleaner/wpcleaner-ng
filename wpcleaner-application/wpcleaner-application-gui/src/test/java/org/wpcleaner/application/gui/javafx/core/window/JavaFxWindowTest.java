@@ -19,7 +19,7 @@ import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.progress.ProgressTracker;
@@ -60,14 +60,15 @@ class JavaFxWindowTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = Mockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final TestWindow window = new TestWindow(services);
 
@@ -76,10 +77,10 @@ class JavaFxWindowTest extends JavaFxTest {
           final KeyEvent f1 =
               new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
           window.getStage().getScene().getRoot().fireEvent(f1);
-          Mockito.verify(actionServices).displayHelp(window);
+          BDDMockito.then(actionServices).should().displayHelp(window);
 
           window.displayHelp();
-          Mockito.verify(actionServices, Mockito.times(2)).displayHelp(window);
+          BDDMockito.then(actionServices).should(BDDMockito.times(2)).displayHelp(window);
 
           window.getStage().close();
         });
@@ -96,14 +97,15 @@ class JavaFxWindowTest extends JavaFxTest {
 
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = Mockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final TestWindow window = new TestWindow(services);
           final LongRunningTask<String> task =
@@ -142,14 +144,15 @@ class JavaFxWindowTest extends JavaFxTest {
 
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = Mockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final TestWindow window = new TestWindow(services);
           final LongRunningTask<String> task =
@@ -186,14 +189,15 @@ class JavaFxWindowTest extends JavaFxTest {
 
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = Mockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final TestWindow window = new TestWindow(services);
           final LongRunningTask<String> task =

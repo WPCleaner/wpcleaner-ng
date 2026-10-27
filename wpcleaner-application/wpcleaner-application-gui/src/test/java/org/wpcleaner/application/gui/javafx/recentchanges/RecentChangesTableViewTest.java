@@ -16,7 +16,7 @@ import javafx.scene.control.TableColumn;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
@@ -33,23 +33,24 @@ class RecentChangesTableViewTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);
-          Mockito.when(mockImageLoader.getImageView(Mockito.any(), Mockito.any()))
-              .thenReturn(Optional.empty());
+          final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
+          BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
+              .willReturn(Optional.empty());
 
-          final JavaFxActionServices mockActionsServices = Mockito.mock(JavaFxActionServices.class);
+          final JavaFxActionServices mockActionsServices =
+              BDDMockito.mock(JavaFxActionServices.class);
 
           final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
-          final FilteredRecentChange rc = Mockito.mock(FilteredRecentChange.class);
-          Mockito.when(rc.diffURI())
-              .thenReturn(URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345"));
-          Mockito.when(rc.pageURI())
-              .thenReturn(URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest"));
-          Mockito.when(rc.title()).thenReturn("Main Page?Test");
+          final FilteredRecentChange rc = BDDMockito.mock(FilteredRecentChange.class);
+          BDDMockito.given(rc.diffURI())
+              .willReturn(URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345"));
+          BDDMockito.given(rc.pageURI())
+              .willReturn(URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest"));
+          BDDMockito.given(rc.title()).willReturn("Main Page?Test");
 
-          final RecentChangesFilter mockFilter = Mockito.mock(RecentChangesFilter.class);
-          Mockito.when(mockFilter.severity()).thenReturn(Severity.ALERT_4);
-          Mockito.when(rc.filter()).thenReturn(mockFilter);
+          final RecentChangesFilter mockFilter = BDDMockito.mock(RecentChangesFilter.class);
+          BDDMockito.given(mockFilter.severity()).willReturn(Severity.ALERT_4);
+          BDDMockito.given(rc.filter()).willReturn(mockFilter);
           items.add(rc);
 
           final RecentChangesTableView tableView =
@@ -136,7 +137,8 @@ class RecentChangesTableViewTest extends JavaFxTest {
 
           // Trigger button action and verify desktopService.browse is called
           button.getOnAction().handle(null);
-          Mockito.verify(mockActionsServices, Mockito.timeout(1000))
+          BDDMockito.then(mockActionsServices)
+              .should(BDDMockito.timeout(1000))
               .browse("https://en.wikipedia.org/wiki/Main_Page%3FTest");
 
           // Verify SeverityTableCell factory and cell update

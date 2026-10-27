@@ -9,7 +9,7 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.wpcleaner.api.api.edit.ApiEditWrapper;
 
@@ -18,18 +18,20 @@ class ApiEditWrapperCustomizerTest {
   private final ApplicationContextRunner contextRunner =
       new ApplicationContextRunner()
           .withUserConfiguration(ApiEditWrapperCustomizer.class)
-          .withBean(ApiEditWrapper.class, () -> Mockito.mock(ApiEditWrapper.class));
+          .withBean(ApiEditWrapper.class, () -> BDDMockito.mock(ApiEditWrapper.class));
 
   @DisplayName("ApiEditWrapperCustomizer configures prefixes and tags directly")
   @Test
   void testDirectCustomization() {
-    final ApiEditWrapper wrapper = Mockito.mock(ApiEditWrapper.class);
+    final ApiEditWrapper wrapper = BDDMockito.mock(ApiEditWrapper.class);
     final String versionPrefix = "0.0.3";
 
     new ApiEditWrapperCustomizer(wrapper, versionPrefix);
 
-    Mockito.verify(wrapper).setPrefixes("WPCleanerNG v" + versionPrefix, "v" + versionPrefix);
-    Mockito.verify(wrapper).setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
+    BDDMockito.then(wrapper)
+        .should()
+        .setPrefixes("WPCleanerNG v" + versionPrefix, "v" + versionPrefix);
+    BDDMockito.then(wrapper).should().setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
   }
 
   @DisplayName(
@@ -40,9 +42,12 @@ class ApiEditWrapperCustomizerTest {
         context -> {
           Assertions.assertThat(context).hasSingleBean(ApiEditWrapperCustomizer.class);
           final ApiEditWrapper wrapper = context.getBean(ApiEditWrapper.class);
-          Mockito.verify(wrapper)
-              .setPrefixes(Mockito.startsWith("WPCleanerNG v"), Mockito.startsWith(""));
-          Mockito.verify(wrapper).setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
+          BDDMockito.then(wrapper)
+              .should()
+              .setPrefixes(BDDMockito.startsWith("WPCleanerNG v"), BDDMockito.startsWith(""));
+          BDDMockito.then(wrapper)
+              .should()
+              .setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
         });
   }
 }

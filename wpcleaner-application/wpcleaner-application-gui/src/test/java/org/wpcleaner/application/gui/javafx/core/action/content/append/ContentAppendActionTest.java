@@ -12,7 +12,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.edit.ApiEditWrapper;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
@@ -41,7 +41,7 @@ class ContentAppendActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
           final ContentAppendConfiguration config =
               new ContentAppendConfiguration(
                   "Summary", List.of(new ContentAppendConfigurationText(true, "Label", "Text")));
@@ -80,7 +80,7 @@ class ContentAppendActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
           final ContentAppendConfiguration config =
               new ContentAppendConfiguration(
                   "Append summary",
@@ -106,8 +106,9 @@ class ContentAppendActionTest extends JavaFxTest {
 
           final ArgumentCaptor<EditQueryByTitle> captor =
               ArgumentCaptor.forClass(EditQueryByTitle.class);
-          Mockito.verify(apiEditWrapper)
-              .edit(Mockito.eq(WikipediaDefinitions.EN), captor.capture());
+          BDDMockito.then(apiEditWrapper)
+              .should()
+              .edit(BDDMockito.eq(WikipediaDefinitions.EN), captor.capture());
 
           final EditQueryByTitle query = captor.getValue();
           Assertions.assertThat(query.title()).isEqualTo("User talk:Alice");
@@ -132,7 +133,7 @@ class ContentAppendActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
           final ContentAppendConfiguration config =
               new ContentAppendConfiguration(
                   "Multi summary",
@@ -156,8 +157,9 @@ class ContentAppendActionTest extends JavaFxTest {
 
           final ArgumentCaptor<EditQueryByTitle> captor =
               ArgumentCaptor.forClass(EditQueryByTitle.class);
-          Mockito.verify(apiEditWrapper)
-              .edit(Mockito.eq(WikipediaDefinitions.EN), captor.capture());
+          BDDMockito.then(apiEditWrapper)
+              .should()
+              .edit(BDDMockito.eq(WikipediaDefinitions.EN), captor.capture());
 
           final EditQueryByTitle query = captor.getValue();
           Assertions.assertThat(query.title()).isEqualTo("User talk:Bob");
@@ -179,7 +181,7 @@ class ContentAppendActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
           final ContentAppendConfiguration config =
               new ContentAppendConfiguration(
                   "Summary",
@@ -196,7 +198,7 @@ class ContentAppendActionTest extends JavaFxTest {
 
           action.execute();
 
-          Mockito.verifyNoInteractions(apiEditWrapper);
+          BDDMockito.then(apiEditWrapper).shouldHaveNoInteractions();
         });
   }
 }

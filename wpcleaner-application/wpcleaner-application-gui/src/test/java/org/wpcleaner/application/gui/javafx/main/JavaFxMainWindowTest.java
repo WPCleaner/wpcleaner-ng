@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
@@ -40,47 +40,49 @@ class JavaFxMainWindowTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxMainWindowServices services = Mockito.mock(JavaFxMainWindowServices.class);
-          final ApiRandom apiRandom = Mockito.mock(ApiRandom.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final JavaFxMainWindowServices services = BDDMockito.mock(JavaFxMainWindowServices.class);
+          final ApiRandom apiRandom = BDDMockito.mock(ApiRandom.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final InterestingSettingsManager interestingSettings =
-              Mockito.mock(InterestingSettingsManager.class);
+              BDDMockito.mock(InterestingSettingsManager.class);
           final JavaFxRecentChangesWindowFactory recentChangesWindowFactory =
-              Mockito.mock(JavaFxRecentChangesWindowFactory.class);
-          final UrlService urlService = Mockito.mock(UrlService.class);
-          final CurrentUserService currentUserService = Mockito.mock(CurrentUserService.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowFactory.class);
+          final UrlService urlService = BDDMockito.mock(UrlService.class);
+          final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          final ConnectedUser user = Mockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+          final ConnectedUser user = BDDMockito.mock(ConnectedUser.class);
+          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
 
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.apiRandom()).thenReturn(apiRandom);
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.interestingSettings()).thenReturn(interestingSettings);
-          Mockito.when(services.recentChangesWindowFactory())
-              .thenReturn(recentChangesWindowFactory);
-          Mockito.when(services.urlService()).thenReturn(urlService);
-          Mockito.when(services.user()).thenReturn(currentUserService);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.apiRandom()).willReturn(apiRandom);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.interestingSettings()).willReturn(interestingSettings);
+          BDDMockito.given(services.recentChangesWindowFactory())
+              .willReturn(recentChangesWindowFactory);
+          BDDMockito.given(services.urlService()).willReturn(urlService);
+          BDDMockito.given(services.user()).willReturn(currentUserService);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final InterestingSettings interestingSettingsObj =
-              Mockito.mock(InterestingSettings.class);
-          Mockito.when(interestingSettings.getCurrentSettings()).thenReturn(interestingSettingsObj);
-          Mockito.when(interestingSettingsObj.getByWikiSettings(Mockito.any()))
-              .thenReturn(Optional.empty());
+              BDDMockito.mock(InterestingSettings.class);
+          BDDMockito.given(interestingSettings.getCurrentSettings())
+              .willReturn(interestingSettingsObj);
+          BDDMockito.given(interestingSettingsObj.getByWikiSettings(BDDMockito.any()))
+              .willReturn(Optional.empty());
 
-          Mockito.when(currentUserService.getCurrentUser()).thenReturn(user);
-          Mockito.when(user.username()).thenReturn("TestUser");
-          Mockito.when(user.wiki()).thenReturn(wiki);
-          Mockito.when(user.groups()).thenReturn(List.of("sysop"));
-          Mockito.when(user.rights()).thenReturn(List.of("read", "edit"));
-          Mockito.when(user.demo()).thenReturn(false);
+          BDDMockito.given(currentUserService.getCurrentUser()).willReturn(user);
+          BDDMockito.given(user.username()).willReturn("TestUser");
+          BDDMockito.given(user.wiki()).willReturn(wiki);
+          BDDMockito.given(user.groups()).willReturn(List.of("sysop"));
+          BDDMockito.given(user.rights()).willReturn(List.of("read", "edit"));
+          BDDMockito.given(user.demo()).willReturn(false);
 
           final JavaFxSaveWindowsPositionAction saveAction =
-              Mockito.mock(JavaFxSaveWindowsPositionAction.class);
-          Mockito.when(actionServices.saveWindowsPosition()).thenReturn(saveAction);
+              BDDMockito.mock(JavaFxSaveWindowsPositionAction.class);
+          BDDMockito.given(actionServices.saveWindowsPosition()).willReturn(saveAction);
 
           final JavaFxMainWindow mainWindow = new JavaFxMainWindow(services);
 
@@ -91,7 +93,7 @@ class JavaFxMainWindowTest extends JavaFxTest {
           final KeyEvent f1 =
               new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
           mainWindow.getStage().getScene().getRoot().fireEvent(f1);
-          Mockito.verify(actionServices).displayHelp(mainWindow);
+          BDDMockito.then(actionServices).should().displayHelp(mainWindow);
 
           final javafx.scene.Parent rootPane = mainWindow.getStage().getScene().getRoot();
           final VBox mainContainer = (VBox) rootPane.getChildrenUnmodifiable().getFirst();
