@@ -91,4 +91,14 @@ class KnownDefinitionsTest {
         .assertThatHosts()
         .anyMatch(host -> host.contains(".wikipedia.org"));
   }
+
+  @DisplayName("Verify that Wiktionary main host is a subdomain of wiktionary.org")
+  @Test
+  void wiktionaryMainHost() {
+    // WHEN
+    final String mainHost = WiktionaryDefinitions.FR.mainHost();
+
+    // THEN
+    Assertions.assertThat(mainHost).isEqualTo("fr.wiktionary.org");
+  }
 }

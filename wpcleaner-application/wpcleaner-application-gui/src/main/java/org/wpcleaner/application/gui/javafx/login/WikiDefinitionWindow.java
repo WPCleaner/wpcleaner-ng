@@ -232,7 +232,7 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
         return true;
       }
     }
-    if (languageField.isVisible()) {
+    if (builderTypeComboBox.getValue() != WikiBuilderType.FANDOM) {
       final String language = languageField.getText().trim();
       if (language.isEmpty()) {
         showError(GT._T("The language cannot be empty."));

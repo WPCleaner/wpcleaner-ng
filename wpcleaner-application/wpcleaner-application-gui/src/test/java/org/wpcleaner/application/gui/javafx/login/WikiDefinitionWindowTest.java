@@ -12,6 +12,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -21,6 +22,7 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.wpcleaner.api.api.query.meta.siteinfo.ApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
@@ -161,5 +163,66 @@ class WikiDefinitionWindowTest extends JavaFxTest {
     final WikiDefinition added = addedFuture.get(5, TimeUnit.SECONDS);
     Assertions.assertThat(added).isNotNull();
     Assertions.assertThat(added.name()).isEqualTo("CustomWiki");
+  }
+
+  @DisplayName("handleOk adds a Fandom wiki without language")
+  @Test
+  void testHandleOkAddsFandomWikiWithoutLanguage()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final CompletableFuture<WikiDefinition> addedFuture = new CompletableFuture<>();
+
+    runOnJavaFx(
+        () -> {
+          final JavaFxLoginWindowServices services =
+              BDDMockito.mock(JavaFxLoginWindowServices.class);
+          final ApiSiteInfo apiSiteInfo = BDDMockito.mock(ApiSiteInfo.class);
+
+          BDDMockito.given(services.imageLoader()).willReturn(BDDMockito.mock(ImageLoader.class));
+          BDDMockito.given(services.actionServices())
+              .willReturn(BDDMockito.mock(JavaFxActionServices.class));
+          BDDMockito.given(services.windowsRegistry())
+              .willReturn(BDDMockito.mock(JavaFxWindowsRegistry.class));
+          BDDMockito.given(services.apiSiteInfo()).willReturn(apiSiteInfo);
+          BDDMockito.given(services.knownDefinitions())
+              .willReturn(BDDMockito.mock(KnownDefinitions.class));
+          BDDMockito.given(
+                  apiSiteInfo.requestSiteInfo(
+                      BDDMockito.any(),
+                      BDDMockito.any(),
+                      BDDMockito.isNull(),
+                      BDDMockito.isNull(),
+                      BDDMockito.isNull()))
+              .willReturn(BDDMockito.mock(SiteInfo.class));
+
+          final WikiDefinitionWindow window =
+              new WikiDefinitionWindow(services, null, addedFuture::complete);
+
+          final StackPane stackPane = (StackPane) window.getStage().getScene().getRoot();
+          final VBox mainContainer = (VBox) stackPane.getChildren().getFirst();
+          final VBox form = (VBox) mainContainer.getChildren().get(0);
+          final HBox familyRow = (HBox) form.getChildren().get(0);
+          @SuppressWarnings("unchecked")
+          final ComboBox<WikiBuilderType> familyComboBox =
+              (ComboBox<WikiBuilderType>) familyRow.getChildren().get(1);
+          familyComboBox.getSelectionModel().select(WikiBuilderType.FANDOM);
+
+          final HBox nameRow = (HBox) form.getChildren().get(1);
+          final TextField nameField = (TextField) nameRow.getChildren().get(1);
+          nameField.setText("Memory Alpha");
+
+          final HBox subdomainRow = (HBox) form.getChildren().get(3);
+          final TextField subdomainField = (TextField) subdomainRow.getChildren().get(1);
+          subdomainField.setText("memory-alpha");
+
+          final HBox buttons = (HBox) mainContainer.getChildren().get(1);
+          final Button okButton = (Button) buttons.getChildren().get(0);
+
+          okButton.fire();
+        });
+
+    final WikiDefinition added = addedFuture.get(5, TimeUnit.SECONDS);
+    Assertions.assertThat(added.mainHost()).isEqualTo("memory-alpha.fandom.com");
+    Assertions.assertThat(added.apiPath()).isEqualTo("/api.php");
+    Assertions.assertThat(added.code()).isEqualTo("fandom:memory-alpha");
   }
 }
