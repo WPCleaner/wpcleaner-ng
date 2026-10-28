@@ -26,6 +26,7 @@ import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWin
 
 final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
+  static final String OK_ID = "ok";
   static final String USER_PAGE_ID = "user-page";
   static final String USER_TALK_PAGE_ID = "user-talk-page";
 
@@ -83,6 +84,7 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
     mainContainer.getChildren().add(userTalkPageGroup);
 
     final Button okButton = new Button(GT._T("OK"));
+    okButton.setId(OK_ID);
     okButton.setDefaultButton(true);
     okButton.setOnAction(_ -> handleOk());
 

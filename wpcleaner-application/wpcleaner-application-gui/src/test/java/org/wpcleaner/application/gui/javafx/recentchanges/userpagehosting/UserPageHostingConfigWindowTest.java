@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -22,39 +25,27 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfiguration;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationPane;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationText;
 import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfiguration;
 import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfigurationPane;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
-import org.wpcleaner.lib.image.ImageCollection;
-import org.wpcleaner.lib.image.ImageLoader;
-import org.wpcleaner.lib.image.ImageSize;
 
+@GuiSpringBootTest
 class UserPageHostingConfigWindowTest extends JavaFxTest {
+
+  @Autowired private JavaFxRecentChangesWindowServices services;
 
   @DisplayName("UserPageHostingConfigWindow initializes controls with existing configuration")
   @Test
-  void testUserPageHostingConfigWindowInitializationWithConfig()
+  void userPageHostingConfigWindowInitializationWithConfig()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final Stage ownerStage = new Stage();
           final UserPageHostingConfig initialConfig =
               new UserPageHostingConfig(
@@ -95,12 +86,8 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
           Assertions.assertThat(removeButton.getText()).isEmpty();
           Assertions.assertThat(removeButton.getTooltip().getText()).isEqualTo("Remove");
 
-          BDDMockito.then(imageLoader)
-              .should()
-              .getImageResource(ImageCollection.LIST_ADD, ImageSize.BUTTON);
-          BDDMockito.then(imageLoader)
-              .should()
-              .getImageResource(ImageCollection.LIST_REMOVE, ImageSize.BUTTON);
+          Assertions.assertThat(addButton.getGraphic()).isInstanceOf(ImageView.class);
+          Assertions.assertThat(removeButton.getGraphic()).isInstanceOf(ImageView.class);
 
           Assertions.assertThat(removeButton.isDisabled()).isTrue();
           tableView.getSelectionModel().select(0);
@@ -124,21 +111,10 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
 
   @DisplayName("UserPageHostingConfigWindow initializes controls with null configuration")
   @Test
-  void testUserPageHostingConfigWindowInitializationWithoutConfig()
+  void userPageHostingConfigWindowInitializationWithoutConfig()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final Stage ownerStage = new Stage();
           final UserPageHostingConfigWindow window =
               new UserPageHostingConfigWindow(services, ownerStage, null, _ -> {});
@@ -156,21 +132,10 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
 
   @DisplayName("UserPageHostingConfigWindow expands components vertically when resized")
   @Test
-  void testUserPageHostingConfigWindowVerticalResize()
+  void userPageHostingConfigWindowVerticalResize()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final Stage ownerStage = new Stage();
           final UserPageHostingConfigWindow window =
               new UserPageHostingConfigWindow(services, ownerStage, null, _ -> {});
@@ -205,6 +170,64 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
           Assertions.assertThat(userPageTextArea.getHeight()).isGreaterThan(initialTextAreaHeight);
           Assertions.assertThat(tableView.getHeight()).isGreaterThan(initialTableViewHeight);
 
+          window.getStage().close();
+          ownerStage.close();
+        });
+  }
+
+  @DisplayName("OK passes the edited configuration and closes the window")
+  @Test
+  void okPassesEditedConfiguration()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final UserPageHostingConfig initialConfig =
+        new UserPageHostingConfig(
+            new ContentReplaceConfiguration("userPageSummary", "userPageText"),
+            new ContentAppendConfiguration(
+                "userTalkPageSummary",
+                List.of(new ContentAppendConfigurationText(true, "label1", "text1"))));
+    final AtomicReference<UserPageHostingConfig> validated = new AtomicReference<>();
+    final Stage ownerStage = callOnJavaFx(Stage::new);
+    final UserPageHostingConfigWindow window =
+        callOnJavaFx(
+            () ->
+                new UserPageHostingConfigWindow(
+                    services, ownerStage, initialConfig, validated::set));
+
+    runOnJavaFx(
+        () -> {
+          final TitledPane userPageGroup =
+              lookup(window, UserPageHostingConfigWindow.USER_PAGE_ID, TitledPane.class);
+          lookup(userPageGroup, ContentReplaceConfigurationPane.SUMMARY_ID, TextField.class)
+              .setText("newSummary");
+          lookup(window, UserPageHostingConfigWindow.OK_ID, Button.class).fire();
+          Assertions.assertThat(window.getStage().isShowing()).isFalse();
+          ownerStage.close();
+        });
+
+    Assertions.assertThat(validated.get())
+        .isEqualTo(
+            new UserPageHostingConfig(
+                new ContentReplaceConfiguration("newSummary", "userPageText"),
+                initialConfig.userTalkPage()));
+  }
+
+  @DisplayName("OK shows an error and keeps the window open when a mandatory field is missing")
+  @Test
+  void okWithMissingFieldShowsError()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final AtomicReference<UserPageHostingConfig> validated = new AtomicReference<>();
+    final Stage ownerStage = callOnJavaFx(Stage::new);
+    final UserPageHostingConfigWindow window =
+        callOnJavaFx(
+            () -> new UserPageHostingConfigWindow(services, ownerStage, null, validated::set));
+
+    Platform.runLater(() -> lookup(window, UserPageHostingConfigWindow.OK_ID, Button.class).fire());
+
+    Assertions.assertThat(closeAlert(window)).isEqualTo("Please fill in all mandatory fields.");
+    Assertions.assertThat(callOnJavaFx(() -> window.getStage().isShowing())).isTrue();
+    Assertions.assertThat(validated.get()).isNull();
+    runOnJavaFx(
+        () -> {
           window.getStage().close();
           ownerStage.close();
         });

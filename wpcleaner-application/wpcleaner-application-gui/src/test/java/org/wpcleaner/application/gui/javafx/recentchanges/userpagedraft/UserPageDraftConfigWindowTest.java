@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -21,40 +24,29 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfiguration;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationPane;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationText;
 import org.wpcleaner.application.gui.javafx.core.action.content.movetodraft.MoveToDraftConfiguration;
+import org.wpcleaner.application.gui.javafx.core.action.content.movetodraft.MoveToDraftConfigurationPane;
 import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfiguration;
 import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfigurationPane;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
-import org.wpcleaner.lib.image.ImageCollection;
-import org.wpcleaner.lib.image.ImageLoader;
-import org.wpcleaner.lib.image.ImageSize;
 
+@GuiSpringBootTest
 class UserPageDraftConfigWindowTest extends JavaFxTest {
+
+  @Autowired private JavaFxRecentChangesWindowServices services;
 
   @DisplayName("UserPageDraftConfigWindow initializes controls with existing configuration")
   @Test
-  void testUserPageDraftConfigWindowInitializationWithConfig()
+  void userPageDraftConfigWindowInitializationWithConfig()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final Stage ownerStage = new Stage();
           final UserPageDraftConfig initialConfig =
               new UserPageDraftConfig(
@@ -98,12 +90,8 @@ class UserPageDraftConfigWindowTest extends JavaFxTest {
           Assertions.assertThat(removeButton.getText()).isEmpty();
           Assertions.assertThat(removeButton.getTooltip().getText()).isEqualTo("Remove");
 
-          BDDMockito.then(imageLoader)
-              .should()
-              .getImageResource(ImageCollection.LIST_ADD, ImageSize.BUTTON);
-          BDDMockito.then(imageLoader)
-              .should()
-              .getImageResource(ImageCollection.LIST_REMOVE, ImageSize.BUTTON);
+          Assertions.assertThat(addButton.getGraphic()).isInstanceOf(ImageView.class);
+          Assertions.assertThat(removeButton.getGraphic()).isInstanceOf(ImageView.class);
 
           Assertions.assertThat(removeButton.isDisabled()).isTrue();
           tableView.getSelectionModel().select(0);
@@ -129,21 +117,10 @@ class UserPageDraftConfigWindowTest extends JavaFxTest {
 
   @DisplayName("UserPageDraftConfigWindow initializes controls with null configuration")
   @Test
-  void testUserPageDraftConfigWindowInitializationWithoutConfig()
+  void userPageDraftConfigWindowInitializationWithoutConfig()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final Stage ownerStage = new Stage();
           final AtomicReference<UserPageDraftConfig> validated = new AtomicReference<>();
           final UserPageDraftConfigWindow window =
@@ -151,6 +128,65 @@ class UserPageDraftConfigWindowTest extends JavaFxTest {
 
           Assertions.assertThat(window.getStage().isShowing()).isTrue();
 
+          window.getStage().close();
+          ownerStage.close();
+        });
+  }
+
+  @DisplayName("OK passes the edited configuration and closes the window")
+  @Test
+  void okPassesEditedConfiguration()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final UserPageDraftConfig initialConfig =
+        new UserPageDraftConfig(
+            new MoveToDraftConfiguration("Draft", "moveSummary"),
+            new ContentReplaceConfiguration("userPageSummary", "userPageText"),
+            new ContentAppendConfiguration(
+                "userTalkPageSummary",
+                List.of(new ContentAppendConfigurationText(true, "label1", "text1"))));
+    final AtomicReference<UserPageDraftConfig> validated = new AtomicReference<>();
+    final Stage ownerStage = callOnJavaFx(Stage::new);
+    final UserPageDraftConfigWindow window =
+        callOnJavaFx(
+            () ->
+                new UserPageDraftConfigWindow(services, ownerStage, initialConfig, validated::set));
+
+    runOnJavaFx(
+        () -> {
+          final TitledPane moveDraftGroup =
+              lookup(window, UserPageDraftConfigWindow.MOVE_TO_DRAFT_ID, TitledPane.class);
+          lookup(moveDraftGroup, MoveToDraftConfigurationPane.SUB_PAGE_NAME_ID, TextField.class)
+              .setText("Brouillon");
+          lookup(window, UserPageDraftConfigWindow.OK_ID, Button.class).fire();
+          Assertions.assertThat(window.getStage().isShowing()).isFalse();
+          ownerStage.close();
+        });
+
+    Assertions.assertThat(validated.get())
+        .isEqualTo(
+            new UserPageDraftConfig(
+                new MoveToDraftConfiguration("Brouillon", "moveSummary"),
+                initialConfig.userPage(),
+                initialConfig.userTalkPage()));
+  }
+
+  @DisplayName("OK shows an error and keeps the window open when a mandatory field is missing")
+  @Test
+  void okWithMissingFieldShowsError()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final AtomicReference<UserPageDraftConfig> validated = new AtomicReference<>();
+    final Stage ownerStage = callOnJavaFx(Stage::new);
+    final UserPageDraftConfigWindow window =
+        callOnJavaFx(
+            () -> new UserPageDraftConfigWindow(services, ownerStage, null, validated::set));
+
+    Platform.runLater(() -> lookup(window, UserPageDraftConfigWindow.OK_ID, Button.class).fire());
+
+    Assertions.assertThat(closeAlert(window)).isEqualTo("Please fill in all mandatory fields.");
+    Assertions.assertThat(callOnJavaFx(() -> window.getStage().isShowing())).isTrue();
+    Assertions.assertThat(validated.get()).isNull();
+    runOnJavaFx(
+        () -> {
           window.getStage().close();
           ownerStage.close();
         });
