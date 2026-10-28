@@ -27,6 +27,7 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 ## Commands
 
 - Single test: `./gradlew :<module>:test --tests <full.package.TestClass>`
+- JavaFX tests run headless (no window on screen); add `-Pwpcleaner.test.headless=false` to display windows
 - Tests calling a real MediaWiki server (`src/apiTest` source set, not run by `test` nor `build`):
   `./gradlew :wpcleaner-api:apiTest --tests <full.package.TestClass>`
 - Format: `./gradlew :<module>:spotlessApply` (run before declaring work done)
