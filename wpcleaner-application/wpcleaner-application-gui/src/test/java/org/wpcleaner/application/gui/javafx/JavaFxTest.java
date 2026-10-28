@@ -107,6 +107,17 @@ public class JavaFxTest {
     };
   }
 
+  protected <T extends JavaFxWindow<?>> T waitForWindow(
+      final JavaFxWindowsRegistry windowsRegistry, final Class<T> type)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    return waitForJavaFx(
+        () ->
+            windowsRegistry.getVisibleWindows().stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .findFirst());
+  }
+
   protected String closeAlert(final JavaFxWindow<?> owner)
       throws InterruptedException, ExecutionException, TimeoutException {
     return waitForJavaFx(

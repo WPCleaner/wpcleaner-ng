@@ -10,13 +10,10 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
 import org.assertj.core.api.Assertions;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +34,7 @@ import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.action.content.PageContentDisplay;
 import org.wpcleaner.application.gui.javafx.core.action.content.PageContentExpectations;
-import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.application.gui.javafx.core.window.EmptyWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 
 @GuiSpringBootTest
@@ -55,27 +52,7 @@ class MoveToDraftActionTest extends JavaFxTest {
   @Value("${version.prefix}")
   private String versionPrefix;
 
-  @Nullable private TestWindow window;
-
-  private static final class TestWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
-
-    TestWindow(final JavaFxRecentChangesWindowServices services) {
-      super(services);
-      initialize();
-    }
-
-    @NonNull
-    @Override
-    public String getName() {
-      return "testWindow";
-    }
-
-    @NonNull
-    @Override
-    protected Scene createScene() {
-      return new Scene(new StackPane(), 100, 100);
-    }
-  }
+  @Nullable private EmptyWindow<JavaFxRecentChangesWindowServices> window;
 
   @BeforeEach
   void setUp() {
@@ -84,7 +61,7 @@ class MoveToDraftActionTest extends JavaFxTest {
 
   @AfterEach
   void tearDown() throws InterruptedException, ExecutionException, TimeoutException {
-    final TestWindow currentWindow = window;
+    final EmptyWindow<JavaFxRecentChangesWindowServices> currentWindow = window;
     if (currentWindow != null) {
       runOnJavaFx(() -> currentWindow.getStage().close());
     }
@@ -202,7 +179,7 @@ class MoveToDraftActionTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     return callOnJavaFx(
         () -> {
-          final TestWindow owner = new TestWindow(services);
+          final EmptyWindow<JavaFxRecentChangesWindowServices> owner = new EmptyWindow<>(services);
           window = owner;
           return new MoveToDraftAction(
               owner,

@@ -32,9 +32,19 @@ public final class PageContentExpectations {
       final WikiDefinition wiki,
       final String title,
       final String content) {
+    givenPagesContent(mockApiRevisions, wiki, Map.of(title, content));
+  }
+
+  public static void givenPagesContent(
+      final MockApiRevisions mockApiRevisions,
+      final WikiDefinition wiki,
+      final Map<String, String> contentByTitle) {
     mockApiRevisions
-        .givenRetrieveRevisionsByTitle(wiki, List.of(title), CONTENT_QUERY)
-        .willReturn(List.of(createPage(title, content)));
+        .givenRetrieveRevisionsByTitle(wiki, List.copyOf(contentByTitle.keySet()), CONTENT_QUERY)
+        .willReturn(
+            contentByTitle.entrySet().stream()
+                .map(entry -> createPage(entry.getKey(), entry.getValue()))
+                .toList());
   }
 
   public static void givenPageContentFailure(

@@ -14,445 +14,274 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.Nullable;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.BDDMockito;
-import org.wpcleaner.api.analysis.PageAnalysisFactory;
-import org.wpcleaner.api.api.ConnectedUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.wpcleaner.api.api.CurrentUserService;
-import org.wpcleaner.api.api.edit.ApiEditWrapper;
-import org.wpcleaner.api.api.edit.EditQuery;
+import org.wpcleaner.api.api.edit.Edit;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
-import org.wpcleaner.api.api.move.MoveQuery;
+import org.wpcleaner.api.api.edit.EditQueryCommon;
+import org.wpcleaner.api.api.edit.MockApiEdit;
+import org.wpcleaner.api.api.move.MockApiMove;
+import org.wpcleaner.api.api.move.Move;
 import org.wpcleaner.api.api.move.MoveQueryByTitle;
-import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
-import org.wpcleaner.api.api.query.prop.revisions.Page;
-import org.wpcleaner.api.api.query.prop.revisions.Revision;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
-import org.wpcleaner.api.progress.LongRunningTask;
-import org.wpcleaner.api.progress.ProgressTracker;
+import org.wpcleaner.api.api.move.MoveQueryCommon;
+import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
+import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.repository.CaseType;
-import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
-import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.settings.SettingsPersistence;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
-import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
-import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
-import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.application.gui.javafx.core.action.content.PageContentDisplay;
+import org.wpcleaner.application.gui.javafx.core.action.content.PageContentExpectations;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
+import org.wpcleaner.application.gui.javafx.core.window.EmptyWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChange;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
 import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
-import org.wpcleaner.lib.image.ImageLoader;
 
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"})
+@GuiSpringBootTest
 class UserPageDraftActionTest extends JavaFxTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
+  private static final String CSRF_TOKEN = "csrf-token+\\";
+  private static final String CONFIG =
+      """
+      {
+        "moveToDraft": {
+          "subPageName": "Draft",
+          "summary": "Moving to draft"
+        },
+        "userPage": {
+          "summary": "Summary",
+          "text": "User page text"
+        },
+        "userTalkPage": {
+          "summary": "Talk summary",
+          "texts": [
+            {
+              "addedByDefault": true,
+              "label": "Notice",
+              "text": "Notice for __USER__ on __DRAFT__"
+            }
+          ]
+        }
+      }
+      """;
+
+  @Autowired private JavaFxRecentChangesWindowServices services;
+  @Autowired private CurrentUserService currentUserService;
+  @Autowired private NamespaceRepository namespaceRepository;
+  @Autowired private JavaFxWindowsRegistry windowsRegistry;
+  @Autowired private MockApiEdit mockApiEdit;
+  @Autowired private MockApiMove mockApiMove;
+  @Autowired private MockApiRevisions mockApiRevisions;
+  @Autowired private MockApiTokens mockApiTokens;
+
+  @Value("${version.prefix}")
+  private String versionPrefix;
+
+  @BeforeEach
+  void setUp() throws IOException {
+    currentUserService.logout();
+    currentUserService.login(WIKI, "Bot", false);
+    namespaceRepository.addNamespace(
+        new Namespace(CommonNamespaces.USER.id, "User", "User", List.of(), CaseType.FIRST_LETTER));
+    namespaceRepository.addNamespace(
+        new Namespace(
+            CommonNamespaces.USER_TALK.id,
+            "User talk",
+            "User talk",
+            List.of(),
+            CaseType.FIRST_LETTER));
+    Files.deleteIfExists(getConfigFile());
+  }
+
+  @AfterEach
+  void tearDown() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+    runOnJavaFx(windowsRegistry::closeAllWindows);
+    Files.deleteIfExists(getConfigFile());
+    currentUserService.logout();
+  }
 
   @DisplayName("canApply returns true only for user pages that are not subpages")
   @Test
-  void testCanApply() {
-    final JavaFxRecentChangesWindowServices services =
-        BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-    final JavaFxWindow<?> owner = BDDMockito.mock(JavaFxWindow.class);
-    final RecentChangesAction action = new UserPageDraftAction(services, owner);
+  void canApply() throws InterruptedException, ExecutionException, TimeoutException {
+    final RecentChangesAction action = createAction();
 
-    final FilteredRecentChange userPage =
-        createRecentChange(CommonNamespaces.USER.id, "User:NicoV");
-    final FilteredRecentChange userSubPage =
-        createRecentChange(CommonNamespaces.USER.id, "User:NicoV/sandbox");
-    final FilteredRecentChange articlePage =
-        createRecentChange(CommonNamespaces.MAIN.id, "Main Page");
-    final FilteredRecentChange nullNamespacePage = createRecentChange(null, "User:NicoV");
-
-    Assertions.assertThat(action.canApply(userPage)).isTrue();
-    Assertions.assertThat(action.canApply(userSubPage)).isFalse();
-    Assertions.assertThat(action.canApply(articlePage)).isFalse();
-    Assertions.assertThat(action.canApply(nullNamespacePage)).isFalse();
+    Assertions.assertThat(
+            action.canApply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV")))
+        .isTrue();
+    Assertions.assertThat(
+            action.canApply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV/sandbox")))
+        .isFalse();
+    Assertions.assertThat(
+            action.canApply(createRecentChange(CommonNamespaces.MAIN.id, "Main Page")))
+        .isFalse();
+    Assertions.assertThat(action.canApply(createRecentChange(null, "User:NicoV"))).isFalse();
   }
 
   @DisplayName("configure displays configuration window")
   @Test
-  void testConfigureDisplaysConfigurationWindow()
+  void configureDisplaysConfigurationWindow()
       throws InterruptedException, ExecutionException, TimeoutException {
-    runOnJavaFx(
-        () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-          final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
-          final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
+    final UserPageDraftAction action = createAction();
 
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-          BDDMockito.given(services.user()).willReturn(currentUserService);
-          BDDMockito.given(currentUserService.getCurrentUser()).willReturn(connectedUser);
-          BDDMockito.given(connectedUser.wiki()).willReturn(wiki);
-          BDDMockito.given(wiki.code()).willReturn("enwiki");
+    runOnJavaFx(action::configure);
 
-          final JavaFxWindow<?> owner = BDDMockito.mock(JavaFxWindow.class);
-          final Stage ownerStage = new Stage();
-          BDDMockito.given(owner.getStage()).willReturn(ownerStage);
-
-          final UserPageDraftAction action = new UserPageDraftAction(services, owner);
-          action.configure();
-
-          final ArgumentCaptor<JavaFxWindow<?>> captor = ArgumentCaptor.captor();
-          BDDMockito.then(windowsRegistry).should().register(captor.capture());
-          Assertions.assertThat(captor.getValue()).isInstanceOf(UserPageDraftConfigWindow.class);
-          captor.getValue().getStage().close();
-        });
+    Assertions.assertThat(waitForWindow(windowsRegistry, UserPageDraftConfigWindow.class))
+        .isNotNull();
   }
 
   @DisplayName("apply retrieves user page, talk page, and draft sub-page in a single API call")
   @Test
-  void testApplyRetrievesPagesInSingleApiCall()
+  void applyRetrievesPagesInSingleApiCall()
       throws InterruptedException, ExecutionException, TimeoutException, IOException {
-    final String wikiCode = "testapplydraftwiki";
-    final Path configFolder = SettingsPersistence.getFolder().resolve(wikiCode);
-    final Path configFile = configFolder.resolve("rc-userpage-draft.json");
-    try {
-      Files.createDirectories(configFolder);
-      final String validConfig =
-          """
-          {
-            "moveToDraft": {
-              "subPageName": "Draft",
-              "summary": "Moving to draft"
-            },
-            "userPage": {
-              "summary": "Summary",
-              "text": "Text"
-            },
-            "userTalkPage": {
-              "summary": "Talk summary",
-              "texts": [
-                {
-                  "addedByDefault": true,
-                  "label": "Notice",
-                  "text": "Notice text"
-                }
-              ]
-            }
-          }
-          """;
-      Files.writeString(configFile, validConfig, StandardCharsets.UTF_8);
+    writeConfig();
+    givenPagesContent();
+    final UserPageDraftAction action = createAction();
 
-      runOnJavaFx(
-          () -> {
-            final JavaFxRecentChangesWindowServices services =
-                BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-            final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-            final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-            final JavaFxWindowsRegistry windowsRegistry =
-                BDDMockito.mock(JavaFxWindowsRegistry.class);
-            final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
-            final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
-            final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
-            final NamespaceRepository namespaceRepository =
-                BDDMockito.mock(NamespaceRepository.class);
-            final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
-            final PageSyntaxColorizer colorizer =
-                new PageSyntaxColorizer(
-                    List.of(),
-                    new JavaFxStylePropertiesRegistry(new StylePropertiesRegistry(List.of())));
-            final PageAnalysisFactory pageAnalysisFactory =
-                new PageAnalysisFactory(
-                    new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
+    runOnJavaFx(() -> action.apply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV")));
 
-            BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-            BDDMockito.given(services.actionServices()).willReturn(actionServices);
-            BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-            BDDMockito.given(services.user()).willReturn(currentUserService);
-            BDDMockito.given(currentUserService.getCurrentUser()).willReturn(connectedUser);
-            BDDMockito.given(connectedUser.wiki()).willReturn(wiki);
-            BDDMockito.given(wiki.code()).willReturn(wikiCode);
-            BDDMockito.given(services.namespaceRepository()).willReturn(namespaceRepository);
-            BDDMockito.given(services.apiRevisions()).willReturn(apiRevisions);
-            BDDMockito.given(services.colorizer()).willReturn(colorizer);
-            BDDMockito.given(services.pageAnalysisFactory()).willReturn(pageAnalysisFactory);
-
-            final Namespace userNs =
-                new Namespace(
-                    CommonNamespaces.USER.id, "User", "User", List.of(), CaseType.FIRST_LETTER);
-            final Namespace userTalkNs =
-                new Namespace(
-                    CommonNamespaces.USER_TALK.id,
-                    "User talk",
-                    "User talk",
-                    List.of(),
-                    CaseType.FIRST_LETTER);
-            BDDMockito.given(namespaceRepository.getNamespaces())
-                .willReturn(List.of(userNs, userTalkNs));
-
-            final Revision userRevision =
-                new Revision(
-                    null,
-                    false,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    Map.of("main", new RevisionSlot("User content", null, null, null)),
-                    List.of(),
-                    null,
-                    null,
-                    null);
-            final Page userPage =
-                new Page(false, CommonNamespaces.USER.id, 1, List.of(userRevision), "User:NicoV");
-
-            final Revision talkRevision =
-                new Revision(
-                    null,
-                    false,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    Map.of("main", new RevisionSlot("Talk content", null, null, null)),
-                    List.of(),
-                    null,
-                    null,
-                    null);
-            final Page talkPage =
-                new Page(
-                    false,
-                    CommonNamespaces.USER_TALK.id,
-                    2,
-                    List.of(talkRevision),
-                    "User talk:NicoV");
-
-            final Page draftPage =
-                new Page(false, CommonNamespaces.USER.id, 3, List.of(), "User:NicoV/Draft");
-
-            BDDMockito.given(
-                    apiRevisions.retrieveRevisionsByTitle(
-                        BDDMockito.eq(wiki),
-                        BDDMockito.eq(List.of("User:NicoV", "User talk:NicoV", "User:NicoV/Draft")),
-                        BDDMockito.any()))
-                .willReturn(List.of(userPage, talkPage, draftPage));
-
-            final JavaFxWindow<?> owner = BDDMockito.mock(JavaFxWindow.class);
-            final Stage ownerStage = new Stage();
-            BDDMockito.given(owner.getStage()).willReturn(ownerStage);
-            BDDMockito.willAnswer(
-                    invocation -> {
-                      final LongRunningTask<?> task = invocation.getArgument(0);
-                      final Consumer<Object> afterTask = invocation.getArgument(1);
-                      final Object result = task.call(new ProgressTracker(_ -> {}));
-                      afterTask.accept(result);
-                      return null;
-                    })
-                .given(owner)
-                .executeAsync(BDDMockito.any(), BDDMockito.any(), BDDMockito.any());
-
-            final UserPageDraftAction action = new UserPageDraftAction(services, owner);
-            final FilteredRecentChange userPageRc =
-                createRecentChange(CommonNamespaces.USER.id, "User:NicoV");
-
-            action.apply(userPageRc);
-
-            BDDMockito.then(apiRevisions)
-                .should(BDDMockito.times(1))
-                .retrieveRevisionsByTitle(
-                    BDDMockito.eq(wiki),
-                    BDDMockito.eq(List.of("User:NicoV", "User talk:NicoV", "User:NicoV/Draft")),
-                    BDDMockito.any());
-            BDDMockito.then(apiRevisions).shouldHaveNoMoreInteractions();
-
-            final ArgumentCaptor<JavaFxWindow<?>> captor = ArgumentCaptor.captor();
-            BDDMockito.then(windowsRegistry).should().register(captor.capture());
-            Assertions.assertThat(captor.getValue()).isInstanceOf(UserPageDraftActionWindow.class);
-            captor.getValue().getStage().close();
-            ownerStage.close();
-          });
-    } finally {
-      Files.deleteIfExists(configFile);
-    }
+    final UserPageDraftActionWindow window =
+        waitForWindow(windowsRegistry, UserPageDraftActionWindow.class);
+    runOnJavaFx(
+        () -> {
+          assertDisplay(
+              window, UserPageDraftActionWindow.USER_PAGE_DISPLAY_ID, "User:NicoV", "User content");
+          assertDisplay(
+              window,
+              UserPageDraftActionWindow.USER_TALK_PAGE_DISPLAY_ID,
+              "User talk:NicoV",
+              "Talk content");
+          assertDisplay(
+              window,
+              UserPageDraftActionWindow.DRAFT_DISPLAY_ID,
+              "User:NicoV/Draft",
+              "Draft content");
+        });
   }
 
   @DisplayName("executeAction moves user page, updates user page, and updates talk page")
   @Test
-  void testExecuteActionMovesUserPageEditsUserPageAndAppendsTalkPage()
+  void executeActionMovesUserPageEditsUserPageAndAppendsTalkPage()
       throws InterruptedException, ExecutionException, TimeoutException, IOException {
-    final String wikiCode = "testexecuteactionwiki";
-    final Path configFolder = SettingsPersistence.getFolder().resolve(wikiCode);
-    final Path configFile = configFolder.resolve("rc-userpage-draft.json");
-    try {
-      Files.createDirectories(configFolder);
-      final String validConfig =
-          """
-          {
-            "moveToDraft": {
-              "subPageName": "Draft",
-              "summary": "Moving to draft"
-            },
-            "userPage": {
-              "summary": "Summary",
-              "text": "User page text"
-            },
-            "userTalkPage": {
-              "summary": "Talk summary",
-              "texts": [
-                {
-                  "addedByDefault": true,
-                  "label": "Notice",
-                  "text": "Notice for __USER__ on __DRAFT__"
-                }
-              ]
-            }
-          }
-          """;
-      Files.writeString(configFile, validConfig, StandardCharsets.UTF_8);
+    writeConfig();
+    givenPagesContent();
+    mockApiTokens.givenCsrfToken(WIKI, CSRF_TOKEN);
+    mockApiMove
+        .givenMove(
+            WIKI,
+            new MoveQueryByTitle(
+                "User:NicoV",
+                MoveQueryCommon.emptyBuilder()
+                    .to("User:NicoV/Draft")
+                    .reason(withPrefix("Moving to draft"))
+                    .noRedirect(true)
+                    .ignoreWarnings(true)
+                    .token(CSRF_TOKEN)
+                    .build()))
+        .willReturn(new Move("User:NicoV", "Moving to draft", false, "User:NicoV/Draft"));
+    mockApiEdit
+        .givenEdit(
+            WIKI,
+            new EditQueryByTitle(
+                "User:NicoV",
+                EditQueryCommon.emptyBuilder()
+                    .text("User page text")
+                    .summary(withPrefix("Summary"))
+                    .token(CSRF_TOKEN)
+                    .build()))
+        .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, "User:NicoV", null));
+    mockApiEdit
+        .givenEdit(
+            WIKI,
+            new EditQueryByTitle(
+                "User talk:NicoV",
+                EditQueryCommon.emptyBuilder()
+                    .appendText("\n\nNotice for NicoV on Draft")
+                    .summary(withPrefix("Talk summary"))
+                    .token(CSRF_TOKEN)
+                    .build()))
+        .willReturn(new Edit(Edit.RESULT_SUCCESS, 2, "User talk:NicoV", null));
+    final UserPageDraftAction action = createAction();
 
-      runOnJavaFx(
-          () -> {
-            final JavaFxRecentChangesWindowServices services =
-                BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-            final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-            final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-            final JavaFxWindowsRegistry windowsRegistry =
-                BDDMockito.mock(JavaFxWindowsRegistry.class);
-            final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
-            final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
-            final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
-            final NamespaceRepository namespaceRepository =
-                BDDMockito.mock(NamespaceRepository.class);
-            final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
-            final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
-            final PageSyntaxColorizer colorizer =
-                new PageSyntaxColorizer(
-                    List.of(),
-                    new JavaFxStylePropertiesRegistry(new StylePropertiesRegistry(List.of())));
-            final PageAnalysisFactory pageAnalysisFactory =
-                new PageAnalysisFactory(
-                    new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
+    runOnJavaFx(() -> action.apply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV")));
+    final UserPageDraftActionWindow window =
+        waitForWindow(windowsRegistry, UserPageDraftActionWindow.class);
+    runOnJavaFx(() -> lookup(window, UserPageDraftActionWindow.OK_ID, Button.class).fire());
 
-            BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-            BDDMockito.given(services.actionServices()).willReturn(actionServices);
-            BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-            BDDMockito.given(services.user()).willReturn(currentUserService);
-            BDDMockito.given(currentUserService.getCurrentUser()).willReturn(connectedUser);
-            BDDMockito.given(connectedUser.wiki()).willReturn(wiki);
-            BDDMockito.given(wiki.code()).willReturn(wikiCode);
-            BDDMockito.given(services.namespaceRepository()).willReturn(namespaceRepository);
-            BDDMockito.given(services.apiRevisions()).willReturn(apiRevisions);
-            BDDMockito.given(services.apiEdit()).willReturn(apiEditWrapper);
-            BDDMockito.given(services.colorizer()).willReturn(colorizer);
-            BDDMockito.given(services.pageAnalysisFactory()).willReturn(pageAnalysisFactory);
-
-            final Namespace userNs =
-                new Namespace(
-                    CommonNamespaces.USER.id, "User", "User", List.of(), CaseType.FIRST_LETTER);
-            final Namespace userTalkNs =
-                new Namespace(
-                    CommonNamespaces.USER_TALK.id,
-                    "User talk",
-                    "User talk",
-                    List.of(),
-                    CaseType.FIRST_LETTER);
-            BDDMockito.given(namespaceRepository.getNamespaces())
-                .willReturn(List.of(userNs, userTalkNs));
-
-            BDDMockito.given(
-                    apiRevisions.retrieveRevisionsByTitle(
-                        BDDMockito.eq(wiki), BDDMockito.any(), BDDMockito.any()))
-                .willReturn(List.of());
-
-            final JavaFxWindow<?> owner = BDDMockito.mock(JavaFxWindow.class);
-            final Stage ownerStage = new Stage();
-            BDDMockito.given(owner.getStage()).willReturn(ownerStage);
-            BDDMockito.willAnswer(
-                    invocation -> {
-                      final LongRunningTask<?> task = invocation.getArgument(0);
-                      final Consumer<Object> afterTask = invocation.getArgument(1);
-                      final Object result = task.call(new ProgressTracker(_ -> {}));
-                      afterTask.accept(result);
-                      return null;
-                    })
-                .given(owner)
-                .executeAsync(BDDMockito.any(), BDDMockito.any(), BDDMockito.any());
-
-            final UserPageDraftAction action = new UserPageDraftAction(services, owner);
-            final FilteredRecentChange userPageRc =
-                createRecentChange(CommonNamespaces.USER.id, "User:NicoV");
-
-            action.apply(userPageRc);
-
-            final ArgumentCaptor<JavaFxWindow<?>> captor = ArgumentCaptor.captor();
-            BDDMockito.then(windowsRegistry).should().register(captor.capture());
-            final UserPageDraftActionWindow actionWindow =
-                (UserPageDraftActionWindow) captor.getValue();
-
-            final ArgumentCaptor<MoveQuery> moveCaptor = ArgumentCaptor.captor();
-            final ArgumentCaptor<EditQuery> editCaptor = ArgumentCaptor.captor();
-
-            final Button okButton =
-                lookup(actionWindow, UserPageDraftActionWindow.OK_ID, Button.class);
-
-            okButton.fire();
-
-            BDDMockito.then(apiEditWrapper)
-                .should(BDDMockito.timeout(5000).times(1))
-                .move(BDDMockito.eq(wiki), moveCaptor.capture());
-            final MoveQuery moveQuery = moveCaptor.getValue();
-            Assertions.assertThat(moveQuery).isInstanceOf(MoveQueryByTitle.class);
-            final MoveQueryByTitle moveByTitle = (MoveQueryByTitle) moveQuery;
-            Assertions.assertThat(moveByTitle.from()).isEqualTo("User:NicoV");
-            Assertions.assertThat(moveByTitle.common().to()).isEqualTo("User:NicoV/Draft");
-            Assertions.assertThat(moveByTitle.common().reason()).isEqualTo("Moving to draft");
-            Assertions.assertThat(moveByTitle.common().moveTalk()).isFalse();
-            Assertions.assertThat(moveByTitle.common().moveSubpages()).isFalse();
-            Assertions.assertThat(moveByTitle.common().noRedirect()).isTrue();
-            Assertions.assertThat(moveByTitle.common().ignoreWarnings()).isTrue();
-
-            BDDMockito.then(apiEditWrapper)
-                .should(BDDMockito.timeout(5000).times(2))
-                .edit(BDDMockito.eq(wiki), editCaptor.capture());
-            final List<EditQuery> editQueries = editCaptor.getAllValues();
-            final EditQueryByTitle userPageEdit = (EditQueryByTitle) editQueries.get(0);
-            Assertions.assertThat(userPageEdit.title()).isEqualTo("User:NicoV");
-            Assertions.assertThat(userPageEdit.common().text()).isEqualTo("User page text");
-            Assertions.assertThat(userPageEdit.common().summary()).isEqualTo("Summary");
-
-            final EditQueryByTitle talkPageEdit = (EditQueryByTitle) editQueries.get(1);
-            Assertions.assertThat(talkPageEdit.title()).isEqualTo("User talk:NicoV");
-            Assertions.assertThat(talkPageEdit.common().appendText())
-                .isEqualTo("\n\nNotice for NicoV on Draft");
-            Assertions.assertThat(talkPageEdit.common().summary()).isEqualTo("Talk summary");
-
-            actionWindow.getStage().close();
-            ownerStage.close();
-          });
-    } finally {
-      Files.deleteIfExists(configFile);
-    }
+    Assertions.assertThat(closeAlert(window))
+        .isEqualTo(
+            "The user page has been moved to draft and replaced, and the talk page updated.");
   }
 
-  private FilteredRecentChange createRecentChange(final Integer ns, final String title) {
+  private UserPageDraftAction createAction()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    return callOnJavaFx(() -> new UserPageDraftAction(services, new EmptyWindow<>(services)));
+  }
+
+  private void givenPagesContent() {
+    PageContentExpectations.givenPagesContent(
+        mockApiRevisions,
+        WIKI,
+        Map.of(
+            "User:NicoV", "User content",
+            "User talk:NicoV", "Talk content",
+            "User:NicoV/Draft", "Draft content"));
+  }
+
+  private static void writeConfig() throws IOException {
+    final Path configFile = getConfigFile();
+    Files.createDirectories(configFile.getParent());
+    Files.writeString(configFile, CONFIG, StandardCharsets.UTF_8);
+  }
+
+  private static Path getConfigFile() {
+    return SettingsPersistence.getFolder().resolve(WIKI.code()).resolve("rc-userpage-draft.json");
+  }
+
+  private String withPrefix(final String summary) {
+    return "WPCleanerNG v%s - %s".formatted(versionPrefix, summary);
+  }
+
+  private static void assertDisplay(
+      final UserPageDraftActionWindow window,
+      final String displayId,
+      final String title,
+      final String content) {
+    final VBox display = lookup(window, displayId, VBox.class);
+    Assertions.assertThat(lookup(display, PageContentDisplay.TITLE_ID, Label.class).getText())
+        .isEqualTo(title);
+    Assertions.assertThat(
+            lookup(display, PageContentDisplay.CONTENT_ID, PageAnalysisScrollPane.class)
+                .getArea()
+                .getText())
+        .isEqualTo(content);
+  }
+
+  private static FilteredRecentChange createRecentChange(
+      @Nullable final Integer ns, final String title) {
     return new FilteredRecentChange(
         "comment",
         0,
         URI.create("https://diff"),
-        BDDMockito.mock(RecentChangesFilter.class),
+        RecentChangesFilter.ACCEPT_ALL,
         ns,
         URI.create("https://page"),
         1,
