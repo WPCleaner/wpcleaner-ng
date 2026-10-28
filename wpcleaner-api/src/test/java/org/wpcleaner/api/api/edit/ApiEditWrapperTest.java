@@ -274,9 +274,7 @@ class ApiEditWrapperTest {
   }
 
   private void givenCsrfToken(final WikiDefinition wiki, final String csrfToken) {
-    mockApiTokens
-        .givenRequestTokens(wiki, List.of(TokensParameters.Type.CSRF))
-        .willReturn(new Tokens(null, csrfToken, null, null, null, null, null, null, null));
+    mockApiTokens.givenCsrfToken(wiki, csrfToken);
   }
 
   private void loginAsBot() {

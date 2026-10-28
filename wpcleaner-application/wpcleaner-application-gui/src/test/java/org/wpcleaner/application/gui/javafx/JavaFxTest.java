@@ -23,6 +23,7 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.junit.jupiter.api.BeforeAll;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
@@ -106,10 +107,14 @@ public class JavaFxTest {
     };
   }
 
-  protected String closeAlert() throws InterruptedException, ExecutionException, TimeoutException {
+  protected String closeAlert(final JavaFxWindow<?> owner)
+      throws InterruptedException, ExecutionException, TimeoutException {
     return waitForJavaFx(
         () ->
             Window.getWindows().stream()
+                .filter(Stage.class::isInstance)
+                .map(Stage.class::cast)
+                .filter(stage -> Objects.equals(stage.getOwner(), owner.getStage()))
                 .map(Window::getScene)
                 .filter(Objects::nonNull)
                 .map(Scene::getRoot)

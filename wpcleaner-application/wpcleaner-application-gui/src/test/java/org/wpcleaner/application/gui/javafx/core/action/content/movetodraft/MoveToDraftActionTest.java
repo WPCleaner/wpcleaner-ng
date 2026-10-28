@@ -5,10 +5,8 @@ package org.wpcleaner.application.gui.javafx.core.action.content.movetodraft;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.application.Platform;
@@ -32,19 +30,13 @@ import org.wpcleaner.api.api.move.Move;
 import org.wpcleaner.api.api.move.MoveQueryByTitle;
 import org.wpcleaner.api.api.move.MoveQueryCommon;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
-import org.wpcleaner.api.api.query.meta.tokens.Tokens;
-import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
-import org.wpcleaner.api.api.query.prop.revisions.Page;
-import org.wpcleaner.api.api.query.prop.revisions.Revision;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.action.content.PageContentDisplay;
+import org.wpcleaner.application.gui.javafx.core.action.content.PageContentExpectations;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 
@@ -53,12 +45,6 @@ class MoveToDraftActionTest extends JavaFxTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
   private static final String CSRF_TOKEN = "csrf-token+\\";
-  private static final RevisionsQuery CONTENT_QUERY =
-      RevisionsQuery.emptyBuilder()
-          .properties(
-              Set.of(RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.IDS))
-          .slots(Set.of("main"))
-          .build();
 
   @Autowired private JavaFxRecentChangesWindowServices services;
   @Autowired private CurrentUserService currentUserService;
@@ -142,9 +128,7 @@ class MoveToDraftActionTest extends JavaFxTest {
             new MoveToDraftConfiguration("CustomSubPage", "Summary text"),
             "User:Author",
             "CustomSubPage");
-    mockApiTokens
-        .givenRequestTokens(WIKI, List.of(TokensParameters.Type.CSRF))
-        .willReturn(new Tokens(null, CSRF_TOKEN, null, null, null, null, null, null, null));
+    mockApiTokens.givenCsrfToken(WIKI, CSRF_TOKEN);
     mockApiMove
         .givenMove(
             WIKI,
@@ -167,9 +151,8 @@ class MoveToDraftActionTest extends JavaFxTest {
   void refreshSuccess() throws InterruptedException, ExecutionException, TimeoutException {
     final MoveToDraftAction action =
         createAction(new MoveToDraftConfiguration("Draft", "Summary text"), "User:Author", "Draft");
-    mockApiRevisions
-        .givenRetrieveRevisionsByTitle(WIKI, List.of("User:Author/NewDraft"), CONTENT_QUERY)
-        .willReturn(List.of(createPage("User:Author/NewDraft", "Refreshed content")));
+    PageContentExpectations.givenPageContent(
+        mockApiRevisions, WIKI, "User:Author/NewDraft", "Refreshed content");
 
     runOnJavaFx(
         () -> {
@@ -192,7 +175,8 @@ class MoveToDraftActionTest extends JavaFxTest {
 
     Platform.runLater(() -> getRefreshButton(action).fire());
 
-    Assertions.assertThat(closeAlert()).isEqualTo("Please enter a sub-page title");
+    Assertions.assertThat(closeAlert(Objects.requireNonNull(window)))
+        .isEqualTo("Please enter a sub-page title");
   }
 
   @DisplayName("MoveToDraftAction refresh shows error when retrieving content fails")
@@ -200,13 +184,13 @@ class MoveToDraftActionTest extends JavaFxTest {
   void refreshError() throws InterruptedException, ExecutionException, TimeoutException {
     final MoveToDraftAction action =
         createAction(new MoveToDraftConfiguration("Draft", "Summary text"), "User:Author", "Draft");
-    mockApiRevisions
-        .givenRetrieveRevisionsByTitle(WIKI, List.of("User:Author/Draft"), CONTENT_QUERY)
-        .willFail();
+    PageContentExpectations.givenPageContentFailure(mockApiRevisions, WIKI, "User:Author/Draft");
 
     runOnJavaFx(() -> getRefreshButton(action).fire());
 
-    Assertions.assertThat(closeAlert()).startsWith("Error loading page content: ").contains("500");
+    Assertions.assertThat(closeAlert(Objects.requireNonNull(window)))
+        .startsWith("Error loading page content: ")
+        .contains("500");
     Assertions.assertThat(callOnJavaFx(() -> getDisplayLabel(action).getText()))
         .isEqualTo("User:Author/Draft");
   }
@@ -231,24 +215,6 @@ class MoveToDraftActionTest extends JavaFxTest {
               new MoveToDraftContext(
                   "Move to draft", WIKI, basePageTitle, subPageName, "Initial draft content"));
         });
-  }
-
-  private static Page createPage(final String title, final String content) {
-    final Revision revision =
-        new Revision(
-            null,
-            false,
-            null,
-            null,
-            123,
-            null,
-            null,
-            Map.of("main", new RevisionSlot(content, null, null, null)),
-            List.of(),
-            null,
-            null,
-            null);
-    return new Page(false, 2, 1234, List.of(revision), title);
   }
 
   private static Label getDisplayLabel(final MoveToDraftAction action) {

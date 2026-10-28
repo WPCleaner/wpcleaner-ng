@@ -6,6 +6,7 @@ package org.wpcleaner.api.api.query.meta.tokens;
  */
 
 import java.util.Collection;
+import java.util.List;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.wpcleaner.api.api.ApiAnswer;
 import org.wpcleaner.api.api.ApiParameters;
@@ -19,6 +20,11 @@ public final class MockApiTokens {
 
   public MockApiTokens(final MockRestServiceServer mediaWikiServer) {
     this.mediaWikiServer = mediaWikiServer;
+  }
+
+  public void givenCsrfToken(final WikiDefinition wiki, final String csrfToken) {
+    givenRequestTokens(wiki, List.of(TokensParameters.Type.CSRF))
+        .willReturn(new Tokens(null, csrfToken, null, null, null, null, null, null, null));
   }
 
   public TokensAnswer givenRequestTokens(
