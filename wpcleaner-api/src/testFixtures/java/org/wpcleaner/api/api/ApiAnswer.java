@@ -34,7 +34,11 @@ public final class ApiAnswer {
   }
 
   public void willReturnQuery(final String key, final Object value) {
-    willReturn(Map.of("batchcomplete", true, "query", Map.of(key, value)));
+    willReturnQuery(Map.of(key, value));
+  }
+
+  public void willReturnQuery(final Object query) {
+    willReturn(Map.of("batchcomplete", true, "query", query));
   }
 
   public void willReturnErrors(final List<ApiError> errors) {

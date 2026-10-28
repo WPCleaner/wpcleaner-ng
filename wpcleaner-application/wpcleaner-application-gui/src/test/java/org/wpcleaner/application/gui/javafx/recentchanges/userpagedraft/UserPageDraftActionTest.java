@@ -34,15 +34,14 @@ import org.wpcleaner.api.api.move.MockApiMove;
 import org.wpcleaner.api.api.move.Move;
 import org.wpcleaner.api.api.move.MoveQueryByTitle;
 import org.wpcleaner.api.api.move.MoveQueryCommon;
+import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
-import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
-import org.wpcleaner.api.repository.namespace.Namespace;
-import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.settings.SettingsPersistence;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
@@ -86,7 +85,7 @@ class UserPageDraftActionTest extends JavaFxTest {
 
   @Autowired private JavaFxRecentChangesWindowServices services;
   @Autowired private CurrentUserService currentUserService;
-  @Autowired private NamespaceRepository namespaceRepository;
+  @Autowired private GuiLogin guiLogin;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
   @Autowired private MockApiEdit mockApiEdit;
   @Autowired private MockApiMove mockApiMove;
@@ -98,17 +97,20 @@ class UserPageDraftActionTest extends JavaFxTest {
 
   @BeforeEach
   void setUp() throws IOException {
-    currentUserService.logout();
-    currentUserService.login(WIKI, "Bot", false);
-    namespaceRepository.addNamespace(
-        new Namespace(CommonNamespaces.USER.id, "User", "User", List.of(), CaseType.FIRST_LETTER));
-    namespaceRepository.addNamespace(
-        new Namespace(
-            CommonNamespaces.USER_TALK.id,
-            "User talk",
-            "User talk",
-            List.of(),
-            CaseType.FIRST_LETTER));
+    guiLogin.login(
+        WIKI,
+        "Bot",
+        List.of(
+            new Namespace(
+                "User", "first-letter", false, CommonNamespaces.USER.id, "User", "User", true),
+            new Namespace(
+                "User talk",
+                "first-letter",
+                false,
+                CommonNamespaces.USER_TALK.id,
+                "User talk",
+                "User talk",
+                true)));
     Files.deleteIfExists(getConfigFile());
   }
 

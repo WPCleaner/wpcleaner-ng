@@ -27,6 +27,11 @@ public final class MockApiTokens {
         .willReturn(new Tokens(null, csrfToken, null, null, null, null, null, null, null));
   }
 
+  public void givenLoginToken(final WikiDefinition wiki, final String loginToken) {
+    givenRequestTokens(wiki, List.of(TokensParameters.Type.LOGIN))
+        .willReturn(new Tokens(null, null, null, loginToken, null, null, null, null, null));
+  }
+
   public TokensAnswer givenRequestTokens(
       final WikiDefinition wiki, final Collection<TokensParameters.Type> tokens) {
     final ApiRequestExpectation request =
