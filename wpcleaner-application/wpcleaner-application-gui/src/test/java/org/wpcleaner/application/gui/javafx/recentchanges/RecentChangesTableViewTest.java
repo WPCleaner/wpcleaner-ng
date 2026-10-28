@@ -6,60 +6,68 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  */
 
 import java.net.URI;
-import java.util.Optional;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.image.ImageView;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
+import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.control.UrlTableCell;
 import org.wpcleaner.application.gui.javafx.core.control.UrlTableColumn;
 import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
 import org.wpcleaner.application.gui.javafx.recentchanges.options.Severity;
 
+@GuiSpringBootTest
 class RecentChangesTableViewTest extends JavaFxTest {
+
+  @Autowired private JavaFxRecentChangesWindowServices services;
+  @Autowired private DesktopService desktopService;
 
   @DisplayName("RecentChangesTableView initializes columns and behaves correctly")
   @Test
-  void testRecentChangesTableViewInitialization()
+  void recentChangesTableViewInitialization()
       throws InterruptedException, ExecutionException, TimeoutException {
+    final FilteredRecentChange rc =
+        new FilteredRecentChange(
+            "comment",
+            0,
+            URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345"),
+            new RecentChangesFilter(
+                "Alert", Set.of(), Severity.ALERT_4, Set.of(), Set.of(), Set.of(), null),
+            0,
+            URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest"),
+            1,
+            2,
+            3,
+            List.of(),
+            null,
+            "Main Page?Test",
+            "User");
+
     runOnJavaFx(
         () -> {
-          final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
-          BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
-              .willReturn(Optional.empty());
-
-          final JavaFxActionServices mockActionsServices =
-              BDDMockito.mock(JavaFxActionServices.class);
-
-          final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
-          final FilteredRecentChange rc = BDDMockito.mock(FilteredRecentChange.class);
-          BDDMockito.given(rc.diffURI())
-              .willReturn(URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345"));
-          BDDMockito.given(rc.pageURI())
-              .willReturn(URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest"));
-          BDDMockito.given(rc.title()).willReturn("Main Page?Test");
-
-          final RecentChangesFilter mockFilter = BDDMockito.mock(RecentChangesFilter.class);
-          BDDMockito.given(mockFilter.severity()).willReturn(Severity.ALERT_4);
-          BDDMockito.given(rc.filter()).willReturn(mockFilter);
-          items.add(rc);
-
+          final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList(rc);
           final RecentChangesTableView tableView =
-              new RecentChangesTableView(items, mockImageLoader, mockActionsServices, _ -> {});
+              new RecentChangesTableView(
+                  items,
+                  new JavaFxImageLoader(services.imageLoader()),
+                  services.actionServices(),
+                  _ -> {});
 
-          // Verify total columns size
           Assertions.assertThat(tableView.getColumns()).hasSize(10);
 
-          // Verify severityCol at index 0
           final TableColumn<FilteredRecentChange, ?> severityCol = tableView.getColumns().get(0);
           Assertions.assertThat(severityCol.getText()).isEmpty();
           @SuppressWarnings("unchecked")
@@ -72,11 +80,9 @@ class RecentChangesTableViewTest extends JavaFxTest {
               castedSeverityCol.getCellValueFactory().call(severityFeature).getValue();
           Assertions.assertThat(severityValue).isEqualTo(Severity.ALERT_4);
 
-          // Verify timeCol, titleCol, and pageURICol
           final TableColumn<FilteredRecentChange, ?> pageURICol = tableView.getColumns().get(7);
           Assertions.assertThat(pageURICol).isInstanceOf(UrlTableColumn.class);
           Assertions.assertThat(pageURICol.getText()).isEmpty();
-          // Verify cell value factory for page
           @SuppressWarnings("unchecked")
           final TableColumn<FilteredRecentChange, URI> castedPageURICol =
               (TableColumn<FilteredRecentChange, URI>) pageURICol;
@@ -88,7 +94,6 @@ class RecentChangesTableViewTest extends JavaFxTest {
           final URI expectedPageUri = URI.create("https://en.wikipedia.org/wiki/Main_Page%3FTest");
           Assertions.assertThat(pageURIValue).isEqualTo(expectedPageUri);
 
-          // Verify diffURICol at index 8
           final TableColumn<FilteredRecentChange, ?> diffURICol = tableView.getColumns().get(8);
           Assertions.assertThat(diffURICol).isInstanceOf(UrlTableColumn.class);
           Assertions.assertThat(diffURICol.getText()).isEmpty();
@@ -105,7 +110,6 @@ class RecentChangesTableViewTest extends JavaFxTest {
               URI.create("https://en.wikipedia.org/wiki/Special:Diff/12345");
           Assertions.assertThat(diffURIValue).isEqualTo(expectedDiffUri);
 
-          // Verify viewCol at index 9
           final TableColumn<FilteredRecentChange, ?> viewCol = tableView.getColumns().get(9);
           Assertions.assertThat(viewCol).isInstanceOf(ViewModificationTableColumn.class);
           Assertions.assertThat(viewCol.getText()).isEmpty();
@@ -120,14 +124,12 @@ class RecentChangesTableViewTest extends JavaFxTest {
               castedViewCol.getCellValueFactory().call(viewFeature).getValue();
           Assertions.assertThat(viewValue).isEqualTo(rc);
 
-          // Verify cell factory and cell update
           final UrlTableCell<FilteredRecentChange> cell =
               (UrlTableCell<FilteredRecentChange>)
                   castedPageURICol.getCellFactory().call(castedPageURICol);
           Assertions.assertThat(cell).isNotNull();
           Assertions.assertThat(cell.getAlignment().name()).isEqualTo("CENTER");
 
-          // Update item to a mock url and verify button is set as graphic
           cell.updateItem(expectedPageUri, false);
           Assertions.assertThat(cell.getGraphic()).isInstanceOf(Button.class);
 
@@ -135,13 +137,8 @@ class RecentChangesTableViewTest extends JavaFxTest {
           Assertions.assertThat(button.getTooltip()).isNotNull();
           Assertions.assertThat(button.getTooltip().getText()).isEqualTo("Open page in browser");
 
-          // Trigger button action and verify desktopService.browse is called
           button.getOnAction().handle(null);
-          BDDMockito.then(mockActionsServices)
-              .should(BDDMockito.timeout(1000))
-              .browse("https://en.wikipedia.org/wiki/Main_Page%3FTest");
 
-          // Verify SeverityTableCell factory and cell update
           final SeverityTableCell<FilteredRecentChange> severityCell =
               (SeverityTableCell<FilteredRecentChange>)
                   castedSeverityCol.getCellFactory().call(castedSeverityCol);
@@ -149,8 +146,14 @@ class RecentChangesTableViewTest extends JavaFxTest {
           Assertions.assertThat(severityCell.getAlignment().name()).isEqualTo("CENTER");
 
           severityCell.updateItem(Severity.ALERT_4, false);
-          Assertions.assertThat(severityCell.getTooltip())
-              .isNull(); // because getImageView returns Optional.empty()
+          Assertions.assertThat(severityCell.getGraphic()).isInstanceOf(ImageView.class);
+          Assertions.assertThat(severityCell.getTooltip().getText())
+              .isEqualTo(
+                  Severity.ALERT_4.getName()); // because getImageView returns Optional.empty()
         });
+
+    BDDMockito.then(desktopService)
+        .should(BDDMockito.timeout(5000))
+        .browse("https://en.wikipedia.org/wiki/Main_Page%3FTest");
   }
 }

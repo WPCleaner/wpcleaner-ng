@@ -5,10 +5,10 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.TableCell;
@@ -19,18 +19,21 @@ import javafx.scene.input.MouseEvent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 
+@GuiSpringBootTest
 class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
+
+  private static final FilteredRecentChange RECENT_CHANGE =
+      FilteredRecentChangeFixtures.create(0, "Main Page");
 
   private static final int[] DOUBLE_CLICK_COLUMNS = {1, 2, 3, 4, 5};
   private static final int[] NON_DOUBLE_CLICK_COLUMNS = {0, 6, 7, 8};
 
-  @FunctionalInterface
-  private interface ViewAction extends Consumer<FilteredRecentChange> {}
+  @Autowired private JavaFxRecentChangesWindowServices services;
 
   @DisplayName(
       "Double-clicking on cells in Time, Title, User, Delta, and Comment columns triggers viewAction")
@@ -39,21 +42,15 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
-          BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
-              .willReturn(Optional.empty());
-          final JavaFxActionServices mockActionsServices =
-              BDDMockito.mock(JavaFxActionServices.class);
-
-          final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
-          final FilteredRecentChange rc = BDDMockito.mock(FilteredRecentChange.class);
-          items.add(rc);
-
-          final ViewAction mockViewAction = BDDMockito.mock(ViewAction.class);
-
+          final ObservableList<FilteredRecentChange> items =
+              FXCollections.observableArrayList(RECENT_CHANGE);
+          final List<FilteredRecentChange> viewed = new ArrayList<>();
           final RecentChangesTableView tableView =
               new RecentChangesTableView(
-                  items, mockImageLoader, mockActionsServices, mockViewAction);
+                  items,
+                  new JavaFxImageLoader(services.imageLoader()),
+                  services.actionServices(),
+                  viewed::add);
 
           final MouseEvent doubleClickEvent =
               new MouseEvent(
@@ -134,10 +131,10 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
             cell.updateIndex(0);
 
             cell.getOnMouseClicked().handle(singleClickEvent);
-            BDDMockito.then(mockViewAction).should(BDDMockito.never()).accept(BDDMockito.any());
+            Assertions.assertThat(viewed).isEmpty();
 
             cell.getOnMouseClicked().handle(rightDoubleClickEvent);
-            BDDMockito.then(mockViewAction).should(BDDMockito.never()).accept(BDDMockito.any());
+            Assertions.assertThat(viewed).isEmpty();
 
             final TableCell<FilteredRecentChange, Object> emptyCell =
                 col.getCellFactory().call(col);
@@ -148,11 +145,11 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
             emptyCell.updateTableRow(emptyRow);
             emptyCell.updateIndex(100);
             emptyCell.getOnMouseClicked().handle(doubleClickEvent);
-            BDDMockito.then(mockViewAction).should(BDDMockito.never()).accept(BDDMockito.any());
+            Assertions.assertThat(viewed).isEmpty();
 
             cell.getOnMouseClicked().handle(doubleClickEvent);
-            BDDMockito.then(mockViewAction).should().accept(rc);
-            BDDMockito.clearInvocations(mockViewAction);
+            Assertions.assertThat(viewed).containsExactly(RECENT_CHANGE);
+            viewed.clear();
           }
 
           for (final int columnIndex : NON_DOUBLE_CLICK_COLUMNS) {
@@ -171,21 +168,15 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
-          BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
-              .willReturn(Optional.empty());
-          final JavaFxActionServices mockActionsServices =
-              BDDMockito.mock(JavaFxActionServices.class);
-
-          final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
-          final FilteredRecentChange rc = BDDMockito.mock(FilteredRecentChange.class);
-          items.add(rc);
-
-          final ViewAction mockViewAction = BDDMockito.mock(ViewAction.class);
-
+          final ObservableList<FilteredRecentChange> items =
+              FXCollections.observableArrayList(RECENT_CHANGE);
+          final List<FilteredRecentChange> viewed = new ArrayList<>();
           final RecentChangesTableView tableView =
               new RecentChangesTableView(
-                  items, mockImageLoader, mockActionsServices, mockViewAction);
+                  items,
+                  new JavaFxImageLoader(services.imageLoader()),
+                  services.actionServices(),
+                  viewed::add);
 
           @SuppressWarnings("unchecked")
           final TableColumn<FilteredRecentChange, String> titleCol =
@@ -218,7 +209,7 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
                   null);
 
           cell.getOnMouseClicked().handle(doubleClickEvent);
-          BDDMockito.then(mockViewAction).should().accept(rc);
+          Assertions.assertThat(viewed).containsExactly(RECENT_CHANGE);
         });
   }
 }

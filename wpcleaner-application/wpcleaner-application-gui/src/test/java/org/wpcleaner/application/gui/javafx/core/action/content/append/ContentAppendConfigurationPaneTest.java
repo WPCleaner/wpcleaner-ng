@@ -11,27 +11,29 @@ import java.util.concurrent.TimeoutException;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
-import org.wpcleaner.lib.image.ImageSize;
 
+@GuiSpringBootTest
 class ContentAppendConfigurationPaneTest extends JavaFxTest {
+
+  @Autowired private ImageLoader imageLoader;
 
   @DisplayName("ContentAppendConfigurationPane initializes children properly with config")
   @Test
-  void testInitializationWithConfiguration()
+  void initializationWithConfiguration()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final List<ContentAppendConfigurationText> initialTexts =
               List.of(new ContentAppendConfigurationText(true, "myLabel", "myText"));
           final ContentAppendConfigurationPane pane =
@@ -74,12 +76,8 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
 
           Assertions.assertThat(addButton.getText()).isEmpty();
           Assertions.assertThat(removeButton.getText()).isEmpty();
-          BDDMockito.then(imageLoader)
-              .should()
-              .getImageResource(ImageCollection.LIST_ADD, ImageSize.BUTTON);
-          BDDMockito.then(imageLoader)
-              .should()
-              .getImageResource(ImageCollection.LIST_REMOVE, ImageSize.BUTTON);
+          Assertions.assertThat(addButton.getGraphic()).isInstanceOf(ImageView.class);
+          Assertions.assertThat(removeButton.getGraphic()).isInstanceOf(ImageView.class);
 
           Assertions.assertThat(removeButton.isDisabled()).isTrue();
           tableView.getSelectionModel().select(0);
@@ -93,11 +91,10 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
 
   @DisplayName("ContentAppendConfigurationPane initializes children empty when config is null")
   @Test
-  void testInitializationWithoutConfiguration()
+  void initializationWithoutConfiguration()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final ContentAppendConfigurationPane pane =
               new ContentAppendConfigurationPane("Append Title", imageLoader, null);
 

@@ -7,47 +7,83 @@ package org.wpcleaner.application.base.utils;
 
 import java.util.List;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.wpcleaner.api.ApiSpringBootTest;
+import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.edit.ApiEditWrapper;
+import org.wpcleaner.api.api.edit.Edit;
+import org.wpcleaner.api.api.edit.EditQueryByTitle;
+import org.wpcleaner.api.api.edit.EditQueryCommon;
+import org.wpcleaner.api.api.edit.MockApiEdit;
+import org.wpcleaner.api.api.query.list.tags.Tag;
+import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
+import org.wpcleaner.api.repository.tag.TagRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
+@ApiSpringBootTest
 class ApiEditWrapperCustomizerTest {
 
-  private final ApplicationContextRunner contextRunner =
-      new ApplicationContextRunner()
-          .withUserConfiguration(ApiEditWrapperCustomizer.class)
-          .withBean(ApiEditWrapper.class, () -> BDDMockito.mock(ApiEditWrapper.class));
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
+  private static final String CSRF_TOKEN = "csrf-token";
+  private static final Edit EDIT = new Edit(Edit.RESULT_SUCCESS, 1, "Test", null);
 
-  @DisplayName("ApiEditWrapperCustomizer configures prefixes and tags directly")
-  @Test
-  void testDirectCustomization() {
-    final ApiEditWrapper wrapper = BDDMockito.mock(ApiEditWrapper.class);
-    final String versionPrefix = "0.0.3";
+  @Autowired private ApiEditWrapper apiEditWrapper;
+  @Autowired private CurrentUserService currentUserService;
+  @Autowired private MockApiEdit mockApiEdit;
+  @Autowired private MockApiTokens mockApiTokens;
+  @Autowired private TagRepository tagRepository;
 
-    new ApiEditWrapperCustomizer(wrapper, versionPrefix);
+  @Value("${version.prefix}")
+  private String versionPrefix;
 
-    BDDMockito.then(wrapper)
-        .should()
-        .setPrefixes("WPCleanerNG v" + versionPrefix, "v" + versionPrefix);
-    BDDMockito.then(wrapper).should().setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
+  @BeforeEach
+  void setUp() {
+    currentUserService.logout();
+    currentUserService.login(WIKI, "Bot", false);
+    currentUserService.withGroups(List.of("bot"));
   }
 
-  @DisplayName(
-      "ApiEditWrapperCustomizer loads version.prefix from property source in Spring context")
+  @AfterEach
+  void tearDown() {
+    currentUserService.logout();
+  }
+
+  @DisplayName("ApiEditWrapperCustomizer configures the summary prefixes and the tags of edits")
   @Test
-  void testSpringContextCustomization() {
-    contextRunner.run(
-        context -> {
-          Assertions.assertThat(context).hasSingleBean(ApiEditWrapperCustomizer.class);
-          final ApiEditWrapper wrapper = context.getBean(ApiEditWrapper.class);
-          BDDMockito.then(wrapper)
-              .should()
-              .setPrefixes(BDDMockito.startsWith("WPCleanerNG v"), BDDMockito.startsWith(""));
-          BDDMockito.then(wrapper)
-              .should()
-              .setTags(List.of("wpcleanerng", "wpcleaner-ng", "wpcleaner"));
-        });
+  void customizedEdits() {
+    Assertions.assertThat(versionPrefix).isNotBlank();
+    mockApiTokens.givenCsrfToken(WIKI, CSRF_TOKEN);
+    mockApiEdit
+        .givenEdit(
+            WIKI,
+            editQuery("WPCleanerNG v%s - Summary".formatted(versionPrefix), List.of(), CSRF_TOKEN))
+        .willReturn(EDIT);
+    mockApiEdit
+        .givenEdit(
+            WIKI,
+            editQuery("v%s - Summary".formatted(versionPrefix), List.of("wpcleaner"), CSRF_TOKEN))
+        .willReturn(EDIT);
+
+    apiEditWrapper.edit(WIKI, editQuery("Summary", null, null));
+    tagRepository.addTag(new Tag(true, true, null, null, null, "wpcleaner", List.of()));
+    apiEditWrapper.edit(WIKI, editQuery("Summary", null, null));
+  }
+
+  private static EditQueryByTitle editQuery(
+      final String summary, final List<String> tags, final String token) {
+    return new EditQueryByTitle(
+        "Test",
+        EditQueryCommon.emptyBuilder()
+            .summary(summary)
+            .text("Text")
+            .tags(tags)
+            .token(token)
+            .build());
   }
 }

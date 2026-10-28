@@ -5,51 +5,43 @@
 
 package org.wpcleaner.application.gui.javafx.login;
 
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import javafx.scene.image.ImageView;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.lib.image.ImageCollection;
 
+@GuiSpringBootTest
 class WikiListCellTest extends JavaFxTest {
 
-  @DisplayName("WikiListCell formats name and code correctly")
-  @Test
-  void testWikiListCellFormatting()
-      throws InterruptedException, ExecutionException, TimeoutException {
-    final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
-    BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
-        .willReturn(Optional.empty());
+  @Autowired private JavaFxLoginWindowServices services;
 
+  @DisplayName("WikiListCell formats name and code correctly and displays the wiki logo")
+  @Test
+  void wikiListCellFormatting() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final WikiListCell cell = new WikiListCell(mockImageLoader);
-          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
-          BDDMockito.given(wiki.code()).willReturn("en");
-          BDDMockito.given(wiki.name()).willReturn("English Wikipedia");
-          BDDMockito.given(wiki.image()).willReturn(ImageCollection.LOGO_WIKIPEDIA);
+          final WikiListCell cell = new WikiListCell(new JavaFxImageLoader(services.imageLoader()));
 
-          cell.updateItem(wiki, false);
+          cell.updateItem(WikipediaDefinitions.EN, false);
 
           Assertions.assertThat(cell.getText()).isEqualTo("en - English Wikipedia");
+          Assertions.assertThat(cell.getGraphic()).isInstanceOf(ImageView.class);
         });
   }
 
   @DisplayName("WikiListCell handles null items correctly")
   @Test
-  void testWikiListCellNullItem()
-      throws InterruptedException, ExecutionException, TimeoutException {
-    final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
-
+  void wikiListCellNullItem() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final WikiListCell cell = new WikiListCell(mockImageLoader);
+          final WikiListCell cell = new WikiListCell(new JavaFxImageLoader(services.imageLoader()));
           cell.updateItem(null, false);
 
           Assertions.assertThat(cell.getText()).isNull();

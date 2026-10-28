@@ -12,27 +12,29 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
-import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
-import org.wpcleaner.lib.image.ImageSize;
 
+@GuiSpringBootTest
 class MoveToDraftActionControlTest extends JavaFxTest {
+
+  @Autowired private ImageLoader imageLoader;
 
   @DisplayName("MoveToDraftActionControl initializes children properly with config")
   @Test
-  void testInitializationWithConfiguration()
+  void initializationWithConfiguration()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final AtomicBoolean refreshed = new AtomicBoolean(false);
           final MoveToDraftConfiguration initial =
               new MoveToDraftConfiguration("Draft", "Moving to draft");
@@ -73,9 +75,7 @@ class MoveToDraftActionControlTest extends JavaFxTest {
           Assertions.assertThat(refreshButton.getStyle()).isEqualTo(DefaultStyles.TOOLBAR_ELEMENT);
           Assertions.assertThat(refreshButton.getTooltip().getText())
               .isEqualTo("Refresh draft page content");
-          BDDMockito.then(imageLoader)
-              .should()
-              .getImageResource(ImageCollection.REFRESH, ImageSize.BUTTON);
+          Assertions.assertThat(refreshButton.getGraphic()).isInstanceOf(ImageView.class);
 
           refreshButton.fire();
           Assertions.assertThat(refreshed.get()).isTrue();
@@ -88,11 +88,10 @@ class MoveToDraftActionControlTest extends JavaFxTest {
 
   @DisplayName("MoveToDraftActionControl initializes empty when config has empty fields")
   @Test
-  void testInitializationWithEmptyConfiguration()
+  void initializationWithEmptyConfiguration()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final MoveToDraftActionControl pane =
               new MoveToDraftActionControl(
                   imageLoader, "Move Title", new MoveToDraftConfiguration("", ""), () -> {});
@@ -117,7 +116,7 @@ class MoveToDraftActionControlTest extends JavaFxTest {
 
   @DisplayName("MoveToDraftActionControl throws NullPointerException when imageLoader is null")
   @Test
-  void testConstructorThrowsNullPointerExceptionWhenImageLoaderIsNull()
+  void constructorThrowsNullPointerExceptionWhenImageLoaderIsNull()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () ->
@@ -130,14 +129,12 @@ class MoveToDraftActionControlTest extends JavaFxTest {
 
   @DisplayName("MoveToDraftActionControl throws NullPointerException when initialConfig is null")
   @Test
-  void testConstructorThrowsNullPointerExceptionWhenInitialConfigIsNull()
+  void constructorThrowsNullPointerExceptionWhenInitialConfigIsNull()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
-        () -> {
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          Assertions.assertThatThrownBy(
-                  () -> new MoveToDraftActionControl(imageLoader, "Move Title", null, () -> {}))
-              .isInstanceOf(NullPointerException.class);
-        });
+        () ->
+            Assertions.assertThatThrownBy(
+                    () -> new MoveToDraftActionControl(imageLoader, "Move Title", null, () -> {}))
+                .isInstanceOf(NullPointerException.class));
   }
 }
