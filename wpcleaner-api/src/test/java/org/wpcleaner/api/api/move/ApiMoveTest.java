@@ -5,98 +5,89 @@ package org.wpcleaner.api.api.move;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.time.Instant;
 import java.util.List;
-import java.util.function.Function;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.BDDMockito;
-import org.springframework.http.MediaType;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestClient;
-import org.wpcleaner.api.api.ApiRestClient;
-import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.HttpServerErrorException;
+import org.wpcleaner.api.ApiSpringBootTest;
+import org.wpcleaner.api.api.ApiError;
+import org.wpcleaner.api.api.ApiException;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
+@ApiSpringBootTest
 class ApiMoveTest {
 
-  @DisplayName("ApiMove performs POST request with expected parameters")
-  @SuppressWarnings("unchecked")
+  private static final MoveQueryCommon COMMON =
+      MoveQueryCommon.emptyBuilder().to("User:Test/Draft").token("test-token+\\").build();
+
+  @Autowired private ApiMove apiMove;
+  @Autowired private MockApiMove mockApiMove;
+
+  @DisplayName("ApiMove by title sends all options and returns the move")
   @Test
-  void testMoveCallsApi() {
-    final ApiRestClient apiRestClient = BDDMockito.mock(ApiRestClient.class);
-    final RestClient restClient = BDDMockito.mock(RestClient.class);
-    final RestClient.RequestBodyUriSpec uriSpec =
-        BDDMockito.mock(RestClient.RequestBodyUriSpec.class);
-    final RestClient.RequestBodySpec bodySpec = BDDMockito.mock(RestClient.RequestBodySpec.class);
-    final RestClient.ResponseSpec responseSpec = BDDMockito.mock(RestClient.ResponseSpec.class);
-    final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
-
-    BDDMockito.given(apiRestClient.getRestClient(wiki)).willReturn(restClient);
-    BDDMockito.given(restClient.post()).willReturn(uriSpec);
-    BDDMockito.given(uriSpec.uri(BDDMockito.any(Function.class))).willReturn(bodySpec);
-    BDDMockito.given(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-        .willReturn(bodySpec);
-
-    final ArgumentCaptor<MultiValueMap<String, Object>> bodyCaptor = ArgumentCaptor.captor();
-    BDDMockito.given(bodySpec.body(bodyCaptor.capture())).willReturn(bodySpec);
-    BDDMockito.given(bodySpec.retrieve()).willReturn(responseSpec);
-
-    final ApiMove apiMove = new ApiMove(apiRestClient);
+  void moveByTitle() {
     final MoveQueryCommon common =
         MoveQueryCommon.emptyBuilder()
             .to("User:Test/Draft")
-            .reason("Drafting page")
+            .reason("Drafting page & moving")
+            .moveTalk(true)
+            .moveSubpages(false)
+            .noRedirect(true)
+            .watchlist(MoveParameters.Watchlist.WATCH.value)
+            .watchlistExpiry(Instant.parse("2026-12-31T00:00:00Z"))
             .ignoreWarnings(true)
-            .token("test-token")
-            .tags(List.of("tag1"))
+            .tags(List.of("tag1", "tag2"))
+            .token("test-token+\\")
             .build();
     final MoveQuery query = new MoveQueryByTitle("User:Test", common);
+    final Move expectedMove =
+        new Move("User:Test", "Drafting page & moving", false, "User:Test/Draft");
+    mockApiMove.givenMove(WikipediaDefinitions.EN, query).willReturn(expectedMove);
 
-    Assertions.assertThatThrownBy(() -> apiMove.move(wiki, query))
-        .hasMessageContaining("No response retrieved");
+    final Move move = apiMove.move(WikipediaDefinitions.EN, query);
 
-    final MultiValueMap<String, Object> body = bodyCaptor.getValue();
-    Assertions.assertThat(body.getFirst("from")).isEqualTo("User:Test");
-    Assertions.assertThat(body.getFirst("to")).isEqualTo("User:Test/Draft");
-    Assertions.assertThat(body.getFirst("reason")).isEqualTo("Drafting page");
-    Assertions.assertThat(body.getFirst("ignorewarnings")).isEqualTo("1");
-    Assertions.assertThat(body.getFirst("tags")).isEqualTo("tag1");
-    Assertions.assertThat(body.getFirst("token")).isEqualTo("test-token");
+    Assertions.assertThat(move).isEqualTo(expectedMove);
   }
 
-  @DisplayName("ApiMove with MoveQueryByPageId performs POST with fromid")
-  @SuppressWarnings("unchecked")
+  @DisplayName("ApiMove by page id sends fromid")
   @Test
-  void testMoveByPageId() {
-    final ApiRestClient apiRestClient = BDDMockito.mock(ApiRestClient.class);
-    final RestClient restClient = BDDMockito.mock(RestClient.class);
-    final RestClient.RequestBodyUriSpec uriSpec =
-        BDDMockito.mock(RestClient.RequestBodyUriSpec.class);
-    final RestClient.RequestBodySpec bodySpec = BDDMockito.mock(RestClient.RequestBodySpec.class);
-    final RestClient.ResponseSpec responseSpec = BDDMockito.mock(RestClient.ResponseSpec.class);
-    final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
+  void moveByPageId() {
+    final MoveQuery query = new MoveQueryByPageId(12_345, COMMON);
+    final Move expectedMove = new Move("User:Test", null, true, "User:Test/Draft");
+    mockApiMove.givenMove(WikipediaDefinitions.EN, query).willReturn(expectedMove);
 
-    BDDMockito.given(apiRestClient.getRestClient(wiki)).willReturn(restClient);
-    BDDMockito.given(restClient.post()).willReturn(uriSpec);
-    BDDMockito.given(uriSpec.uri(BDDMockito.any(Function.class))).willReturn(bodySpec);
-    BDDMockito.given(bodySpec.contentType(MediaType.APPLICATION_FORM_URLENCODED))
-        .willReturn(bodySpec);
+    final Move move = apiMove.move(WikipediaDefinitions.EN, query);
 
-    final ArgumentCaptor<MultiValueMap<String, Object>> bodyCaptor = ArgumentCaptor.captor();
-    BDDMockito.given(bodySpec.body(bodyCaptor.capture())).willReturn(bodySpec);
-    BDDMockito.given(bodySpec.retrieve()).willReturn(responseSpec);
+    Assertions.assertThat(move).isEqualTo(expectedMove);
+  }
 
-    final ApiMove apiMove = new ApiMove(apiRestClient);
-    final MoveQueryCommon common =
-        MoveQueryCommon.emptyBuilder().to("User:Test/Draft").token("test-token").build();
-    final MoveQuery query = new MoveQueryByPageId(12_345, common);
+  @DisplayName("ApiMove throws ApiException when MediaWiki returns errors")
+  @Test
+  void moveWithErrors() {
+    final MoveQuery query = new MoveQueryByTitle("User:Test", COMMON);
+    mockApiMove
+        .givenMove(WikipediaDefinitions.EN, query)
+        .willReturnErrors(
+            List.of(new ApiError("articleexists", "move", "A page of that name already exists.")));
 
-    Assertions.assertThatThrownBy(() -> apiMove.move(wiki, query))
-        .hasMessageContaining("No response retrieved");
+    Assertions.assertThatThrownBy(() -> apiMove.move(WikipediaDefinitions.EN, query))
+        .isInstanceOfSatisfying(
+            ApiException.class,
+            exception ->
+                Assertions.assertThat(exception.getDetails())
+                    .isEqualTo("articleexists: A page of that name already exists."));
+  }
 
-    final MultiValueMap<String, Object> body = bodyCaptor.getValue();
-    Assertions.assertThat(body.getFirst("fromid")).isEqualTo("12345");
-    Assertions.assertThat(body.getFirst("to")).isEqualTo("User:Test/Draft");
+  @DisplayName("ApiMove fails when MediaWiki server fails")
+  @Test
+  void moveWhenServerFails() {
+    final MoveQuery query = new MoveQueryByTitle("User:Test", COMMON);
+    mockApiMove.givenMove(WikipediaDefinitions.EN, query).willFail();
+
+    Assertions.assertThatThrownBy(() -> apiMove.move(WikipediaDefinitions.EN, query))
+        .isInstanceOf(HttpServerErrorException.class);
   }
 }

@@ -11,26 +11,18 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.HttpServerErrorException;
+import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.api.Limit;
-import org.wpcleaner.api.api.MediaWikiServerConfiguration;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
-@SpringBootTest(
-    classes = {MockApiLanglinksTest.TestConfig.class, MediaWikiServerConfiguration.class})
+@ApiSpringBootTest
 class MockApiLanglinksTest {
 
   private static final List<String> TITLES = List.of("Main Page", "Café");
 
   @Autowired private ApiLanglinks apiLanglinks;
   @Autowired private MockApiLanglinks mockApiLanglinks;
-
-  @ComponentScan(basePackages = "org.wpcleaner")
-  @EnableAutoConfiguration
-  static class TestConfig {}
 
   @DisplayName("Retrieve langlinks by title returns the pages given to the mock")
   @Test

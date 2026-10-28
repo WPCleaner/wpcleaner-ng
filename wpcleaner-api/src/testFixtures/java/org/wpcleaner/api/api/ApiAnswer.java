@@ -8,6 +8,7 @@ package org.wpcleaner.api.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.ResponseActions;
@@ -34,6 +35,10 @@ public final class ApiAnswer {
 
   public void willReturnQuery(final String key, final Object value) {
     willReturn(Map.of("batchcomplete", true, "query", Map.of(key, value)));
+  }
+
+  public void willReturnErrors(final List<ApiError> errors) {
+    willReturn(Map.of("errors", errors));
   }
 
   public void willFail() {
