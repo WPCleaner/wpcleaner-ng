@@ -19,9 +19,10 @@ public class ApiRestClient {
   private final RestClient.Builder clientBuilder;
   private final Map<WikiDefinition, RestClient> restClients;
 
-  public ApiRestClient(final ApiLogInterceptor logInterceptor) {
+  public ApiRestClient(
+      final ApiLogInterceptor logInterceptor, final RestClient.Builder clientBuilder) {
     this.logInterceptor = logInterceptor;
-    this.clientBuilder = RestClient.builder();
+    this.clientBuilder = clientBuilder;
     this.restClients = new ConcurrentHashMap<>();
   }
 
@@ -31,6 +32,7 @@ public class ApiRestClient {
 
   private RestClient createRestClient(final WikiDefinition wiki) {
     return clientBuilder
+        .clone()
         .baseUrl(wiki.apiUrl())
         .defaultHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8")
         .defaultHeader(HttpHeaders.ACCEPT_ENCODING, "gzip")

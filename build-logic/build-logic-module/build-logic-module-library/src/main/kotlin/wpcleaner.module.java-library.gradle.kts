@@ -52,7 +52,8 @@ tasks.withType<Test>().configureEach {
   jvmArgs(
     "-Dprism.forceGPU=false",
     "-Dprism.order=sw",
-    "-Duser.language=US",
+    "-Duser.language=en",
+    "-Duser.country=US",
     "-Xshare:off",
     "-XX:+ShowCodeDetailsInExceptionMessages",
     "--enable-native-access=ALL-UNNAMED",

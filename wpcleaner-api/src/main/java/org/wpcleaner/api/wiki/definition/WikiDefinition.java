@@ -31,12 +31,24 @@ public record WikiDefinition(
         ComponentOrientation orientation,
     @Nullable WikiWarning warning) {
 
+  private static final String PATH_SEPARATOR = "/";
+
+  public WikiDefinition {
+    apiPath = withLeadingSeparator(apiPath);
+    indexPath = withLeadingSeparator(indexPath);
+    wikiPath = withLeadingSeparator(wikiPath);
+  }
+
+  private static String withLeadingSeparator(final String path) {
+    return path.startsWith(PATH_SEPARATOR) ? path : PATH_SEPARATOR + path;
+  }
+
   public String apiUrl() {
-    return "https://%s/%s".formatted(mainHost, apiPath);
+    return "https://%s%s".formatted(mainHost, apiPath);
   }
 
   public String pageUrl(final String title) {
-    return "https://%s/%s/%s".formatted(mainHost, wikiPath, title.replace(' ', '_'));
+    return "https://%s%s/%s".formatted(mainHost, wikiPath, title.replace(' ', '_'));
   }
 
   @Nullable

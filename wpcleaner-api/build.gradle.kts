@@ -10,6 +10,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-web")
   runtimeOnly("org.apache.httpcomponents.client5:httpclient5")
   testFixturesApi("org.springframework.boot:spring-boot-starter-test")
+  testFixturesImplementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 testing {
