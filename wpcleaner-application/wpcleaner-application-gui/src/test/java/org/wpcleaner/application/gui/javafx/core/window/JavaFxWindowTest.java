@@ -20,15 +20,21 @@ import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.progress.ProgressTracker;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
+import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
-import org.wpcleaner.lib.image.ImageLoader;
+import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 
+@GuiSpringBootTest
 class JavaFxWindowTest extends JavaFxTest {
+
+  @Autowired private JavaFxRecentChangesWindowServices services;
+  @Autowired private DesktopService desktopService;
 
   private static final class TestWindow extends JavaFxWindow<JavaFxWindowServices> {
 
@@ -56,20 +62,9 @@ class JavaFxWindowTest extends JavaFxTest {
 
   @DisplayName("JavaFxWindow default help page is null and F1 key triggers displayHelp")
   @Test
-  void testDefaultHelpPageAndF1Key()
-      throws InterruptedException, ExecutionException, TimeoutException {
+  void defaultHelpPageAndF1Key() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final TestWindow window = new TestWindow(services);
 
           Assertions.assertThat(window.getHelpPage()).isNull();
@@ -77,18 +72,19 @@ class JavaFxWindowTest extends JavaFxTest {
           final KeyEvent f1 =
               new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
           window.getStage().getScene().getRoot().fireEvent(f1);
-          BDDMockito.then(actionServices).should().displayHelp(window);
-
           window.displayHelp();
-          BDDMockito.then(actionServices).should(BDDMockito.times(2)).displayHelp(window);
 
           window.getStage().close();
         });
+
+    BDDMockito.then(desktopService)
+        .should(BDDMockito.timeout(5000).times(2))
+        .browse(WikipediaDefinitions.EN.pageUrl("Wikipedia:WPCleanerNG"));
   }
 
   @DisplayName("JavaFxWindow executeAsync runs task and calls afterTask on JavaFX thread")
   @Test
-  void testExecuteAsyncSuccess() throws InterruptedException, ExecutionException, TimeoutException {
+  void executeAsyncSuccess() throws InterruptedException, ExecutionException, TimeoutException {
     final CompletableFuture<String> resultFuture = new CompletableFuture<>();
     final CompletableFuture<Boolean> threadFuture = new CompletableFuture<>();
     final CompletableFuture<Boolean> daemonFuture = new CompletableFuture<>();
@@ -97,16 +93,6 @@ class JavaFxWindowTest extends JavaFxTest {
 
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final TestWindow window = new TestWindow(services);
           final LongRunningTask<String> task =
               tracker -> {
@@ -137,23 +123,13 @@ class JavaFxWindowTest extends JavaFxTest {
 
   @DisplayName("JavaFxWindow executeAsync handles failure and calls onError on JavaFX thread")
   @Test
-  void testExecuteAsyncFailure() throws InterruptedException, ExecutionException, TimeoutException {
+  void executeAsyncFailure() throws InterruptedException, ExecutionException, TimeoutException {
     final CompletableFuture<Throwable> errorFuture = new CompletableFuture<>();
     final CompletableFuture<Boolean> threadFuture = new CompletableFuture<>();
     final CompletableFuture<Boolean> loadingBeforeFuture = new CompletableFuture<>();
 
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final TestWindow window = new TestWindow(services);
           final LongRunningTask<String> task =
               _ -> {
@@ -180,7 +156,7 @@ class JavaFxWindowTest extends JavaFxTest {
 
   @DisplayName("JavaFxWindow executeAsync does not set loading when showProgress is false")
   @Test
-  void testExecuteAsyncWithoutProgress()
+  void executeAsyncWithoutProgress()
       throws InterruptedException, ExecutionException, TimeoutException {
     final CompletableFuture<String> resultFuture = new CompletableFuture<>();
     final CompletableFuture<Boolean> threadFuture = new CompletableFuture<>();
@@ -189,16 +165,6 @@ class JavaFxWindowTest extends JavaFxTest {
 
     runOnJavaFx(
         () -> {
-          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
           final TestWindow window = new TestWindow(services);
           final LongRunningTask<String> task =
               new LongRunningTask<>() {
