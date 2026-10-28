@@ -18,43 +18,52 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
-import org.wpcleaner.api.api.ConnectedUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
-import org.wpcleaner.lib.image.ImageLoader;
 
+@GuiSpringBootTest
 class UserInformationWindowTest extends JavaFxTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
+
+  @Autowired private JavaFxMainWindowServices services;
+  @Autowired private CurrentUserService currentUserService;
+  @Autowired private GuiLogin guiLogin;
+  @Autowired private JavaFxWindowsRegistry windowsRegistry;
+
+  @BeforeEach
+  void setUp() {
+    guiLogin.login(
+        WIKI,
+        "TestUser",
+        GuiLogin.USER_NAMESPACES,
+        List.of("sysop", "bureaucrat"),
+        List.of("read", "edit", "upload"));
+  }
+
+  @AfterEach
+  void tearDown() throws InterruptedException, ExecutionException, TimeoutException {
+    runOnJavaFx(windowsRegistry::closeAllWindows);
+    currentUserService.logout();
+  }
 
   @DisplayName("UserInformationWindow initializes and displays user information correctly")
   @Test
-  void testWindowInitialization()
-      throws InterruptedException, ExecutionException, TimeoutException {
+  void windowInitialization() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxMainWindowServices services = BDDMockito.mock(JavaFxMainWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
-          final ConnectedUser user = BDDMockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
-          BDDMockito.given(wiki.toString()).willReturn("Wikipedia (en)");
-          BDDMockito.given(user.username()).willReturn("TestUser");
-          BDDMockito.given(user.wiki()).willReturn(wiki);
-          BDDMockito.given(user.groups()).willReturn(List.of("sysop", "bureaucrat"));
-          BDDMockito.given(user.rights()).willReturn(List.of("read", "edit", "upload"));
-
-          final UserInformationWindow window = new UserInformationWindow(services, null, user);
+          final UserInformationWindow window =
+              new UserInformationWindow(services, null, currentUserService.getCurrentUser());
 
           Assertions.assertThat(window.getStage().getTitle()).isEqualTo("User information");
           Assertions.assertThat(window.getName()).isEqualTo("userInformation");
@@ -86,7 +95,7 @@ class UserInformationWindowTest extends JavaFxTest {
 
           final TextField wikiField =
               lookup(window, UserInformationWindow.WIKI_ID, TextField.class);
-          Assertions.assertThat(wikiField.getText()).isEqualTo("Wikipedia (en)");
+          Assertions.assertThat(wikiField.getText()).isEqualTo(WIKI.toString());
           Assertions.assertThat(wikiField.isEditable()).isFalse();
 
           final TextArea groupsField =
@@ -98,38 +107,18 @@ class UserInformationWindowTest extends JavaFxTest {
               lookup(window, UserInformationWindow.RIGHTS_ID, TextArea.class);
           Assertions.assertThat(rightsField.getText()).isEqualTo("edit\nread\nupload");
           Assertions.assertThat(rightsField.isEditable()).isFalse();
-
-          window.getStage().close();
         });
   }
 
   @DisplayName("UserInformationWindow is modal relative to owner window")
   @Test
-  void testWindowModalRelativelyToMainWindow()
+  void windowModalRelativelyToMainWindow()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxMainWindowServices services = BDDMockito.mock(JavaFxMainWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
-          final ConnectedUser user = BDDMockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
-          BDDMockito.given(wiki.toString()).willReturn("Wikipedia (en)");
-          BDDMockito.given(user.username()).willReturn("TestUser");
-          BDDMockito.given(user.wiki()).willReturn(wiki);
-          BDDMockito.given(user.groups()).willReturn(List.of());
-          BDDMockito.given(user.rights()).willReturn(List.of());
-
           final Stage ownerStage = new Stage();
           final UserInformationWindow window =
-              new UserInformationWindow(services, ownerStage, user);
+              new UserInformationWindow(services, ownerStage, currentUserService.getCurrentUser());
 
           Assertions.assertThat(window.getStage().getModality()).isEqualTo(Modality.WINDOW_MODAL);
           Assertions.assertThat(window.getStage().getOwner()).isEqualTo(ownerStage);

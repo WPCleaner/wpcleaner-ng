@@ -6,112 +6,106 @@ package org.wpcleaner.application.gui.javafx.main;
  */
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.wpcleaner.api.api.ConnectedUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.api.CurrentUserService;
-import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.base.utils.url.UrlService;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
+import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxSaveWindowsPositionAction;
-import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowFactory;
-import org.wpcleaner.application.gui.settings.interesting.InterestingSettings;
-import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
-import org.wpcleaner.lib.image.ImageLoader;
 
+@GuiSpringBootTest
 class JavaFxMainWindowTest extends JavaFxTest {
 
-  @DisplayName("JavaFxMainWindow initializes and customizes feedbacks toolbar with user button")
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
+
+  @Autowired private JavaFxMainWindowFactory mainWindowFactory;
+  @Autowired private CurrentUserService currentUserService;
+  @Autowired private DesktopService desktopService;
+  @Autowired private GuiLogin guiLogin;
+  @Autowired private JavaFxWindowsRegistry windowsRegistry;
+
+  @BeforeEach
+  void setUp() {
+    guiLogin.login(
+        WIKI, "TestUser", GuiLogin.USER_NAMESPACES, List.of("sysop"), List.of("read", "edit"));
+  }
+
+  @AfterEach
+  void tearDown() throws InterruptedException, ExecutionException, TimeoutException {
+    runOnJavaFx(windowsRegistry::closeAllWindows);
+    currentUserService.logout();
+  }
+
+  @DisplayName("JavaFxMainWindow initializes and F1 key displays its help page")
   @Test
-  void testMainWindowInitializationAndUserButton()
+  void mainWindowInitialization()
       throws InterruptedException, ExecutionException, TimeoutException {
+    mainWindowFactory.displayMainWindow();
+    final JavaFxMainWindow mainWindow = waitForWindow(windowsRegistry, JavaFxMainWindow.class);
+
     runOnJavaFx(
         () -> {
-          final JavaFxMainWindowServices services = BDDMockito.mock(JavaFxMainWindowServices.class);
-          final ApiRandom apiRandom = BDDMockito.mock(ApiRandom.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final InterestingSettingsManager interestingSettings =
-              BDDMockito.mock(InterestingSettingsManager.class);
-          final JavaFxRecentChangesWindowFactory recentChangesWindowFactory =
-              BDDMockito.mock(JavaFxRecentChangesWindowFactory.class);
-          final UrlService urlService = BDDMockito.mock(UrlService.class);
-          final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-
-          final ConnectedUser user = BDDMockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
-
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.apiRandom()).willReturn(apiRandom);
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.interestingSettings()).willReturn(interestingSettings);
-          BDDMockito.given(services.recentChangesWindowFactory())
-              .willReturn(recentChangesWindowFactory);
-          BDDMockito.given(services.urlService()).willReturn(urlService);
-          BDDMockito.given(services.user()).willReturn(currentUserService);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-
-          final InterestingSettings interestingSettingsObj =
-              BDDMockito.mock(InterestingSettings.class);
-          BDDMockito.given(interestingSettings.getCurrentSettings())
-              .willReturn(interestingSettingsObj);
-          BDDMockito.given(interestingSettingsObj.getByWikiSettings(BDDMockito.any()))
-              .willReturn(Optional.empty());
-
-          BDDMockito.given(currentUserService.getCurrentUser()).willReturn(user);
-          BDDMockito.given(user.username()).willReturn("TestUser");
-          BDDMockito.given(user.wiki()).willReturn(wiki);
-          BDDMockito.given(user.groups()).willReturn(List.of("sysop"));
-          BDDMockito.given(user.rights()).willReturn(List.of("read", "edit"));
-          BDDMockito.given(user.demo()).willReturn(false);
-
-          final JavaFxSaveWindowsPositionAction saveAction =
-              BDDMockito.mock(JavaFxSaveWindowsPositionAction.class);
-          BDDMockito.given(actionServices.saveWindowsPosition()).willReturn(saveAction);
-
-          final JavaFxMainWindow mainWindow = new JavaFxMainWindow(services);
-
           Assertions.assertThat(mainWindow.getStage().getTitle()).isEqualTo("WPCleaner");
           Assertions.assertThat(mainWindow.getHelpPage()).isEqualTo("Main");
           Assertions.assertThat(mainWindow.getStage().getOnCloseRequest()).isNotNull();
+          Assertions.assertThat(
+                  lookup(mainWindow, JavaFxMainWindow.FEEDBACKS_ID, ToolBar.class).getItems())
+              .contains(lookup(mainWindow, JavaFxMainWindow.USER_INFORMATION_ID, Button.class));
 
           final KeyEvent f1 =
               new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
           mainWindow.getStage().getScene().getRoot().fireEvent(f1);
-          BDDMockito.then(actionServices).should().displayHelp(mainWindow);
+        });
 
-          final ToolBar feedbacksToolBar =
-              lookup(mainWindow, JavaFxMainWindow.FEEDBACKS_ID, ToolBar.class);
-          final List<Button> buttons =
-              feedbacksToolBar.getItems().stream()
-                  .filter(Button.class::isInstance)
-                  .map(Button.class::cast)
-                  .toList();
+    BDDMockito.then(desktopService)
+        .should(BDDMockito.timeout(5000))
+        .browse(WikipediaDefinitions.EN.pageUrl("Wikipedia:WPCleanerNG/Main"));
+  }
 
-          final Optional<Button> userButton =
-              buttons.stream()
-                  .filter(
-                      btn ->
-                          btn.getTooltip() != null
-                              && "User information".equals(btn.getTooltip().getText()))
-                  .findFirst();
+  @DisplayName("User information button displays the logged in user")
+  @Test
+  void userInformationButtonDisplaysLoggedInUser()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    mainWindowFactory.displayMainWindow();
+    final JavaFxMainWindow mainWindow = waitForWindow(windowsRegistry, JavaFxMainWindow.class);
 
-          Assertions.assertThat(userButton).isPresent();
-          mainWindow.getStage().close();
+    runOnJavaFx(
+        () -> lookup(mainWindow, JavaFxMainWindow.USER_INFORMATION_ID, Button.class).fire());
+
+    final UserInformationWindow window =
+        waitForWindow(windowsRegistry, UserInformationWindow.class);
+    runOnJavaFx(
+        () -> {
+          Assertions.assertThat(window.getStage().getOwner()).isEqualTo(mainWindow.getStage());
+          Assertions.assertThat(
+                  lookup(window, UserInformationWindow.USERNAME_ID, TextField.class).getText())
+              .isEqualTo("TestUser");
+          Assertions.assertThat(
+                  lookup(window, UserInformationWindow.WIKI_ID, TextField.class).getText())
+              .isEqualTo(WIKI.toString());
+          Assertions.assertThat(
+                  lookup(window, UserInformationWindow.GROUPS_ID, TextArea.class).getText())
+              .isEqualTo("sysop");
+          Assertions.assertThat(
+                  lookup(window, UserInformationWindow.RIGHTS_ID, TextArea.class).getText())
+              .isEqualTo("edit\nread");
         });
   }
 }

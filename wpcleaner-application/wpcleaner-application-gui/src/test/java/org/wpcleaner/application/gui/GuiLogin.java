@@ -86,7 +86,16 @@ public final class GuiLogin {
 
   public void login(
       final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
-    givenLogin(wiki, username, namespaces);
+    login(wiki, username, namespaces, List.of(), List.of());
+  }
+
+  public void login(
+      final WikiDefinition wiki,
+      final String username,
+      final List<Namespace> namespaces,
+      final List<String> groups,
+      final List<String> rights) {
+    givenLogin(wiki, username, namespaces, groups, rights);
     loginProcessor.execute(
         LoginProcessor.Input.forLogin(wiki, username, PASSWORD.toCharArray()),
         new ProgressTracker(_ -> {}));
@@ -96,20 +105,38 @@ public final class GuiLogin {
 
   public void givenLogin(
       final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
+    givenLogin(wiki, username, namespaces, List.of(), List.of());
+  }
+
+  public void givenLogin(
+      final WikiDefinition wiki,
+      final String username,
+      final List<Namespace> namespaces,
+      final List<String> groups,
+      final List<String> rights) {
     mockApiTokens.givenLoginToken(wiki, LOGIN_TOKEN);
     mockApiLogin
         .givenLogin(wiki, username, PASSWORD, LOGIN_TOKEN)
         .willReturn(new Login(Login.RESULT_SUCCESS, 1L, username));
-    givenDemoLogin(wiki, username, namespaces);
+    givenLoginHookAndUser(wiki, username, namespaces, groups, rights);
   }
 
   public void givenDemoLogin(
       final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
+    givenLoginHookAndUser(wiki, username, namespaces, List.of(), List.of());
+  }
+
+  private void givenLoginHookAndUser(
+      final WikiDefinition wiki,
+      final String username,
+      final List<Namespace> namespaces,
+      final List<String> groups,
+      final List<String> rights) {
     mockApiSiteInfo
         .givenRequestSiteInfo(wiki, SITE_INFO_PROPERTIES, null, null, null)
         .willReturn(createSiteInfo(namespaces));
     mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(List.of());
-    mockApiUsers.givenRetrieveUser(wiki, username).willReturn(createUser(username));
+    mockApiUsers.givenRetrieveUser(wiki, username).willReturn(createUser(username, groups, rights));
   }
 
   private static SiteInfo createSiteInfo(final List<Namespace> namespaces) {
@@ -144,9 +171,10 @@ public final class GuiLogin {
         List.of());
   }
 
-  private static User createUser(final String username) {
+  private static User createUser(
+      final String username, final List<String> groups, final List<String> rights) {
     return new User(
-        null, null, null, null, null, List.of(), List.of(), List.of(), null, null, username, null,
-        List.of(), null, null);
+        null, null, null, null, null, List.of(), groups, List.of(), null, null, username, null,
+        rights, null, null);
   }
 }
