@@ -43,8 +43,9 @@ public final class GuiLogin {
               "User talk",
               true));
 
+  public static final String PASSWORD = "p&ss+word";
+
   private static final String LOGIN_TOKEN = "login-token+\\";
-  private static final String PASSWORD = "password";
   private static final Set<SiteInfoParameters.Properties> SITE_INFO_PROPERTIES =
       Set.of(
           SiteInfoParameters.Properties.INTERWIKI_MAP,
@@ -85,20 +86,30 @@ public final class GuiLogin {
 
   public void login(
       final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
-    mockApiTokens.givenLoginToken(wiki, LOGIN_TOKEN);
-    mockApiLogin
-        .givenLogin(wiki, username, PASSWORD, LOGIN_TOKEN)
-        .willReturn(new Login(Login.RESULT_SUCCESS, 1L, username));
-    mockApiSiteInfo
-        .givenRequestSiteInfo(wiki, SITE_INFO_PROPERTIES, null, null, null)
-        .willReturn(createSiteInfo(namespaces));
-    mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(List.of());
-    mockApiUsers.givenRetrieveUser(wiki, username).willReturn(createUser(username));
+    givenLogin(wiki, username, namespaces);
     loginProcessor.execute(
         LoginProcessor.Input.forLogin(wiki, username, PASSWORD.toCharArray()),
         new ProgressTracker(_ -> {}));
     mediaWikiServer.verify();
     mediaWikiServer.reset();
+  }
+
+  public void givenLogin(
+      final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
+    mockApiTokens.givenLoginToken(wiki, LOGIN_TOKEN);
+    mockApiLogin
+        .givenLogin(wiki, username, PASSWORD, LOGIN_TOKEN)
+        .willReturn(new Login(Login.RESULT_SUCCESS, 1L, username));
+    givenDemoLogin(wiki, username, namespaces);
+  }
+
+  public void givenDemoLogin(
+      final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
+    mockApiSiteInfo
+        .givenRequestSiteInfo(wiki, SITE_INFO_PROPERTIES, null, null, null)
+        .willReturn(createSiteInfo(namespaces));
+    mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(List.of());
+    mockApiUsers.givenRetrieveUser(wiki, username).willReturn(createUser(username));
   }
 
   private static SiteInfo createSiteInfo(final List<Namespace> namespaces) {

@@ -30,6 +30,12 @@ import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServices> {
 
+  static final String DEMO_ID = "demo";
+  static final String LOGIN_ID = "login";
+  static final String PASSWORD_ID = "password";
+  static final String USER_ID = "user";
+  static final String WIKI_ID = "wiki";
+
   public JavaFxLoginWindow(final JavaFxLoginWindowServices services) {
     super(services);
     initialize();
@@ -98,6 +104,9 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
     final GridPane grid = new GridPane();
     grid.setHgap(10);
     grid.setVgap(8);
+    wiki.comboBox.setId(WIKI_ID);
+    user.comboBox.setId(USER_ID);
+    password.field.setId(PASSWORD_ID);
 
     final ColumnConstraints colLabel = new ColumnConstraints();
     colLabel.setPercentWidth(20);
@@ -145,11 +154,13 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
     buttons.setAlignment(Pos.CENTER);
 
     final Button loginButton = new Button(GT._T("Login"));
+    loginButton.setId(LOGIN_ID);
     loginButton.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(loginButton, Priority.ALWAYS);
     loginButton.setOnAction(_ -> handleLogin(wiki, user, password));
 
     final Button demoButton = new Button(GT._T("Demo"));
+    demoButton.setId(DEMO_ID);
     demoButton.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(demoButton, Priority.ALWAYS);
     demoButton.setOnAction(_ -> handleDemo(wiki, user));

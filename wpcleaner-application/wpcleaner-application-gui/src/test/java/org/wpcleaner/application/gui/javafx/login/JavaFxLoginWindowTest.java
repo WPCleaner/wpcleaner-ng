@@ -5,65 +5,67 @@ package org.wpcleaner.application.gui.javafx.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.wpcleaner.api.api.CredentialsProvider;
-import org.wpcleaner.api.api.query.meta.siteinfo.ApiSiteInfo;
-import org.wpcleaner.api.wiki.definition.KnownDefinitions;
-import org.wpcleaner.application.base.processor.LoginProcessor;
-import org.wpcleaner.application.base.utils.url.UrlService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.api.api.ConnectedUser;
+import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.api.api.login.Login;
+import org.wpcleaner.api.api.login.MockApiLogin;
+import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
+import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
-import org.wpcleaner.application.gui.javafx.main.JavaFxMainWindowFactory;
-import org.wpcleaner.lib.image.ImageLoader;
+import org.wpcleaner.application.gui.javafx.main.JavaFxMainWindow;
 
+@GuiSpringBootTest
 class JavaFxLoginWindowTest extends JavaFxTest {
 
-  @DisplayName("JavaFxLoginWindow initializes correctly with close request handler")
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
+  private static final String USERNAME = "Jane Doe";
+
+  @Autowired private JavaFxLoginWindowServices services;
+  @Autowired private CurrentUserService currentUserService;
+  @Autowired private DesktopService desktopService;
+  @Autowired private GuiLogin guiLogin;
+  @Autowired private JavaFxWindowsRegistry windowsRegistry;
+  @Autowired private MockApiLogin mockApiLogin;
+  @Autowired private MockApiTokens mockApiTokens;
+
+  @BeforeEach
+  void setUp() {
+    currentUserService.logout();
+  }
+
+  @AfterEach
+  void tearDown() throws InterruptedException, ExecutionException, TimeoutException {
+    runOnJavaFx(windowsRegistry::closeAllWindows);
+    currentUserService.logout();
+  }
+
+  @DisplayName("JavaFxLoginWindow initializes correctly and F1 key displays its help page")
   @Test
-  void testWindowInitialization()
-      throws InterruptedException, ExecutionException, TimeoutException {
+  void windowInitialization() throws InterruptedException, ExecutionException, TimeoutException {
+    final JavaFxLoginWindow window = createWindow();
+
     runOnJavaFx(
         () -> {
-          final JavaFxLoginWindowServices services =
-              BDDMockito.mock(JavaFxLoginWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-          final ApiSiteInfo apiSiteInfo = BDDMockito.mock(ApiSiteInfo.class);
-          final KnownDefinitions knownDefinitions = BDDMockito.mock(KnownDefinitions.class);
-          final CredentialsProvider credentialsProvider =
-              BDDMockito.mock(CredentialsProvider.class);
-          final LoginProcessor loginProcessor = BDDMockito.mock(LoginProcessor.class);
-          final JavaFxMainWindowFactory main = BDDMockito.mock(JavaFxMainWindowFactory.class);
-          final UrlService urlService = BDDMockito.mock(UrlService.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-          BDDMockito.given(services.apiSiteInfo()).willReturn(apiSiteInfo);
-          BDDMockito.given(services.knownDefinitions()).willReturn(knownDefinitions);
-          BDDMockito.given(services.credentialsProvider()).willReturn(credentialsProvider);
-          BDDMockito.given(services.loginProcessor()).willReturn(loginProcessor);
-          BDDMockito.given(services.main()).willReturn(main);
-          BDDMockito.given(services.urlService()).willReturn(urlService);
-
-          BDDMockito.given(knownDefinitions.getDefinitions()).willReturn(Collections.emptyList());
-          BDDMockito.given(credentialsProvider.getCredential(BDDMockito.any()))
-              .willReturn(Optional.empty());
-
-          final JavaFxLoginWindow window = new JavaFxLoginWindow(services);
-
           Assertions.assertThat(window.getStage().getTitle()).isEqualTo("WPCleaner");
           Assertions.assertThat(window.getName()).isEqualTo("login");
           Assertions.assertThat(window.getHelpPage()).isEqualTo("Login");
@@ -73,9 +75,82 @@ class JavaFxLoginWindowTest extends JavaFxTest {
           final KeyEvent f1 =
               new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
           window.getStage().getScene().getRoot().fireEvent(f1);
-          BDDMockito.then(actionServices).should().displayHelp(window);
-
-          window.getStage().close();
         });
+
+    BDDMockito.then(desktopService)
+        .should(BDDMockito.timeout(5000))
+        .browse(WikipediaDefinitions.EN.pageUrl("Wikipedia:WPCleanerNG/Login"));
+  }
+
+  @DisplayName("Login logs the user in and opens the main window")
+  @Test
+  void loginOpensMainWindow() throws InterruptedException, ExecutionException, TimeoutException {
+    guiLogin.givenLogin(WIKI, USERNAME, GuiLogin.USER_NAMESPACES);
+    final JavaFxLoginWindow window = createWindow();
+
+    runOnJavaFx(
+        () -> {
+          fillForm(window, GuiLogin.PASSWORD);
+          lookup(window, JavaFxLoginWindow.LOGIN_ID, Button.class).fire();
+        });
+
+    Assertions.assertThat(waitForWindow(windowsRegistry, JavaFxMainWindow.class)).isNotNull();
+    waitForJavaFx(() -> Optional.of(window.getStage().isShowing()).filter(showing -> !showing));
+    final ConnectedUser user = currentUserService.getCurrentUser();
+    Assertions.assertThat(user.isLoggedIn()).isTrue();
+    Assertions.assertThat(user.demo()).isFalse();
+    Assertions.assertThat(user.wiki()).isEqualTo(WIKI);
+    Assertions.assertThat(user.username()).isEqualTo(USERNAME);
+  }
+
+  @DisplayName("Login shows an error and keeps the login window open when login fails")
+  @Test
+  void loginFailureShowsError() throws InterruptedException, ExecutionException, TimeoutException {
+    mockApiTokens.givenLoginToken(WIKI, "login-token");
+    mockApiLogin
+        .givenLogin(WIKI, USERNAME, "wrong password", "login-token")
+        .willReturn(new Login(Login.RESULT_FAILED, 0L, USERNAME));
+    final JavaFxLoginWindow window = createWindow();
+
+    runOnJavaFx(
+        () -> {
+          fillForm(window, "wrong password");
+          lookup(window, JavaFxLoginWindow.LOGIN_ID, Button.class).fire();
+        });
+
+    Assertions.assertThat(closeAlert(window)).isEqualTo("Login failed");
+    Assertions.assertThat(callOnJavaFx(() -> window.getStage().isShowing())).isTrue();
+    Assertions.assertThat(currentUserService.getCurrentUser().isLoggedIn()).isFalse();
+  }
+
+  @DisplayName("Demo starts the demo mode without login and opens the main window")
+  @Test
+  void demoOpensMainWindow() throws InterruptedException, ExecutionException, TimeoutException {
+    guiLogin.givenDemoLogin(WIKI, USERNAME, GuiLogin.USER_NAMESPACES);
+    final JavaFxLoginWindow window = createWindow();
+
+    runOnJavaFx(
+        () -> {
+          fillForm(window, "");
+          lookup(window, JavaFxLoginWindow.DEMO_ID, Button.class).fire();
+        });
+
+    Assertions.assertThat(waitForWindow(windowsRegistry, JavaFxMainWindow.class)).isNotNull();
+    final ConnectedUser user = currentUserService.getCurrentUser();
+    Assertions.assertThat(user.isLoggedIn()).isTrue();
+    Assertions.assertThat(user.demo()).isTrue();
+    Assertions.assertThat(user.username()).isEqualTo(USERNAME);
+  }
+
+  private JavaFxLoginWindow createWindow()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    return callOnJavaFx(() -> new JavaFxLoginWindow(services));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static void fillForm(final JavaFxLoginWindow window, final String password) {
+    lookup(window, JavaFxLoginWindow.WIKI_ID, ComboBox.class).getSelectionModel().select(WIKI);
+    lookup(window, JavaFxLoginWindow.USER_ID, ComboBox.class).getSelectionModel().select(USERNAME);
+    lookup(window, JavaFxLoginWindow.PASSWORD_ID, PasswordField.class).setText(password);
   }
 }
