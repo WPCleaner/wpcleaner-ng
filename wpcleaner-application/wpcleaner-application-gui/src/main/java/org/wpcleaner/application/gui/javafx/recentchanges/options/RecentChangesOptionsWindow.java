@@ -39,6 +39,8 @@ import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWin
 public final class RecentChangesOptionsWindow
     extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
+  static final String OK_ID = "ok";
+
   private final TextField nameField;
   private final NamespaceCheckComboBox namespaceComboBox;
   private final ShowCheckComboBox showComboBox;
@@ -120,6 +122,7 @@ public final class RecentChangesOptionsWindow
     grid.add(filtersBox, 1, 6);
 
     final Button okButton = new Button(GT._T("OK"));
+    okButton.setId(OK_ID);
     okButton.setDefaultButton(true);
     okButton.setOnAction(_ -> handleOk());
 

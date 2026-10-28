@@ -9,59 +9,68 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicReference;
+import javafx.application.Platform;
+import javafx.scene.control.Button;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
-import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.query.list.recentchanges.RecentChangesParameters;
 import org.wpcleaner.api.api.query.list.tags.Tag;
-import org.wpcleaner.api.repository.namespace.Namespace;
-import org.wpcleaner.api.repository.namespace.NamespaceRepository;
-import org.wpcleaner.api.repository.tag.TagRepository;
+import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
-import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
-import org.wpcleaner.lib.image.ImageLoader;
 
+@GuiSpringBootTest
 class RecentChangesOptionsWindowTest extends JavaFxTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
+  private static final GuiLogin.LoginData LOGIN_DATA =
+      new GuiLogin.LoginData(
+          List.of(
+              new Namespace(null, "first-letter", true, 0, "", "", false),
+              new Namespace("Talk", "first-letter", false, 1, "Talk", "Talk", true)),
+          List.of(new Tag(true, true, null, null, null, "tag1", List.of())),
+          List.of(),
+          List.of());
+
+  @Autowired private JavaFxRecentChangesWindowServices services;
+  @Autowired private CurrentUserService currentUserService;
+  @Autowired private GuiLogin guiLogin;
+  @Autowired private JavaFxWindowsRegistry windowsRegistry;
+
+  @BeforeEach
+  void setUp() {
+    guiLogin.login(WIKI, "Bot", LOGIN_DATA);
+  }
+
+  @AfterEach
+  void tearDown() throws InterruptedException, ExecutionException, TimeoutException {
+    runOnJavaFx(windowsRegistry::closeAllWindows);
+    currentUserService.logout();
+  }
 
   @DisplayName("RecentChangesOptionsWindow initializes controls and handles filters correctly")
   @Test
-  void testRecentChangesOptionsWindowInitialization()
+  void recentChangesOptionsWindowInitialization()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-          final NamespaceRepository namespaceRepository =
-              BDDMockito.mock(NamespaceRepository.class);
-          final TagRepository tagRepository = BDDMockito.mock(TagRepository.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-          BDDMockito.given(services.namespaceRepository()).willReturn(namespaceRepository);
-          BDDMockito.given(services.tagRepository()).willReturn(tagRepository);
-
-          final Namespace ns0 = Namespace.MAIN;
-          final Tag tag1 = new Tag(false, false, null, null, null, "tag1", List.of());
-
-          BDDMockito.given(namespaceRepository.getNamespaces()).willReturn(List.of(ns0));
-          BDDMockito.given(tagRepository.getTags()).willReturn(List.of(tag1));
-
           final Stage ownerStage = new Stage();
-          final RecentChangesOptions options = getRecentChangesOptions();
-
           final RecentChangesOptionsWindow window =
-              new RecentChangesOptionsWindow(services, ownerStage, options, _ -> {});
+              new RecentChangesOptionsWindow(
+                  services, ownerStage, getRecentChangesOptions(), _ -> {});
 
           Assertions.assertThat(window.getStage().getTitle()).isEqualTo("Recent changes options");
           Assertions.assertThat(window.getName()).isEqualTo("recentChangesOptions");
@@ -75,33 +84,14 @@ class RecentChangesOptionsWindowTest extends JavaFxTest {
 
   @DisplayName("RecentChangesOptionsWindow is modal relative to owner stage")
   @Test
-  void testWindowModalRelativelyToOwner()
+  void windowModalRelativelyToOwner()
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxRecentChangesWindowServices services =
-              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry =
-              BDDMockito.mock(JavaFxWindowsRegistry.class);
-          final NamespaceRepository namespaceRepository =
-              BDDMockito.mock(NamespaceRepository.class);
-          final TagRepository tagRepository = BDDMockito.mock(TagRepository.class);
-
-          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
-          BDDMockito.given(services.actionServices()).willReturn(actionServices);
-          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
-          BDDMockito.given(services.namespaceRepository()).willReturn(namespaceRepository);
-          BDDMockito.given(services.tagRepository()).willReturn(tagRepository);
-
-          BDDMockito.given(namespaceRepository.getNamespaces()).willReturn(List.of());
-          BDDMockito.given(tagRepository.getTags()).willReturn(List.of());
-
-          final RecentChangesOptions options = getRecentChangesOptions();
           final Stage ownerStage = new Stage();
           final RecentChangesOptionsWindow window =
-              new RecentChangesOptionsWindow(services, ownerStage, options, _ -> {});
+              new RecentChangesOptionsWindow(
+                  services, ownerStage, getRecentChangesOptions(), _ -> {});
 
           Assertions.assertThat(window.getStage().getModality()).isEqualTo(Modality.WINDOW_MODAL);
           Assertions.assertThat(window.getStage().getOwner()).isEqualTo(ownerStage);
@@ -111,7 +101,54 @@ class RecentChangesOptionsWindowTest extends JavaFxTest {
         });
   }
 
-  private static @NonNull RecentChangesOptions getRecentChangesOptions() {
+  @DisplayName("OK passes the options with the namespaces and tag known for the wiki")
+  @Test
+  void okPassesOptions() throws InterruptedException, ExecutionException, TimeoutException {
+    final RecentChangesOptions options = getRecentChangesOptions();
+    final AtomicReference<RecentChangesOptions> validated = new AtomicReference<>();
+
+    runOnJavaFx(
+        () -> {
+          final RecentChangesOptionsWindow window =
+              new RecentChangesOptionsWindow(services, new Stage(), options, validated::set);
+          lookup(window, RecentChangesOptionsWindow.OK_ID, Button.class).fire();
+          Assertions.assertThat(window.getStage().isShowing()).isFalse();
+        });
+
+    Assertions.assertThat(validated.get()).isEqualTo(options);
+  }
+
+  @DisplayName("OK shows an error and keeps the window open when the options name is empty")
+  @Test
+  void okWithEmptyNameShowsError()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final RecentChangesOptions options = getRecentChangesOptions();
+    final AtomicReference<RecentChangesOptions> validated = new AtomicReference<>();
+    final RecentChangesOptionsWindow window =
+        callOnJavaFx(
+            () ->
+                new RecentChangesOptionsWindow(
+                    services,
+                    new Stage(),
+                    new RecentChangesOptions(
+                        " ",
+                        options.namespace(),
+                        options.show(),
+                        options.tag(),
+                        options.type(),
+                        options.topOnly(),
+                        options.filters()),
+                    validated::set));
+
+    Platform.runLater(() -> lookup(window, RecentChangesOptionsWindow.OK_ID, Button.class).fire());
+
+    Assertions.assertThat(closeAlert(window))
+        .isEqualTo("The option name cannot be empty or blank.");
+    Assertions.assertThat(callOnJavaFx(() -> window.getStage().isShowing())).isTrue();
+    Assertions.assertThat(validated.get()).isNull();
+  }
+
+  private static RecentChangesOptions getRecentChangesOptions() {
     final RecentChangesFilter filter =
         new RecentChangesFilter(
             "Filter1",

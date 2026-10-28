@@ -18,6 +18,7 @@ import org.wpcleaner.api.api.MediaWikiServerConfiguration;
 import org.wpcleaner.api.api.login.Login;
 import org.wpcleaner.api.api.login.MockApiLogin;
 import org.wpcleaner.api.api.query.list.tags.MockApiTags;
+import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.api.query.list.users.MockApiUsers;
 import org.wpcleaner.api.api.query.list.users.User;
@@ -91,16 +92,11 @@ public final class GuiLogin {
 
   public void login(
       final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
-    login(wiki, username, namespaces, List.of(), List.of());
+    login(wiki, username, LoginData.of(namespaces));
   }
 
-  public void login(
-      final WikiDefinition wiki,
-      final String username,
-      final List<Namespace> namespaces,
-      final List<String> groups,
-      final List<String> rights) {
-    givenLogin(wiki, username, namespaces, groups, rights);
+  public void login(final WikiDefinition wiki, final String username, final LoginData data) {
+    givenLogin(wiki, username, data);
     loginProcessor.execute(
         LoginProcessor.Input.forLogin(wiki, username, PASSWORD.toCharArray()),
         new ProgressTracker(_ -> {}));
@@ -110,38 +106,31 @@ public final class GuiLogin {
 
   public void givenLogin(
       final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
-    givenLogin(wiki, username, namespaces, List.of(), List.of());
+    givenLogin(wiki, username, LoginData.of(namespaces));
   }
 
-  public void givenLogin(
-      final WikiDefinition wiki,
-      final String username,
-      final List<Namespace> namespaces,
-      final List<String> groups,
-      final List<String> rights) {
+  public void givenLogin(final WikiDefinition wiki, final String username, final LoginData data) {
     mockApiTokens.givenLoginToken(wiki, LOGIN_TOKEN);
     mockApiLogin
         .givenLogin(wiki, username, PASSWORD, LOGIN_TOKEN)
         .willReturn(new Login(Login.RESULT_SUCCESS, 1L, username));
-    givenLoginHookAndUser(wiki, username, namespaces, groups, rights);
+    givenLoginHookAndUser(wiki, username, data);
   }
 
   public void givenDemoLogin(
       final WikiDefinition wiki, final String username, final List<Namespace> namespaces) {
-    givenLoginHookAndUser(wiki, username, namespaces, List.of(), List.of());
+    givenLoginHookAndUser(wiki, username, LoginData.of(namespaces));
   }
 
   private void givenLoginHookAndUser(
-      final WikiDefinition wiki,
-      final String username,
-      final List<Namespace> namespaces,
-      final List<String> groups,
-      final List<String> rights) {
+      final WikiDefinition wiki, final String username, final LoginData data) {
     mockApiSiteInfo
         .givenRequestSiteInfo(wiki, SITE_INFO_PROPERTIES, null, null, null)
-        .willReturn(createSiteInfo(namespaces));
-    mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(List.of());
-    mockApiUsers.givenRetrieveUser(wiki, username).willReturn(createUser(username, groups, rights));
+        .willReturn(createSiteInfo(data.namespaces()));
+    mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(data.tags());
+    mockApiUsers
+        .givenRetrieveUser(wiki, username)
+        .willReturn(createUser(username, data.groups(), data.rights()));
   }
 
   private static SiteInfo createSiteInfo(final List<Namespace> namespaces) {
@@ -181,5 +170,13 @@ public final class GuiLogin {
     return new User(
         null, null, null, null, null, List.of(), groups, List.of(), null, null, username, null,
         rights, null, null);
+  }
+
+  public record LoginData(
+      List<Namespace> namespaces, List<Tag> tags, List<String> groups, List<String> rights) {
+
+    public static LoginData of(final List<Namespace> namespaces) {
+      return new LoginData(namespaces, List.of(), List.of(), List.of());
+    }
   }
 }

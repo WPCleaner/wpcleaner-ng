@@ -46,9 +46,11 @@ class UserInformationWindowTest extends JavaFxTest {
     guiLogin.login(
         WIKI,
         "TestUser",
-        GuiLogin.USER_NAMESPACES,
-        List.of("sysop", "bureaucrat"),
-        List.of("read", "edit", "upload"));
+        new GuiLogin.LoginData(
+            GuiLogin.USER_NAMESPACES,
+            List.of(),
+            List.of("sysop", "bureaucrat"),
+            List.of("read", "edit", "upload")));
   }
 
   @AfterEach

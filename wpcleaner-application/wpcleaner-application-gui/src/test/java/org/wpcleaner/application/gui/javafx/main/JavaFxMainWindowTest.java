@@ -44,7 +44,10 @@ class JavaFxMainWindowTest extends JavaFxTest {
   @BeforeEach
   void setUp() {
     guiLogin.login(
-        WIKI, "TestUser", GuiLogin.USER_NAMESPACES, List.of("sysop"), List.of("read", "edit"));
+        WIKI,
+        "TestUser",
+        new GuiLogin.LoginData(
+            GuiLogin.USER_NAMESPACES, List.of(), List.of("sysop"), List.of("read", "edit")));
   }
 
   @AfterEach
