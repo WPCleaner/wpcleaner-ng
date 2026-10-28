@@ -19,7 +19,7 @@ import javafx.scene.input.MouseEvent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
@@ -39,16 +39,17 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);
-          Mockito.when(mockImageLoader.getImageView(Mockito.any(), Mockito.any()))
-              .thenReturn(Optional.empty());
-          final JavaFxActionServices mockActionsServices = Mockito.mock(JavaFxActionServices.class);
+          final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
+          BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
+              .willReturn(Optional.empty());
+          final JavaFxActionServices mockActionsServices =
+              BDDMockito.mock(JavaFxActionServices.class);
 
           final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
-          final FilteredRecentChange rc = Mockito.mock(FilteredRecentChange.class);
+          final FilteredRecentChange rc = BDDMockito.mock(FilteredRecentChange.class);
           items.add(rc);
 
-          final ViewAction mockViewAction = Mockito.mock(ViewAction.class);
+          final ViewAction mockViewAction = BDDMockito.mock(ViewAction.class);
 
           final RecentChangesTableView tableView =
               new RecentChangesTableView(
@@ -133,10 +134,10 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
             cell.updateIndex(0);
 
             cell.getOnMouseClicked().handle(singleClickEvent);
-            Mockito.verify(mockViewAction, Mockito.never()).accept(Mockito.any());
+            BDDMockito.then(mockViewAction).should(BDDMockito.never()).accept(BDDMockito.any());
 
             cell.getOnMouseClicked().handle(rightDoubleClickEvent);
-            Mockito.verify(mockViewAction, Mockito.never()).accept(Mockito.any());
+            BDDMockito.then(mockViewAction).should(BDDMockito.never()).accept(BDDMockito.any());
 
             final TableCell<FilteredRecentChange, Object> emptyCell =
                 col.getCellFactory().call(col);
@@ -147,11 +148,11 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
             emptyCell.updateTableRow(emptyRow);
             emptyCell.updateIndex(100);
             emptyCell.getOnMouseClicked().handle(doubleClickEvent);
-            Mockito.verify(mockViewAction, Mockito.never()).accept(Mockito.any());
+            BDDMockito.then(mockViewAction).should(BDDMockito.never()).accept(BDDMockito.any());
 
             cell.getOnMouseClicked().handle(doubleClickEvent);
-            Mockito.verify(mockViewAction).accept(rc);
-            Mockito.clearInvocations(mockViewAction);
+            BDDMockito.then(mockViewAction).should().accept(rc);
+            BDDMockito.clearInvocations(mockViewAction);
           }
 
           for (final int columnIndex : NON_DOUBLE_CLICK_COLUMNS) {
@@ -170,16 +171,17 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxImageLoader mockImageLoader = Mockito.mock(JavaFxImageLoader.class);
-          Mockito.when(mockImageLoader.getImageView(Mockito.any(), Mockito.any()))
-              .thenReturn(Optional.empty());
-          final JavaFxActionServices mockActionsServices = Mockito.mock(JavaFxActionServices.class);
+          final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
+          BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
+              .willReturn(Optional.empty());
+          final JavaFxActionServices mockActionsServices =
+              BDDMockito.mock(JavaFxActionServices.class);
 
           final ObservableList<FilteredRecentChange> items = FXCollections.observableArrayList();
-          final FilteredRecentChange rc = Mockito.mock(FilteredRecentChange.class);
+          final FilteredRecentChange rc = BDDMockito.mock(FilteredRecentChange.class);
           items.add(rc);
 
-          final ViewAction mockViewAction = Mockito.mock(ViewAction.class);
+          final ViewAction mockViewAction = BDDMockito.mock(ViewAction.class);
 
           final RecentChangesTableView tableView =
               new RecentChangesTableView(
@@ -216,7 +218,7 @@ class RecentChangesTableViewDoubleClickTest extends JavaFxTest {
                   null);
 
           cell.getOnMouseClicked().handle(doubleClickEvent);
-          Mockito.verify(mockViewAction).accept(rc);
+          BDDMockito.then(mockViewAction).should().accept(rc);
         });
   }
 }

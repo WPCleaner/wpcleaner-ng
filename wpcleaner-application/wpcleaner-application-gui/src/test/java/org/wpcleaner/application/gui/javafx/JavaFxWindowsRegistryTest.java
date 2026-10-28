@@ -13,7 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindowServices;
@@ -50,13 +50,13 @@ class JavaFxWindowsRegistryTest extends JavaFxTest {
         () -> {
           final JavaFxWindowsRegistry registry = new JavaFxWindowsRegistry();
 
-          final JavaFxWindowServices services = Mockito.mock(JavaFxWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowServices services = BDDMockito.mock(JavaFxWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(registry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(registry);
 
           final RegistryTestWindow window1 = new RegistryTestWindow(services);
           final RegistryTestWindow window2 = new RegistryTestWindow(services);

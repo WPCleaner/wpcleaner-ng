@@ -16,7 +16,7 @@ import javafx.scene.input.MouseEvent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
@@ -32,9 +32,9 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final RecentChangesConfigurableAction action =
-              Mockito.mock(RecentChangesConfigurableAction.class);
+              BDDMockito.mock(RecentChangesConfigurableAction.class);
           final ObjectProperty<FilteredRecentChange> currentRecentChange =
               new SimpleObjectProperty<>();
 
@@ -53,13 +53,13 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
 
           final FilteredRecentChange userPage =
               createRecentChange(CommonNamespaces.USER.id, "User:NicoV");
-          Mockito.when(action.canApply(userPage)).thenReturn(true);
+          BDDMockito.given(action.canApply(userPage)).willReturn(true);
 
           currentRecentChange.set(userPage);
           Assertions.assertThat(button.isDisable()).isFalse();
 
           button.fire();
-          Mockito.verify(action, Mockito.times(1)).apply(userPage);
+          BDDMockito.then(action).should(BDDMockito.times(1)).apply(userPage);
 
           final MouseEvent rightClickEvent =
               new MouseEvent(
@@ -82,11 +82,11 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
                   false,
                   null);
           button.getOnMouseClicked().handle(rightClickEvent);
-          Mockito.verify(action, Mockito.times(1)).configure();
+          BDDMockito.then(action).should(BDDMockito.times(1)).configure();
 
           final FilteredRecentChange mainPage =
               createRecentChange(CommonNamespaces.MAIN.id, "Main Page");
-          Mockito.when(action.canApply(mainPage)).thenReturn(false);
+          BDDMockito.given(action.canApply(mainPage)).willReturn(false);
 
           currentRecentChange.set(mainPage);
           Assertions.assertThat(button.isDisable()).isTrue();
@@ -101,7 +101,7 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
         "comment",
         0,
         URI.create("https://diff"),
-        Mockito.mock(RecentChangesFilter.class),
+        BDDMockito.mock(RecentChangesFilter.class),
         ns,
         URI.create("https://page"),
         1,

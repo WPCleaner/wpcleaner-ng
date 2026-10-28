@@ -51,6 +51,7 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 ## Testing
 
 - Favor integration tests over unit tests.
+- Use `BDDMockito` instead of `Mockito` (`given`/`willReturn`, `then(...).should()`).
 - Share test data across modules with `testFixtures(project(...))` (see `wpcleaner-api/src/testFixtures`).
 
 ## Git

@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -35,25 +35,27 @@ class RecentChangesFilterWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final NamespaceRepository namespaceRepository = Mockito.mock(NamespaceRepository.class);
-          final TagRepository tagRepository = Mockito.mock(TagRepository.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final NamespaceRepository namespaceRepository =
+              BDDMockito.mock(NamespaceRepository.class);
+          final TagRepository tagRepository = BDDMockito.mock(TagRepository.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.namespaceRepository()).thenReturn(namespaceRepository);
-          Mockito.when(services.tagRepository()).thenReturn(tagRepository);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.namespaceRepository()).willReturn(namespaceRepository);
+          BDDMockito.given(services.tagRepository()).willReturn(tagRepository);
 
           final Namespace ns0 = new Namespace(0, "Main", "Main", List.of(), CaseType.FIRST_LETTER);
           final Namespace ns1 = new Namespace(1, "Talk", "Talk", List.of(), CaseType.FIRST_LETTER);
           final Tag tag1 = new Tag(false, false, null, null, null, "tag1", List.of());
 
-          Mockito.when(namespaceRepository.getNamespaces()).thenReturn(List.of(ns0, ns1));
-          Mockito.when(tagRepository.getTags()).thenReturn(List.of(tag1));
+          BDDMockito.given(namespaceRepository.getNamespaces()).willReturn(List.of(ns0, ns1));
+          BDDMockito.given(tagRepository.getTags()).willReturn(List.of(tag1));
 
           final Stage ownerStage = new Stage();
 
@@ -132,21 +134,23 @@ class RecentChangesFilterWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final NamespaceRepository namespaceRepository = Mockito.mock(NamespaceRepository.class);
-          final TagRepository tagRepository = Mockito.mock(TagRepository.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final NamespaceRepository namespaceRepository =
+              BDDMockito.mock(NamespaceRepository.class);
+          final TagRepository tagRepository = BDDMockito.mock(TagRepository.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.namespaceRepository()).thenReturn(namespaceRepository);
-          Mockito.when(services.tagRepository()).thenReturn(tagRepository);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.namespaceRepository()).willReturn(namespaceRepository);
+          BDDMockito.given(services.tagRepository()).willReturn(tagRepository);
 
-          Mockito.when(namespaceRepository.getNamespaces()).thenReturn(List.of());
-          Mockito.when(tagRepository.getTags()).thenReturn(List.of());
+          BDDMockito.given(namespaceRepository.getNamespaces()).willReturn(List.of());
+          BDDMockito.given(tagRepository.getTags()).willReturn(List.of());
 
           final Stage ownerStage = new Stage();
           final RecentChangesFilterWindow window =

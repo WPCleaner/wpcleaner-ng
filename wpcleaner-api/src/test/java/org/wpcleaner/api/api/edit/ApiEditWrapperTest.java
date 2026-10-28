@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.move.ApiMove;
@@ -27,30 +27,30 @@ class ApiEditWrapperTest {
   @DisplayName("ApiEditWrapper executes edits on a daemon thread named ApiEditWrapper")
   @Test
   void testEditRunsOnDaemonThread() {
-    final ApiEdit apiEdit = Mockito.mock(ApiEdit.class);
-    final ApiMove apiMove = Mockito.mock(ApiMove.class);
-    final TagRepository tagRepository = Mockito.mock(TagRepository.class);
-    final TokenRepository tokenRepository = Mockito.mock(TokenRepository.class);
-    final CurrentUserService user = Mockito.mock(CurrentUserService.class);
+    final ApiEdit apiEdit = BDDMockito.mock(ApiEdit.class);
+    final ApiMove apiMove = BDDMockito.mock(ApiMove.class);
+    final TagRepository tagRepository = BDDMockito.mock(TagRepository.class);
+    final TokenRepository tokenRepository = BDDMockito.mock(TokenRepository.class);
+    final CurrentUserService user = BDDMockito.mock(CurrentUserService.class);
 
-    final ConnectedUser connectedUser = Mockito.mock(ConnectedUser.class);
-    Mockito.when(connectedUser.demo()).thenReturn(false);
-    Mockito.when(connectedUser.isLoggedIn()).thenReturn(true);
-    Mockito.when(user.getCurrentUser()).thenReturn(connectedUser);
+    final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
+    BDDMockito.given(connectedUser.demo()).willReturn(false);
+    BDDMockito.given(connectedUser.isLoggedIn()).willReturn(true);
+    BDDMockito.given(user.getCurrentUser()).willReturn(connectedUser);
 
-    final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+    final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
     final EditQueryCommon common = EditQueryCommon.emptyBuilder().summary("test summary").build();
     final EditQuery query = new EditQueryByTitle("Test", common);
 
     final AtomicBoolean isDaemon = new AtomicBoolean(false);
     final AtomicReference<String> threadName = new AtomicReference<>();
 
-    Mockito.when(apiEdit.edit(Mockito.eq(wiki), Mockito.any(EditQuery.class)))
-        .thenAnswer(
+    BDDMockito.given(apiEdit.edit(BDDMockito.eq(wiki), BDDMockito.any(EditQuery.class)))
+        .willAnswer(
             _ -> {
               isDaemon.set(Thread.currentThread().isDaemon());
               threadName.set(Thread.currentThread().getName());
-              return Mockito.mock(Edit.class);
+              return BDDMockito.mock(Edit.class);
             });
 
     final ApiEditWrapper wrapper =
@@ -65,18 +65,18 @@ class ApiEditWrapperTest {
   @DisplayName("ApiEditWrapper executes moves on a daemon thread named ApiEditWrapper")
   @Test
   void testMoveRunsOnDaemonThread() {
-    final ApiEdit apiEdit = Mockito.mock(ApiEdit.class);
-    final ApiMove apiMove = Mockito.mock(ApiMove.class);
-    final TagRepository tagRepository = Mockito.mock(TagRepository.class);
-    final TokenRepository tokenRepository = Mockito.mock(TokenRepository.class);
-    final CurrentUserService user = Mockito.mock(CurrentUserService.class);
+    final ApiEdit apiEdit = BDDMockito.mock(ApiEdit.class);
+    final ApiMove apiMove = BDDMockito.mock(ApiMove.class);
+    final TagRepository tagRepository = BDDMockito.mock(TagRepository.class);
+    final TokenRepository tokenRepository = BDDMockito.mock(TokenRepository.class);
+    final CurrentUserService user = BDDMockito.mock(CurrentUserService.class);
 
-    final ConnectedUser connectedUser = Mockito.mock(ConnectedUser.class);
-    Mockito.when(connectedUser.demo()).thenReturn(false);
-    Mockito.when(connectedUser.isLoggedIn()).thenReturn(true);
-    Mockito.when(user.getCurrentUser()).thenReturn(connectedUser);
+    final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
+    BDDMockito.given(connectedUser.demo()).willReturn(false);
+    BDDMockito.given(connectedUser.isLoggedIn()).willReturn(true);
+    BDDMockito.given(user.getCurrentUser()).willReturn(connectedUser);
 
-    final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+    final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
     final MoveQueryCommon common =
         MoveQueryCommon.emptyBuilder().to("User:Test/Draft").reason("Drafting").build();
     final MoveQuery query = new MoveQueryByTitle("User:Test", common);
@@ -84,12 +84,12 @@ class ApiEditWrapperTest {
     final AtomicBoolean isDaemon = new AtomicBoolean(false);
     final AtomicReference<String> threadName = new AtomicReference<>();
 
-    Mockito.when(apiMove.move(Mockito.eq(wiki), Mockito.any(MoveQuery.class)))
-        .thenAnswer(
+    BDDMockito.given(apiMove.move(BDDMockito.eq(wiki), BDDMockito.any(MoveQuery.class)))
+        .willAnswer(
             _ -> {
               isDaemon.set(Thread.currentThread().isDaemon());
               threadName.set(Thread.currentThread().getName());
-              return Mockito.mock(Move.class);
+              return BDDMockito.mock(Move.class);
             });
 
     final ApiEditWrapper wrapper =
@@ -104,17 +104,17 @@ class ApiEditWrapperTest {
   @DisplayName("ApiEditWrapper destroys executor cleanly")
   @Test
   void testDestroyShutsDownExecutor() {
-    final ApiEdit apiEdit = Mockito.mock(ApiEdit.class);
-    final ApiMove apiMove = Mockito.mock(ApiMove.class);
-    final TagRepository tagRepository = Mockito.mock(TagRepository.class);
-    final TokenRepository tokenRepository = Mockito.mock(TokenRepository.class);
-    final CurrentUserService user = Mockito.mock(CurrentUserService.class);
+    final ApiEdit apiEdit = BDDMockito.mock(ApiEdit.class);
+    final ApiMove apiMove = BDDMockito.mock(ApiMove.class);
+    final TagRepository tagRepository = BDDMockito.mock(TagRepository.class);
+    final TokenRepository tokenRepository = BDDMockito.mock(TokenRepository.class);
+    final CurrentUserService user = BDDMockito.mock(CurrentUserService.class);
 
     final ApiEditWrapper wrapper =
         new ApiEditWrapper(apiEdit, apiMove, tagRepository, tokenRepository, user);
     wrapper.destroy();
 
-    final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+    final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
     final EditQueryCommon common = EditQueryCommon.emptyBuilder().summary("test summary").build();
     final EditQuery query = new EditQueryByTitle("Test", common);
 

@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
@@ -44,14 +44,15 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final Stage ownerStage = new Stage();
           final UserPageHostingConfig initialConfig =
@@ -93,8 +94,11 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
           Assertions.assertThat(removeButton.getText()).isEmpty();
           Assertions.assertThat(removeButton.getTooltip().getText()).isEqualTo("Remove");
 
-          Mockito.verify(imageLoader).getImageResource(ImageCollection.LIST_ADD, ImageSize.BUTTON);
-          Mockito.verify(imageLoader)
+          BDDMockito.then(imageLoader)
+              .should()
+              .getImageResource(ImageCollection.LIST_ADD, ImageSize.BUTTON);
+          BDDMockito.then(imageLoader)
+              .should()
               .getImageResource(ImageCollection.LIST_REMOVE, ImageSize.BUTTON);
 
           Assertions.assertThat(removeButton.isDisabled()).isTrue();
@@ -123,14 +127,15 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final Stage ownerStage = new Stage();
           final UserPageHostingConfigWindow window =
@@ -154,14 +159,15 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
 
           final Stage ownerStage = new Stage();
           final UserPageHostingConfigWindow window =

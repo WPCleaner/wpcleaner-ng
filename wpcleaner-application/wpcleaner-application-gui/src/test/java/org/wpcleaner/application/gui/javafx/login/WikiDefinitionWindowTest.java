@@ -23,7 +23,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.wpcleaner.api.api.query.meta.siteinfo.ApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
@@ -41,18 +40,20 @@ class WikiDefinitionWindowTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxLoginWindowServices services = Mockito.mock(JavaFxLoginWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final ApiSiteInfo apiSiteInfo = Mockito.mock(ApiSiteInfo.class);
-          final KnownDefinitions knownDefinitions = Mockito.mock(KnownDefinitions.class);
+          final JavaFxLoginWindowServices services =
+              BDDMockito.mock(JavaFxLoginWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final ApiSiteInfo apiSiteInfo = BDDMockito.mock(ApiSiteInfo.class);
+          final KnownDefinitions knownDefinitions = BDDMockito.mock(KnownDefinitions.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.apiSiteInfo()).thenReturn(apiSiteInfo);
-          Mockito.when(services.knownDefinitions()).thenReturn(knownDefinitions);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.apiSiteInfo()).willReturn(apiSiteInfo);
+          BDDMockito.given(services.knownDefinitions()).willReturn(knownDefinitions);
 
           final AtomicBoolean added = new AtomicBoolean(false);
           final WikiDefinitionWindow window =
@@ -84,18 +85,20 @@ class WikiDefinitionWindowTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxLoginWindowServices services = Mockito.mock(JavaFxLoginWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final ApiSiteInfo apiSiteInfo = Mockito.mock(ApiSiteInfo.class);
-          final KnownDefinitions knownDefinitions = Mockito.mock(KnownDefinitions.class);
+          final JavaFxLoginWindowServices services =
+              BDDMockito.mock(JavaFxLoginWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final ApiSiteInfo apiSiteInfo = BDDMockito.mock(ApiSiteInfo.class);
+          final KnownDefinitions knownDefinitions = BDDMockito.mock(KnownDefinitions.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.apiSiteInfo()).thenReturn(apiSiteInfo);
-          Mockito.when(services.knownDefinitions()).thenReturn(knownDefinitions);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.apiSiteInfo()).willReturn(apiSiteInfo);
+          BDDMockito.given(services.knownDefinitions()).willReturn(knownDefinitions);
 
           final Stage ownerStage = new Stage();
           final WikiDefinitionWindow window =
@@ -117,28 +120,30 @@ class WikiDefinitionWindowTest extends JavaFxTest {
 
     runOnJavaFx(
         () -> {
-          final JavaFxLoginWindowServices services = Mockito.mock(JavaFxLoginWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final ApiSiteInfo apiSiteInfo = Mockito.mock(ApiSiteInfo.class);
-          final KnownDefinitions knownDefinitions = Mockito.mock(KnownDefinitions.class);
+          final JavaFxLoginWindowServices services =
+              BDDMockito.mock(JavaFxLoginWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final ApiSiteInfo apiSiteInfo = BDDMockito.mock(ApiSiteInfo.class);
+          final KnownDefinitions knownDefinitions = BDDMockito.mock(KnownDefinitions.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.apiSiteInfo()).thenReturn(apiSiteInfo);
-          Mockito.when(services.knownDefinitions()).thenReturn(knownDefinitions);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.apiSiteInfo()).willReturn(apiSiteInfo);
+          BDDMockito.given(services.knownDefinitions()).willReturn(knownDefinitions);
 
-          final SiteInfo siteInfo = Mockito.mock(SiteInfo.class);
-          Mockito.when(
+          final SiteInfo siteInfo = BDDMockito.mock(SiteInfo.class);
+          BDDMockito.given(
                   apiSiteInfo.requestSiteInfo(
-                      Mockito.any(),
-                      Mockito.any(),
-                      Mockito.isNull(),
-                      Mockito.isNull(),
-                      Mockito.isNull()))
-              .thenReturn(siteInfo);
+                      BDDMockito.any(),
+                      BDDMockito.any(),
+                      BDDMockito.isNull(),
+                      BDDMockito.isNull(),
+                      BDDMockito.isNull()))
+              .willReturn(siteInfo);
 
           final WikiDefinitionWindow window =
               new WikiDefinitionWindow(services, null, addedFuture::complete);

@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
@@ -32,7 +32,7 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final List<ContentAppendConfigurationText> initialTexts =
               List.of(new ContentAppendConfigurationText(true, "myLabel", "myText"));
           final ContentAppendConfigurationPane pane =
@@ -74,8 +74,11 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
 
           Assertions.assertThat(addButton.getText()).isEmpty();
           Assertions.assertThat(removeButton.getText()).isEmpty();
-          Mockito.verify(imageLoader).getImageResource(ImageCollection.LIST_ADD, ImageSize.BUTTON);
-          Mockito.verify(imageLoader)
+          BDDMockito.then(imageLoader)
+              .should()
+              .getImageResource(ImageCollection.LIST_ADD, ImageSize.BUTTON);
+          BDDMockito.then(imageLoader)
+              .should()
               .getImageResource(ImageCollection.LIST_REMOVE, ImageSize.BUTTON);
 
           Assertions.assertThat(removeButton.isDisabled()).isTrue();
@@ -93,7 +96,7 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final ContentAppendConfigurationPane pane =
               new ContentAppendConfigurationPane("Append Title", imageLoader, null);
 

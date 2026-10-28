@@ -22,7 +22,7 @@ import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.CurrentUserService;
@@ -62,10 +62,11 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
 
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
@@ -75,11 +76,11 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.colorizer()).thenReturn(colorizer);
-          Mockito.when(services.pageAnalysisFactory()).thenReturn(pageAnalysisFactory);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.colorizer()).willReturn(colorizer);
+          BDDMockito.given(services.pageAnalysisFactory()).willReturn(pageAnalysisFactory);
 
           final Stage ownerStage = new Stage();
           final UserPageDraftConfig config =
@@ -205,14 +206,15 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final CurrentUserService currentUserService = Mockito.mock(CurrentUserService.class);
-          final ConnectedUser connectedUser = Mockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
-          final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
+          final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
+          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
+          final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
 
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
@@ -222,15 +224,15 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.colorizer()).thenReturn(colorizer);
-          Mockito.when(services.pageAnalysisFactory()).thenReturn(pageAnalysisFactory);
-          Mockito.when(services.user()).thenReturn(currentUserService);
-          Mockito.when(currentUserService.getCurrentUser()).thenReturn(connectedUser);
-          Mockito.when(connectedUser.wiki()).thenReturn(wiki);
-          Mockito.when(services.apiRevisions()).thenReturn(apiRevisions);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.colorizer()).willReturn(colorizer);
+          BDDMockito.given(services.pageAnalysisFactory()).willReturn(pageAnalysisFactory);
+          BDDMockito.given(services.user()).willReturn(currentUserService);
+          BDDMockito.given(currentUserService.getCurrentUser()).willReturn(connectedUser);
+          BDDMockito.given(connectedUser.wiki()).willReturn(wiki);
+          BDDMockito.given(services.apiRevisions()).willReturn(apiRevisions);
 
           final Revision revision =
               new Revision(
@@ -248,12 +250,12 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
                   null);
           final Page page = new Page(false, 2, 1, List.of(revision), "User:Test/CustomDraft");
 
-          Mockito.when(
+          BDDMockito.given(
                   apiRevisions.retrieveRevisionsByTitle(
-                      Mockito.eq(wiki),
-                      Mockito.eq(List.of("User:Test/CustomDraft")),
-                      Mockito.any()))
-              .thenReturn(List.of(page));
+                      BDDMockito.eq(wiki),
+                      BDDMockito.eq(List.of("User:Test/CustomDraft")),
+                      BDDMockito.any()))
+              .willReturn(List.of(page));
 
           final Stage ownerStage = new Stage();
           final UserPageDraftConfig config =
@@ -287,11 +289,12 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
           subPageNameField.setText("CustomDraft");
           refreshButton.fire();
 
-          Mockito.verify(apiRevisions, Mockito.timeout(5000).times(1))
+          BDDMockito.then(apiRevisions)
+              .should(BDDMockito.timeout(5000).times(1))
               .retrieveRevisionsByTitle(
-                  Mockito.eq(WikipediaDefinitions.EN),
-                  Mockito.eq(List.of("User:Test/CustomDraft")),
-                  Mockito.any());
+                  BDDMockito.eq(WikipediaDefinitions.EN),
+                  BDDMockito.eq(List.of("User:Test/CustomDraft")),
+                  BDDMockito.any());
 
           window.getStage().close();
           ownerStage.close();

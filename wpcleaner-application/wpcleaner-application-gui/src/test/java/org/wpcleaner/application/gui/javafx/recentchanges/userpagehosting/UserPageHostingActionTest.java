@@ -20,7 +20,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.CurrentUserService;
@@ -58,8 +58,8 @@ class UserPageHostingActionTest extends JavaFxTest {
   @Test
   void testCanApply() {
     final JavaFxRecentChangesWindowServices services =
-        Mockito.mock(JavaFxRecentChangesWindowServices.class);
-    final JavaFxWindow<?> owner = Mockito.mock(JavaFxWindow.class);
+        BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+    final JavaFxWindow<?> owner = BDDMockito.mock(JavaFxWindow.class);
     final RecentChangesAction action = new UserPageHostingAction(services, owner);
 
     final FilteredRecentChange userPage =
@@ -83,31 +83,32 @@ class UserPageHostingActionTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           final JavaFxRecentChangesWindowServices services =
-              Mockito.mock(JavaFxRecentChangesWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final CurrentUserService currentUserService = Mockito.mock(CurrentUserService.class);
-          final ConnectedUser connectedUser = Mockito.mock(ConnectedUser.class);
-          final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
+              BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
+          final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
+          final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.user()).thenReturn(currentUserService);
-          Mockito.when(currentUserService.getCurrentUser()).thenReturn(connectedUser);
-          Mockito.when(connectedUser.wiki()).thenReturn(wiki);
-          Mockito.when(wiki.code()).thenReturn("enwiki");
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.user()).willReturn(currentUserService);
+          BDDMockito.given(currentUserService.getCurrentUser()).willReturn(connectedUser);
+          BDDMockito.given(connectedUser.wiki()).willReturn(wiki);
+          BDDMockito.given(wiki.code()).willReturn("enwiki");
 
-          final JavaFxWindow<?> owner = Mockito.mock(JavaFxWindow.class);
+          final JavaFxWindow<?> owner = BDDMockito.mock(JavaFxWindow.class);
           final Stage ownerStage = new Stage();
-          Mockito.when(owner.getStage()).thenReturn(ownerStage);
+          BDDMockito.given(owner.getStage()).willReturn(ownerStage);
 
           final UserPageHostingAction action = new UserPageHostingAction(services, owner);
           action.configure();
 
           final ArgumentCaptor<JavaFxWindow<?>> captor = ArgumentCaptor.captor();
-          Mockito.verify(windowsRegistry).register(captor.capture());
+          BDDMockito.then(windowsRegistry).should().register(captor.capture());
           Assertions.assertThat(captor.getValue()).isInstanceOf(UserPageHostingConfigWindow.class);
           captor.getValue().getStage().close();
         });
@@ -146,15 +147,17 @@ class UserPageHostingActionTest extends JavaFxTest {
       runOnJavaFx(
           () -> {
             final JavaFxRecentChangesWindowServices services =
-                Mockito.mock(JavaFxRecentChangesWindowServices.class);
-            final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-            final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-            final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-            final CurrentUserService currentUserService = Mockito.mock(CurrentUserService.class);
-            final ConnectedUser connectedUser = Mockito.mock(ConnectedUser.class);
-            final WikiDefinition wiki = Mockito.mock(WikiDefinition.class);
-            final NamespaceRepository namespaceRepository = Mockito.mock(NamespaceRepository.class);
-            final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+                BDDMockito.mock(JavaFxRecentChangesWindowServices.class);
+            final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+            final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+            final JavaFxWindowsRegistry windowsRegistry =
+                BDDMockito.mock(JavaFxWindowsRegistry.class);
+            final CurrentUserService currentUserService = BDDMockito.mock(CurrentUserService.class);
+            final ConnectedUser connectedUser = BDDMockito.mock(ConnectedUser.class);
+            final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
+            final NamespaceRepository namespaceRepository =
+                BDDMockito.mock(NamespaceRepository.class);
+            final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
             final PageSyntaxColorizer colorizer =
                 new PageSyntaxColorizer(
                     List.of(),
@@ -163,17 +166,17 @@ class UserPageHostingActionTest extends JavaFxTest {
                 new PageAnalysisFactory(
                     new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
 
-            Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-            Mockito.when(services.actionServices()).thenReturn(actionServices);
-            Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-            Mockito.when(services.user()).thenReturn(currentUserService);
-            Mockito.when(currentUserService.getCurrentUser()).thenReturn(connectedUser);
-            Mockito.when(connectedUser.wiki()).thenReturn(wiki);
-            Mockito.when(wiki.code()).thenReturn(wikiCode);
-            Mockito.when(services.namespaceRepository()).thenReturn(namespaceRepository);
-            Mockito.when(services.apiRevisions()).thenReturn(apiRevisions);
-            Mockito.when(services.colorizer()).thenReturn(colorizer);
-            Mockito.when(services.pageAnalysisFactory()).thenReturn(pageAnalysisFactory);
+            BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+            BDDMockito.given(services.actionServices()).willReturn(actionServices);
+            BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+            BDDMockito.given(services.user()).willReturn(currentUserService);
+            BDDMockito.given(currentUserService.getCurrentUser()).willReturn(connectedUser);
+            BDDMockito.given(connectedUser.wiki()).willReturn(wiki);
+            BDDMockito.given(wiki.code()).willReturn(wikiCode);
+            BDDMockito.given(services.namespaceRepository()).willReturn(namespaceRepository);
+            BDDMockito.given(services.apiRevisions()).willReturn(apiRevisions);
+            BDDMockito.given(services.colorizer()).willReturn(colorizer);
+            BDDMockito.given(services.pageAnalysisFactory()).willReturn(pageAnalysisFactory);
 
             final Namespace userNs =
                 new Namespace(
@@ -185,8 +188,8 @@ class UserPageHostingActionTest extends JavaFxTest {
                     "User talk",
                     List.of(),
                     CaseType.FIRST_LETTER);
-            Mockito.when(namespaceRepository.getNamespaces())
-                .thenReturn(List.of(userNs, userTalkNs));
+            BDDMockito.given(namespaceRepository.getNamespaces())
+                .willReturn(List.of(userNs, userTalkNs));
 
             final Revision userRevision =
                 new Revision(
@@ -227,17 +230,17 @@ class UserPageHostingActionTest extends JavaFxTest {
                     List.of(talkRevision),
                     "User talk:NicoV");
 
-            Mockito.when(
+            BDDMockito.given(
                     apiRevisions.retrieveRevisionsByTitle(
-                        Mockito.eq(wiki),
-                        Mockito.eq(List.of("User:NicoV", "User talk:NicoV")),
-                        Mockito.any()))
-                .thenReturn(List.of(userPage, talkPage));
+                        BDDMockito.eq(wiki),
+                        BDDMockito.eq(List.of("User:NicoV", "User talk:NicoV")),
+                        BDDMockito.any()))
+                .willReturn(List.of(userPage, talkPage));
 
-            final JavaFxWindow<?> owner = Mockito.mock(JavaFxWindow.class);
+            final JavaFxWindow<?> owner = BDDMockito.mock(JavaFxWindow.class);
             final Stage ownerStage = new Stage();
-            Mockito.when(owner.getStage()).thenReturn(ownerStage);
-            Mockito.doAnswer(
+            BDDMockito.given(owner.getStage()).willReturn(ownerStage);
+            BDDMockito.willAnswer(
                     invocation -> {
                       final LongRunningTask<?> task = invocation.getArgument(0);
                       final Consumer<Object> afterTask = invocation.getArgument(1);
@@ -245,8 +248,8 @@ class UserPageHostingActionTest extends JavaFxTest {
                       afterTask.accept(result);
                       return null;
                     })
-                .when(owner)
-                .executeAsync(Mockito.any(), Mockito.any(), Mockito.any());
+                .given(owner)
+                .executeAsync(BDDMockito.any(), BDDMockito.any(), BDDMockito.any());
 
             final UserPageHostingAction action = new UserPageHostingAction(services, owner);
             final FilteredRecentChange userPageRc =
@@ -254,15 +257,16 @@ class UserPageHostingActionTest extends JavaFxTest {
 
             action.apply(userPageRc);
 
-            Mockito.verify(apiRevisions, Mockito.times(1))
+            BDDMockito.then(apiRevisions)
+                .should(BDDMockito.times(1))
                 .retrieveRevisionsByTitle(
-                    Mockito.eq(wiki),
-                    Mockito.eq(List.of("User:NicoV", "User talk:NicoV")),
-                    Mockito.any());
-            Mockito.verifyNoMoreInteractions(apiRevisions);
+                    BDDMockito.eq(wiki),
+                    BDDMockito.eq(List.of("User:NicoV", "User talk:NicoV")),
+                    BDDMockito.any());
+            BDDMockito.then(apiRevisions).shouldHaveNoMoreInteractions();
 
             final ArgumentCaptor<JavaFxWindow<?>> captor = ArgumentCaptor.captor();
-            Mockito.verify(windowsRegistry).register(captor.capture());
+            BDDMockito.then(windowsRegistry).should().register(captor.capture());
             Assertions.assertThat(captor.getValue())
                 .isInstanceOf(UserPageHostingActionWindow.class);
             captor.getValue().getStage().close();
@@ -278,7 +282,7 @@ class UserPageHostingActionTest extends JavaFxTest {
         "comment",
         0,
         URI.create("https://diff"),
-        Mockito.mock(RecentChangesFilter.class),
+        BDDMockito.mock(RecentChangesFilter.class),
         ns,
         URI.create("https://page"),
         1,

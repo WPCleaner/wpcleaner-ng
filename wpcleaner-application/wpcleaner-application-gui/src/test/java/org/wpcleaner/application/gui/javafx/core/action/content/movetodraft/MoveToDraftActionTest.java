@@ -17,7 +17,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.edit.ApiEditWrapper;
 import org.wpcleaner.api.api.move.MoveQueryByTitle;
@@ -43,8 +43,8 @@ class MoveToDraftActionTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindow<?> window = Mockito.mock(JavaFxWindow.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final JavaFxWindow<?> window = BDDMockito.mock(JavaFxWindow.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
                   List.of(),
@@ -52,8 +52,8 @@ class MoveToDraftActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
-          final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
+          final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
           final MoveToDraftConfiguration config =
               new MoveToDraftConfiguration("Draft", "Move to draft");
 
@@ -89,8 +89,8 @@ class MoveToDraftActionTest extends JavaFxTest {
   void testGetSubPageName() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindow<?> window = Mockito.mock(JavaFxWindow.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final JavaFxWindow<?> window = BDDMockito.mock(JavaFxWindow.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
                   List.of(),
@@ -98,8 +98,8 @@ class MoveToDraftActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
-          final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
+          final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
           final MoveToDraftConfiguration config =
               new MoveToDraftConfiguration("  DraftSubPage  ", "Summary text");
 
@@ -128,8 +128,8 @@ class MoveToDraftActionTest extends JavaFxTest {
   void testExecute() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindow<?> window = Mockito.mock(JavaFxWindow.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final JavaFxWindow<?> window = BDDMockito.mock(JavaFxWindow.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
                   List.of(),
@@ -137,8 +137,8 @@ class MoveToDraftActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
-          final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
+          final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
           final MoveToDraftConfiguration config =
               new MoveToDraftConfiguration("CustomSubPage", "Summary text");
 
@@ -162,8 +162,9 @@ class MoveToDraftActionTest extends JavaFxTest {
 
           final ArgumentCaptor<MoveQueryByTitle> captor =
               ArgumentCaptor.forClass(MoveQueryByTitle.class);
-          Mockito.verify(apiEditWrapper)
-              .move(Mockito.eq(WikipediaDefinitions.EN), captor.capture());
+          BDDMockito.then(apiEditWrapper)
+              .should()
+              .move(BDDMockito.eq(WikipediaDefinitions.EN), captor.capture());
 
           final MoveQueryByTitle query = captor.getValue();
           Assertions.assertThat(query.from()).isEqualTo("User:Author");
@@ -177,8 +178,8 @@ class MoveToDraftActionTest extends JavaFxTest {
   void testRefreshSuccess() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindow<?> window = Mockito.mock(JavaFxWindow.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final JavaFxWindow<?> window = BDDMockito.mock(JavaFxWindow.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
                   List.of(),
@@ -186,8 +187,8 @@ class MoveToDraftActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
-          final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
+          final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
           final MoveToDraftConfiguration config =
               new MoveToDraftConfiguration("Draft", "Summary text");
 
@@ -223,8 +224,9 @@ class MoveToDraftActionTest extends JavaFxTest {
           final ArgumentCaptor<Consumer<String>> onSuccessCaptor =
               ArgumentCaptor.forClass(Consumer.class);
 
-          Mockito.verify(window)
-              .executeAsync(taskCaptor.capture(), onSuccessCaptor.capture(), Mockito.any());
+          BDDMockito.then(window)
+              .should()
+              .executeAsync(taskCaptor.capture(), onSuccessCaptor.capture(), BDDMockito.any());
 
           Assertions.assertThat(taskCaptor.getValue()).isNotNull();
 
@@ -240,8 +242,8 @@ class MoveToDraftActionTest extends JavaFxTest {
   void testRefreshBlankSubPage() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindow<?> window = Mockito.mock(JavaFxWindow.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final JavaFxWindow<?> window = BDDMockito.mock(JavaFxWindow.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
                   List.of(),
@@ -249,8 +251,8 @@ class MoveToDraftActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
-          final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
+          final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
           final MoveToDraftConfiguration config = new MoveToDraftConfiguration("", "Summary text");
 
           final MoveToDraftAction action =
@@ -276,9 +278,10 @@ class MoveToDraftActionTest extends JavaFxTest {
 
           refreshButton.fire();
 
-          Mockito.verify(window).showError("Please enter a sub-page title");
-          Mockito.verify(window, Mockito.never())
-              .executeAsync(Mockito.any(), Mockito.any(), Mockito.any());
+          BDDMockito.then(window).should().showError("Please enter a sub-page title");
+          BDDMockito.then(window)
+              .should(BDDMockito.never())
+              .executeAsync(BDDMockito.any(), BDDMockito.any(), BDDMockito.any());
         });
   }
 
@@ -287,8 +290,8 @@ class MoveToDraftActionTest extends JavaFxTest {
   void testRefreshError() throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxWindow<?> window = Mockito.mock(JavaFxWindow.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
+          final JavaFxWindow<?> window = BDDMockito.mock(JavaFxWindow.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
           final PageSyntaxColorizer colorizer =
               new PageSyntaxColorizer(
                   List.of(),
@@ -296,8 +299,8 @@ class MoveToDraftActionTest extends JavaFxTest {
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
-          final ApiEditWrapper apiEditWrapper = Mockito.mock(ApiEditWrapper.class);
-          final ApiRevisions apiRevisions = Mockito.mock(ApiRevisions.class);
+          final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
+          final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
           final MoveToDraftConfiguration config =
               new MoveToDraftConfiguration("Draft", "Summary text");
 
@@ -328,12 +331,13 @@ class MoveToDraftActionTest extends JavaFxTest {
           final ArgumentCaptor<Consumer<Exception>> onErrorCaptor =
               ArgumentCaptor.forClass(Consumer.class);
 
-          Mockito.verify(window)
-              .executeAsync(Mockito.any(), Mockito.any(), onErrorCaptor.capture());
+          BDDMockito.then(window)
+              .should()
+              .executeAsync(BDDMockito.any(), BDDMockito.any(), onErrorCaptor.capture());
 
           onErrorCaptor.getValue().accept(new RuntimeException("Network error"));
 
-          Mockito.verify(window).showError("Error loading page content: Network error");
+          BDDMockito.then(window).should().showError("Error loading page content: Network error");
         });
   }
 }

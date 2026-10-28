@@ -14,7 +14,7 @@ import javafx.scene.input.KeyEvent;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.BDDMockito;
 import org.wpcleaner.api.api.CredentialsProvider;
 import org.wpcleaner.api.api.query.meta.siteinfo.ApiSiteInfo;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
@@ -34,30 +34,33 @@ class JavaFxLoginWindowTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     runOnJavaFx(
         () -> {
-          final JavaFxLoginWindowServices services = Mockito.mock(JavaFxLoginWindowServices.class);
-          final ImageLoader imageLoader = Mockito.mock(ImageLoader.class);
-          final JavaFxActionServices actionServices = Mockito.mock(JavaFxActionServices.class);
-          final JavaFxWindowsRegistry windowsRegistry = Mockito.mock(JavaFxWindowsRegistry.class);
-          final ApiSiteInfo apiSiteInfo = Mockito.mock(ApiSiteInfo.class);
-          final KnownDefinitions knownDefinitions = Mockito.mock(KnownDefinitions.class);
-          final CredentialsProvider credentialsProvider = Mockito.mock(CredentialsProvider.class);
-          final LoginProcessor loginProcessor = Mockito.mock(LoginProcessor.class);
-          final JavaFxMainWindowFactory main = Mockito.mock(JavaFxMainWindowFactory.class);
-          final UrlService urlService = Mockito.mock(UrlService.class);
+          final JavaFxLoginWindowServices services =
+              BDDMockito.mock(JavaFxLoginWindowServices.class);
+          final ImageLoader imageLoader = BDDMockito.mock(ImageLoader.class);
+          final JavaFxActionServices actionServices = BDDMockito.mock(JavaFxActionServices.class);
+          final JavaFxWindowsRegistry windowsRegistry =
+              BDDMockito.mock(JavaFxWindowsRegistry.class);
+          final ApiSiteInfo apiSiteInfo = BDDMockito.mock(ApiSiteInfo.class);
+          final KnownDefinitions knownDefinitions = BDDMockito.mock(KnownDefinitions.class);
+          final CredentialsProvider credentialsProvider =
+              BDDMockito.mock(CredentialsProvider.class);
+          final LoginProcessor loginProcessor = BDDMockito.mock(LoginProcessor.class);
+          final JavaFxMainWindowFactory main = BDDMockito.mock(JavaFxMainWindowFactory.class);
+          final UrlService urlService = BDDMockito.mock(UrlService.class);
 
-          Mockito.when(services.imageLoader()).thenReturn(imageLoader);
-          Mockito.when(services.actionServices()).thenReturn(actionServices);
-          Mockito.when(services.windowsRegistry()).thenReturn(windowsRegistry);
-          Mockito.when(services.apiSiteInfo()).thenReturn(apiSiteInfo);
-          Mockito.when(services.knownDefinitions()).thenReturn(knownDefinitions);
-          Mockito.when(services.credentialsProvider()).thenReturn(credentialsProvider);
-          Mockito.when(services.loginProcessor()).thenReturn(loginProcessor);
-          Mockito.when(services.main()).thenReturn(main);
-          Mockito.when(services.urlService()).thenReturn(urlService);
+          BDDMockito.given(services.imageLoader()).willReturn(imageLoader);
+          BDDMockito.given(services.actionServices()).willReturn(actionServices);
+          BDDMockito.given(services.windowsRegistry()).willReturn(windowsRegistry);
+          BDDMockito.given(services.apiSiteInfo()).willReturn(apiSiteInfo);
+          BDDMockito.given(services.knownDefinitions()).willReturn(knownDefinitions);
+          BDDMockito.given(services.credentialsProvider()).willReturn(credentialsProvider);
+          BDDMockito.given(services.loginProcessor()).willReturn(loginProcessor);
+          BDDMockito.given(services.main()).willReturn(main);
+          BDDMockito.given(services.urlService()).willReturn(urlService);
 
-          Mockito.when(knownDefinitions.getDefinitions()).thenReturn(Collections.emptyList());
-          Mockito.when(credentialsProvider.getCredential(Mockito.any()))
-              .thenReturn(Optional.empty());
+          BDDMockito.given(knownDefinitions.getDefinitions()).willReturn(Collections.emptyList());
+          BDDMockito.given(credentialsProvider.getCredential(BDDMockito.any()))
+              .willReturn(Optional.empty());
 
           final JavaFxLoginWindow window = new JavaFxLoginWindow(services);
 
@@ -70,7 +73,7 @@ class JavaFxLoginWindowTest extends JavaFxTest {
           final KeyEvent f1 =
               new KeyEvent(KeyEvent.KEY_PRESSED, "", "", KeyCode.F1, false, false, false, false);
           window.getStage().getScene().getRoot().fireEvent(f1);
-          Mockito.verify(actionServices).displayHelp(window);
+          BDDMockito.then(actionServices).should().displayHelp(window);
 
           window.getStage().close();
         });
