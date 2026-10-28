@@ -18,7 +18,10 @@ import org.wpcleaner.application.gui.core.desktop.DesktopService;
 @Target(ElementType.TYPE)
 @SpringBootTest(
     classes = {WPCleaner.class, MediaWikiServerConfiguration.class, GuiLogin.class},
-    properties = "wpcleaner.api.edit-wrapper.throttle-period-seconds=0",
+    properties = {
+      MediaWikiServerConfiguration.ENABLED_PROPERTY + "=true",
+      "wpcleaner.api.edit-wrapper.throttle-period-seconds=0"
+    },
     webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @MockitoBean(types = DesktopService.class)
 public @interface GuiSpringBootTest {}

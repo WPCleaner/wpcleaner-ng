@@ -10,8 +10,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.test.context.TestComponent;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.wpcleaner.api.api.Limit;
+import org.wpcleaner.api.api.MediaWikiServerConfiguration;
 import org.wpcleaner.api.api.login.Login;
 import org.wpcleaner.api.api.login.MockApiLogin;
 import org.wpcleaner.api.api.query.list.tags.MockApiTags;
@@ -28,6 +31,8 @@ import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
 
+@ConditionalOnProperty(MediaWikiServerConfiguration.ENABLED_PROPERTY)
+@TestComponent
 public final class GuiLogin {
 
   public static final List<Namespace> USER_NAMESPACES =

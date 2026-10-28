@@ -5,6 +5,8 @@ package org.wpcleaner.api.api;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
@@ -19,7 +21,11 @@ import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.langlinks.MockApiLanglinks;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 
+@ConditionalOnProperty(MediaWikiServerConfiguration.ENABLED_PROPERTY)
+@TestConfiguration
 public class MediaWikiServerConfiguration {
+
+  public static final String ENABLED_PROPERTY = "wpcleaner.test.mediawiki-server";
 
   @Bean
   public MockRestServiceServer mediaWikiServer(final RestClient.Builder apiRestClientBuilder) {

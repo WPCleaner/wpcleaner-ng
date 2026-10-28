@@ -15,5 +15,6 @@ import org.wpcleaner.api.api.MediaWikiServerConfiguration;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @SpringBootTest(
-    classes = {ApiSpringBootTestConfiguration.class, MediaWikiServerConfiguration.class})
+    classes = {ApiSpringBootTestConfiguration.class, MediaWikiServerConfiguration.class},
+    properties = MediaWikiServerConfiguration.ENABLED_PROPERTY + "=true")
 public @interface ApiSpringBootTest {}
