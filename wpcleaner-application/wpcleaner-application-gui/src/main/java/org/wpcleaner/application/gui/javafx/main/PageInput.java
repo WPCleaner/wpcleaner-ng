@@ -6,6 +6,7 @@ package org.wpcleaner.application.gui.javafx.main;
  */
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -36,6 +37,7 @@ import org.wpcleaner.lib.image.ImageSize;
 public class PageInput {
 
   static final String ADD_PAGE_ID = "add-page";
+  static final String RANDOM_PAGE_ID = "random-page";
   static final String REMOVE_PAGE_ID = "remove-page";
 
   final JavaFxWindow<?> owner;
@@ -93,6 +95,7 @@ public class PageInput {
     removePage.setOnAction(_ -> removePage());
 
     final Button randomPage = new Button();
+    randomPage.setId(RANDOM_PAGE_ID);
     randomPage.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.RANDOM, ImageSize.TOOLBAR)
@@ -140,7 +143,15 @@ public class PageInput {
   }
 
   private void retrieveRandomPage() {
-    owner.executeAsync(new RetrieveRandomPageTask(), comboBox::setValue, _ -> {});
+    owner.executeAsync(
+        new RetrieveRandomPageTask(),
+        comboBox::setValue,
+        e ->
+            owner.showError(
+                GT._T(
+                    "Error retrieving a random page: %s",
+                    Objects.requireNonNullElseGet(
+                        e.getMessage(), () -> e.getClass().getSimpleName()))));
   }
 
   final class RetrieveRandomPageTask implements LongRunningTask<String> {

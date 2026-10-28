@@ -6,32 +6,28 @@
 package org.wpcleaner.application.gui.javafx.login;
 
 import java.util.Optional;
-import javafx.application.Platform;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.lib.image.ImageCollection;
 
-class WikiListCellTest {
-
-  @BeforeAll
-  static void setUpClass() {
-    JavaFxInitializer.initialize();
-  }
+class WikiListCellTest extends JavaFxTest {
 
   @DisplayName("WikiListCell formats name and code correctly")
   @Test
-  void testWikiListCellFormatting() {
+  void testWikiListCellFormatting()
+      throws InterruptedException, ExecutionException, TimeoutException {
     final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
     BDDMockito.given(mockImageLoader.getImageView(BDDMockito.any(), BDDMockito.any()))
         .willReturn(Optional.empty());
 
-    Platform.runLater(
+    runOnJavaFx(
         () -> {
           final WikiListCell cell = new WikiListCell(mockImageLoader);
           final WikiDefinition wiki = BDDMockito.mock(WikiDefinition.class);
@@ -47,10 +43,11 @@ class WikiListCellTest {
 
   @DisplayName("WikiListCell handles null items correctly")
   @Test
-  void testWikiListCellNullItem() {
+  void testWikiListCellNullItem()
+      throws InterruptedException, ExecutionException, TimeoutException {
     final JavaFxImageLoader mockImageLoader = BDDMockito.mock(JavaFxImageLoader.class);
 
-    Platform.runLater(
+    runOnJavaFx(
         () -> {
           final WikiListCell cell = new WikiListCell(mockImageLoader);
           cell.updateItem(null, false);
