@@ -51,9 +51,17 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 
 ## Testing
 
-- Favor integration tests over unit tests.
-- Use `BDDMockito` instead of `Mockito` (`given`/`willReturn`, `then(...).should()`).
-- Share test data across modules with `testFixtures(project(...))` (see `wpcleaner-api/src/testFixtures`).
+- Favor integration tests in the Spring context over unit tests: use `@ApiSpringBootTest` (API) or
+  `@GuiSpringBootTest` (GUI) and real beans.
+- Mock only what is outside the application:
+  - MediaWiki: `MockApi*` helpers in `wpcleaner-api/src/testFixtures` (one per endpoint, built on
+    `ApiRequestExpectation` and `ApiAnswer`); add one for a new endpoint. Unexpected requests fail the test.
+  - System browser: the `DesktopService` `@MockitoBean`.
+- Use `BDDMockito` (`given`/`willReturn`, `then(...).should()`) for these boundaries only, never `mock(...)`.
+- GUI tests extend `JavaFxTest`: run code with `runOnJavaFx`/`callOnJavaFx`, find controls with `lookup`
+  by id (constants in the class that creates the node, kebab-case values), log in with `GuiLogin`.
+- Shared beans keep state (tokens, tags, current user): log out or reset in `@BeforeEach`.
+- Share test data across modules with `testFixtures(project(...))`.
 
 ## Git
 
