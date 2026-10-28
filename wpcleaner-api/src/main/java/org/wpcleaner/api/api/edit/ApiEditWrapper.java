@@ -16,6 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.ApiException;
 import org.wpcleaner.api.api.ConnectedUser;
@@ -32,13 +33,12 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @Service
 public class ApiEditWrapper implements DisposableBean {
 
-  private static final Duration THROTTLE_PERIOD = Duration.ofMinutes(1);
-
   private final ApiEdit apiEdit;
   private final ApiMove apiMove;
   private final TagRepository tagRepository;
   private final TokenRepository tokenRepository;
   private final CurrentUserService user;
+  private final Duration throttlePeriod;
   private final Deque<Instant> callTimes;
   private final ExecutorService executor;
   private final List<String> tags;
@@ -50,12 +50,15 @@ public class ApiEditWrapper implements DisposableBean {
       final ApiMove apiMove,
       final TagRepository tagRepository,
       final TokenRepository tokenRepository,
-      final CurrentUserService user) {
+      final CurrentUserService user,
+      @Value("${wpcleaner.api.edit-wrapper.throttle-period-seconds:60}")
+          final long throttlePeriodSeconds) {
     this.apiEdit = apiEdit;
     this.apiMove = apiMove;
     this.tagRepository = tagRepository;
     this.tokenRepository = tokenRepository;
     this.user = user;
+    this.throttlePeriod = Duration.ofSeconds(throttlePeriodSeconds);
     this.callTimes = new ArrayDeque<>();
     this.executor =
         Executors.newSingleThreadExecutor(
@@ -133,18 +136,27 @@ public class ApiEditWrapper implements DisposableBean {
   }
 
   private void throttle() {
-    final Instant threshold = Instant.now().minus(THROTTLE_PERIOD);
-    callTimes.removeIf(threshold::isAfter);
-    if (callTimes.size() < computeMaxEdits()) {
-      return;
+    removeExpiredCallTimes();
+    if (callTimes.size() >= computeMaxEdits()) {
+      waitForFirstCallTimeExpiry();
+      removeExpiredCallTimes();
     }
-    final Duration wait = Duration.between(threshold, callTimes.getFirst());
+    callTimes.add(Instant.now());
+  }
+
+  private void removeExpiredCallTimes() {
+    final Instant threshold = Instant.now().minus(throttlePeriod);
+    callTimes.removeIf(threshold::isAfter);
+  }
+
+  private void waitForFirstCallTimeExpiry() {
+    final Duration wait =
+        Duration.between(Instant.now(), callTimes.getFirst().plus(throttlePeriod));
     if (wait.isNegative()) {
       return;
     }
     try {
       Thread.sleep(wait);
-      callTimes.add(Instant.now());
     } catch (InterruptedException e) {
       throw ApiException.of(e, "Error waiting for throttle");
     }

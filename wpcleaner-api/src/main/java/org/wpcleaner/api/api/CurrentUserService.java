@@ -7,6 +7,7 @@ package org.wpcleaner.api.api;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.repository.token.TokenRepository;
 import org.wpcleaner.api.wiki.definition.KnownDefinitions;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -14,10 +15,13 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 public class CurrentUserService {
 
   private final KnownDefinitions knownDefinitions;
+  private final TokenRepository tokenRepository;
   private ConnectedUser currentUser;
 
-  public CurrentUserService(final KnownDefinitions knownDefinitions) {
+  public CurrentUserService(
+      final KnownDefinitions knownDefinitions, final TokenRepository tokenRepository) {
     this.knownDefinitions = knownDefinitions;
+    this.tokenRepository = tokenRepository;
     currentUser = ConnectedUser.notLoggedIn(knownDefinitions.getPreferred());
   }
 
@@ -38,6 +42,7 @@ public class CurrentUserService {
   }
 
   public void logout() {
+    tokenRepository.clear();
     currentUser = ConnectedUser.notLoggedIn(knownDefinitions.getPreferred());
   }
 }
