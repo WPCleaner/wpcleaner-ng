@@ -30,10 +30,12 @@ import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentR
 import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceContext;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
+import org.wpcleaner.application.gui.javafx.recentchanges.UserPageVariables;
 
 final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
   static final String MATRIX_ID = "matrix";
+  static final String OK_ID = "ok";
   static final String USER_PAGE_ACTION_ID = "user-page-action";
   static final String USER_PAGE_DISPLAY_ID = "user-page-display";
   static final String USER_TALK_PAGE_ACTION_ID = "user-talk-page-action";
@@ -41,6 +43,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
 
   private final ContentReplaceAction userPageAction;
   private final ContentAppendAction userTalkPageAction;
+  private final String userName;
 
   public UserPageHostingActionWindow(
       final JavaFxRecentChangesWindowServices services,
@@ -53,6 +56,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
       final String userTalkPageContent) {
     super(services, Objects.requireNonNull(owner));
     stage.initModality(Modality.WINDOW_MODAL);
+    this.userName = UserPageVariables.getUserName(userPageTitle);
     this.userPageAction =
         new ContentReplaceAction(
             services.colorizer(),
@@ -129,6 +133,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
     mainContainer.getChildren().add(matrix);
 
     final Button okButton = new Button(GT._T("OK"));
+    okButton.setId(OK_ID);
     okButton.setDefaultButton(true);
     okButton.setOnAction(_ -> handleOk());
 
@@ -177,6 +182,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
         userPageAction.execute();
       }
       try (ProgressStep _ = tracker.start(GT._T("Updating user talk page"))) {
+        UserPageVariables.setUserVariables(userTalkPageAction, userName);
         userTalkPageAction.execute();
       }
       return null;

@@ -32,6 +32,7 @@ import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentR
 import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceContext;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
+import org.wpcleaner.application.gui.javafx.recentchanges.UserPageVariables;
 
 final class UserPageDraftActionWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
@@ -62,8 +63,7 @@ final class UserPageDraftActionWindow extends JavaFxWindow<JavaFxRecentChangesWi
       final String initialDraftContent) {
     super(services, Objects.requireNonNull(owner));
     stage.initModality(Modality.WINDOW_MODAL);
-    final int colon = userPageTitle.indexOf(':');
-    this.userName = colon >= 0 ? userPageTitle.substring(colon + 1) : userPageTitle;
+    this.userName = UserPageVariables.getUserName(userPageTitle);
     this.userPageAction =
         new ContentReplaceAction(
             services.colorizer(),
@@ -223,8 +223,7 @@ final class UserPageDraftActionWindow extends JavaFxWindow<JavaFxRecentChangesWi
         userPageAction.execute();
       }
       try (ProgressStep _ = tracker.start(GT._T("Updating user talk page"))) {
-        userTalkPageAction.setVariable("__USER__", userName);
-        userTalkPageAction.setVariable("__USER_PAGE__", userName.replace(' ', '_'));
+        UserPageVariables.setUserVariables(userTalkPageAction, userName);
         userTalkPageAction.setVariable("__DRAFT__", moveToDraftAction.getSubPageName());
         userTalkPageAction.setVariable(
             "__DRAFT_PAGE__", moveToDraftAction.getSubPageName().replace(' ', '_'));

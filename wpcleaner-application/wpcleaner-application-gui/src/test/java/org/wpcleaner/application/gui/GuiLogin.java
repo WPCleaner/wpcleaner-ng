@@ -24,10 +24,24 @@ import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.progress.ProgressTracker;
+import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
 
 public final class GuiLogin {
+
+  public static final List<Namespace> USER_NAMESPACES =
+      List.of(
+          new Namespace(
+              "User", "first-letter", false, CommonNamespaces.USER.id, "User", "User", true),
+          new Namespace(
+              "User talk",
+              "first-letter",
+              false,
+              CommonNamespaces.USER_TALK.id,
+              "User talk",
+              "User talk",
+              true));
 
   private static final String LOGIN_TOKEN = "login-token+\\";
   private static final String PASSWORD = "password";

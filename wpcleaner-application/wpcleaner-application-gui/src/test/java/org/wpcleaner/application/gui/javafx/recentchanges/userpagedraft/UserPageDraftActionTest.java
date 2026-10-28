@@ -6,11 +6,9 @@ package org.wpcleaner.application.gui.javafx.recentchanges.userpagedraft;
  */
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -18,7 +16,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +31,6 @@ import org.wpcleaner.api.api.move.MockApiMove;
 import org.wpcleaner.api.api.move.Move;
 import org.wpcleaner.api.api.move.MoveQueryByTitle;
 import org.wpcleaner.api.api.move.MoveQueryCommon;
-import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -49,10 +45,9 @@ import org.wpcleaner.application.gui.javafx.core.action.content.PageContentDispl
 import org.wpcleaner.application.gui.javafx.core.action.content.PageContentExpectations;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
 import org.wpcleaner.application.gui.javafx.core.window.EmptyWindow;
-import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChange;
+import org.wpcleaner.application.gui.javafx.recentchanges.FilteredRecentChangeFixtures;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
-import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
 
 @GuiSpringBootTest
 class UserPageDraftActionTest extends JavaFxTest {
@@ -97,20 +92,7 @@ class UserPageDraftActionTest extends JavaFxTest {
 
   @BeforeEach
   void setUp() throws IOException {
-    guiLogin.login(
-        WIKI,
-        "Bot",
-        List.of(
-            new Namespace(
-                "User", "first-letter", false, CommonNamespaces.USER.id, "User", "User", true),
-            new Namespace(
-                "User talk",
-                "first-letter",
-                false,
-                CommonNamespaces.USER_TALK.id,
-                "User talk",
-                "User talk",
-                true)));
+    guiLogin.login(WIKI, "Bot", GuiLogin.USER_NAMESPACES);
     Files.deleteIfExists(getConfigFile());
   }
 
@@ -127,15 +109,20 @@ class UserPageDraftActionTest extends JavaFxTest {
     final RecentChangesAction action = createAction();
 
     Assertions.assertThat(
-            action.canApply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV")))
+            action.canApply(
+                FilteredRecentChangeFixtures.create(CommonNamespaces.USER.id, "User:NicoV")))
         .isTrue();
     Assertions.assertThat(
-            action.canApply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV/sandbox")))
+            action.canApply(
+                FilteredRecentChangeFixtures.create(
+                    CommonNamespaces.USER.id, "User:NicoV/sandbox")))
         .isFalse();
     Assertions.assertThat(
-            action.canApply(createRecentChange(CommonNamespaces.MAIN.id, "Main Page")))
+            action.canApply(
+                FilteredRecentChangeFixtures.create(CommonNamespaces.MAIN.id, "Main Page")))
         .isFalse();
-    Assertions.assertThat(action.canApply(createRecentChange(null, "User:NicoV"))).isFalse();
+    Assertions.assertThat(action.canApply(FilteredRecentChangeFixtures.create(null, "User:NicoV")))
+        .isFalse();
   }
 
   @DisplayName("configure displays configuration window")
@@ -158,7 +145,10 @@ class UserPageDraftActionTest extends JavaFxTest {
     givenPagesContent();
     final UserPageDraftAction action = createAction();
 
-    runOnJavaFx(() -> action.apply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV")));
+    runOnJavaFx(
+        () ->
+            action.apply(
+                FilteredRecentChangeFixtures.create(CommonNamespaces.USER.id, "User:NicoV")));
 
     final UserPageDraftActionWindow window =
         waitForWindow(windowsRegistry, UserPageDraftActionWindow.class);
@@ -223,7 +213,10 @@ class UserPageDraftActionTest extends JavaFxTest {
         .willReturn(new Edit(Edit.RESULT_SUCCESS, 2, "User talk:NicoV", null));
     final UserPageDraftAction action = createAction();
 
-    runOnJavaFx(() -> action.apply(createRecentChange(CommonNamespaces.USER.id, "User:NicoV")));
+    runOnJavaFx(
+        () ->
+            action.apply(
+                FilteredRecentChangeFixtures.create(CommonNamespaces.USER.id, "User:NicoV")));
     final UserPageDraftActionWindow window =
         waitForWindow(windowsRegistry, UserPageDraftActionWindow.class);
     runOnJavaFx(() -> lookup(window, UserPageDraftActionWindow.OK_ID, Button.class).fire());
@@ -275,23 +268,5 @@ class UserPageDraftActionTest extends JavaFxTest {
                 .getArea()
                 .getText())
         .isEqualTo(content);
-  }
-
-  private static FilteredRecentChange createRecentChange(
-      @Nullable final Integer ns, final String title) {
-    return new FilteredRecentChange(
-        "comment",
-        0,
-        URI.create("https://diff"),
-        RecentChangesFilter.ACCEPT_ALL,
-        ns,
-        URI.create("https://page"),
-        1,
-        2,
-        3,
-        List.of(),
-        null,
-        title,
-        "User");
   }
 }

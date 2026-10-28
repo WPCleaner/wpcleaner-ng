@@ -5,8 +5,6 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.net.URI;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.beans.property.ObjectProperty;
@@ -20,7 +18,6 @@ import org.mockito.BDDMockito;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
-import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
 
@@ -52,7 +49,7 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
           Assertions.assertThat(button.isDisable()).isTrue();
 
           final FilteredRecentChange userPage =
-              createRecentChange(CommonNamespaces.USER.id, "User:NicoV");
+              FilteredRecentChangeFixtures.create(CommonNamespaces.USER.id, "User:NicoV");
           BDDMockito.given(action.canApply(userPage)).willReturn(true);
 
           currentRecentChange.set(userPage);
@@ -85,7 +82,7 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
           BDDMockito.then(action).should(BDDMockito.times(1)).configure();
 
           final FilteredRecentChange mainPage =
-              createRecentChange(CommonNamespaces.MAIN.id, "Main Page");
+              FilteredRecentChangeFixtures.create(CommonNamespaces.MAIN.id, "Main Page");
           BDDMockito.given(action.canApply(mainPage)).willReturn(false);
 
           currentRecentChange.set(mainPage);
@@ -94,22 +91,5 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
           currentRecentChange.set(null);
           Assertions.assertThat(button.isDisable()).isTrue();
         });
-  }
-
-  private FilteredRecentChange createRecentChange(final Integer ns, final String title) {
-    return new FilteredRecentChange(
-        "comment",
-        0,
-        URI.create("https://diff"),
-        BDDMockito.mock(RecentChangesFilter.class),
-        ns,
-        URI.create("https://page"),
-        1,
-        2,
-        3,
-        List.of(),
-        null,
-        title,
-        "User");
   }
 }
