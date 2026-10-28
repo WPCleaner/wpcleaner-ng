@@ -28,6 +28,8 @@ import org.wpcleaner.lib.image.ImageSize;
 
 public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowServices> {
 
+  static final String FEEDBACKS_ID = "feedbacks";
+
   private final ConnectedUser user;
 
   public JavaFxMainWindow(final JavaFxMainWindowServices services) {
@@ -110,6 +112,7 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
   private ToolBar createFeedbacksToolbar() {
     final FeedbacksToolBar feedbacks =
         new FeedbacksToolBar(services.actionServices(), imageLoader, services.urlService());
+    feedbacks.setId(FEEDBACKS_ID);
 
     final Button userButton = new Button();
     userButton.setTooltip(new Tooltip(GT._T("User information")));

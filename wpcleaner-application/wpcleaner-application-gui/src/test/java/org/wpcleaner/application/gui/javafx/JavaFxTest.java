@@ -12,13 +12,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 import javafx.application.Platform;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToolBar;
 import javafx.stage.Window;
 import org.junit.jupiter.api.BeforeAll;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 public class JavaFxTest {
 
@@ -65,6 +72,38 @@ public class JavaFxTest {
       TimeUnit.MILLISECONDS.sleep(POLL_MILLISECONDS);
     }
     throw new TimeoutException("Nothing found on JavaFX thread");
+  }
+
+  protected static <T extends Node> T lookup(
+      final JavaFxWindow<?> window, final String id, final Class<T> type) {
+    return lookup(window.getStage().getScene().getRoot(), id, type);
+  }
+
+  protected static <T extends Node> T lookup(
+      final Node root, final String id, final Class<T> type) {
+    return findById(root, id)
+        .map(type::cast)
+        .orElseThrow(() -> new AssertionError("No node with id " + id));
+  }
+
+  private static Optional<Node> findById(final Node node, final String id) {
+    if (id.equals(node.getId())) {
+      return Optional.of(node);
+    }
+    return getInnerNodes(node)
+        .map(innerNode -> findById(innerNode, id))
+        .flatMap(Optional::stream)
+        .findFirst();
+  }
+
+  private static Stream<Node> getInnerNodes(final Node node) {
+    return switch (node) {
+      case TitledPane titledPane -> Stream.ofNullable(titledPane.getContent());
+      case ScrollPane scrollPane -> Stream.ofNullable(scrollPane.getContent());
+      case ToolBar toolBar -> toolBar.getItems().stream();
+      case Parent parent -> parent.getChildrenUnmodifiable().stream();
+      default -> Stream.empty();
+    };
   }
 
   protected String closeAlert() throws InterruptedException, ExecutionException, TimeoutException {

@@ -16,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
@@ -253,7 +252,7 @@ class MoveToDraftActionTest extends JavaFxTest {
   }
 
   private static Label getDisplayLabel(final MoveToDraftAction action) {
-    return (Label) action.getDisplayPane().getChildren().getFirst();
+    return lookup(action.getDisplayPane(), PageContentDisplay.TITLE_ID, Label.class);
   }
 
   private static String getDisplayedContent(final MoveToDraftAction action) {
@@ -261,14 +260,14 @@ class MoveToDraftActionTest extends JavaFxTest {
   }
 
   private static TextField getSubPageNameField(final MoveToDraftAction action) {
-    return (TextField) getGrid(action).getChildren().get(3);
+    return lookup(
+        action.getConfigurationControl(),
+        MoveToDraftActionControl.SUB_PAGE_NAME_ID,
+        TextField.class);
   }
 
   private static Button getRefreshButton(final MoveToDraftAction action) {
-    return (Button) getGrid(action).getChildren().get(4);
-  }
-
-  private static GridPane getGrid(final MoveToDraftAction action) {
-    return (GridPane) ((MoveToDraftActionControl) action.getConfigurationControl()).getContent();
+    return lookup(
+        action.getConfigurationControl(), MoveToDraftActionControl.REFRESH_ID, Button.class);
   }
 }

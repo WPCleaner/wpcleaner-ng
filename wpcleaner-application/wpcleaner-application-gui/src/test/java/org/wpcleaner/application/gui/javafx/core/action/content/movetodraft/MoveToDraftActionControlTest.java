@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.javafx.core.action.content.movetodraft;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -48,22 +49,27 @@ class MoveToDraftActionControlTest extends JavaFxTest {
           final GridPane grid = (GridPane) pane.getContent();
           Assertions.assertThat(grid.getChildren()).hasSize(5);
 
-          final Label summaryLabel = (Label) grid.getChildren().get(0);
+          final Label summaryLabel =
+              lookup(pane, MoveToDraftActionControl.SUMMARY_LABEL_ID, Label.class);
           Assertions.assertThat(summaryLabel.getText()).isEqualTo("Summary:");
 
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
+          final TextField summaryField =
+              lookup(pane, MoveToDraftActionControl.SUMMARY_ID, TextField.class);
           Assertions.assertThat(summaryField.getText()).isEqualTo("Moving to draft");
           Assertions.assertThat(GridPane.getHgrow(summaryField)).isEqualTo(Priority.ALWAYS);
           Assertions.assertThat(GridPane.getColumnSpan(summaryField)).isEqualTo(2);
 
-          final Label subPageNameLabel = (Label) grid.getChildren().get(2);
+          final Label subPageNameLabel =
+              lookup(pane, MoveToDraftActionControl.SUB_PAGE_NAME_LABEL_ID, Label.class);
           Assertions.assertThat(subPageNameLabel.getText()).isEqualTo("Sub-page name:");
 
-          final TextField subPageNameField = (TextField) grid.getChildren().get(3);
+          final TextField subPageNameField =
+              lookup(pane, MoveToDraftActionControl.SUB_PAGE_NAME_ID, TextField.class);
           Assertions.assertThat(subPageNameField.getText()).isEqualTo("Draft");
           Assertions.assertThat(GridPane.getHgrow(subPageNameField)).isEqualTo(Priority.ALWAYS);
 
-          final Button refreshButton = (Button) grid.getChildren().get(4);
+          final Button refreshButton =
+              lookup(pane, MoveToDraftActionControl.REFRESH_ID, Button.class);
           Assertions.assertThat(refreshButton.getStyle()).isEqualTo(DefaultStyles.TOOLBAR_ELEMENT);
           Assertions.assertThat(refreshButton.getTooltip().getText())
               .isEqualTo("Refresh draft page content");
@@ -75,7 +81,7 @@ class MoveToDraftActionControlTest extends JavaFxTest {
           Assertions.assertThat(refreshed.get()).isTrue();
 
           refreshed.set(false);
-          subPageNameField.fireEvent(new javafx.event.ActionEvent());
+          subPageNameField.fireEvent(new ActionEvent());
           Assertions.assertThat(refreshed.get()).isTrue();
         });
   }
@@ -96,9 +102,10 @@ class MoveToDraftActionControlTest extends JavaFxTest {
           Assertions.assertThat(pane.getSummary()).isEmpty();
           Assertions.assertThat(pane.getSubPageName()).isEmpty();
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
-          final TextField subPageNameField = (TextField) grid.getChildren().get(3);
+          final TextField summaryField =
+              lookup(pane, MoveToDraftActionControl.SUMMARY_ID, TextField.class);
+          final TextField subPageNameField =
+              lookup(pane, MoveToDraftActionControl.SUB_PAGE_NAME_ID, TextField.class);
 
           summaryField.setText("summary");
           Assertions.assertThat(pane.isComplete()).isFalse();

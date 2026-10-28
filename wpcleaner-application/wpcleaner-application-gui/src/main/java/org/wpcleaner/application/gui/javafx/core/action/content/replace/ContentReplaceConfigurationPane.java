@@ -16,6 +16,9 @@ import org.wpcleaner.api.utils.GT;
 
 public final class ContentReplaceConfigurationPane extends TitledPane {
 
+  public static final String SUMMARY_ID = "summary";
+  public static final String TEXT_ID = "text";
+
   private static final double LABEL_WIDTH = 120.0;
 
   private final TextField summaryField;
@@ -29,7 +32,9 @@ public final class ContentReplaceConfigurationPane extends TitledPane {
     setMaxHeight(Double.MAX_VALUE);
 
     this.summaryField = new TextField();
+    this.summaryField.setId(SUMMARY_ID);
     this.textArea = new TextArea();
+    this.textArea.setId(TEXT_ID);
     this.textArea.setPrefRowCount(4);
 
     if (initialConfig != null) {

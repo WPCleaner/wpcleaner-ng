@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +25,11 @@ import org.mockito.BDDMockito;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.api.api.edit.ApiEditWrapper;
+import org.wpcleaner.api.api.edit.EditQuery;
+import org.wpcleaner.api.api.edit.EditQueryByTitle;
+import org.wpcleaner.api.api.move.MoveQuery;
+import org.wpcleaner.api.api.move.MoveQueryByTitle;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.Revision;
@@ -51,7 +57,7 @@ import org.wpcleaner.application.gui.javafx.recentchanges.RecentChangesAction;
 import org.wpcleaner.application.gui.javafx.recentchanges.options.RecentChangesFilter;
 import org.wpcleaner.lib.image.ImageLoader;
 
-@SuppressWarnings("PMD.CouplingBetweenObjects")
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"})
 class UserPageDraftActionTest extends JavaFxTest {
 
   @DisplayName("canApply returns true only for user pages that are not subpages")
@@ -331,8 +337,7 @@ class UserPageDraftActionTest extends JavaFxTest {
             final NamespaceRepository namespaceRepository =
                 BDDMockito.mock(NamespaceRepository.class);
             final ApiRevisions apiRevisions = BDDMockito.mock(ApiRevisions.class);
-            final org.wpcleaner.api.api.edit.ApiEditWrapper apiEditWrapper =
-                BDDMockito.mock(org.wpcleaner.api.api.edit.ApiEditWrapper.class);
+            final ApiEditWrapper apiEditWrapper = BDDMockito.mock(ApiEditWrapper.class);
             final PageSyntaxColorizer colorizer =
                 new PageSyntaxColorizer(
                     List.of(),
@@ -397,30 +402,20 @@ class UserPageDraftActionTest extends JavaFxTest {
             final UserPageDraftActionWindow actionWindow =
                 (UserPageDraftActionWindow) captor.getValue();
 
-            final ArgumentCaptor<org.wpcleaner.api.api.move.MoveQuery> moveCaptor =
-                ArgumentCaptor.captor();
-            final ArgumentCaptor<org.wpcleaner.api.api.edit.EditQuery> editCaptor =
-                ArgumentCaptor.captor();
+            final ArgumentCaptor<MoveQuery> moveCaptor = ArgumentCaptor.captor();
+            final ArgumentCaptor<EditQuery> editCaptor = ArgumentCaptor.captor();
 
-            final javafx.scene.layout.StackPane root =
-                (javafx.scene.layout.StackPane) actionWindow.getStage().getScene().getRoot();
-            final javafx.scene.layout.VBox mainContainer =
-                (javafx.scene.layout.VBox) root.getChildren().getFirst();
-            final javafx.scene.layout.HBox buttons =
-                (javafx.scene.layout.HBox) mainContainer.getChildren().get(1);
-            final javafx.scene.control.Button okButton =
-                (javafx.scene.control.Button) buttons.getChildren().getFirst();
+            final Button okButton =
+                lookup(actionWindow, UserPageDraftActionWindow.OK_ID, Button.class);
 
             okButton.fire();
 
             BDDMockito.then(apiEditWrapper)
                 .should(BDDMockito.timeout(5000).times(1))
                 .move(BDDMockito.eq(wiki), moveCaptor.capture());
-            final org.wpcleaner.api.api.move.MoveQuery moveQuery = moveCaptor.getValue();
-            Assertions.assertThat(moveQuery)
-                .isInstanceOf(org.wpcleaner.api.api.move.MoveQueryByTitle.class);
-            final org.wpcleaner.api.api.move.MoveQueryByTitle moveByTitle =
-                (org.wpcleaner.api.api.move.MoveQueryByTitle) moveQuery;
+            final MoveQuery moveQuery = moveCaptor.getValue();
+            Assertions.assertThat(moveQuery).isInstanceOf(MoveQueryByTitle.class);
+            final MoveQueryByTitle moveByTitle = (MoveQueryByTitle) moveQuery;
             Assertions.assertThat(moveByTitle.from()).isEqualTo("User:NicoV");
             Assertions.assertThat(moveByTitle.common().to()).isEqualTo("User:NicoV/Draft");
             Assertions.assertThat(moveByTitle.common().reason()).isEqualTo("Moving to draft");
@@ -432,16 +427,13 @@ class UserPageDraftActionTest extends JavaFxTest {
             BDDMockito.then(apiEditWrapper)
                 .should(BDDMockito.timeout(5000).times(2))
                 .edit(BDDMockito.eq(wiki), editCaptor.capture());
-            final List<org.wpcleaner.api.api.edit.EditQuery> editQueries =
-                editCaptor.getAllValues();
-            final org.wpcleaner.api.api.edit.EditQueryByTitle userPageEdit =
-                (org.wpcleaner.api.api.edit.EditQueryByTitle) editQueries.get(0);
+            final List<EditQuery> editQueries = editCaptor.getAllValues();
+            final EditQueryByTitle userPageEdit = (EditQueryByTitle) editQueries.get(0);
             Assertions.assertThat(userPageEdit.title()).isEqualTo("User:NicoV");
             Assertions.assertThat(userPageEdit.common().text()).isEqualTo("User page text");
             Assertions.assertThat(userPageEdit.common().summary()).isEqualTo("Summary");
 
-            final org.wpcleaner.api.api.edit.EditQueryByTitle talkPageEdit =
-                (org.wpcleaner.api.api.edit.EditQueryByTitle) editQueries.get(1);
+            final EditQueryByTitle talkPageEdit = (EditQueryByTitle) editQueries.get(1);
             Assertions.assertThat(talkPageEdit.title()).isEqualTo("User talk:NicoV");
             Assertions.assertThat(talkPageEdit.common().appendText())
                 .isEqualTo("\n\nNotice for NicoV on Draft");

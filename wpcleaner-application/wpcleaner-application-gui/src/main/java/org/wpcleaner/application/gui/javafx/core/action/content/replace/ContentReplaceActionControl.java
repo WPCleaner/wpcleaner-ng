@@ -16,6 +16,9 @@ import org.wpcleaner.api.utils.GT;
 
 public final class ContentReplaceActionControl extends TitledPane {
 
+  public static final String SUMMARY_ID = "summary";
+  public static final String TEXT_ID = "text";
+
   private static final double LABEL_WIDTH = 120.0;
 
   private final TextField summaryField;
@@ -32,7 +35,9 @@ public final class ContentReplaceActionControl extends TitledPane {
     setText(title);
 
     this.summaryField = new TextField(initialConfig.summary());
+    this.summaryField.setId(SUMMARY_ID);
     this.textArea = new TextArea(initialConfig.text());
+    this.textArea.setId(TEXT_ID);
     this.textArea.setEditable(false);
     this.textArea.setPrefRowCount(3);
 

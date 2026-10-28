@@ -37,9 +37,10 @@ class ContentReplaceConfigurationPaneTest extends JavaFxTest {
           Assertions.assertThat(retrieved.summary()).isEqualTo("mySummary");
           Assertions.assertThat(retrieved.text()).isEqualTo("myText");
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
-          final TextArea textArea = (TextArea) grid.getChildren().get(3);
+          final TextField summaryField =
+              lookup(pane, ContentReplaceConfigurationPane.SUMMARY_ID, TextField.class);
+          final TextArea textArea =
+              lookup(pane, ContentReplaceConfigurationPane.TEXT_ID, TextArea.class);
 
           Assertions.assertThat(summaryField.getText()).isEqualTo("mySummary");
           Assertions.assertThat(textArea.getText()).isEqualTo("myText");
@@ -65,9 +66,10 @@ class ContentReplaceConfigurationPaneTest extends JavaFxTest {
           Assertions.assertThat(retrieved.summary()).isEmpty();
           Assertions.assertThat(retrieved.text()).isEmpty();
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
-          final TextArea textArea = (TextArea) grid.getChildren().get(3);
+          final TextField summaryField =
+              lookup(pane, ContentReplaceConfigurationPane.SUMMARY_ID, TextField.class);
+          final TextArea textArea =
+              lookup(pane, ContentReplaceConfigurationPane.TEXT_ID, TextArea.class);
 
           summaryField.setText("newSummary");
           Assertions.assertThat(pane.isComplete()).isFalse();

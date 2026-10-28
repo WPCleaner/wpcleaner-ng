@@ -14,9 +14,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
@@ -67,10 +65,7 @@ class WikiDefinitionWindowTest extends JavaFxTest {
           final Parent root = window.getStage().getScene().getRoot();
           Assertions.assertThat(root).isInstanceOf(StackPane.class);
 
-          final StackPane stackPane = (StackPane) root;
-          final VBox mainContainer = (VBox) stackPane.getChildren().getFirst();
-          final HBox buttons = (HBox) mainContainer.getChildren().get(1);
-          final Button cancelButton = (Button) buttons.getChildren().get(1);
+          final Button cancelButton = lookup(window, WikiDefinitionWindow.CANCEL_ID, Button.class);
 
           Assertions.assertThat(cancelButton.getText()).isEqualTo("Cancel");
           Assertions.assertThat(added).isFalse();
@@ -148,19 +143,14 @@ class WikiDefinitionWindowTest extends JavaFxTest {
           final WikiDefinitionWindow window =
               new WikiDefinitionWindow(services, null, addedFuture::complete);
 
-          final StackPane stackPane = (StackPane) window.getStage().getScene().getRoot();
-          final VBox mainContainer = (VBox) stackPane.getChildren().getFirst();
-          final VBox form = (VBox) mainContainer.getChildren().get(0);
-          final HBox nameRow = (HBox) form.getChildren().get(1);
-          final TextField nameField = (TextField) nameRow.getChildren().get(1);
+          final TextField nameField = lookup(window, WikiDefinitionWindow.NAME_ID, TextField.class);
           nameField.setText("CustomWiki");
 
-          final HBox langRow = (HBox) form.getChildren().get(2);
-          final TextField langField = (TextField) langRow.getChildren().get(1);
+          final TextField langField =
+              lookup(window, WikiDefinitionWindow.LANGUAGE_ID, TextField.class);
           langField.setText("fr");
 
-          final HBox buttons = (HBox) mainContainer.getChildren().get(1);
-          final Button okButton = (Button) buttons.getChildren().get(0);
+          final Button okButton = lookup(window, WikiDefinitionWindow.OK_ID, Button.class);
 
           okButton.fire();
         });
@@ -202,25 +192,19 @@ class WikiDefinitionWindowTest extends JavaFxTest {
           final WikiDefinitionWindow window =
               new WikiDefinitionWindow(services, null, addedFuture::complete);
 
-          final StackPane stackPane = (StackPane) window.getStage().getScene().getRoot();
-          final VBox mainContainer = (VBox) stackPane.getChildren().getFirst();
-          final VBox form = (VBox) mainContainer.getChildren().get(0);
-          final HBox familyRow = (HBox) form.getChildren().get(0);
           @SuppressWarnings("unchecked")
           final ComboBox<WikiBuilderType> familyComboBox =
-              (ComboBox<WikiBuilderType>) familyRow.getChildren().get(1);
+              lookup(window, WikiDefinitionWindow.FAMILY_ID, ComboBox.class);
           familyComboBox.getSelectionModel().select(WikiBuilderType.FANDOM);
 
-          final HBox nameRow = (HBox) form.getChildren().get(1);
-          final TextField nameField = (TextField) nameRow.getChildren().get(1);
+          final TextField nameField = lookup(window, WikiDefinitionWindow.NAME_ID, TextField.class);
           nameField.setText("Memory Alpha");
 
-          final HBox subdomainRow = (HBox) form.getChildren().get(3);
-          final TextField subdomainField = (TextField) subdomainRow.getChildren().get(1);
+          final TextField subdomainField =
+              lookup(window, WikiDefinitionWindow.SUBDOMAIN_ID, TextField.class);
           subdomainField.setText("memory-alpha");
 
-          final HBox buttons = (HBox) mainContainer.getChildren().get(1);
-          final Button okButton = (Button) buttons.getChildren().get(0);
+          final Button okButton = lookup(window, WikiDefinitionWindow.OK_ID, Button.class);
 
           okButton.fire();
         });

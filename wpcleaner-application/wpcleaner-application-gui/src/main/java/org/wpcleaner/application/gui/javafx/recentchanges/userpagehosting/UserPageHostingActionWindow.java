@@ -33,6 +33,12 @@ import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWin
 
 final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
+  static final String MATRIX_ID = "matrix";
+  static final String USER_PAGE_ACTION_ID = "user-page-action";
+  static final String USER_PAGE_DISPLAY_ID = "user-page-display";
+  static final String USER_TALK_PAGE_ACTION_ID = "user-talk-page-action";
+  static final String USER_TALK_PAGE_DISPLAY_ID = "user-talk-page-display";
+
   private final ContentReplaceAction userPageAction;
   private final ContentAppendAction userTalkPageAction;
 
@@ -86,6 +92,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
     mainContainer.setPrefWidth(1900);
 
     final GridPane matrix = new GridPane();
+    matrix.setId(MATRIX_ID);
     matrix.setHgap(10);
     matrix.setVgap(10);
 
@@ -106,6 +113,11 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
     rowBottom.setVgrow(Priority.ALWAYS);
 
     matrix.getRowConstraints().addAll(rowTop, rowBottom);
+
+    userPageAction.getConfigurationControl().setId(USER_PAGE_ACTION_ID);
+    userTalkPageAction.getConfigurationControl().setId(USER_TALK_PAGE_ACTION_ID);
+    userPageAction.getDisplayPane().setId(USER_PAGE_DISPLAY_ID);
+    userTalkPageAction.getDisplayPane().setId(USER_TALK_PAGE_DISPLAY_ID);
 
     matrix.add(userPageAction.getConfigurationControl(), 0, 0);
     matrix.add(userTalkPageAction.getConfigurationControl(), 1, 0);

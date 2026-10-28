@@ -22,6 +22,12 @@ import org.wpcleaner.lib.image.ImageSize;
 
 public final class MoveToDraftActionControl extends TitledPane {
 
+  public static final String REFRESH_ID = "refresh";
+  public static final String SUB_PAGE_NAME_ID = "sub-page-name";
+  public static final String SUB_PAGE_NAME_LABEL_ID = "sub-page-name-label";
+  public static final String SUMMARY_ID = "summary";
+  public static final String SUMMARY_LABEL_ID = "summary-label";
+
   private static final double LABEL_WIDTH = 120.0;
 
   private final TextField subPageNameField;
@@ -41,10 +47,13 @@ public final class MoveToDraftActionControl extends TitledPane {
     setText(title);
 
     this.summaryField = new TextField(initialConfig.summary());
+    this.summaryField.setId(SUMMARY_ID);
     this.subPageNameField = new TextField(initialConfig.subPageName());
+    this.subPageNameField.setId(SUB_PAGE_NAME_ID);
     this.subPageNameField.setOnAction(_ -> onRefresh.run());
 
     final Button refreshButton = new Button();
+    refreshButton.setId(REFRESH_ID);
     refreshButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     final JavaFxImageLoader fxImageLoader =
         new JavaFxImageLoader(Objects.requireNonNull(imageLoader, "imageLoader"));
@@ -60,6 +69,7 @@ public final class MoveToDraftActionControl extends TitledPane {
     grid.setMaxHeight(Double.MAX_VALUE);
 
     final Label summaryLabel = new Label(GT._T("Summary:"));
+    summaryLabel.setId(SUMMARY_LABEL_ID);
     summaryLabel.setMinWidth(LABEL_WIDTH);
     summaryLabel.setPrefWidth(LABEL_WIDTH);
     grid.add(summaryLabel, 0, 0);
@@ -67,6 +77,7 @@ public final class MoveToDraftActionControl extends TitledPane {
     GridPane.setHgrow(summaryField, Priority.ALWAYS);
 
     final Label subPageNameLabel = new Label(GT._T("Sub-page name:"));
+    subPageNameLabel.setId(SUB_PAGE_NAME_LABEL_ID);
     subPageNameLabel.setMinWidth(LABEL_WIDTH);
     subPageNameLabel.setPrefWidth(LABEL_WIDTH);
     grid.add(subPageNameLabel, 0, 1);

@@ -13,10 +13,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.assertj.core.api.Assertions;
@@ -68,11 +66,8 @@ class UserInformationWindowTest extends JavaFxTest {
           final Parent root = window.getStage().getScene().getRoot();
           Assertions.assertThat(root).isInstanceOf(StackPane.class);
 
-          final StackPane stackPane = (StackPane) root;
-          final VBox mainContainer = (VBox) stackPane.getChildren().getFirst();
-          final GridPane grid = (GridPane) mainContainer.getChildren().getFirst();
-          final HBox buttons = (HBox) mainContainer.getChildren().get(1);
-          final Button closeButton = (Button) buttons.getChildren().getFirst();
+          final GridPane grid = lookup(window, UserInformationWindow.FIELDS_ID, GridPane.class);
+          final Button closeButton = lookup(window, UserInformationWindow.CLOSE_ID, Button.class);
 
           Assertions.assertThat(grid.getColumnConstraints()).hasSize(2);
           Assertions.assertThat(grid.getColumnConstraints().getFirst().getHgrow())
@@ -84,19 +79,23 @@ class UserInformationWindowTest extends JavaFxTest {
           Assertions.assertThat(closeButton.isCancelButton()).isTrue();
           Assertions.assertThat(closeButton.isDefaultButton()).isTrue();
 
-          final TextField usernameField = (TextField) grid.getChildren().get(1);
+          final TextField usernameField =
+              lookup(window, UserInformationWindow.USERNAME_ID, TextField.class);
           Assertions.assertThat(usernameField.getText()).isEqualTo("TestUser");
           Assertions.assertThat(usernameField.isEditable()).isFalse();
 
-          final TextField wikiField = (TextField) grid.getChildren().get(3);
+          final TextField wikiField =
+              lookup(window, UserInformationWindow.WIKI_ID, TextField.class);
           Assertions.assertThat(wikiField.getText()).isEqualTo("Wikipedia (en)");
           Assertions.assertThat(wikiField.isEditable()).isFalse();
 
-          final TextArea groupsField = (TextArea) grid.getChildren().get(5);
+          final TextArea groupsField =
+              lookup(window, UserInformationWindow.GROUPS_ID, TextArea.class);
           Assertions.assertThat(groupsField.getText()).isEqualTo("bureaucrat\nsysop");
           Assertions.assertThat(groupsField.isEditable()).isFalse();
 
-          final TextArea rightsField = (TextArea) grid.getChildren().get(7);
+          final TextArea rightsField =
+              lookup(window, UserInformationWindow.RIGHTS_ID, TextArea.class);
           Assertions.assertThat(rightsField.getText()).isEqualTo("edit\nread\nupload");
           Assertions.assertThat(rightsField.isEditable()).isFalse();
 

@@ -38,9 +38,10 @@ class MoveToDraftConfigurationPaneTest extends JavaFxTest {
           Assertions.assertThat(retrieved.summary()).isEqualTo("Moving page");
           Assertions.assertThat(retrieved.subPageName()).isEqualTo("DraftSubPage");
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
-          final TextField subPageNameField = (TextField) grid.getChildren().get(3);
+          final TextField summaryField =
+              lookup(pane, MoveToDraftConfigurationPane.SUMMARY_ID, TextField.class);
+          final TextField subPageNameField =
+              lookup(pane, MoveToDraftConfigurationPane.SUB_PAGE_NAME_ID, TextField.class);
 
           Assertions.assertThat(summaryField.getText()).isEqualTo("Moving page");
           Assertions.assertThat(subPageNameField.getText()).isEqualTo("DraftSubPage");
@@ -63,9 +64,10 @@ class MoveToDraftConfigurationPaneTest extends JavaFxTest {
           Assertions.assertThat(pane.getSummary()).isEmpty();
           Assertions.assertThat(pane.getSubPageName()).isEmpty();
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
-          final TextField subPageNameField = (TextField) grid.getChildren().get(3);
+          final TextField summaryField =
+              lookup(pane, MoveToDraftConfigurationPane.SUMMARY_ID, TextField.class);
+          final TextField subPageNameField =
+              lookup(pane, MoveToDraftConfigurationPane.SUB_PAGE_NAME_ID, TextField.class);
 
           summaryField.setText("summary");
           Assertions.assertThat(pane.isComplete()).isFalse();

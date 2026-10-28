@@ -35,6 +35,9 @@ import org.wpcleaner.lib.image.ImageSize;
 
 public class PageInput {
 
+  static final String ADD_PAGE_ID = "add-page";
+  static final String REMOVE_PAGE_ID = "remove-page";
+
   final JavaFxWindow<?> owner;
   final WikiDefinition wiki;
   final InterestingSettingsManager settingsManager;
@@ -72,6 +75,7 @@ public class PageInput {
     label.setAlignment(Pos.CENTER_RIGHT);
 
     final Button addPage = new Button();
+    addPage.setId(ADD_PAGE_ID);
     addPage.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.TOOLBAR)
@@ -80,6 +84,7 @@ public class PageInput {
     addPage.setOnAction(_ -> addPage());
 
     final Button removePage = new Button();
+    removePage.setId(REMOVE_PAGE_ID);
     removePage.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.TOOLBAR)

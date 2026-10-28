@@ -27,6 +27,10 @@ import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWin
 
 final class UserPageDraftConfigWindow extends JavaFxWindow<JavaFxRecentChangesWindowServices> {
 
+  static final String MOVE_TO_DRAFT_ID = "move-to-draft";
+  static final String USER_PAGE_ID = "user-page";
+  static final String USER_TALK_PAGE_ID = "user-talk-page";
+
   private final MoveToDraftConfigurationPane moveDraftGroup;
   private final Consumer<UserPageDraftConfig> onConfigValidated;
   private final ContentReplaceConfigurationPane userPageGroup;
@@ -55,6 +59,9 @@ final class UserPageDraftConfigWindow extends JavaFxWindow<JavaFxRecentChangesWi
             GT._T("User talk page"),
             services.imageLoader(),
             initialConfig != null ? initialConfig.userTalkPage() : null);
+    this.userPageGroup.setId(USER_PAGE_ID);
+    this.moveDraftGroup.setId(MOVE_TO_DRAFT_ID);
+    this.userTalkPageGroup.setId(USER_TALK_PAGE_ID);
 
     initialize();
     stage.show();

@@ -15,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -39,6 +38,7 @@ import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
+import org.wpcleaner.application.gui.javafx.core.action.content.PageContentDisplay;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendActionControl;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfiguration;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationText;
@@ -113,11 +113,10 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
           Assertions.assertThat(window.getStage().getModality()).isEqualTo(Modality.WINDOW_MODAL);
           Assertions.assertThat(window.getStage().getOwner()).isEqualTo(ownerStage);
 
-          final StackPane root = (StackPane) window.getStage().getScene().getRoot();
-          final VBox mainContainer = (VBox) root.getChildren().getFirst();
-          Assertions.assertThat(mainContainer.getPrefWidth()).isEqualTo(1900.0);
+          final GridPane matrix =
+              lookup(window, UserPageDraftActionWindow.MATRIX_ID, GridPane.class);
+          Assertions.assertThat(((VBox) matrix.getParent()).getPrefWidth()).isEqualTo(1900.0);
 
-          final GridPane matrix = (GridPane) mainContainer.getChildren().get(0);
           Assertions.assertThat(matrix.getChildren()).hasSize(6);
           Assertions.assertThat(matrix.getColumnConstraints()).hasSize(3);
           Assertions.assertThat(matrix.getColumnConstraints().get(0).getPercentWidth())
@@ -128,15 +127,27 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
               .isEqualTo(100.0 / 3.0);
 
           final ContentReplaceActionControl userPageGroup =
-              (ContentReplaceActionControl) matrix.getChildren().get(0);
+              lookup(
+                  window,
+                  UserPageDraftActionWindow.USER_PAGE_ACTION_ID,
+                  ContentReplaceActionControl.class);
           final ContentAppendActionControl userTalkPageGroup =
-              (ContentAppendActionControl) matrix.getChildren().get(1);
+              lookup(
+                  window,
+                  UserPageDraftActionWindow.USER_TALK_PAGE_ACTION_ID,
+                  ContentAppendActionControl.class);
           final MoveToDraftActionControl moveDraftGroup =
-              (MoveToDraftActionControl) matrix.getChildren().get(2);
+              lookup(
+                  window,
+                  UserPageDraftActionWindow.MOVE_TO_DRAFT_ACTION_ID,
+                  MoveToDraftActionControl.class);
 
-          final VBox userPageBox = (VBox) matrix.getChildren().get(3);
-          final VBox userTalkPageBox = (VBox) matrix.getChildren().get(4);
-          final VBox draftBox = (VBox) matrix.getChildren().get(5);
+          final VBox userPageBox =
+              lookup(window, UserPageDraftActionWindow.USER_PAGE_DISPLAY_ID, VBox.class);
+          final VBox userTalkPageBox =
+              lookup(window, UserPageDraftActionWindow.USER_TALK_PAGE_DISPLAY_ID, VBox.class);
+          final VBox draftBox =
+              lookup(window, UserPageDraftActionWindow.DRAFT_DISPLAY_ID, VBox.class);
 
           Assertions.assertThat(GridPane.getColumnIndex(userPageGroup)).isEqualTo(0);
           Assertions.assertThat(GridPane.getRowIndex(userPageGroup)).isEqualTo(0);
@@ -152,38 +163,40 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
           Assertions.assertThat(GridPane.getRowIndex(moveDraftGroup)).isEqualTo(0);
           Assertions.assertThat(moveDraftGroup.getText()).isEqualTo("Move to draft");
           Assertions.assertThat(moveDraftGroup.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
-          final GridPane moveDraftGrid = (GridPane) moveDraftGroup.getContent();
-          final TextField subPageNameField = (TextField) moveDraftGrid.getChildren().get(3);
+          final TextField subPageNameField =
+              lookup(moveDraftGroup, MoveToDraftActionControl.SUB_PAGE_NAME_ID, TextField.class);
           Assertions.assertThat(subPageNameField.getText()).isEqualTo("Draft");
-          final Button refreshButton = (Button) moveDraftGrid.getChildren().get(4);
+          final Button refreshButton =
+              lookup(moveDraftGroup, MoveToDraftActionControl.REFRESH_ID, Button.class);
           Assertions.assertThat(refreshButton.getTooltip().getText())
               .isEqualTo("Refresh draft page content");
 
           Assertions.assertThat(GridPane.getColumnIndex(userPageBox)).isEqualTo(0);
           Assertions.assertThat(GridPane.getRowIndex(userPageBox)).isEqualTo(1);
-          final Label userPageLabel = (Label) userPageBox.getChildren().getFirst();
+          final Label userPageLabel = lookup(userPageBox, PageContentDisplay.TITLE_ID, Label.class);
           Assertions.assertThat(userPageLabel.getText()).isEqualTo("User:Test");
           final PageAnalysisScrollPane userPageScrollPane =
-              (PageAnalysisScrollPane) userPageBox.getChildren().get(1);
+              lookup(userPageBox, PageContentDisplay.CONTENT_ID, PageAnalysisScrollPane.class);
           Assertions.assertThat(userPageScrollPane.getArea().getPrefHeight()).isEqualTo(700.0);
           Assertions.assertThat(userPageBox.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
 
           Assertions.assertThat(GridPane.getColumnIndex(userTalkPageBox)).isEqualTo(1);
           Assertions.assertThat(GridPane.getRowIndex(userTalkPageBox)).isEqualTo(1);
-          final Label userTalkPageLabel = (Label) userTalkPageBox.getChildren().getFirst();
+          final Label userTalkPageLabel =
+              lookup(userTalkPageBox, PageContentDisplay.TITLE_ID, Label.class);
           Assertions.assertThat(userTalkPageLabel.getText()).isEqualTo("User talk:Test");
           final PageAnalysisScrollPane userTalkPageScrollPane =
-              (PageAnalysisScrollPane) userTalkPageBox.getChildren().get(1);
+              lookup(userTalkPageBox, PageContentDisplay.CONTENT_ID, PageAnalysisScrollPane.class);
           Assertions.assertThat(userTalkPageScrollPane.getArea().getPrefHeight()).isEqualTo(700.0);
           Assertions.assertThat(userTalkPageBox.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
 
           Assertions.assertThat(GridPane.getColumnIndex(draftBox)).isEqualTo(2);
           Assertions.assertThat(GridPane.getRowIndex(draftBox)).isEqualTo(1);
-          final Label draftLabel = (Label) draftBox.getChildren().getFirst();
+          final Label draftLabel = lookup(draftBox, PageContentDisplay.TITLE_ID, Label.class);
           Assertions.assertThat(draftLabel.getText()).isEqualTo("User:Test/Draft");
 
           final PageAnalysisScrollPane draftScrollPane =
-              (PageAnalysisScrollPane) draftBox.getChildren().get(1);
+              lookup(draftBox, PageContentDisplay.CONTENT_ID, PageAnalysisScrollPane.class);
           Assertions.assertThat(draftScrollPane.getArea().getPrefHeight()).isEqualTo(700.0);
           Assertions.assertThat(draftBox.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
 
@@ -277,14 +290,15 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
                   "Draft",
                   "Initial draft");
 
-          final StackPane root = (StackPane) window.getStage().getScene().getRoot();
-          final VBox mainContainer = (VBox) root.getChildren().getFirst();
-          final GridPane matrix = (GridPane) mainContainer.getChildren().get(0);
           final MoveToDraftActionControl moveDraftGroup =
-              (MoveToDraftActionControl) matrix.getChildren().get(2);
-          final GridPane moveDraftGrid = (GridPane) moveDraftGroup.getContent();
-          final TextField subPageNameField = (TextField) moveDraftGrid.getChildren().get(3);
-          final Button refreshButton = (Button) moveDraftGrid.getChildren().get(4);
+              lookup(
+                  window,
+                  UserPageDraftActionWindow.MOVE_TO_DRAFT_ACTION_ID,
+                  MoveToDraftActionControl.class);
+          final TextField subPageNameField =
+              lookup(moveDraftGroup, MoveToDraftActionControl.SUB_PAGE_NAME_ID, TextField.class);
+          final Button refreshButton =
+              lookup(moveDraftGroup, MoveToDraftActionControl.REFRESH_ID, Button.class);
 
           subPageNameField.setText("CustomDraft");
           refreshButton.fire();

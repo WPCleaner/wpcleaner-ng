@@ -19,6 +19,9 @@ import org.wpcleaner.api.utils.GT;
 
 public final class ContentAppendActionControl extends TitledPane {
 
+  public static final String SUMMARY_ID = "summary";
+  public static final String TEXTS_ID = "texts";
+
   private static final double LABEL_WIDTH = 120.0;
 
   private final List<CheckBox> checkBoxes = new ArrayList<>();
@@ -35,6 +38,7 @@ public final class ContentAppendActionControl extends TitledPane {
     setText(title);
 
     this.summaryField = new TextField(initialConfig.summary());
+    this.summaryField.setId(SUMMARY_ID);
 
     final GridPane grid = new GridPane();
     grid.setHgap(10);
@@ -53,6 +57,7 @@ public final class ContentAppendActionControl extends TitledPane {
     staticTextsLabel.setPrefWidth(LABEL_WIDTH);
 
     final VBox checkboxesBox = new VBox(5);
+    checkboxesBox.setId(TEXTS_ID);
     for (final ContentAppendConfigurationText textConfig : initialConfig.texts()) {
       final CheckBox cb = new CheckBox(textConfig.label());
       cb.setSelected(textConfig.addedByDefault());

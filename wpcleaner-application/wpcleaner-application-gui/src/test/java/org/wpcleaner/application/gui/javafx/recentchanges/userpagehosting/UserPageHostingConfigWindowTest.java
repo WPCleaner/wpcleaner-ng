@@ -14,7 +14,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -28,8 +27,10 @@ import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfiguration;
+import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationPane;
 import org.wpcleaner.application.gui.javafx.core.action.content.append.ContentAppendConfigurationText;
 import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfiguration;
+import org.wpcleaner.application.gui.javafx.core.action.content.replace.ContentReplaceConfigurationPane;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowServices;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageLoader;
@@ -74,20 +75,20 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
           Assertions.assertThat(window.getStage().getModality()).isEqualTo(Modality.WINDOW_MODAL);
           Assertions.assertThat(window.getStage().getOwner()).isEqualTo(ownerStage);
 
-          final StackPane root = (StackPane) window.getStage().getScene().getRoot();
-          final VBox mainContainer = (VBox) root.getChildren().getFirst();
-          final TitledPane userPageGroup = (TitledPane) mainContainer.getChildren().get(0);
-          final TitledPane userTalkPageGroup = (TitledPane) mainContainer.getChildren().get(1);
+          final TitledPane userPageGroup =
+              lookup(window, UserPageHostingConfigWindow.USER_PAGE_ID, TitledPane.class);
+          final TitledPane userTalkPageGroup =
+              lookup(window, UserPageHostingConfigWindow.USER_TALK_PAGE_ID, TitledPane.class);
 
-          final GridPane userPageGrid = (GridPane) userPageGroup.getContent();
-          final TextArea userPageTextArea = (TextArea) userPageGrid.getChildren().get(3);
+          final TextArea userPageTextArea =
+              lookup(userPageGroup, ContentReplaceConfigurationPane.TEXT_ID, TextArea.class);
 
-          final GridPane userTalkPageGrid = (GridPane) userTalkPageGroup.getContent();
-          final VBox tableBox = (VBox) userTalkPageGrid.getChildren().get(3);
-          final TableView<?> tableView = (TableView<?>) tableBox.getChildren().getFirst();
-          final HBox buttonsBox = (HBox) tableBox.getChildren().get(1);
-          final Button addButton = (Button) buttonsBox.getChildren().get(0);
-          final Button removeButton = (Button) buttonsBox.getChildren().get(1);
+          final TableView<?> tableView =
+              lookup(userTalkPageGroup, ContentAppendConfigurationPane.TEXTS_ID, TableView.class);
+          final Button addButton =
+              lookup(userTalkPageGroup, ContentAppendConfigurationPane.ADD_ID, Button.class);
+          final Button removeButton =
+              lookup(userTalkPageGroup, ContentAppendConfigurationPane.REMOVE_ID, Button.class);
 
           Assertions.assertThat(addButton.getText()).isEmpty();
           Assertions.assertThat(addButton.getTooltip().getText()).isEqualTo("Add");
@@ -112,7 +113,8 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
           Assertions.assertThat(userPageGroup.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
           Assertions.assertThat(userTalkPageGroup.getMaxHeight()).isEqualTo(Double.MAX_VALUE);
           Assertions.assertThat(GridPane.getVgrow(userPageTextArea)).isEqualTo(Priority.ALWAYS);
-          Assertions.assertThat(GridPane.getVgrow(tableBox)).isEqualTo(Priority.ALWAYS);
+          Assertions.assertThat(GridPane.getVgrow(tableView.getParent()))
+              .isEqualTo(Priority.ALWAYS);
           Assertions.assertThat(VBox.getVgrow(tableView)).isEqualTo(Priority.ALWAYS);
 
           window.getStage().close();
@@ -177,16 +179,16 @@ class UserPageHostingConfigWindowTest extends JavaFxTest {
           root.applyCss();
           root.layout();
 
-          final VBox mainContainer = (VBox) root.getChildren().getFirst();
-          final TitledPane userPageGroup = (TitledPane) mainContainer.getChildren().get(0);
-          final TitledPane userTalkPageGroup = (TitledPane) mainContainer.getChildren().get(1);
+          final TitledPane userPageGroup =
+              lookup(window, UserPageHostingConfigWindow.USER_PAGE_ID, TitledPane.class);
+          final TitledPane userTalkPageGroup =
+              lookup(window, UserPageHostingConfigWindow.USER_TALK_PAGE_ID, TitledPane.class);
 
-          final GridPane userPageGrid = (GridPane) userPageGroup.getContent();
-          final TextArea userPageTextArea = (TextArea) userPageGrid.getChildren().get(3);
+          final TextArea userPageTextArea =
+              lookup(userPageGroup, ContentReplaceConfigurationPane.TEXT_ID, TextArea.class);
 
-          final GridPane userTalkPageGrid = (GridPane) userTalkPageGroup.getContent();
-          final VBox tableBox = (VBox) userTalkPageGrid.getChildren().get(3);
-          final TableView<?> tableView = (TableView<?>) tableBox.getChildren().getFirst();
+          final TableView<?> tableView =
+              lookup(userTalkPageGroup, ContentAppendConfigurationPane.TEXTS_ID, TableView.class);
 
           final double initialUserPageHeight = userPageGroup.getHeight();
           final double initialUserTalkPageHeight = userTalkPageGroup.getHeight();

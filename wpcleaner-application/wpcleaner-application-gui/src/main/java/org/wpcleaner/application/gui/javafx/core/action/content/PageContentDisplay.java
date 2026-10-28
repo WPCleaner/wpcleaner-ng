@@ -16,6 +16,9 @@ import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyn
 
 public final class PageContentDisplay extends VBox {
 
+  public static final String CONTENT_ID = "content";
+  public static final String TITLE_ID = "title";
+
   private final Label label;
   private final PageAnalysisScrollPane scrollPane;
 
@@ -31,7 +34,9 @@ public final class PageContentDisplay extends VBox {
     HBox.setHgrow(this, Priority.ALWAYS);
 
     this.label = new Label(pageTitle);
+    this.label.setId(TITLE_ID);
     this.scrollPane = new PageAnalysisScrollPane(colorizer);
+    this.scrollPane.setId(CONTENT_ID);
     final PageAnalysisArea previewArea = scrollPane.getArea();
     previewArea.setPrefHeight(700);
     previewArea.updateText(pageTitle, pageContent, pageAnalysisFactory);

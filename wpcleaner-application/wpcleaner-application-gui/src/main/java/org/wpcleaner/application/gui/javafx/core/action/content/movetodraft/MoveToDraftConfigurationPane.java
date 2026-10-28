@@ -15,6 +15,9 @@ import org.wpcleaner.api.utils.GT;
 
 public final class MoveToDraftConfigurationPane extends TitledPane {
 
+  public static final String SUB_PAGE_NAME_ID = "sub-page-name";
+  public static final String SUMMARY_ID = "summary";
+
   private static final double LABEL_WIDTH = 120.0;
 
   private final TextField subPageNameField;
@@ -28,7 +31,9 @@ public final class MoveToDraftConfigurationPane extends TitledPane {
     setMaxHeight(Double.MAX_VALUE);
 
     this.subPageNameField = new TextField();
+    this.subPageNameField.setId(SUB_PAGE_NAME_ID);
     this.summaryField = new TextField();
+    this.summaryField.setId(SUMMARY_ID);
 
     if (initialConfig != null) {
       this.subPageNameField.setText(initialConfig.subPageName());

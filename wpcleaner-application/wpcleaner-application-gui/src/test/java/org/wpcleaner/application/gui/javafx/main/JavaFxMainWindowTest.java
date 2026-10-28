@@ -13,7 +13,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -95,9 +94,8 @@ class JavaFxMainWindowTest extends JavaFxTest {
           mainWindow.getStage().getScene().getRoot().fireEvent(f1);
           BDDMockito.then(actionServices).should().displayHelp(mainWindow);
 
-          final javafx.scene.Parent rootPane = mainWindow.getStage().getScene().getRoot();
-          final VBox mainContainer = (VBox) rootPane.getChildrenUnmodifiable().getFirst();
-          final ToolBar feedbacksToolBar = (ToolBar) mainContainer.getChildren().get(2);
+          final ToolBar feedbacksToolBar =
+              lookup(mainWindow, JavaFxMainWindow.FEEDBACKS_ID, ToolBar.class);
           final List<Button> buttons =
               feedbacksToolBar.getItems().stream()
                   .filter(Button.class::isInstance)

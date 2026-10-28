@@ -35,6 +35,11 @@ import org.wpcleaner.lib.image.ImageSize;
 
 public final class ContentAppendConfigurationPane extends TitledPane {
 
+  public static final String ADD_ID = "add";
+  public static final String REMOVE_ID = "remove";
+  public static final String SUMMARY_ID = "summary";
+  public static final String TEXTS_ID = "texts";
+
   private static final double LABEL_WIDTH = 120.0;
 
   private final JavaFxImageLoader imageLoader;
@@ -53,6 +58,7 @@ public final class ContentAppendConfigurationPane extends TitledPane {
 
     this.imageLoader = new JavaFxImageLoader(imageLoader);
     this.summaryField = new TextField();
+    this.summaryField.setId(SUMMARY_ID);
 
     if (initialConfig != null) {
       this.summaryField.setText(initialConfig.summary());
@@ -76,6 +82,7 @@ public final class ContentAppendConfigurationPane extends TitledPane {
     final Label staticTextsLabel = new Label(GT._T("Additional texts:"));
     staticTextsLabel.setMinWidth(LABEL_WIDTH);
     staticTextsLabel.setPrefWidth(LABEL_WIDTH);
+    tableView.setId(TEXTS_ID);
     tableView.setEditable(true);
     tableView.setPrefHeight(150);
     tableView.setMaxHeight(Double.MAX_VALUE);
@@ -128,6 +135,7 @@ public final class ContentAppendConfigurationPane extends TitledPane {
 
   private Button createAddButton() {
     final Button button = new Button();
+    button.setId(ADD_ID);
     button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_ADD, ImageSize.BUTTON)
@@ -257,6 +265,7 @@ public final class ContentAppendConfigurationPane extends TitledPane {
 
   private Button createRemoveButton() {
     final Button button = new Button();
+    button.setId(REMOVE_ID);
     button.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
     imageLoader
         .getImageView(ImageCollection.LIST_REMOVE, ImageSize.BUTTON)

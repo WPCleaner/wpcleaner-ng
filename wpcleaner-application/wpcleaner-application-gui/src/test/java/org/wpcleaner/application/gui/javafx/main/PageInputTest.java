@@ -8,26 +8,21 @@ package org.wpcleaner.application.gui.javafx.main;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
+import javafx.scene.control.Button;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
-import org.wpcleaner.application.gui.javafx.JavaFxInitializer;
+import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.settings.interesting.InterestingByWikiSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettings;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 
-class PageInputTest {
-
-  @BeforeAll
-  static void setUpClass() {
-    JavaFxInitializer.initialize();
-  }
+class PageInputTest extends JavaFxTest {
 
   @DisplayName("PageInput initializes with correct pages and options")
   @Test
@@ -86,11 +81,10 @@ class PageInputTest {
           final PageInput pageInput =
               new PageInput(owner, wiki, settingsManager, imageLoader, apiRandom);
 
-          // Get the buttons
-          final javafx.scene.control.Button addPageButton =
-              (javafx.scene.control.Button) pageInput.toolBar.getItems().get(0);
-          final javafx.scene.control.Button removePageButton =
-              (javafx.scene.control.Button) pageInput.toolBar.getItems().get(1);
+          final Button addPageButton =
+              lookup(pageInput.toolBar, PageInput.ADD_PAGE_ID, Button.class);
+          final Button removePageButton =
+              lookup(pageInput.toolBar, PageInput.REMOVE_PAGE_ID, Button.class);
 
           // Initial state
           Assertions.assertThat(pageInput.comboBox.getItems())

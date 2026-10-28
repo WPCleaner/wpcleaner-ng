@@ -29,6 +29,13 @@ import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices> {
 
+  static final String CLOSE_ID = "close";
+  static final String FIELDS_ID = "fields";
+  static final String GROUPS_ID = "groups";
+  static final String RIGHTS_ID = "rights";
+  static final String USERNAME_ID = "username";
+  static final String WIKI_ID = "wiki";
+
   private final ConnectedUser user;
 
   UserInformationWindow(
@@ -61,6 +68,7 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
     mainContainer.setPadding(new Insets(15, 15, 15, 15));
 
     final GridPane grid = new GridPane();
+    grid.setId(FIELDS_ID);
     grid.setHgap(10);
     grid.setVgap(10);
 
@@ -76,6 +84,7 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
     final Label usernameLabel = new Label(GT._T("Username:"));
     usernameLabel.setMinWidth(Region.USE_PREF_SIZE);
     final TextField usernameField = new TextField(user.username());
+    usernameField.setId(USERNAME_ID);
     usernameField.setEditable(false);
     grid.add(usernameLabel, 0, 0);
     grid.add(usernameField, 1, 0);
@@ -83,6 +92,7 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
     final Label wikiLabel = new Label(GT._T("Wiki:"));
     wikiLabel.setMinWidth(Region.USE_PREF_SIZE);
     final TextField wikiField = new TextField(user.wiki().toString());
+    wikiField.setId(WIKI_ID);
     wikiField.setEditable(false);
     grid.add(wikiLabel, 0, 1);
     grid.add(wikiField, 1, 1);
@@ -91,6 +101,7 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
     groupsLabelField.setMinWidth(Region.USE_PREF_SIZE);
     final TextArea groupsField =
         new TextArea(String.join("\n", user.groups().stream().sorted().toList()));
+    groupsField.setId(GROUPS_ID);
     groupsField.setEditable(false);
     groupsField.setPrefRowCount(4);
     grid.add(groupsLabelField, 0, 2);
@@ -100,6 +111,7 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
     rightsLabelField.setMinWidth(Region.USE_PREF_SIZE);
     final TextArea rightsField =
         new TextArea(String.join("\n", user.rights().stream().sorted().toList()));
+    rightsField.setId(RIGHTS_ID);
     rightsField.setEditable(false);
     rightsField.setPrefRowCount(6);
     grid.add(rightsLabelField, 0, 3);
@@ -114,17 +126,21 @@ final class UserInformationWindow extends JavaFxWindow<JavaFxMainWindowServices>
     GridPane.setVgrow(groupsField, Priority.ALWAYS);
     GridPane.setVgrow(rightsField, Priority.ALWAYS);
 
-    final Button closeButton = new Button(GT._T("Close"));
-    closeButton.setCancelButton(true);
-    closeButton.setDefaultButton(true);
-    closeButton.setOnAction(_ -> stage.close());
-
-    final HBox buttons = new HBox(10, closeButton);
+    final HBox buttons = new HBox(10, createCloseButton());
     buttons.setAlignment(Pos.CENTER_RIGHT);
 
     mainContainer.getChildren().addAll(grid, buttons);
 
     root.getChildren().addAll(mainContainer, progressOverlay);
     return new Scene(root, 650, 500);
+  }
+
+  private Button createCloseButton() {
+    final Button closeButton = new Button(GT._T("Close"));
+    closeButton.setId(CLOSE_ID);
+    closeButton.setCancelButton(true);
+    closeButton.setDefaultButton(true);
+    closeButton.setOnAction(_ -> stage.close());
+    return closeButton;
   }
 }

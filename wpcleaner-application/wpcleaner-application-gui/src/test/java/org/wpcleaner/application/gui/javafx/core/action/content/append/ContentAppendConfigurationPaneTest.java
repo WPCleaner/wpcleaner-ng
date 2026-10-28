@@ -12,7 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.assertj.core.api.Assertions;
@@ -56,21 +55,22 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
           Assertions.assertThat(retrieved.getFirst().label()).isEqualTo("myLabel");
           Assertions.assertThat(retrieved.getFirst().text()).isEqualTo("myText");
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
+          final TextField summaryField =
+              lookup(pane, ContentAppendConfigurationPane.SUMMARY_ID, TextField.class);
           Assertions.assertThat(summaryField.getText()).isEqualTo("mySummary");
           Assertions.assertThat(GridPane.getHgrow(summaryField)).isEqualTo(Priority.ALWAYS);
 
-          final VBox tableBox = (VBox) grid.getChildren().get(3);
-          final TableView<?> tableView = (TableView<?>) tableBox.getChildren().getFirst();
+          final TableView<?> tableView =
+              lookup(pane, ContentAppendConfigurationPane.TEXTS_ID, TableView.class);
           Assertions.assertThat(tableView.getColumns()).hasSize(3);
           Assertions.assertThat(tableView.getColumns().get(0).isSortable()).isFalse();
           Assertions.assertThat(tableView.getColumns().get(1).isSortable()).isFalse();
           Assertions.assertThat(tableView.getColumns().get(2).isSortable()).isFalse();
 
-          final HBox buttonsBox = (HBox) tableBox.getChildren().get(1);
-          final Button addButton = (Button) buttonsBox.getChildren().get(0);
-          final Button removeButton = (Button) buttonsBox.getChildren().get(1);
+          final Button addButton =
+              lookup(pane, ContentAppendConfigurationPane.ADD_ID, Button.class);
+          final Button removeButton =
+              lookup(pane, ContentAppendConfigurationPane.REMOVE_ID, Button.class);
 
           Assertions.assertThat(addButton.getText()).isEmpty();
           Assertions.assertThat(removeButton.getText()).isEmpty();
@@ -85,7 +85,8 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
           tableView.getSelectionModel().select(0);
           Assertions.assertThat(removeButton.isDisabled()).isFalse();
 
-          Assertions.assertThat(GridPane.getVgrow(tableBox)).isEqualTo(Priority.ALWAYS);
+          Assertions.assertThat(GridPane.getVgrow(tableView.getParent()))
+              .isEqualTo(Priority.ALWAYS);
           Assertions.assertThat(VBox.getVgrow(tableView)).isEqualTo(Priority.ALWAYS);
         });
   }
@@ -105,8 +106,8 @@ class ContentAppendConfigurationPaneTest extends JavaFxTest {
           Assertions.assertThat(pane.getSummary()).isEmpty();
           Assertions.assertThat(pane.getTexts()).isEmpty();
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
+          final TextField summaryField =
+              lookup(pane, ContentAppendConfigurationPane.SUMMARY_ID, TextField.class);
 
           summaryField.setText("enteredSummary");
           Assertions.assertThat(pane.isComplete()).isTrue();

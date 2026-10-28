@@ -43,7 +43,7 @@ class PageContentDisplayTest extends JavaFxTest {
               new PageContentDisplay(colorizer, pageAnalysisFactory, "User:Test", "Page content");
 
           Assertions.assertThat(display.getChildren()).hasSize(2);
-          final Label label = (Label) display.getChildren().getFirst();
+          final Label label = lookup(display, PageContentDisplay.TITLE_ID, Label.class);
           Assertions.assertThat(label.getText()).isEqualTo("User:Test");
 
           final PageAnalysisScrollPane scrollPane = display.getScrollPane();

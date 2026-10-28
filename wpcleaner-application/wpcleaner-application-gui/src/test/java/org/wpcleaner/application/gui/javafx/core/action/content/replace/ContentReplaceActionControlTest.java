@@ -38,9 +38,10 @@ class ContentReplaceActionControlTest extends JavaFxTest {
           Assertions.assertThat(retrieved.summary()).isEqualTo("mySummary");
           Assertions.assertThat(retrieved.text()).isEqualTo("myText");
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
-          final TextArea textArea = (TextArea) grid.getChildren().get(3);
+          final TextField summaryField =
+              lookup(pane, ContentReplaceActionControl.SUMMARY_ID, TextField.class);
+          final TextArea textArea =
+              lookup(pane, ContentReplaceActionControl.TEXT_ID, TextArea.class);
 
           Assertions.assertThat(summaryField.getText()).isEqualTo("mySummary");
           Assertions.assertThat(textArea.getText()).isEqualTo("myText");
@@ -69,8 +70,8 @@ class ContentReplaceActionControlTest extends JavaFxTest {
           Assertions.assertThat(retrieved.summary()).isEmpty();
           Assertions.assertThat(retrieved.text()).isEmpty();
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
+          final TextField summaryField =
+              lookup(pane, ContentReplaceActionControl.SUMMARY_ID, TextField.class);
 
           summaryField.setText("enteredSummary");
           Assertions.assertThat(pane.isComplete()).isTrue();

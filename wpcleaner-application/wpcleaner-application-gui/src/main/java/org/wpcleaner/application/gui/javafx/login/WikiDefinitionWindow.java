@@ -46,6 +46,13 @@ import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 @SuppressWarnings("PMD.ExcessiveImports")
 public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowServices> {
 
+  static final String CANCEL_ID = "cancel";
+  static final String FAMILY_ID = "family";
+  static final String LANGUAGE_ID = "language";
+  static final String NAME_ID = "name";
+  static final String OK_ID = "ok";
+  static final String SUBDOMAIN_ID = "subdomain";
+
   private final ComboBox<WikiBuilderType> builderTypeComboBox;
   private final TextField nameField;
   private final TextField languageField;
@@ -67,14 +74,18 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
     stage.setTitle(GT._T("Add wiki"));
 
     builderTypeComboBox = new ComboBox<>();
+    builderTypeComboBox.setId(FAMILY_ID);
     builderTypeComboBox.getItems().addAll(WikiBuilderType.values());
     builderTypeComboBox.getSelectionModel().select(WikiBuilderType.WIKIPEDIA);
     builderTypeComboBox.setCellFactory(_ -> new WikiBuilderTypeListCell(imageLoader));
     builderTypeComboBox.setButtonCell(new WikiBuilderTypeListCell(imageLoader));
 
     nameField = new TextField();
+    nameField.setId(NAME_ID);
     languageField = new TextField();
+    languageField.setId(LANGUAGE_ID);
     subdomainField = new TextField();
+    subdomainField.setId(SUBDOMAIN_ID);
     mainHostField = new TextField();
     apiPathField = new TextField("/w/api.php");
     indexPathField = new TextField("/w/index.php");
@@ -153,10 +164,12 @@ public final class WikiDefinitionWindow extends JavaFxWindow<JavaFxLoginWindowSe
                     }));
 
     final Button okButton = new Button(GT._T("OK"));
+    okButton.setId(OK_ID);
     okButton.setDefaultButton(true);
     okButton.setOnAction(_ -> handleOk());
 
     final Button cancelButton = new Button(GT._T("Cancel"));
+    cancelButton.setId(CANCEL_ID);
     cancelButton.setCancelButton(true);
     cancelButton.setOnAction(_ -> stage.close());
 

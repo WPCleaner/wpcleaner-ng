@@ -41,12 +41,12 @@ class ContentAppendActionControlTest extends JavaFxTest {
 
           Assertions.assertThat(pane.getSelectedTexts()).containsExactly("text1");
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
+          final TextField summaryField =
+              lookup(pane, ContentAppendActionControl.SUMMARY_ID, TextField.class);
           Assertions.assertThat(summaryField.getText()).isEqualTo("mySummary");
           Assertions.assertThat(GridPane.getHgrow(summaryField)).isEqualTo(Priority.ALWAYS);
 
-          final VBox checkboxesBox = (VBox) grid.getChildren().get(3);
+          final VBox checkboxesBox = lookup(pane, ContentAppendActionControl.TEXTS_ID, VBox.class);
           Assertions.assertThat(checkboxesBox.getChildren()).hasSize(2);
 
           final CheckBox cb1 = (CheckBox) checkboxesBox.getChildren().get(0);
@@ -74,8 +74,8 @@ class ContentAppendActionControlTest extends JavaFxTest {
           Assertions.assertThat(pane.getSummary()).isEmpty();
           Assertions.assertThat(pane.getSelectedTexts()).isEmpty();
 
-          final GridPane grid = (GridPane) pane.getContent();
-          final TextField summaryField = (TextField) grid.getChildren().get(1);
+          final TextField summaryField =
+              lookup(pane, ContentAppendActionControl.SUMMARY_ID, TextField.class);
 
           summaryField.setText("enteredSummary");
           Assertions.assertThat(pane.isComplete()).isTrue();
