@@ -5,6 +5,8 @@ package org.wpcleaner.api.analysis.languagelink;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
 
-public record LanguageLinkElement(int begin, int end) implements Element {}
+public record LanguageLinkElement(
+    int begin, int end, String language, String target, @Nullable String text) implements Element {}

@@ -5,6 +5,14 @@ package org.wpcleaner.api.analysis.interwikilink;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
 
-public record InterwikiLinkElement(int begin, int end) implements Element {}
+public record InterwikiLinkElement(
+    int begin,
+    int end,
+    String prefix,
+    String target,
+    @Nullable String anchor,
+    @Nullable String text)
+    implements Element {}

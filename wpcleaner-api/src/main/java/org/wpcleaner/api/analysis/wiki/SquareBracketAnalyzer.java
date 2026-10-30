@@ -90,7 +90,7 @@ final class SquareBracketAnalyzer {
     if (target == null) {
       return;
     }
-    extractValue(cursor, ' ', UNAUTHORIZED_AFTER_1_OPEN_AND_SEPARATOR);
+    final String value = extractValue(cursor, ' ', UNAUTHORIZED_AFTER_1_OPEN_AND_SEPARATOR);
     if (cursor.getIndex() >= text.length() || text.charAt(cursor.getIndex()) != CLOSE) {
       return;
     }
@@ -99,7 +99,7 @@ final class SquareBracketAnalyzer {
     if (cursor.getIndex() - firstClosingBracket != 1) {
       return;
     }
-    persist1SquareBracketResult(firstOpeningBracket, cursor.getIndex(), target);
+    persist1SquareBracketResult(firstOpeningBracket, cursor.getIndex(), target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
@@ -113,7 +113,7 @@ final class SquareBracketAnalyzer {
     if (target == null) {
       return;
     }
-    extractValue(cursor, PIPE, UNAUTHORIZED_AFTER_2_OPEN_AND_SEPARATOR);
+    final String value = extractValue(cursor, PIPE, UNAUTHORIZED_AFTER_2_OPEN_AND_SEPARATOR);
     if (cursor.getIndex() >= text.length() || text.charAt(cursor.getIndex()) != CLOSE) {
       return;
     }
@@ -122,39 +122,54 @@ final class SquareBracketAnalyzer {
     if (cursor.getIndex() - firstClosingBracket != TWO) {
       return;
     }
-    persist2SquareBracketsResult(firstOpeningBracket, cursor.getIndex(), target);
+    persist2SquareBracketsResult(firstOpeningBracket, cursor.getIndex(), target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
   }
 
-  private void persist1SquareBracketResult(final int begin, final int end, final String target) {
+  private void persist1SquareBracketResult(
+      final int begin, final int end, final String target, @Nullable final String value) {
     final boolean knownProtocol =
         protocols.stream().anyMatch(protocol -> target.startsWith(protocol.value()));
     if (knownProtocol) {
-      externalLinks.add(new ExternalLinkElement(begin, end));
+      externalLinks.add(new ExternalLinkElement(begin, end, target, value));
     }
   }
 
-  private void persist2SquareBracketsResult(final int begin, final int end, final String target) {
+  private void persist2SquareBracketsResult(
+      final int begin, final int end, final String target, @Nullable final String value) {
     final int column = target.indexOf(':');
     if (column <= 0) {
-      internalLinks.add(new InternalLinkElement(begin, end));
+      persistInternalLink(begin, end, target, value);
       return;
     }
-    final String beforeColumn = target.substring(0, column);
+    final String beforeColumn = target.substring(0, column).trim();
+    final String afterColumn = target.substring(column + 1);
     final Optional<Interwiki> interwikiOpt = Interwiki.findInterwiki(interwikis, beforeColumn);
     if (interwikiOpt.isPresent()) {
       if (interwikiOpt.get().language() != null) {
-        languageLinks.add(new LanguageLinkElement(begin, end));
+        languageLinks.add(
+            new LanguageLinkElement(begin, end, beforeColumn, afterColumn.trim(), value));
       } else {
-        interwikiLinks.add(new InterwikiLinkElement(begin, end));
+        final AnchoredTarget anchoredTarget = AnchoredTarget.split(afterColumn);
+        interwikiLinks.add(
+            new InterwikiLinkElement(
+                begin, end, beforeColumn, anchoredTarget.target(), anchoredTarget.anchor(), value));
       }
     } else if (categoryNamespace != null && categoryNamespace.isPossibleName(beforeColumn)) {
-      categories.add(new CategoryElement(begin, end));
+      categories.add(new CategoryElement(begin, end, beforeColumn, afterColumn.trim(), value));
     } else {
-      internalLinks.add(new InternalLinkElement(begin, end));
+      persistInternalLink(begin, end, target, value);
     }
+  }
+
+  private void persistInternalLink(
+      final int begin, final int end, final String target, @Nullable final String value) {
+    final AnchoredTarget anchoredTarget = AnchoredTarget.split(target);
+    internalLinks.add(
+        new InternalLinkElement(
+            begin, end, anchoredTarget.target(), anchoredTarget.anchor(), value));
   }
 
   @Nullable
@@ -210,5 +225,20 @@ final class SquareBracketAnalyzer {
 
   List<LanguageLinkElement> getLanguageLinks() {
     return languageLinks;
+  }
+
+  private record AnchoredTarget(String target, @Nullable String anchor) {
+
+    private static final char ANCHOR = '#';
+
+    static AnchoredTarget split(final String fullTarget) {
+      final int anchorIndex = fullTarget.indexOf(ANCHOR);
+      if (anchorIndex < 0) {
+        return new AnchoredTarget(fullTarget.trim(), null);
+      }
+      return new AnchoredTarget(
+          fullTarget.substring(0, anchorIndex).trim(),
+          fullTarget.substring(anchorIndex + 1).trim());
+    }
   }
 }
