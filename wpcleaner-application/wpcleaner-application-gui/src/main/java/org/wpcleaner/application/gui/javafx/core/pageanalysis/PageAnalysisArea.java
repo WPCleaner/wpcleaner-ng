@@ -9,6 +9,7 @@ import org.fxmisc.richtext.InlineCssTextArea;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 
 public final class PageAnalysisArea extends InlineCssTextArea {
@@ -29,11 +30,14 @@ public final class PageAnalysisArea extends InlineCssTextArea {
   }
 
   public void updateText(
-      final String title, @Nullable final String text, final PageAnalysisFactory factory) {
+      final WikiDefinition wiki,
+      final String title,
+      @Nullable final String text,
+      final PageAnalysisFactory factory) {
     if (text == null) {
       super.replaceText("");
     } else {
-      updateAnalysis(factory.analysis(title, text));
+      updateAnalysis(factory.analysis(wiki, title, text));
     }
   }
 }

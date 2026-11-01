@@ -13,8 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
 class InterwikiExtractorTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
 
   @DisplayName("Should extract interwikis from SiteInfo into InterwikiRepository")
   @Test
@@ -54,10 +58,10 @@ class InterwikiExtractorTest {
             List.of());
 
     // WHEN
-    extractor.extract(siteInfo);
+    extractor.extract(WIKI, siteInfo);
 
     // THEN
-    final List<Interwiki> interwikis = repository.getInterwikis();
+    final List<Interwiki> interwikis = repository.getInterwikis(WIKI);
     Assertions.assertThat(interwikis).hasSize(1);
     final Interwiki interwiki = interwikis.getFirst();
     Assertions.assertThat(interwiki.prefix()).isEqualTo("en");

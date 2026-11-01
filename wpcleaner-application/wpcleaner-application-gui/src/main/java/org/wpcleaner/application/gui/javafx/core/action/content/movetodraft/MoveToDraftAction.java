@@ -49,7 +49,11 @@ public class MoveToDraftAction {
             imageLoader, context.blockTitle(), configuration, this::refreshTargetContent);
     this.displayPane =
         new PageContentDisplay(
-            colorizer, analysisFactory, context.subPageFullTitle(), context.pageContent());
+            colorizer,
+            analysisFactory,
+            context.wiki(),
+            context.subPageFullTitle(),
+            context.pageContent());
   }
 
   public Control getConfigurationControl() {
@@ -94,7 +98,8 @@ public class MoveToDraftAction {
     final String targetSubPageTitle = context.subPageFullTitle(subPageName);
     owner.executeAsync(
         new RetrievePageContentTask(context.wiki(), targetSubPageTitle, apiRevisions),
-        content -> displayPane.updateText(targetSubPageTitle, content, analysisFactory),
+        content ->
+            displayPane.updateText(context.wiki(), targetSubPageTitle, content, analysisFactory),
         e ->
             owner.showError(
                 GT._T(

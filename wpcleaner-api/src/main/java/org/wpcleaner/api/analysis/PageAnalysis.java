@@ -19,6 +19,7 @@ import org.wpcleaner.api.analysis.wiki.WikiContainer;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 public final class PageAnalysis {
 
@@ -29,6 +30,7 @@ public final class PageAnalysis {
   private final WikiContainer wikiElements;
 
   public PageAnalysis(
+      final WikiDefinition wiki,
       final String title,
       final String text,
       final InterwikiRepository interwikiRepository,
@@ -40,7 +42,7 @@ public final class PageAnalysis {
     this.tags = new TagContainer(text, comments);
     this.wikiElements =
         new WikiContainer(
-            text, comments, interwikiRepository, namespaceRepository, protocolRepository);
+            wiki, text, comments, interwikiRepository, namespaceRepository, protocolRepository);
   }
 
   public String getTitle() {

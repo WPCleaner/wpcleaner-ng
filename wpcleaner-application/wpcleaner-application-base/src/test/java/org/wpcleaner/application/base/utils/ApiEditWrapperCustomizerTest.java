@@ -71,7 +71,7 @@ class ApiEditWrapperCustomizerTest {
         .willReturn(EDIT);
 
     apiEditWrapper.edit(WIKI, editQuery("Summary", null, null));
-    tagRepository.addTag(new Tag(true, true, null, null, null, "wpcleaner", List.of()));
+    tagRepository.addTag(WIKI, new Tag(true, true, null, null, null, "wpcleaner", List.of()));
     apiEditWrapper.edit(WIKI, editQuery("Summary", null, null));
   }
 

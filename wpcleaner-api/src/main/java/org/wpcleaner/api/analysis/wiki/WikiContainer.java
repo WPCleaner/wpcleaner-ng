@@ -19,10 +19,12 @@ import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @SuppressWarnings("PMD.DataClass")
 public class WikiContainer {
 
+  private final WikiDefinition wiki;
   private final String text;
   private final InterwikiRepository interwikiRepository;
   private final NamespaceRepository namespaceRepository;
@@ -37,11 +39,13 @@ public class WikiContainer {
   private boolean done;
 
   public WikiContainer(
+      final WikiDefinition wiki,
       final String text,
       final CommentContainer comments,
       final InterwikiRepository interwikiRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
+    this.wiki = wiki;
     this.text = text;
     this.interwikiRepository = interwikiRepository;
     this.namespaceRepository = namespaceRepository;
@@ -90,9 +94,9 @@ public class WikiContainer {
             new WikiAnalyzer(
                 text,
                 textBrowser,
-                interwikiRepository.getInterwikis(),
-                namespaceRepository.getNamespaces(),
-                protocolRepository.getProtocols());
+                interwikiRepository.getInterwikis(wiki),
+                namespaceRepository.getNamespaces(wiki),
+                protocolRepository.getProtocols(wiki));
         analyzer.analyze();
         categories.addAll(analyzer.getCategories());
         externalLinks.addAll(analyzer.getExternalLinks());

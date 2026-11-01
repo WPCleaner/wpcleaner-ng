@@ -35,7 +35,7 @@ public class ContentReplaceAction {
         new ContentReplaceActionControl(context.blockTitle(), configuration);
     this.displayPane =
         new PageContentDisplay(
-            colorizer, analysisFactory, context.pageTitle(), context.pageContent());
+            colorizer, analysisFactory, context.wiki(), context.pageTitle(), context.pageContent());
   }
 
   public Control getConfigurationControl() {

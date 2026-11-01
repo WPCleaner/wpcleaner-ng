@@ -48,13 +48,13 @@ public class LoginHook {
     if (!siteInfoProperties.isEmpty()) {
       try (ProgressStep _ = tracker.start(GT._T("Retrieving site information"))) {
         siteInfoExtractor.extract(
-            apiSiteInfo.requestSiteInfo(wiki, siteInfoProperties, null, null, null));
+            wiki, apiSiteInfo.requestSiteInfo(wiki, siteInfoProperties, null, null, null));
       }
     }
     if (!tagsProperties.isEmpty()) {
       try (ProgressStep _ = tracker.start(GT._T("Retrieving tags"))) {
         final List<Tag> tags = apiTags.retrieveTags(wiki, Limit.max(), null, tagsProperties);
-        tagRepository.addTags(tags);
+        tagRepository.addTags(wiki, tags);
       }
     }
   }

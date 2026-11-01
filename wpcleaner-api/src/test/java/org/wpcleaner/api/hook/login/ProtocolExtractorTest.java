@@ -13,8 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.repository.protocol.Protocol;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
 class ProtocolExtractorTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
 
   @DisplayName("Should extract protocols from SiteInfo into ProtocolRepository")
   @Test
@@ -51,10 +55,10 @@ class ProtocolExtractorTest {
             List.of());
 
     // WHEN
-    extractor.extract(siteInfo);
+    extractor.extract(WIKI, siteInfo);
 
     // THEN
-    final List<Protocol> protocols = repository.getProtocols();
+    final List<Protocol> protocols = repository.getProtocols(WIKI);
     Assertions.assertThat(protocols).hasSize(2);
     Assertions.assertThat(protocols.get(0).value()).isEqualTo("http://");
     Assertions.assertThat(protocols.get(1).value()).isEqualTo("https://");

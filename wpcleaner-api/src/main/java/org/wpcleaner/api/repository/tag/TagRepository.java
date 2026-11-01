@@ -8,36 +8,65 @@ package org.wpcleaner.api.repository.tag;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.api.ConnectedUser;
+import org.wpcleaner.api.api.LogoutHook;
 import org.wpcleaner.api.api.query.list.tags.Tag;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
-public class TagRepository {
+public class TagRepository implements LogoutHook {
 
-  private final List<Tag> tags = new ArrayList<>();
+  private final Map<WikiDefinition, List<Tag>> tags = new HashMap<>();
+  private final Lock tagsLock = new ReentrantLock();
 
-  public void addTag(final Tag tag) {
-    if (tags.stream().map(Tag::name).anyMatch(name -> Objects.equals(name, tag.name()))) {
-      return;
+  public void addTag(final WikiDefinition wiki, final Tag tag) {
+    tagsLock.lock();
+    try {
+      final List<Tag> wikiTags = tags.computeIfAbsent(wiki, _ -> new ArrayList<>());
+      if (wikiTags.stream().map(Tag::name).anyMatch(name -> Objects.equals(name, tag.name()))) {
+        return;
+      }
+      wikiTags.add(tag);
+      wikiTags.sort(Comparator.comparing(Tag::name));
+    } finally {
+      tagsLock.unlock();
     }
-    tags.add(tag);
-    tags.sort(Comparator.comparing(Tag::name));
   }
 
-  public void addTags(final Collection<Tag> newTags) {
+  public void addTags(final WikiDefinition wiki, final Collection<Tag> newTags) {
     for (final Tag tag : newTags) {
-      addTag(tag);
+      addTag(wiki, tag);
     }
   }
 
-  public List<Tag> getTags() {
-    return List.copyOf(tags);
+  public List<Tag> getTags(final WikiDefinition wiki) {
+    tagsLock.lock();
+    try {
+      return List.copyOf(tags.getOrDefault(wiki, List.of()));
+    } finally {
+      tagsLock.unlock();
+    }
   }
 
-  public Optional<Tag> getSimilarTag(final String name) {
-    return tags.stream().filter(tag -> name.equalsIgnoreCase(tag.name())).findFirst();
+  public Optional<Tag> getSimilarTag(final WikiDefinition wiki, final String name) {
+    return getTags(wiki).stream().filter(tag -> name.equalsIgnoreCase(tag.name())).findFirst();
+  }
+
+  @Override
+  public void logout(final ConnectedUser user) {
+    tagsLock.lock();
+    try {
+      tags.clear();
+    } finally {
+      tagsLock.unlock();
+    }
   }
 }

@@ -13,6 +13,7 @@ import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
 public class NamespaceExtractor {
@@ -23,11 +24,15 @@ public class NamespaceExtractor {
     this.repository = repository;
   }
 
-  public void extract(final SiteInfo siteInfo) {
-    siteInfo.namespaces().values().forEach(namespace -> extractNamespace(siteInfo, namespace));
+  public void extract(final WikiDefinition wiki, final SiteInfo siteInfo) {
+    siteInfo
+        .namespaces()
+        .values()
+        .forEach(namespace -> extractNamespace(wiki, siteInfo, namespace));
   }
 
   private void extractNamespace(
+      final WikiDefinition wiki,
       final SiteInfo siteInfo,
       final org.wpcleaner.api.api.query.meta.siteinfo.Namespace namespace) {
     final String name =
@@ -35,6 +40,7 @@ public class NamespaceExtractor {
             namespace.name(), () -> Objects.requireNonNullElse(namespace.local(), ""));
     final String canonical = Objects.requireNonNullElse(namespace.canonical(), "");
     repository.addNamespace(
+        wiki,
         new Namespace(
             namespace.id(),
             canonical,

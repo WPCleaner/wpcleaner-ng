@@ -12,13 +12,15 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.ApiException;
+import org.wpcleaner.api.api.ConnectedUser;
+import org.wpcleaner.api.api.LogoutHook;
 import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
-public class TokenRepository {
+public class TokenRepository implements LogoutHook {
 
   private final ApiTokens apiTokens;
   private final Map<WikiDefinition, String> csrfTokens = new HashMap<>();
@@ -48,7 +50,8 @@ public class TokenRepository {
     }
   }
 
-  public void clear() {
+  @Override
+  public void logout(final ConnectedUser user) {
     csrfLock.lock();
     try {
       csrfTokens.clear();

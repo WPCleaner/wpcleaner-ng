@@ -65,7 +65,8 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 
 ## Git
 
-- Never commit and never push: leave changes in the working tree for the maintainer to review.
+- Committing is allowed only on a local branch you create for the task, never on `main`.
+- Never push to the remote repository and never open a pull request: the maintainer reviews and publishes.
 
 ## Project skills
 

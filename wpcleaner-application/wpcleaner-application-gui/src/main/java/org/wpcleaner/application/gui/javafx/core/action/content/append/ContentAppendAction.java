@@ -37,7 +37,7 @@ public class ContentAppendAction {
     this.configurationControl = new ContentAppendActionControl(context.blockTitle(), configuration);
     this.displayPane =
         new PageContentDisplay(
-            colorizer, analysisFactory, context.pageTitle(), context.pageContent());
+            colorizer, analysisFactory, context.wiki(), context.pageTitle(), context.pageContent());
   }
 
   public Control getConfigurationControl() {

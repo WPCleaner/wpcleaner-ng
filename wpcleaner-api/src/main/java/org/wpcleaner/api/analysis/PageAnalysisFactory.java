@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
 public class PageAnalysisFactory {
@@ -26,8 +27,8 @@ public class PageAnalysisFactory {
     this.protocolRepository = protocolRepository;
   }
 
-  public PageAnalysis analysis(final String title, final String text) {
+  public PageAnalysis analysis(final WikiDefinition wiki, final String title, final String text) {
     return new PageAnalysis(
-        title, text, interwikiRepository, namespaceRepository, protocolRepository);
+        wiki, title, text, interwikiRepository, namespaceRepository, protocolRepository);
   }
 }

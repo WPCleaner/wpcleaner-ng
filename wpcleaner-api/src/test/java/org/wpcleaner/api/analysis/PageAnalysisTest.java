@@ -22,8 +22,12 @@ import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
 class PageAnalysisTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.FR;
 
   @DisplayName("should analyze comment")
   @Test
@@ -53,6 +57,20 @@ class PageAnalysisTest {
     Assertions.assertThat(analysis.getInternalLinks()).hasSize(1);
     Assertions.assertThat(analysis.getInternalLinks().getFirst().begin()).isZero();
     Assertions.assertThat(analysis.getInternalLinks().getFirst().end()).isEqualTo(text.length());
+  }
+
+  @DisplayName("should not analyze category with namespaces of another wiki")
+  @Test
+  void analyzeCategoryWithNamespacesOfAnotherWiki() {
+    // GIVEN
+    final String text = "[[Catégorie:My category]]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(WikipediaDefinitions.EN, text);
+
+    // THEN
+    Assertions.assertThat(analysis.getCategories()).isEmpty();
+    Assertions.assertThat(analysis.getInternalLinks()).hasSize(1);
   }
 
   @DisplayName("should analyze category")
@@ -100,8 +118,13 @@ class PageAnalysisTest {
   }
 
   private PageAnalysis createPageAnalysis(final String text) {
+    return createPageAnalysis(WIKI, text);
+  }
+
+  private PageAnalysis createPageAnalysis(final WikiDefinition wiki, final String text) {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     namespaceRepository.addNamespace(
+        WIKI,
         new Namespace(
             CommonNamespaces.CATEGORY.id,
             "Category",
@@ -109,10 +132,10 @@ class PageAnalysisTest {
             List.of("Catégories"),
             CaseType.FIRST_LETTER));
     final ProtocolRepository protocolRepository = new ProtocolRepository();
-    protocolRepository.addProtocol(new Protocol("https://"));
-    protocolRepository.addProtocol(new Protocol("http://"));
+    protocolRepository.addProtocol(WIKI, new Protocol("https://"));
+    protocolRepository.addProtocol(WIKI, new Protocol("http://"));
     return new PageAnalysis(
-        "Title", text, new InterwikiRepository(), namespaceRepository, protocolRepository);
+        wiki, "Title", text, new InterwikiRepository(), namespaceRepository, protocolRepository);
   }
 
   @DisplayName("should analyze language link when interwiki has language attribute")
@@ -123,14 +146,19 @@ class PageAnalysisTest {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
+        WIKI, new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
     interwikiRepository.addInterwiki(
-        new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
+        WIKI, new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
 
     // WHEN
     final PageAnalysis analysis =
         new PageAnalysis(
-            "Title", text, interwikiRepository, namespaceRepository, new ProtocolRepository());
+            WIKI,
+            "Title",
+            text,
+            interwikiRepository,
+            namespaceRepository,
+            new ProtocolRepository());
 
     // THEN
     Assertions.assertThat(analysis.getLanguageLinks()).hasSize(1);
@@ -147,12 +175,17 @@ class PageAnalysisTest {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
+        WIKI, new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
 
     // WHEN
     final PageAnalysis analysis =
         new PageAnalysis(
-            "Title", text, interwikiRepository, namespaceRepository, new ProtocolRepository());
+            WIKI,
+            "Title",
+            text,
+            interwikiRepository,
+            namespaceRepository,
+            new ProtocolRepository());
 
     // THEN
     Assertions.assertThat(analysis.getLanguageLinks()).isEmpty();
@@ -268,11 +301,12 @@ class PageAnalysisTest {
     final String text = "[[en:Hello world]]";
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
+        WIKI, new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
 
     // WHEN
     final PageAnalysis analysis =
         new PageAnalysis(
+            WIKI,
             "Title",
             text,
             interwikiRepository,
@@ -291,11 +325,12 @@ class PageAnalysisTest {
     final String text = "[[wikt:hello#English|hello]]";
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("wikt", true, "https://en.wiktionary.org/wiki/", null, null));
+        WIKI, new Interwiki("wikt", true, "https://en.wiktionary.org/wiki/", null, null));
 
     // WHEN
     final PageAnalysis analysis =
         new PageAnalysis(
+            WIKI,
             "Title",
             text,
             interwikiRepository,
@@ -315,11 +350,12 @@ class PageAnalysisTest {
     final String text = "[[ en :X]]";
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
+        WIKI, new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
 
     // WHEN
     final PageAnalysis analysis =
         new PageAnalysis(
+            WIKI,
             "Title",
             text,
             interwikiRepository,
