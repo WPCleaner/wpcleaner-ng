@@ -59,7 +59,8 @@ public final class PageAnalysis {
     this.title = title;
     this.text = text;
     this.preprocessor =
-        new PreprocessorContainer(wiki, text, extensionTagRepository, magicWordRepository);
+        new PreprocessorContainer(
+            wiki, text, extensionTagRepository, magicWordRepository, namespaceRepository);
     this.tags = new TagContainer(text, preprocessor);
     this.wikiElements =
         new WikiContainer(

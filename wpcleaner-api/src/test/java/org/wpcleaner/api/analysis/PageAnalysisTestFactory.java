@@ -48,6 +48,18 @@ final class PageAnalysisTestFactory {
         WIKI,
         new Namespace(
             CommonNamespaces.FILE.id, "File", "Fichier", List.of("Image"), CaseType.FIRST_LETTER));
+    namespaceRepository.addNamespace(
+        WIKI,
+        new Namespace(
+            CommonNamespaces.USER.id,
+            "User",
+            "Utilisateur",
+            List.of("Utilisatrice"),
+            CaseType.FIRST_LETTER));
+    namespaceRepository.addNamespace(
+        WIKI,
+        new Namespace(
+            CommonNamespaces.TEMPLATE.id, "Template", "Modèle", List.of(), CaseType.FIRST_LETTER));
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
         WIKI, new Interwiki("en", false, "https://en.wikipedia.org/wiki/$1", "English", null));

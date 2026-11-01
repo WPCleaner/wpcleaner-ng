@@ -7,9 +7,15 @@ package org.wpcleaner.api.analysis.template;
 
 import java.util.List;
 import org.wpcleaner.api.analysis.Element;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 
 public record TemplateElement(
-    int begin, int end, String name, List<TemplateParameter> parameters, List<String> modifiers)
+    int begin,
+    int end,
+    String name,
+    PageTitle title,
+    List<TemplateParameter> parameters,
+    List<String> modifiers)
     implements Element {
 
   public TemplateElement {

@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.image.ImageParameter;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
 
@@ -28,7 +29,14 @@ class PageAnalysisImageTest {
 
     // THEN
     Assertions.assertThat(analysis.getImages())
-        .containsExactly(new ImageElement(0, text.length(), "Fichier", "Exemple.jpg", List.of()));
+        .containsExactly(
+            new ImageElement(
+                0,
+                text.length(),
+                "Fichier",
+                "Exemple.jpg",
+                new PageTitle(6, "Exemple.jpg"),
+                List.of()));
     Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
   }
 
@@ -43,7 +51,14 @@ class PageAnalysisImageTest {
 
     // THEN
     Assertions.assertThat(analysis.getImages())
-        .containsExactly(new ImageElement(0, text.length(), "Image", "Exemple.jpg", List.of()));
+        .containsExactly(
+            new ImageElement(
+                0,
+                text.length(),
+                "Image",
+                "Exemple.jpg",
+                new PageTitle(6, "Exemple.jpg"),
+                List.of()));
   }
 
   @DisplayName("should analyze image options and caption")
@@ -64,6 +79,7 @@ class PageAnalysisImageTest {
                 text.length(),
                 "File",
                 "X.jpg",
+                new PageTitle(6, "X.jpg"),
                 List.of(
                     new ImageParameter(13, 18, "thumb", "img_thumbnail", null),
                     new ImageParameter(19, 24, "200px", "img_width", "200"),
@@ -124,6 +140,7 @@ class PageAnalysisImageTest {
                 text.length(),
                 "File",
                 "X.jpg",
+                new PageTitle(6, "X.jpg"),
                 List.of(
                     new ImageParameter(13, 21, "vignette", "img_thumbnail", null),
                     new ImageParameter(22, 45, "Voir [[Paris|la ville]]", null, null))));
@@ -148,6 +165,7 @@ class PageAnalysisImageTest {
                 text.length(),
                 "File",
                 "X.jpg",
+                new PageTitle(6, "X.jpg"),
                 List.of(new ImageParameter(13, 29, "[http://a.org b]", null, null))));
   }
 
@@ -168,7 +186,12 @@ class PageAnalysisImageTest {
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
             new TemplateElement(
-                19, 26, "T", List.of(new TemplateParameter(23, 24, null, "a")), List.of()));
+                19,
+                26,
+                "T",
+                new PageTitle(10, "T"),
+                List.of(new TemplateParameter(23, 24, null, "a")),
+                List.of()));
   }
 
   @DisplayName("should not split parameters at a pipe inside a comment")
@@ -202,6 +225,7 @@ class PageAnalysisImageTest {
                 24,
                 "File",
                 "X.jpg",
+                new PageTitle(6, "X.jpg"),
                 List.of(new ImageParameter(17, 22, "thumb", "img_thumbnail", null))));
   }
 
