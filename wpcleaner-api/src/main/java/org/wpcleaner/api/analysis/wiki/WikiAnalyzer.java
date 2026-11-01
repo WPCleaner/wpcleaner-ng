@@ -14,6 +14,7 @@ import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.protocol.Protocol;
@@ -25,6 +26,7 @@ final class WikiAnalyzer {
   private final SquareBracketAnalyzer squareBracketAnalyzer;
   private final ImageAnalyzer imageAnalyzer;
   private final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer;
+  private final ListItemAnalyzer listItemAnalyzer;
 
   WikiAnalyzer(
       final String text,
@@ -33,17 +35,20 @@ final class WikiAnalyzer {
       final List<Namespace> namespaces,
       final List<Protocol> protocols,
       final ImageAnalyzer imageAnalyzer,
-      final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer) {
+      final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer,
+      final ListItemAnalyzer listItemAnalyzer) {
     this.text = text;
     this.textBrowser = textBrowser;
     this.imageAnalyzer = imageAnalyzer;
     this.behaviorSwitchAnalyzer = behaviorSwitchAnalyzer;
+    this.listItemAnalyzer = listItemAnalyzer;
     this.squareBracketAnalyzer =
         new SquareBracketAnalyzer(text, interwikis, namespaces, protocols, imageAnalyzer);
   }
 
   void analyze() {
     behaviorSwitchAnalyzer.analyze();
+    listItemAnalyzer.analyze();
     final TextBrowser.ReverseCursor cursor = textBrowser.reverseCursor();
     while (cursor.getIndex() >= 0) {
       final int currentIndex = cursor.getIndex();
@@ -70,6 +75,10 @@ final class WikiAnalyzer {
 
   List<ImageElement> getImages() {
     return imageAnalyzer.getImages();
+  }
+
+  List<ListItemElement> getListItems() {
+    return listItemAnalyzer.getListItems();
   }
 
   List<InternalLinkElement> getInternalLinks() {

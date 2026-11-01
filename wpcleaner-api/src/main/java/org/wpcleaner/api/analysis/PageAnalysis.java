@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.include.IncludeAreaElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
@@ -108,6 +109,10 @@ public final class PageAnalysis {
 
   public List<LanguageLinkElement> getLanguageLinks() {
     return wikiElements.getLanguageLinks();
+  }
+
+  public List<ListItemElement> getListItems() {
+    return wikiElements.getListItems();
   }
 
   public List<TemplateElement> getTemplates() {
