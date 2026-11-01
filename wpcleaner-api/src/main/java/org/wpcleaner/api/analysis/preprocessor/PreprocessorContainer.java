@@ -92,6 +92,14 @@ public class PreprocessorContainer {
     return parameters;
   }
 
+  public List<Element> getCurlyBracketElements() {
+    ensureAnalyzed();
+    final List<Element> curlyBracketElements = new ArrayList<>(templates);
+    curlyBracketElements.addAll(functions);
+    curlyBracketElements.addAll(parameters);
+    return curlyBracketElements;
+  }
+
   public List<IncludeAreaElement> getIncludeAreas() {
     ensureAnalyzed();
     return includeAreas;

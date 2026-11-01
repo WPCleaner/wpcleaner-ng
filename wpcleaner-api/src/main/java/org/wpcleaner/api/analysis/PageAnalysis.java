@@ -10,6 +10,7 @@ import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.function.FunctionElement;
+import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.include.IncludeAreaElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
@@ -53,7 +54,14 @@ public final class PageAnalysis {
     this.tags = new TagContainer(text, preprocessor);
     this.wikiElements =
         new WikiContainer(
-            wiki, text, tags, interwikiRepository, namespaceRepository, protocolRepository);
+            wiki,
+            text,
+            preprocessor,
+            tags,
+            interwikiRepository,
+            magicWordRepository,
+            namespaceRepository,
+            protocolRepository);
   }
 
   public String getTitle() {
@@ -78,6 +86,10 @@ public final class PageAnalysis {
 
   public List<ExternalLinkElement> getExternalLinks() {
     return wikiElements.getExternalLinks();
+  }
+
+  public List<ImageElement> getImages() {
+    return wikiElements.getImages();
   }
 
   public List<InternalLinkElement> getInternalLinks() {
