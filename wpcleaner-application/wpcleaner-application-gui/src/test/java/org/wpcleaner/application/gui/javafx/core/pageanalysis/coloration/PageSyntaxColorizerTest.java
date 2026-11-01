@@ -15,6 +15,7 @@ import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
@@ -47,6 +48,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             new InterwikiRepository(),
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -94,6 +96,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -142,6 +145,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -189,6 +193,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             new InterwikiRepository(),
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             new NamespaceRepository(),
             protocolRepository);

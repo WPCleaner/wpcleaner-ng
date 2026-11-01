@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Stream;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
@@ -19,11 +20,13 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
+import org.wpcleaner.api.analysis.magiclink.MagicLinkElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWord;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
@@ -36,6 +39,7 @@ public class WikiContainer {
   private final WikiDefinition wiki;
   private final String text;
   private final InterwikiRepository interwikiRepository;
+  private final MagicLinkRepository magicLinkRepository;
   private final MagicWordRepository magicWordRepository;
   private final NamespaceRepository namespaceRepository;
   private final ProtocolRepository protocolRepository;
@@ -49,6 +53,7 @@ public class WikiContainer {
   private final List<InterwikiLinkElement> interwikiLinks;
   private final List<LanguageLinkElement> languageLinks;
   private final List<ListItemElement> listItems;
+  private final List<MagicLinkElement> magicLinks;
   private final List<ParagraphElement> paragraphs;
   private final List<TableElement> tables;
   private final Lock lock = new ReentrantLock();
@@ -60,12 +65,14 @@ public class WikiContainer {
       final PreprocessorContainer preprocessor,
       final TagContainer tags,
       final InterwikiRepository interwikiRepository,
+      final MagicLinkRepository magicLinkRepository,
       final MagicWordRepository magicWordRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
     this.wiki = wiki;
     this.text = text;
     this.interwikiRepository = interwikiRepository;
+    this.magicLinkRepository = magicLinkRepository;
     this.magicWordRepository = magicWordRepository;
     this.namespaceRepository = namespaceRepository;
     this.protocolRepository = protocolRepository;
@@ -79,6 +86,7 @@ public class WikiContainer {
     this.interwikiLinks = new ArrayList<>();
     this.languageLinks = new ArrayList<>();
     this.listItems = new ArrayList<>();
+    this.magicLinks = new ArrayList<>();
     this.paragraphs = new ArrayList<>();
     this.tables = new ArrayList<>();
     this.done = false;
@@ -122,6 +130,11 @@ public class WikiContainer {
   public List<ListItemElement> getListItems() {
     ensureAnalyzed();
     return listItems;
+  }
+
+  public List<MagicLinkElement> getMagicLinks() {
+    ensureAnalyzed();
+    return magicLinks;
   }
 
   public List<ParagraphElement> getParagraphs() {
@@ -168,6 +181,13 @@ public class WikiContainer {
         interwikiLinks.addAll(analyzer.getInterwikiLinks());
         languageLinks.addAll(analyzer.getLanguageLinks());
         listItems.addAll(analyzer.getListItems());
+        final MagicLinkAnalyzer magicLinkAnalyzer =
+            new MagicLinkAnalyzer(text, textBrowser, magicLinkRepository.getMagicLinks(wiki));
+        magicLinkAnalyzer.analyze(
+            Stream.of(categories, externalLinks, internalLinks, interwikiLinks, languageLinks)
+                .<Element>flatMap(List::stream)
+                .toList());
+        magicLinks.addAll(magicLinkAnalyzer.getMagicLinks());
         paragraphs.addAll(analyzer.getParagraphs());
         tables.addAll(analyzer.getTables());
         done = true;

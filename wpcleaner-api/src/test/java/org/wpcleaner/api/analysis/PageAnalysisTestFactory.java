@@ -11,6 +11,8 @@ import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
+import org.wpcleaner.api.repository.magiclink.MagicLinkType;
 import org.wpcleaner.api.repository.magicword.MagicWord;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -51,6 +53,9 @@ final class PageAnalysisTestFactory {
     final ExtensionTagRepository extensionTagRepository = new ExtensionTagRepository();
     Stream.of("nowiki", "pre", "ref", "references", "math", "inputbox")
         .forEach(name -> extensionTagRepository.addExtensionTag(WIKI, new ExtensionTag(name)));
+    final MagicLinkRepository magicLinkRepository = new MagicLinkRepository();
+    magicLinkRepository.enableMagicLink(WIKI, MagicLinkType.ISBN);
+    magicLinkRepository.enableMagicLink(WIKI, MagicLinkType.PMID);
     final MagicWordRepository magicWordRepository = new MagicWordRepository();
     Stream.of(
             new MagicWord(
@@ -88,6 +93,7 @@ final class PageAnalysisTestFactory {
         text,
         extensionTagRepository,
         new InterwikiRepository(),
+        magicLinkRepository,
         magicWordRepository,
         namespaceRepository,
         protocolRepository);
