@@ -54,23 +54,33 @@ final class PageAnalysisTestFactory {
     final MagicWordRepository magicWordRepository = new MagicWordRepository();
     Stream.of(
             new MagicWord(
-                "currentyear", List.of("ANNEEACTUELLE", "CURRENTYEAR"), true, false, true),
-            new MagicWord("defaultsort", List.of("CLEFDETRI:", "DEFAULTSORT:"), true, true, false),
-            new MagicWord("if", List.of("si", "if"), false, true, false),
-            new MagicWord("img_alt", List.of("alt=$1"), true, false, false),
-            new MagicWord("img_right", List.of("droite", "right"), true, false, false),
+                "currentyear", List.of("ANNEEACTUELLE", "CURRENTYEAR"), true, false, false, true),
             new MagicWord(
-                "img_thumbnail", List.of("vignette", "thumb", "thumbnail"), true, false, false),
+                "defaultsort", List.of("CLEFDETRI:", "DEFAULTSORT:"), true, false, true, false),
+            new MagicWord("if", List.of("si", "if"), false, false, true, false),
+            new MagicWord("img_alt", List.of("alt=$1"), true, false, false, false),
+            new MagicWord("img_right", List.of("droite", "right"), true, false, false, false),
+            new MagicWord(
+                "img_thumbnail",
+                List.of("vignette", "thumb", "thumbnail"),
+                true,
+                false,
+                false,
+                false),
             new MagicWord(
                 "img_upright",
                 List.of("redresse", "redresse=$1", "upright", "upright=$1"),
                 true,
                 false,
+                false,
                 false),
-            new MagicWord("img_width", List.of("$1px"), true, false, false),
-            new MagicWord("language", List.of("#LANGUE", "#LANGUAGE"), false, true, false),
-            new MagicWord("lc", List.of("MINUS:", "LC:"), false, true, false),
-            new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, true, true))
+            new MagicWord("img_width", List.of("$1px"), true, false, false, false),
+            new MagicWord("language", List.of("#LANGUE", "#LANGUAGE"), false, false, true, false),
+            new MagicWord(
+                "notoc", List.of("__AUCUNSOMMAIRE__", "__NOTOC__"), false, true, false, false),
+            new MagicWord("toc", List.of("__SOMMAIRE__", "__TOC__"), false, true, false, false),
+            new MagicWord("lc", List.of("MINUS:", "LC:"), false, false, true, false),
+            new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, false, true, true))
         .forEach(magicWord -> magicWordRepository.addMagicWord(WIKI, magicWord));
     return new PageAnalysis(
         wiki,

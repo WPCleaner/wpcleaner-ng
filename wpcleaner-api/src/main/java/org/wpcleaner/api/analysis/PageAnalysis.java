@@ -6,6 +6,7 @@ package org.wpcleaner.api.analysis;
  */
 
 import java.util.List;
+import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
@@ -75,6 +76,10 @@ public final class PageAnalysis {
 
   public List<CommentElement> getComments() {
     return preprocessor.getComments();
+  }
+
+  public List<BehaviorSwitchElement> getBehaviorSwitches() {
+    return wikiElements.getBehaviorSwitches();
   }
 
   public List<CategoryElement> getCategories() {

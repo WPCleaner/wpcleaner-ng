@@ -16,6 +16,7 @@ class PageAnalysisConfigurer {
   PageAnalysisConfigurer(final LoginHook loginHook) {
     loginHook.addSiteInfoProperties(
         Set.of(
+            SiteInfoParameters.Properties.DOUBLE_UNDERSCORES,
             SiteInfoParameters.Properties.EXTENSION_TAGS,
             SiteInfoParameters.Properties.FUNCTION_HOOKS,
             SiteInfoParameters.Properties.INTERWIKI_MAP,

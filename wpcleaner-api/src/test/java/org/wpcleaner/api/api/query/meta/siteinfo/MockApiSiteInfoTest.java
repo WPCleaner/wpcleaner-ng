@@ -41,6 +41,7 @@ class MockApiSiteInfoTest {
             List.of(),
             List.of(),
             List.of(),
+            List.of(),
             null,
             List.of(new Interwiki(null, "fr", true, "fr", "https://fr.wikipedia.org/wiki/$1")),
             List.of(),

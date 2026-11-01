@@ -33,6 +33,7 @@ public enum SiteInfoParameters {
   public enum Properties {
     DB_REPLICATION_LAG("dbrepllag"),
     DEFAULT_OPTIONS("defaultoptions"),
+    DOUBLE_UNDERSCORES("doubleunderscores"),
     EXTENSION_TAGS("extensiontags"),
     EXTENSIONS("extensions"),
     FILE_EXTENSIONS("fileextensions"),

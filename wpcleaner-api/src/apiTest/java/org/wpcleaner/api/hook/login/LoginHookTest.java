@@ -114,6 +114,7 @@ class LoginHookTest {
     final List<MagicWord> magicWords = magicWordRepository.getMagicWords(WikimediaDefinitions.META);
     Assertions.assertThat(magicWords)
         .as("magicWords")
+        .anySatisfy(magicWord -> Assertions.assertThat(magicWord.doubleUnderscore()).isTrue())
         .anySatisfy(magicWord -> Assertions.assertThat(magicWord.functionHook()).isTrue())
         .anySatisfy(magicWord -> Assertions.assertThat(magicWord.variable()).isTrue());
     for (final MagicWord magicWord : magicWords) {

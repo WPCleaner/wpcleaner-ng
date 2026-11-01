@@ -37,6 +37,7 @@ class ApiSiteInfoTest {
     // Verify all properties are parsed and mapped correctly
     Assertions.assertThat(siteInfo.dbReplicationLag()).as("dbReplicationLag").isNotNull();
     Assertions.assertThat(siteInfo.defaultOptions()).as("defaultOptions").isNotEmpty();
+    Assertions.assertThat(siteInfo.doubleUnderscores()).as("doubleUnderscores").isNotEmpty();
     Assertions.assertThat(siteInfo.extensions()).as("extensions").isNotEmpty();
     Assertions.assertThat(siteInfo.extensionTags()).as("extensionTags").isNotEmpty();
     Assertions.assertThat(siteInfo.fileExtensions()).as("fileExtensions").isNotEmpty();
