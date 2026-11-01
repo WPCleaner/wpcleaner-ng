@@ -8,10 +8,12 @@ package org.wpcleaner.api.analysis.template;
 import java.util.List;
 import org.wpcleaner.api.analysis.Element;
 
-public record TemplateElement(int begin, int end, String name, List<TemplateParameter> parameters)
+public record TemplateElement(
+    int begin, int end, String name, List<TemplateParameter> parameters, List<String> modifiers)
     implements Element {
 
   public TemplateElement {
     parameters = List.copyOf(parameters);
+    modifiers = List.copyOf(modifiers);
   }
 }

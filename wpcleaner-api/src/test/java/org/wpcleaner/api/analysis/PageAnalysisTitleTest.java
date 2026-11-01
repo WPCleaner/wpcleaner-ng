@@ -129,7 +129,8 @@ class PageAnalysisTitleTest {
                 0,
                 text.length(),
                 "T",
-                List.of(new TemplateParameter(4, 15, null, "\n== a|b ==\n"))));
+                List.of(new TemplateParameter(4, 15, null, "\n== a|b ==\n")),
+                List.of()));
   }
 
   @DisplayName("should use a single equal sign at line start as parameter name separator")
@@ -146,6 +147,10 @@ class PageAnalysisTitleTest {
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
             new TemplateElement(
-                0, text.length(), "T", List.of(new TemplateParameter(4, 9, "", "a=\n"))));
+                0,
+                text.length(),
+                "T",
+                List.of(new TemplateParameter(4, 9, "", "a=\n")),
+                List.of()));
   }
 }

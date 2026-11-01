@@ -84,6 +84,11 @@ final class PageAnalysisTestFactory {
             new MagicWord(
                 "notoc", List.of("__AUCUNSOMMAIRE__", "__NOTOC__"), false, true, false, false),
             new MagicWord("toc", List.of("__SOMMAIRE__", "__TOC__"), false, true, false, false),
+            new MagicWord("msg", List.of("MSG:"), false, false, false, false),
+            new MagicWord("msgnw", List.of("MSGNW:"), false, false, false, false),
+            new MagicWord("raw", List.of("RAW:"), false, false, false, false),
+            new MagicWord("safesubst", List.of("SAFESUBST:"), false, false, false, false),
+            new MagicWord("subst", List.of("SUBST:"), false, false, false, false),
             new MagicWord("lc", List.of("MINUS:", "LC:"), false, false, true, false),
             new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, false, true, true))
         .forEach(magicWord -> magicWordRepository.addMagicWord(WIKI, magicWord));
