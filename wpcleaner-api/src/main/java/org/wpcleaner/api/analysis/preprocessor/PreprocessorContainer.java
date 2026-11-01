@@ -19,6 +19,7 @@ import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.template.TemplateElement;
+import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
@@ -38,6 +39,7 @@ public class PreprocessorContainer {
   private final List<TemplateElement> templates;
   private final List<FunctionElement> functions;
   private final List<ParameterElement> parameters;
+  private final List<TitleElement> titles;
   private final List<Element> exclusions;
   private final Lock lock = new ReentrantLock();
   private boolean done;
@@ -58,6 +60,7 @@ public class PreprocessorContainer {
     this.templates = new ArrayList<>();
     this.functions = new ArrayList<>();
     this.parameters = new ArrayList<>();
+    this.titles = new ArrayList<>();
     this.exclusions = new ArrayList<>();
     this.done = false;
   }
@@ -92,6 +95,11 @@ public class PreprocessorContainer {
     return parameters;
   }
 
+  public List<TitleElement> getTitles() {
+    ensureAnalyzed();
+    return titles;
+  }
+
   public List<Element> getCurlyBracketElements() {
     ensureAnalyzed();
     final List<Element> curlyBracketElements = new ArrayList<>(templates);
@@ -120,8 +128,10 @@ public class PreprocessorContainer {
                 .collect(Collectors.toUnmodifiableSet());
         final CurlyBracketElementFactory curlyBracketElementFactory =
             new CurlyBracketElementFactory(text, magicWordRepository.getMagicWords(wiki));
+        final TitleElementFactory titleElementFactory = new TitleElementFactory(text);
         final PreprocessorAnalyzer analyzer =
-            new PreprocessorAnalyzer(text, extensionTagNames, curlyBracketElementFactory);
+            new PreprocessorAnalyzer(
+                text, extensionTagNames, curlyBracketElementFactory, titleElementFactory);
         analyzer.analyze();
         comments.addAll(analyzer.getComments());
         tags.addAll(analyzer.getTags());
@@ -130,6 +140,7 @@ public class PreprocessorContainer {
         templates.addAll(curlyBracketElementFactory.getTemplates());
         functions.addAll(curlyBracketElementFactory.getFunctions());
         parameters.addAll(curlyBracketElementFactory.getParameters());
+        titles.addAll(titleElementFactory.getTitles());
         exclusions.addAll(analyzer.getExclusions());
         done = true;
       }

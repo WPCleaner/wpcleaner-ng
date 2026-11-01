@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.function.Consumer;
+import org.jspecify.annotations.Nullable;
 
 final class BracketStack {
 
@@ -19,19 +20,26 @@ final class BracketStack {
   static final char SQUARE_CLOSE = ']';
   static final char PIPE = '|';
   static final char EQUAL = '=';
+  static final char NEW_LINE = '\n';
   private static final int MIN_COUNT = 2;
   private static final int MAX_CURLY_COUNT = 3;
+  private static final int MAX_TITLE_COUNT = 6;
 
   private final String text;
   private final int end;
   private final Consumer<CurlyBrackets> curlyBracketsConsumer;
+  private final Consumer<TitleLine> titleLineConsumer;
   private final Deque<Piece> pieces;
 
   BracketStack(
-      final String text, final int end, final Consumer<CurlyBrackets> curlyBracketsConsumer) {
+      final String text,
+      final int end,
+      final Consumer<CurlyBrackets> curlyBracketsConsumer,
+      final Consumer<TitleLine> titleLineConsumer) {
     this.text = text;
     this.end = end;
     this.curlyBracketsConsumer = curlyBracketsConsumer;
+    this.titleLineConsumer = titleLineConsumer;
     this.pieces = new ArrayDeque<>();
   }
 
@@ -41,11 +49,18 @@ final class BracketStack {
       return open(index, current);
     }
     final Piece top = pieces.peek();
+    if (current == EQUAL && isLineStart(index)) {
+      return openTitle(index, top);
+    }
     if (top == null) {
       return index + 1;
     }
+    return analyzeInsidePiece(index, current, top);
+  }
+
+  private int analyzeInsidePiece(final int index, final char current, final Piece top) {
     if (current == top.close()) {
-      return close(index, top);
+      return top.open == EQUAL ? closeTitle(index) : close(index, top);
     }
     if (top.open == CURLY_OPEN && current == PIPE) {
       top.addPart(index);
@@ -53,6 +68,34 @@ final class BracketStack {
       top.markEqual(index);
     }
     return index + 1;
+  }
+
+  void finish() {
+    Piece top = pieces.peek();
+    while (top != null && top.open == EQUAL) {
+      closeTitle(end);
+      top = pieces.peek();
+    }
+  }
+
+  private boolean isLineStart(final int index) {
+    return index == 0 || text.charAt(index - 1) == NEW_LINE;
+  }
+
+  private int openTitle(final int index, @Nullable final Piece top) {
+    final int count = countRun(index, EQUAL, MAX_TITLE_COUNT);
+    if (count == 1 && top != null && top.canMarkEqual()) {
+      top.markEqual(index);
+    } else {
+      pieces.push(new Piece(EQUAL, index, count));
+    }
+    return index + count;
+  }
+
+  private int closeTitle(final int index) {
+    final Piece piece = pieces.pop();
+    titleLineConsumer.accept(new TitleLine(piece.begin, index, piece.count));
+    return index;
   }
 
   private int open(final int index, final char open) {
@@ -111,7 +154,17 @@ final class BracketStack {
     }
 
     private char close() {
-      return open == CURLY_OPEN ? CURLY_CLOSE : SQUARE_CLOSE;
+      return switch (open) {
+        case CURLY_OPEN -> CURLY_CLOSE;
+        case EQUAL -> NEW_LINE;
+        default -> SQUARE_CLOSE;
+      };
+    }
+
+    private boolean canMarkEqual() {
+      return open == CURLY_OPEN
+          && equals.size() > 1
+          && equals.getLast() == CurlyBrackets.Part.NO_EQUAL;
     }
 
     private int maxCount() {
