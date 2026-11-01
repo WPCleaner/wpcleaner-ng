@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.comment.CommentElement;
+import org.wpcleaner.api.analysis.include.IncludeAreaElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
@@ -28,6 +29,7 @@ public class PreprocessorContainer {
   private final List<CommentElement> comments;
   private final List<TagElement> tags;
   private final List<CompleteTagElement> completeTags;
+  private final List<IncludeAreaElement> includeAreas;
   private final List<Element> exclusions;
   private final Lock lock = new ReentrantLock();
   private boolean done;
@@ -42,6 +44,7 @@ public class PreprocessorContainer {
     this.comments = new ArrayList<>();
     this.tags = new ArrayList<>();
     this.completeTags = new ArrayList<>();
+    this.includeAreas = new ArrayList<>();
     this.exclusions = new ArrayList<>();
     this.done = false;
   }
@@ -59,6 +62,11 @@ public class PreprocessorContainer {
   public List<CompleteTagElement> getCompleteTags() {
     ensureAnalyzed();
     return completeTags;
+  }
+
+  public List<IncludeAreaElement> getIncludeAreas() {
+    ensureAnalyzed();
+    return includeAreas;
   }
 
   public List<Element> getExclusions() {
@@ -79,6 +87,7 @@ public class PreprocessorContainer {
         comments.addAll(analyzer.getComments());
         tags.addAll(analyzer.getTags());
         completeTags.addAll(analyzer.getCompleteTags());
+        includeAreas.addAll(analyzer.getIncludeAreas());
         exclusions.addAll(analyzer.getExclusions());
         done = true;
       }

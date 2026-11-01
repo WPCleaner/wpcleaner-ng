@@ -18,6 +18,8 @@ import java.util.regex.Pattern;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.comment.CommentElement;
+import org.wpcleaner.api.analysis.include.IncludeAreaElement;
+import org.wpcleaner.api.analysis.include.IncludeAreaType;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagAttribute;
 import org.wpcleaner.api.analysis.tag.TagAttributeAnalyzer;
@@ -25,11 +27,25 @@ import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.api.analysis.tag.TagType;
 import org.wpcleaner.api.analysis.tag.TagTypeRepository;
+import org.wpcleaner.api.analysis.tag.WikiTagType;
 
 final class PreprocessorAnalyzer {
 
   private static final String SELF_CLOSING_END =
       new String(new char[] {TagElement.TOKEN_SLASH, TagElement.TOKEN_END});
+  private static final Map<String, IncludeAreaType> AREA_TYPES_BY_TAG_NAME =
+      Map.of(
+          WikiTagType.INCLUDEONLY.getNormalizedName(), IncludeAreaType.INCLUDE_ONLY,
+          WikiTagType.NOINCLUDE.getNormalizedName(), IncludeAreaType.NO_INCLUDE);
+  private static final Set<String> PREPROCESSOR_TAG_NAMES =
+      Set.of(
+          WikiTagType.INCLUDEONLY.getNormalizedName(),
+          WikiTagType.NOINCLUDE.getNormalizedName(),
+          WikiTagType.ONLYINCLUDE.getNormalizedName());
+  private static final String ONLY_INCLUDE_START_TAG =
+      "<" + WikiTagType.ONLYINCLUDE.getNormalizedName() + ">";
+  private static final String ONLY_INCLUDE_END_TAG =
+      "</" + WikiTagType.ONLYINCLUDE.getNormalizedName() + ">";
 
   private final String text;
   private final Set<String> extensionTagNames;
@@ -40,6 +56,7 @@ final class PreprocessorAnalyzer {
   private final List<TagElement> tags;
   private final List<CompleteTagElement> completeTags;
   private final List<CompleteTagElement> nonWikiTags;
+  private final List<IncludeAreaElement> includeAreas;
 
   PreprocessorAnalyzer(final String text, final Set<String> extensionTagNames) {
     this.text = text;
@@ -51,13 +68,16 @@ final class PreprocessorAnalyzer {
     this.tags = new ArrayList<>();
     this.completeTags = new ArrayList<>();
     this.nonWikiTags = new ArrayList<>();
+    this.includeAreas = new ArrayList<>();
   }
 
   void analyze() {
     analyze(0, text.length());
+    analyzeOnlyIncludeAreas();
     comments.sort(Element.COMPARATOR);
     tags.sort(Element.COMPARATOR);
     completeTags.sort(Element.COMPARATOR);
+    includeAreas.sort(Element.COMPARATOR);
   }
 
   List<CommentElement> getComments() {
@@ -70,6 +90,10 @@ final class PreprocessorAnalyzer {
 
   List<CompleteTagElement> getCompleteTags() {
     return completeTags;
+  }
+
+  List<IncludeAreaElement> getIncludeAreas() {
+    return includeAreas;
   }
 
   List<Element> getExclusions() {
@@ -108,7 +132,7 @@ final class PreprocessorAnalyzer {
     final int nameEnd = findNameEnd(nameBegin, end);
     final String name = text.substring(nameBegin, nameEnd);
     final String normalizedName = name.toLowerCase(Locale.ROOT);
-    if (!extensionTagNames.contains(normalizedName) || !isAfterName(nameEnd, end)) {
+    if (!isPreprocessorTag(normalizedName) || !isAfterName(nameEnd, end)) {
       return nameBegin;
     }
     final int tokenEnd = text.indexOf(TagElement.TOKEN_END, nameEnd);
@@ -131,8 +155,10 @@ final class PreprocessorAnalyzer {
             : findEndTag(normalizedName, tagEnd, end);
     if (endTag.isEmpty()) {
       namesWithoutEndTag.add(normalizedName);
+      addIncludeArea(normalizedName, begin, end);
       return tagEnd;
     }
+    addIncludeArea(normalizedName, begin, endTag.get().end());
     tags.add(endTag.get());
     final CompleteTagElement completeTag = new CompleteTagElement(startTag, endTag.get());
     completeTags.add(completeTag);
@@ -144,6 +170,32 @@ final class PreprocessorAnalyzer {
       nonWikiTags.add(completeTag);
     }
     return endTag.get().end();
+  }
+
+  private boolean isPreprocessorTag(final String normalizedName) {
+    return extensionTagNames.contains(normalizedName)
+        || PREPROCESSOR_TAG_NAMES.contains(normalizedName);
+  }
+
+  private void addIncludeArea(final String normalizedName, final int begin, final int end) {
+    final IncludeAreaType type = AREA_TYPES_BY_TAG_NAME.get(normalizedName);
+    if (type != null) {
+      includeAreas.add(new IncludeAreaElement(begin, end, type));
+    }
+  }
+
+  private void analyzeOnlyIncludeAreas() {
+    if (!text.contains(ONLY_INCLUDE_END_TAG)) {
+      return;
+    }
+    int begin = text.indexOf(ONLY_INCLUDE_START_TAG);
+    while (begin >= 0) {
+      final int endTagBegin =
+          text.indexOf(ONLY_INCLUDE_END_TAG, begin + ONLY_INCLUDE_START_TAG.length());
+      final int end = endTagBegin < 0 ? text.length() : endTagBegin + ONLY_INCLUDE_END_TAG.length();
+      includeAreas.add(new IncludeAreaElement(begin, end, IncludeAreaType.ONLY_INCLUDE));
+      begin = text.indexOf(ONLY_INCLUDE_START_TAG, end);
+    }
   }
 
   private int findNameEnd(final int nameBegin, final int end) {
