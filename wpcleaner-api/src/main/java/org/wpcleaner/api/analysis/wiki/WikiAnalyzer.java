@@ -15,6 +15,7 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
+import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -27,8 +28,7 @@ final class WikiAnalyzer {
   private final SquareBracketAnalyzer squareBracketAnalyzer;
   private final ImageAnalyzer imageAnalyzer;
   private final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer;
-  private final ListItemAnalyzer listItemAnalyzer;
-  private final TableAnalyzer tableAnalyzer;
+  private final BlockLevelAnalyzer blockLevelAnalyzer;
 
   WikiAnalyzer(
       final String text,
@@ -38,22 +38,19 @@ final class WikiAnalyzer {
       final List<Protocol> protocols,
       final ImageAnalyzer imageAnalyzer,
       final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer,
-      final ListItemAnalyzer listItemAnalyzer,
-      final TableAnalyzer tableAnalyzer) {
+      final BlockLevelAnalyzer blockLevelAnalyzer) {
     this.text = text;
     this.textBrowser = textBrowser;
     this.imageAnalyzer = imageAnalyzer;
     this.behaviorSwitchAnalyzer = behaviorSwitchAnalyzer;
-    this.listItemAnalyzer = listItemAnalyzer;
-    this.tableAnalyzer = tableAnalyzer;
+    this.blockLevelAnalyzer = blockLevelAnalyzer;
     this.squareBracketAnalyzer =
         new SquareBracketAnalyzer(text, interwikis, namespaces, protocols, imageAnalyzer);
   }
 
   void analyze() {
     behaviorSwitchAnalyzer.analyze();
-    listItemAnalyzer.analyze();
-    tableAnalyzer.analyze();
+    blockLevelAnalyzer.analyze();
     final TextBrowser.ReverseCursor cursor = textBrowser.reverseCursor();
     while (cursor.getIndex() >= 0) {
       final int currentIndex = cursor.getIndex();
@@ -83,11 +80,15 @@ final class WikiAnalyzer {
   }
 
   List<ListItemElement> getListItems() {
-    return listItemAnalyzer.getListItems();
+    return blockLevelAnalyzer.getListItems();
+  }
+
+  List<ParagraphElement> getParagraphs() {
+    return blockLevelAnalyzer.getParagraphs();
   }
 
   List<TableElement> getTables() {
-    return tableAnalyzer.getTables();
+    return blockLevelAnalyzer.getTables();
   }
 
   List<InternalLinkElement> getInternalLinks() {

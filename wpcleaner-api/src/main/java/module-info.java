@@ -30,6 +30,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.analysis.interwikilink;
   exports org.wpcleaner.api.analysis.languagelink;
   exports org.wpcleaner.api.analysis.listitem;
+  exports org.wpcleaner.api.analysis.paragraph;
   exports org.wpcleaner.api.analysis.parameter;
   exports org.wpcleaner.api.analysis.preprocessor;
   exports org.wpcleaner.api.analysis.table;
@@ -76,6 +77,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.analysis.interwikilink;
   opens org.wpcleaner.api.analysis.languagelink;
   opens org.wpcleaner.api.analysis.listitem;
+  opens org.wpcleaner.api.analysis.paragraph;
   opens org.wpcleaner.api.analysis.parameter;
   opens org.wpcleaner.api.analysis.preprocessor;
   opens org.wpcleaner.api.analysis.table;
