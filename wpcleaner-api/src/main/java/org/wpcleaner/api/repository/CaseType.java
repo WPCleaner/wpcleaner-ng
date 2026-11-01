@@ -17,7 +17,7 @@ public enum CaseType {
 
   public String normalize(final String original) {
     return switch (this) {
-      case FIRST_LETTER -> StringUtils.firstLetterUpperCase(original);
+      case FIRST_LETTER -> StringUtils.firstLetterTitleCase(original);
       case CASE_SENSITIVE -> original;
       case CASE_INSENSITIVE -> original.toLowerCase(Locale.ROOT);
     };

@@ -156,4 +156,24 @@ class PageAnalysisNameNormalizationTest {
             InternalLinkElement::target, InternalLinkElement::anchor, InternalLinkElement::title)
         .containsExactly(Assertions.tuple("A&#38;B", "Section", new PageTitle(0, "A&B")));
   }
+
+  @DisplayName("should use title case for the first letter like MediaWiki")
+  @Test
+  void normalizeTitleFirstLetterWithTitleCase() {
+    // GIVEN
+    final String text = "[[ტბეთი]] [[ǆungla]] [[ßtraße]] [[𐐨x]] [[élan]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .map(InternalLinkElement::title)
+        .containsExactly(
+            new PageTitle(0, "ტბეთი"),
+            new PageTitle(0, "ǅungla"),
+            new PageTitle(0, "ßtraße"),
+            new PageTitle(0, "𐐀x"),
+            new PageTitle(0, "Élan"));
+  }
 }
