@@ -43,6 +43,17 @@ public final class TextBrowser {
     return new Cursor(index);
   }
 
+  public boolean isContinuous(final int begin, final int length) {
+    final Cursor cursor = new Cursor(begin);
+    for (int offset = 1; offset < length; offset++) {
+      cursor.moveNext();
+      if (!cursor.samePart() || cursor.getIndex() != begin + offset) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public ReverseCursor reverseCursor() {
     return new ReverseCursor();
   }
