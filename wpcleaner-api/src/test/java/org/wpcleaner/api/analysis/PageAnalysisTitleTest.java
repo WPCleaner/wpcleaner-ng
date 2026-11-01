@@ -9,6 +9,7 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
 import org.wpcleaner.api.analysis.title.TitleElement;
@@ -129,6 +130,7 @@ class PageAnalysisTitleTest {
                 0,
                 text.length(),
                 "T",
+                new PageTitle(10, "T"),
                 List.of(new TemplateParameter(4, 15, null, "\n== a|b ==\n")),
                 List.of()));
   }
@@ -150,6 +152,7 @@ class PageAnalysisTitleTest {
                 0,
                 text.length(),
                 "T",
+                new PageTitle(10, "T"),
                 List.of(new TemplateParameter(4, 9, "", "a=\n")),
                 List.of()));
   }

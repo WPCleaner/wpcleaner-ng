@@ -16,6 +16,8 @@ import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.image.ImageParameter;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 
@@ -27,6 +29,7 @@ final class ImageAnalyzer {
   private final String text;
   private final TextBrowser textBrowser;
   @Nullable private final Namespace fileNamespace;
+  private final PageTitleNormalizer pageTitleNormalizer;
   private final ImageParameterFactory parameterFactory;
   private final Map<Integer, Integer> curlyBracketEnds;
   private final List<ImageElement> images;
@@ -40,6 +43,7 @@ final class ImageAnalyzer {
     this.text = text;
     this.textBrowser = textBrowser;
     this.fileNamespace = Namespace.findNamespace(namespaces, CommonNamespaces.FILE.id).orElse(null);
+    this.pageTitleNormalizer = new PageTitleNormalizer(namespaces);
     this.parameterFactory = parameterFactory;
     this.curlyBracketEnds = new HashMap<>();
     curlyBracketElements.forEach(
@@ -61,8 +65,13 @@ final class ImageAnalyzer {
       return false;
     }
     final String name = target.substring(column + 1).trim();
+    final Optional<PageTitle> title =
+        pageTitleNormalizer.normalize(target, CommonNamespaces.MAIN.id);
+    if (title.isEmpty()) {
+      return false;
+    }
     final Optional<ImageElement> image =
-        new ParameterScan(separatorIndex).scan(begin, namespace, name);
+        new ParameterScan(separatorIndex).scan(begin, namespace, name, title.get());
     image.ifPresent(images::add);
     return image.isPresent();
   }
@@ -84,7 +93,7 @@ final class ImageAnalyzer {
     }
 
     private Optional<ImageElement> scan(
-        final int begin, final String namespace, final String name) {
+        final int begin, final String namespace, final String name, final PageTitle title) {
       while (cursor.getIndex() < text.length()) {
         final int index = cursor.getIndex();
         final Integer curlyBracketEnd = curlyBracketEnds.get(index);
@@ -92,7 +101,7 @@ final class ImageAnalyzer {
           final OptionalInt end = analyzeCharacter(index);
           if (end.isPresent()) {
             return Optional.of(
-                new ImageElement(begin, end.getAsInt(), namespace, name, parameters));
+                new ImageElement(begin, end.getAsInt(), namespace, name, title, parameters));
           }
         } else {
           cursor = textBrowser.cursor(curlyBracketEnd);

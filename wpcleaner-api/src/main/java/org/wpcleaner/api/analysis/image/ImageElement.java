@@ -8,9 +8,15 @@ package org.wpcleaner.api.analysis.image;
 import java.util.List;
 import java.util.Optional;
 import org.wpcleaner.api.analysis.Element;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 
 public record ImageElement(
-    int begin, int end, String namespace, String name, List<ImageParameter> parameters)
+    int begin,
+    int end,
+    String namespace,
+    String name,
+    PageTitle title,
+    List<ImageParameter> parameters)
     implements Element {
 
   public ImageElement {

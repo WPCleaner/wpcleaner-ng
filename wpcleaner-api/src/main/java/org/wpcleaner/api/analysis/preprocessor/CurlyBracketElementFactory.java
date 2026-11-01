@@ -13,10 +13,13 @@ import java.util.function.Predicate;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.function.FunctionElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
 import org.wpcleaner.api.repository.magicword.MagicWord;
+import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 
 final class CurlyBracketElementFactory {
 
@@ -29,13 +32,18 @@ final class CurlyBracketElementFactory {
 
   private final String text;
   private final List<MagicWord> magicWords;
+  private final PageTitleNormalizer pageTitleNormalizer;
   private final List<TemplateElement> templates;
   private final List<FunctionElement> functions;
   private final List<ParameterElement> parameters;
 
-  CurlyBracketElementFactory(final String text, final List<MagicWord> magicWords) {
+  CurlyBracketElementFactory(
+      final String text,
+      final List<MagicWord> magicWords,
+      final PageTitleNormalizer pageTitleNormalizer) {
     this.text = text;
     this.magicWords = magicWords;
+    this.pageTitleNormalizer = pageTitleNormalizer;
     this.templates = new ArrayList<>();
     this.functions = new ArrayList<>();
     this.parameters = new ArrayList<>();
@@ -175,7 +183,9 @@ final class CurlyBracketElementFactory {
       final List<String> modifiers) {
     final CurlyBrackets.Part namePart = curlyBrackets.parts().getFirst();
     final String name = commentedText.withoutComments(nameBegin, namePart.end()).trim();
-    if (name.isEmpty()) {
+    final Optional<PageTitle> title =
+        pageTitleNormalizer.normalize(name, CommonNamespaces.TEMPLATE.id);
+    if (title.isEmpty()) {
       return;
     }
     final List<TemplateParameter> templateParameters =
@@ -185,7 +195,12 @@ final class CurlyBracketElementFactory {
             .toList();
     templates.add(
         new TemplateElement(
-            curlyBrackets.begin(), curlyBrackets.end(), name, templateParameters, modifiers));
+            curlyBrackets.begin(),
+            curlyBrackets.end(),
+            name,
+            title.get(),
+            templateParameters,
+            modifiers));
   }
 
   private TemplateParameter createTemplateParameter(

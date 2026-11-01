@@ -15,6 +15,7 @@ import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.function.FunctionElement;
 import org.wpcleaner.api.analysis.include.IncludeAreaElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagElement;
@@ -23,6 +24,7 @@ import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
+import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @SuppressWarnings("PMD.DataClass")
@@ -32,6 +34,7 @@ public class PreprocessorContainer {
   private final String text;
   private final ExtensionTagRepository extensionTagRepository;
   private final MagicWordRepository magicWordRepository;
+  private final NamespaceRepository namespaceRepository;
   private final List<CommentElement> comments;
   private final List<TagElement> tags;
   private final List<CompleteTagElement> completeTags;
@@ -48,11 +51,13 @@ public class PreprocessorContainer {
       final WikiDefinition wiki,
       final String text,
       final ExtensionTagRepository extensionTagRepository,
-      final MagicWordRepository magicWordRepository) {
+      final MagicWordRepository magicWordRepository,
+      final NamespaceRepository namespaceRepository) {
     this.wiki = wiki;
     this.text = text;
     this.extensionTagRepository = extensionTagRepository;
     this.magicWordRepository = magicWordRepository;
+    this.namespaceRepository = namespaceRepository;
     this.comments = new ArrayList<>();
     this.tags = new ArrayList<>();
     this.completeTags = new ArrayList<>();
@@ -127,7 +132,10 @@ public class PreprocessorContainer {
                 .map(ExtensionTag::name)
                 .collect(Collectors.toUnmodifiableSet());
         final CurlyBracketElementFactory curlyBracketElementFactory =
-            new CurlyBracketElementFactory(text, magicWordRepository.getMagicWords(wiki));
+            new CurlyBracketElementFactory(
+                text,
+                magicWordRepository.getMagicWords(wiki),
+                new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki)));
         final TitleElementFactory titleElementFactory = new TitleElementFactory(text);
         final PreprocessorAnalyzer analyzer =
             new PreprocessorAnalyzer(

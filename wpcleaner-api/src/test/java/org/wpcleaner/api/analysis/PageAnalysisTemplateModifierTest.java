@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.function.FunctionElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
 
@@ -31,6 +32,7 @@ class PageAnalysisTemplateModifierTest {
                 0,
                 text.length(),
                 "Cite web",
+                new PageTitle(10, "Cite web"),
                 List.of(new TemplateParameter(17, 22, "url", "x")),
                 List.of("subst")));
   }
@@ -74,7 +76,13 @@ class PageAnalysisTemplateModifierTest {
             new FunctionElement(0, 18, "PAGENAME", "pagename", List.of(), List.of("subst")));
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
-            new TemplateElement(18, text.length(), "PAGENAME", List.of(), List.of("msgnw")));
+            new TemplateElement(
+                18,
+                text.length(),
+                "PAGENAME",
+                new PageTitle(10, "PAGENAME"),
+                List.of(),
+                List.of("msgnw")));
   }
 
   @DisplayName("should analyze several modifiers in MediaWiki order, ignoring case")
@@ -89,8 +97,16 @@ class PageAnalysisTemplateModifierTest {
     // THEN
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
-            new TemplateElement(0, 21, "T", List.of(), List.of("subst", "msgnw", "raw")),
-            new TemplateElement(21, 36, "subst:U", List.of(), List.of("raw")),
-            new TemplateElement(36, text.length(), "substitute", List.of(), List.of()));
+            new TemplateElement(
+                0, 21, "T", new PageTitle(10, "T"), List.of(), List.of("subst", "msgnw", "raw")),
+            new TemplateElement(
+                21, 36, "subst:U", new PageTitle(10, "Subst:U"), List.of(), List.of("raw")),
+            new TemplateElement(
+                36,
+                text.length(),
+                "substitute",
+                new PageTitle(10, "Substitute"),
+                List.of(),
+                List.of()));
   }
 }
