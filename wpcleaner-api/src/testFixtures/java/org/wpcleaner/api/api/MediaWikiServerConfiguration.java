@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClient;
 import org.wpcleaner.api.api.edit.MockApiEdit;
 import org.wpcleaner.api.api.login.MockApiLogin;
 import org.wpcleaner.api.api.move.MockApiMove;
+import org.wpcleaner.api.api.parse.MockApiParse;
 import org.wpcleaner.api.api.query.list.random.MockApiRandom;
 import org.wpcleaner.api.api.query.list.tags.MockApiTags;
 import org.wpcleaner.api.api.query.list.users.MockApiUsers;
@@ -45,6 +46,11 @@ public class MediaWikiServerConfiguration {
   @Bean
   public MockApiMove mockApiMove(final MockRestServiceServer mediaWikiServer) {
     return new MockApiMove(mediaWikiServer);
+  }
+
+  @Bean
+  public MockApiParse mockApiParse(final MockRestServiceServer mediaWikiServer) {
+    return new MockApiParse(mediaWikiServer);
   }
 
   @Bean

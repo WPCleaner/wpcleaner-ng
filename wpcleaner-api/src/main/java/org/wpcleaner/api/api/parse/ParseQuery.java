@@ -1,0 +1,15 @@
+package org.wpcleaner.api.api.parse;
+
+/*
+ * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import java.util.Set;
+
+public record ParseQuery(String title, String text, Set<ParseParameters.Properties> properties) {
+
+  public ParseQuery {
+    properties = Set.copyOf(properties);
+  }
+}
