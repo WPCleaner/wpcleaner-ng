@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
+import org.springframework.web.util.HtmlUtils;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -21,6 +22,7 @@ public final class PageTitleNormalizer {
           "[ _\\u00A0\\u1680\\u180E\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000]+");
   private static final String SPACE = " ";
   private static final char FRAGMENT = '#';
+  private static final char CHARACTER_REFERENCE = '&';
   private static final char NAMESPACE_SEPARATOR = ':';
 
   private final List<Namespace> namespaces;
@@ -30,8 +32,10 @@ public final class PageTitleNormalizer {
   }
 
   public Optional<PageTitle> normalize(final String name, final int defaultNamespace) {
-    final int fragment = name.indexOf(FRAGMENT);
-    String text = normalizeSpaces(fragment < 0 ? name : name.substring(0, fragment));
+    final String decodedName =
+        name.indexOf(CHARACTER_REFERENCE) < 0 ? name : HtmlUtils.htmlUnescape(name);
+    final int fragment = decodedName.indexOf(FRAGMENT);
+    String text = normalizeSpaces(fragment < 0 ? decodedName : decodedName.substring(0, fragment));
     int namespace = defaultNamespace;
     if (!text.isEmpty() && text.charAt(0) == NAMESPACE_SEPARATOR) {
       namespace = CommonNamespaces.MAIN.id;

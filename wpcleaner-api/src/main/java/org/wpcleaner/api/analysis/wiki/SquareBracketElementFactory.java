@@ -8,6 +8,8 @@ package org.wpcleaner.api.analysis.wiki;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
@@ -122,15 +124,28 @@ final class SquareBracketElementFactory {
   private record AnchoredTarget(String target, @Nullable String anchor) {
 
     private static final char ANCHOR = '#';
+    private static final Pattern NUMERIC_CHARACTER_REFERENCE =
+        Pattern.compile("&#(\\d+|[xX][0-9a-fA-F]+);");
 
     static AnchoredTarget split(final String fullTarget) {
-      final int anchorIndex = fullTarget.indexOf(ANCHOR);
+      final int anchorIndex = findAnchor(fullTarget);
       if (anchorIndex < 0) {
         return new AnchoredTarget(fullTarget.trim(), null);
       }
       return new AnchoredTarget(
           fullTarget.substring(0, anchorIndex).trim(),
           fullTarget.substring(anchorIndex + 1).trim());
+    }
+
+    private static int findAnchor(final String fullTarget) {
+      final Matcher matcher = NUMERIC_CHARACTER_REFERENCE.matcher(fullTarget);
+      int anchorIndex = fullTarget.indexOf(ANCHOR);
+      while (anchorIndex > 0
+          && matcher.find(anchorIndex - 1)
+          && matcher.start() == anchorIndex - 1) {
+        anchorIndex = fullTarget.indexOf(ANCHOR, matcher.end());
+      }
+      return anchorIndex;
     }
   }
 }
