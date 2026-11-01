@@ -14,5 +14,6 @@ public record InterwikiLinkElement(
     String prefix,
     String target,
     @Nullable String anchor,
-    @Nullable String text)
+    @Nullable String text,
+    boolean leadingColon)
     implements Element {}

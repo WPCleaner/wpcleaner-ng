@@ -184,12 +184,16 @@ public class WikiContainer {
         analyzer.analyze();
         behaviorSwitches.addAll(analyzer.getBehaviorSwitches());
         categories.addAll(analyzer.getCategories());
+        categories.sort(Element.COMPARATOR);
         externalLinks.addAll(analyzer.getExternalLinks());
         images.addAll(analyzer.getImages());
         images.sort(Element.COMPARATOR);
         internalLinks.addAll(analyzer.getInternalLinks());
+        internalLinks.sort(Element.COMPARATOR);
         interwikiLinks.addAll(analyzer.getInterwikiLinks());
+        interwikiLinks.sort(Element.COMPARATOR);
         languageLinks.addAll(analyzer.getLanguageLinks());
+        languageLinks.sort(Element.COMPARATOR);
         listItems.addAll(analyzer.getListItems());
         final MagicLinkAnalyzer magicLinkAnalyzer =
             new MagicLinkAnalyzer(

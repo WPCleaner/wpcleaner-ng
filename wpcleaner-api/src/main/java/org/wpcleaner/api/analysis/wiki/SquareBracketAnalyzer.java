@@ -7,7 +7,6 @@ package org.wpcleaner.api.analysis.wiki;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
@@ -16,7 +15,6 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
-import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.protocol.Protocol;
 
@@ -38,15 +36,10 @@ final class SquareBracketAnalyzer {
   private static final int TWO = 2;
 
   private final String text;
-  @Nullable private final Namespace categoryNamespace;
-  private final List<Interwiki> interwikis;
   private final List<Protocol> protocols;
   private final ImageAnalyzer imageAnalyzer;
-  private final List<CategoryElement> categories;
+  private final SquareBracketElementFactory elementFactory;
   private final List<ExternalLinkElement> externalLinks;
-  private final List<InternalLinkElement> internalLinks;
-  private final List<InterwikiLinkElement> interwikiLinks;
-  private final List<LanguageLinkElement> languageLinks;
 
   SquareBracketAnalyzer(
       final String text,
@@ -55,16 +48,10 @@ final class SquareBracketAnalyzer {
       final List<Protocol> protocols,
       final ImageAnalyzer imageAnalyzer) {
     this.text = text;
-    this.categoryNamespace =
-        Namespace.findNamespace(namespaces, CommonNamespaces.CATEGORY.id).orElse(null);
-    this.interwikis = interwikis;
     this.protocols = protocols;
     this.imageAnalyzer = imageAnalyzer;
-    this.categories = new ArrayList<>();
+    this.elementFactory = new SquareBracketElementFactory(interwikis, namespaces);
     this.externalLinks = new ArrayList<>();
-    this.internalLinks = new ArrayList<>();
-    this.interwikiLinks = new ArrayList<>();
-    this.languageLinks = new ArrayList<>();
   }
 
   void analyzeSquareBracket(final TextBrowser.ReverseCursor reverseCursor) {
@@ -126,7 +113,7 @@ final class SquareBracketAnalyzer {
     if (passClosingBrackets(cursor) < TWO) {
       return;
     }
-    persist2SquareBracketsResult(firstOpeningBracket, firstClosingBracket + TWO, target, value);
+    elementFactory.persist(firstOpeningBracket, firstClosingBracket + TWO, target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
@@ -150,41 +137,6 @@ final class SquareBracketAnalyzer {
     if (knownProtocol) {
       externalLinks.add(new ExternalLinkElement(begin, end, target, value, true));
     }
-  }
-
-  private void persist2SquareBracketsResult(
-      final int begin, final int end, final String target, @Nullable final String value) {
-    final int column = target.indexOf(':');
-    if (column <= 0) {
-      persistInternalLink(begin, end, target, value);
-      return;
-    }
-    final String beforeColumn = target.substring(0, column).trim();
-    final String afterColumn = target.substring(column + 1);
-    final Optional<Interwiki> interwikiOpt = Interwiki.findInterwiki(interwikis, beforeColumn);
-    if (interwikiOpt.isPresent()) {
-      if (interwikiOpt.get().language() != null) {
-        languageLinks.add(
-            new LanguageLinkElement(begin, end, beforeColumn, afterColumn.trim(), value));
-      } else {
-        final AnchoredTarget anchoredTarget = AnchoredTarget.split(afterColumn);
-        interwikiLinks.add(
-            new InterwikiLinkElement(
-                begin, end, beforeColumn, anchoredTarget.target(), anchoredTarget.anchor(), value));
-      }
-    } else if (categoryNamespace != null && categoryNamespace.isPossibleName(beforeColumn)) {
-      categories.add(new CategoryElement(begin, end, beforeColumn, afterColumn.trim(), value));
-    } else {
-      persistInternalLink(begin, end, target, value);
-    }
-  }
-
-  private void persistInternalLink(
-      final int begin, final int end, final String target, @Nullable final String value) {
-    final AnchoredTarget anchoredTarget = AnchoredTarget.split(target);
-    internalLinks.add(
-        new InternalLinkElement(
-            begin, end, anchoredTarget.target(), anchoredTarget.anchor(), value));
   }
 
   @Nullable
@@ -223,7 +175,7 @@ final class SquareBracketAnalyzer {
   }
 
   List<CategoryElement> getCategories() {
-    return categories;
+    return elementFactory.getCategories();
   }
 
   List<ExternalLinkElement> getExternalLinks() {
@@ -231,29 +183,14 @@ final class SquareBracketAnalyzer {
   }
 
   List<InternalLinkElement> getInternalLinks() {
-    return internalLinks;
+    return elementFactory.getInternalLinks();
   }
 
   List<InterwikiLinkElement> getInterwikiLinks() {
-    return interwikiLinks;
+    return elementFactory.getInterwikiLinks();
   }
 
   List<LanguageLinkElement> getLanguageLinks() {
-    return languageLinks;
-  }
-
-  private record AnchoredTarget(String target, @Nullable String anchor) {
-
-    private static final char ANCHOR = '#';
-
-    static AnchoredTarget split(final String fullTarget) {
-      final int anchorIndex = fullTarget.indexOf(ANCHOR);
-      if (anchorIndex < 0) {
-        return new AnchoredTarget(fullTarget.trim(), null);
-      }
-      return new AnchoredTarget(
-          fullTarget.substring(0, anchorIndex).trim(),
-          fullTarget.substring(anchorIndex + 1).trim());
-    }
+    return elementFactory.getLanguageLinks();
   }
 }

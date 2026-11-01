@@ -9,5 +9,10 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
 
 public record InternalLinkElement(
-    int begin, int end, String target, @Nullable String anchor, @Nullable String text)
+    int begin,
+    int end,
+    String target,
+    @Nullable String anchor,
+    @Nullable String text,
+    boolean leadingColon)
     implements Element {}
