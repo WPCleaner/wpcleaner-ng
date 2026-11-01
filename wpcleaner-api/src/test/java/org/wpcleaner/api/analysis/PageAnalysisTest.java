@@ -174,7 +174,8 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "Link", "Anchor", "Some text"));
+        .containsExactly(
+            new InternalLinkElement(0, text.length(), "Link", "Anchor", "Some text", false));
   }
 
   @DisplayName("should analyze internal link without text nor anchor")
@@ -188,7 +189,7 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "Link", null, null));
+        .containsExactly(new InternalLinkElement(0, text.length(), "Link", null, null, false));
   }
 
   @DisplayName("should analyze internal link with empty text")
@@ -202,7 +203,7 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "Link", null, ""));
+        .containsExactly(new InternalLinkElement(0, text.length(), "Link", null, "", false));
   }
 
   @DisplayName("should analyze internal link to an anchor of the same page")
@@ -216,7 +217,7 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "", "Section", null));
+        .containsExactly(new InternalLinkElement(0, text.length(), "", "Section", null, false));
   }
 
   @DisplayName("should analyze category parts")
@@ -318,7 +319,7 @@ class PageAnalysisTest {
     // THEN
     Assertions.assertThat(analysis.getInterwikiLinks())
         .containsExactly(
-            new InterwikiLinkElement(0, text.length(), "wikt", "hello", "English", "hello"));
+            new InterwikiLinkElement(0, text.length(), "wikt", "hello", "English", "hello", false));
   }
 
   @DisplayName("should analyze language link when prefix is surrounded by whitespace")
@@ -376,7 +377,7 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, 7, "a", null, "b"));
+        .containsExactly(new InternalLinkElement(0, 7, "a", null, "b", false));
   }
 
   @DisplayName("should analyze external link followed by a closing bracket")

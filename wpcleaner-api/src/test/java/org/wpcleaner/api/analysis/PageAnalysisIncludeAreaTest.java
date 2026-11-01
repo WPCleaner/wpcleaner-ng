@@ -86,7 +86,7 @@ class PageAnalysisIncludeAreaTest {
             new IncludeAreaElement(0, 26, IncludeAreaType.NO_INCLUDE),
             new IncludeAreaElement(26, text.length(), IncludeAreaType.INCLUDE_ONLY));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(39, 47, "Link", null, null));
+        .containsExactly(new InternalLinkElement(39, 47, "Link", null, null, false));
   }
 
   @DisplayName("should analyze onlyinclude areas")

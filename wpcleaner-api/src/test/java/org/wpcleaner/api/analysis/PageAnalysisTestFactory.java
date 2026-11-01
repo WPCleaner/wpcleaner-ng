@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
+import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magiclink.MagicLinkType;
@@ -47,6 +48,11 @@ final class PageAnalysisTestFactory {
         WIKI,
         new Namespace(
             CommonNamespaces.FILE.id, "File", "Fichier", List.of("Image"), CaseType.FIRST_LETTER));
+    final InterwikiRepository interwikiRepository = new InterwikiRepository();
+    interwikiRepository.addInterwiki(
+        WIKI, new Interwiki("en", false, "https://en.wikipedia.org/wiki/$1", "English", null));
+    interwikiRepository.addInterwiki(
+        WIKI, new Interwiki("wikt", false, "https://fr.wiktionary.org/wiki/$1", null, null));
     final ProtocolRepository protocolRepository = new ProtocolRepository();
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     protocolRepository.addProtocol(WIKI, new Protocol("http://"));
@@ -97,7 +103,7 @@ final class PageAnalysisTestFactory {
         "Title",
         text,
         extensionTagRepository,
-        new InterwikiRepository(),
+        interwikiRepository,
         magicLinkRepository,
         magicWordRepository,
         namespaceRepository,

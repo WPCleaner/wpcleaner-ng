@@ -50,7 +50,7 @@ class PageAnalysisTagTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(28, text.length(), "C", null, null));
+        .containsExactly(new InternalLinkElement(28, text.length(), "C", null, null, false));
   }
 
   @DisplayName("should analyze tag attributes")
@@ -177,7 +177,7 @@ class PageAnalysisTagTest {
     Assertions.assertThat(analysis.getCompleteTags())
         .containsExactly(new CompleteTagElement(startTag, endTag));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(32, text.length(), "Other", null, null));
+        .containsExactly(new InternalLinkElement(32, text.length(), "Other", null, null, false));
   }
 
   @DisplayName("should not analyze links inside pre")
@@ -206,7 +206,7 @@ class PageAnalysisTagTest {
     // THEN
     Assertions.assertThat(analysis.getCompleteTags()).isEmpty();
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(8, text.length(), "Link", null, null));
+        .containsExactly(new InternalLinkElement(8, text.length(), "Link", null, null, false));
   }
 
   @DisplayName("should analyze links inside tags with wiki content")
@@ -221,7 +221,7 @@ class PageAnalysisTagTest {
     // THEN
     Assertions.assertThat(analysis.getCompleteTags()).hasSize(1);
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(14, 22, "Link", null, null));
+        .containsExactly(new InternalLinkElement(14, 22, "Link", null, null, false));
   }
 
   @DisplayName("should not analyze links inside tag attributes")
@@ -249,7 +249,7 @@ class PageAnalysisTagTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, 8, "Link", null, null));
+        .containsExactly(new InternalLinkElement(0, 8, "Link", null, null, false));
   }
 
   @DisplayName("should end nowiki before a comment it contains")
@@ -265,7 +265,7 @@ class PageAnalysisTagTest {
     Assertions.assertThat(analysis.getComments()).isEmpty();
     Assertions.assertThat(analysis.getCompleteTags()).hasSize(1);
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(24, text.length(), "Link", null, null));
+        .containsExactly(new InternalLinkElement(24, text.length(), "Link", null, null, false));
   }
 
   @DisplayName("should not start nowiki inside a comment")
@@ -283,7 +283,7 @@ class PageAnalysisTagTest {
         .containsExactly(new TagElement(23, text.length(), "nowiki", TagKind.END, List.of()));
     Assertions.assertThat(analysis.getCompleteTags()).isEmpty();
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(15, 23, "Link", null, null));
+        .containsExactly(new InternalLinkElement(15, 23, "Link", null, null, false));
   }
 
   @DisplayName("should not detect comments inside nowiki")
@@ -346,7 +346,7 @@ class PageAnalysisTagTest {
     Assertions.assertThat(analysis.getComments())
         .containsExactly(new CommentElement(8, text.length()));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, 8, "Link", null, null));
+        .containsExactly(new InternalLinkElement(0, 8, "Link", null, null, false));
   }
 
   @DisplayName("should analyze self-closing extension tag")
@@ -364,7 +364,7 @@ class PageAnalysisTagTest {
             new TagElement(
                 0, 16, "ref", TagKind.SELF_CLOSING, List.of(new TagAttribute("name", "a"))));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(16, text.length(), "Link", null, null));
+        .containsExactly(new InternalLinkElement(16, text.length(), "Link", null, null, false));
   }
 
   @DisplayName("should not analyze content of unknown extension tags")
@@ -402,6 +402,6 @@ class PageAnalysisTagTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(8, 16, "Link", null, null));
+        .containsExactly(new InternalLinkElement(8, 16, "Link", null, null, false));
   }
 }
