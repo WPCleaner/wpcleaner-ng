@@ -6,7 +6,6 @@ package org.wpcleaner.api.analysis.wiki;
  */
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -16,8 +15,6 @@ import java.util.stream.Stream;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
-import org.wpcleaner.api.analysis.tag.CompleteTagElement;
-import org.wpcleaner.api.analysis.template.TemplateParameter;
 
 final class LineAnalyzer {
 
@@ -27,11 +24,14 @@ final class LineAnalyzer {
   private final TextBrowser textBrowser;
   private final NavigableMap<Integer, Integer> skippedElementEnds;
   private final Map<Integer, Integer> commentEnds;
-  private final List<Area> containers;
+  private final TextContainers containers;
   private final List<Line> lines;
 
   LineAnalyzer(
-      final String text, final TextBrowser textBrowser, final PreprocessorContainer preprocessor) {
+      final String text,
+      final TextBrowser textBrowser,
+      final PreprocessorContainer preprocessor,
+      final TextContainers containers) {
     this.text = text;
     this.textBrowser = textBrowser;
     this.skippedElementEnds = new TreeMap<>();
@@ -42,17 +42,7 @@ final class LineAnalyzer {
     this.commentEnds =
         preprocessor.getComments().stream()
             .collect(Collectors.toMap(CommentElement::begin, CommentElement::end, Math::max));
-    this.containers =
-        Stream.of(
-                preprocessor.getTemplates().stream()
-                    .flatMap(template -> template.parameters().stream())
-                    .map(LineAnalyzer::toArea),
-                preprocessor.getFunctions().stream()
-                    .flatMap(function -> function.parameters().stream())
-                    .map(LineAnalyzer::toArea),
-                preprocessor.getCompleteTags().stream().map(LineAnalyzer::toContentArea))
-            .flatMap(areas -> areas)
-            .toList();
+    this.containers = containers;
     this.lines = new ArrayList<>();
     analyze();
   }
@@ -81,10 +71,9 @@ final class LineAnalyzer {
   }
 
   private void analyze() {
-    final Area wholeText = new Area(0, text.length());
     int lineBegin = 0;
     while (lineBegin >= 0 && lineBegin < text.length()) {
-      final Area container = findContainer(lineBegin, wholeText);
+      final Area container = containers.findContainer(lineBegin);
       if (!textBrowser.isInsideExclusion(lineBegin)
           && !isInsideSkippedElement(lineBegin, container)) {
         final int lineEnd = findLineEnd(lineBegin, container.end());
@@ -103,13 +92,6 @@ final class LineAnalyzer {
       commentEnd = commentEnds.get(contentBegin);
     }
     return contentBegin;
-  }
-
-  private Area findContainer(final int lineBegin, final Area wholeText) {
-    return containers.stream()
-        .filter(container -> container.begin() <= lineBegin && lineBegin < container.end())
-        .min(Comparator.comparingInt(Area::end))
-        .orElse(wholeText);
   }
 
   private boolean isInsideSkippedElement(final int lineBegin, final Area container) {
@@ -145,18 +127,6 @@ final class LineAnalyzer {
         .max()
         .orElse(-1);
   }
-
-  private static Area toArea(final TemplateParameter parameter) {
-    return new Area(parameter.begin(), parameter.end());
-  }
-
-  private static Area toContentArea(final CompleteTagElement completeTag) {
-    final int contentBegin = completeTag.startTag().end();
-    final int contentEnd = completeTag.endTag().begin();
-    return new Area(contentBegin, contentEnd);
-  }
-
-  record Area(int begin, int end) {}
 
   record Line(int begin, int contentBegin, int end, Area container) {}
 }

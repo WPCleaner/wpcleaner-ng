@@ -19,11 +19,15 @@ final class BlockLevelAnalyzer {
   private final ParagraphAnalyzer paragraphAnalyzer;
 
   BlockLevelAnalyzer(
-      final String text, final TextBrowser textBrowser, final PreprocessorContainer preprocessor) {
-    final LineAnalyzer lineAnalyzer = new LineAnalyzer(text, textBrowser, preprocessor);
+      final String text,
+      final TextBrowser textBrowser,
+      final PreprocessorContainer preprocessor,
+      final TextContainers containers) {
+    final LineAnalyzer lineAnalyzer = new LineAnalyzer(text, textBrowser, preprocessor, containers);
     this.listItemAnalyzer = new ListItemAnalyzer(text, lineAnalyzer);
     this.tableAnalyzer = new TableAnalyzer(text, lineAnalyzer);
-    this.paragraphAnalyzer = new ParagraphAnalyzer(text, lineAnalyzer, preprocessor.getTitles());
+    this.paragraphAnalyzer =
+        new ParagraphAnalyzer(text, lineAnalyzer, containers, preprocessor.getTitles());
   }
 
   void analyze() {

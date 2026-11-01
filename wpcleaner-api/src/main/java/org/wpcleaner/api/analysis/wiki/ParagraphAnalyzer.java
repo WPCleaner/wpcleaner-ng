@@ -20,15 +20,20 @@ final class ParagraphAnalyzer {
 
   private final String text;
   private final LineAnalyzer lineAnalyzer;
+  private final TextContainers containers;
   private final Set<Integer> titleBegins;
   private final List<ParagraphElement> paragraphs;
   private int paragraphBegin;
   private int paragraphEnd;
 
   ParagraphAnalyzer(
-      final String text, final LineAnalyzer lineAnalyzer, final List<TitleElement> titles) {
+      final String text,
+      final LineAnalyzer lineAnalyzer,
+      final TextContainers containers,
+      final List<TitleElement> titles) {
     this.text = text;
     this.lineAnalyzer = lineAnalyzer;
+    this.containers = containers;
     this.titleBegins = titles.stream().map(TitleElement::begin).collect(Collectors.toSet());
     this.paragraphs = new ArrayList<>();
     this.paragraphBegin = -1;
@@ -41,7 +46,7 @@ final class ParagraphAnalyzer {
 
   void analyze(final List<TableElement> tables) {
     for (final LineAnalyzer.Line line : lineAnalyzer.getLines()) {
-      if (line.container().begin() == 0 && line.container().end() == text.length()) {
+      if (containers.isWholeText(line.container())) {
         analyzeLine(line, tables);
       }
     }

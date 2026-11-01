@@ -47,7 +47,7 @@ final class TableAnalyzer {
   }
 
   void analyze() {
-    final Map<LineAnalyzer.Area, List<LineAnalyzer.Line>> linesByContainer =
+    final Map<Area, List<LineAnalyzer.Line>> linesByContainer =
         lineAnalyzer.getLines().stream()
             .collect(
                 Collectors.groupingBy(

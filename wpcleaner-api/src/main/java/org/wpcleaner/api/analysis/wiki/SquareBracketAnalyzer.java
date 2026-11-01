@@ -148,7 +148,7 @@ final class SquareBracketAnalyzer {
     final boolean knownProtocol =
         protocols.stream().anyMatch(protocol -> target.startsWith(protocol.value()));
     if (knownProtocol) {
-      externalLinks.add(new ExternalLinkElement(begin, end, target, value));
+      externalLinks.add(new ExternalLinkElement(begin, end, target, value, true));
     }
   }
 
