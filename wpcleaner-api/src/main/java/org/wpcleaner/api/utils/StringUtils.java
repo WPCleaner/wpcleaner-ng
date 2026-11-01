@@ -25,11 +25,19 @@ public final class StringUtils {
     return original.substring(0, 1).toLowerCase(Locale.ROOT) + original.substring(1);
   }
 
-  public static String firstLetterUpperCase(final String original) {
+  public static String firstLetterTitleCase(final String original) {
     if (original.isEmpty()) {
       return original;
     }
-    return original.substring(0, 1).toUpperCase(Locale.ROOT) + original.substring(1);
+    final int firstLetter = original.codePointAt(0);
+    final int titleCaseFirstLetter = Character.toTitleCase(firstLetter);
+    if (titleCaseFirstLetter == firstLetter) {
+      return original;
+    }
+    return new StringBuilder(original.length())
+        .appendCodePoint(titleCaseFirstLetter)
+        .append(original, Character.charCount(firstLetter), original.length())
+        .toString();
   }
 
   public static String joinWithEllipsis(final Collection<String> items, final int maxItems) {
