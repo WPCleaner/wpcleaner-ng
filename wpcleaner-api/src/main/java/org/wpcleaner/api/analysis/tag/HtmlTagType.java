@@ -71,7 +71,6 @@ public enum HtmlTagType implements TagType {
   HtmlTagType(final String normalizedName, final Type type) {
     this.normalizedName = normalizedName;
     this.type = type;
-    TagTypeRepository.registerTagType(this);
   }
 
   @Override
@@ -97,6 +96,11 @@ public enum HtmlTagType implements TagType {
   @Override
   public boolean isVoid() {
     return Type.VOID == type;
+  }
+
+  @Override
+  public boolean hasWikiContent() {
+    return true;
   }
 
   private enum Type {

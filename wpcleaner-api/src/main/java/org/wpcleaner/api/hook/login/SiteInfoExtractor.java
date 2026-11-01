@@ -12,14 +12,17 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @Service
 public class SiteInfoExtractor {
 
+  private final ExtensionTagExtractor extensionTagExtractor;
   private final InterwikiExtractor interwikiExtractor;
   private final NamespaceExtractor namespaceExtractor;
   private final ProtocolExtractor protocolExtractor;
 
   public SiteInfoExtractor(
+      final ExtensionTagExtractor extensionTagExtractor,
       final InterwikiExtractor interwikiExtractor,
       final NamespaceExtractor namespaceExtractor,
       final ProtocolExtractor protocolExtractor) {
+    this.extensionTagExtractor = extensionTagExtractor;
     this.interwikiExtractor = interwikiExtractor;
     this.namespaceExtractor = namespaceExtractor;
     this.protocolExtractor = protocolExtractor;
@@ -29,5 +32,6 @@ public class SiteInfoExtractor {
     namespaceExtractor.extract(wiki, siteInfo);
     interwikiExtractor.extract(wiki, siteInfo);
     protocolExtractor.extract(wiki, siteInfo);
+    extensionTagExtractor.extract(wiki, siteInfo);
   }
 }

@@ -7,15 +7,17 @@ package org.wpcleaner.api.analysis;
 
 import java.util.List;
 import org.wpcleaner.api.analysis.category.CategoryElement;
-import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
+import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
+import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -25,7 +27,7 @@ public final class PageAnalysis {
 
   private final String title;
   private final String text;
-  private final CommentContainer comments;
+  private final PreprocessorContainer preprocessor;
   private final TagContainer tags;
   private final WikiContainer wikiElements;
 
@@ -33,16 +35,17 @@ public final class PageAnalysis {
       final WikiDefinition wiki,
       final String title,
       final String text,
+      final ExtensionTagRepository extensionTagRepository,
       final InterwikiRepository interwikiRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
     this.title = title;
     this.text = text;
-    this.comments = new CommentContainer(text);
-    this.tags = new TagContainer(text, comments);
+    this.preprocessor = new PreprocessorContainer(wiki, text, extensionTagRepository);
+    this.tags = new TagContainer(text, preprocessor);
     this.wikiElements =
         new WikiContainer(
-            wiki, text, comments, interwikiRepository, namespaceRepository, protocolRepository);
+            wiki, text, tags, interwikiRepository, namespaceRepository, protocolRepository);
   }
 
   public String getTitle() {
@@ -54,7 +57,7 @@ public final class PageAnalysis {
   }
 
   public List<CommentElement> getComments() {
-    return comments.getComments();
+    return preprocessor.getComments();
   }
 
   public List<CategoryElement> getCategories() {
@@ -79,5 +82,9 @@ public final class PageAnalysis {
 
   public List<TagElement> getTags() {
     return tags.getTags();
+  }
+
+  public List<CompleteTagElement> getCompleteTags() {
+    return tags.getCompleteTags();
   }
 }

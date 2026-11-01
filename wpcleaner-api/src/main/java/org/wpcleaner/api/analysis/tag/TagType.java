@@ -16,4 +16,6 @@ public interface TagType {
   boolean canBeSelfClosing();
 
   boolean isVoid();
+
+  boolean hasWikiContent();
 }

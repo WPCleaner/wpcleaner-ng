@@ -5,22 +5,25 @@ package org.wpcleaner.api.analysis.tag;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class TagTypeRepository {
 
-  private static final Map<String, TagType> TYPES_BY_STANDARDIZED_NAME = new HashMap<>();
+  private static final Map<String, TagType> TYPES_BY_STANDARDIZED_NAME =
+      Stream.<TagType>concat(
+              Arrays.stream(HtmlTagType.values()), Arrays.stream(WikiTagType.values()))
+          .collect(Collectors.toUnmodifiableMap(TagType::getNormalizedName, Function.identity()));
 
   private TagTypeRepository() {
     // Utility class
   }
 
-  static void registerTagType(final TagType tagType) {
-    if (TYPES_BY_STANDARDIZED_NAME.containsKey(tagType.getNormalizedName())) {
-      throw new IllegalStateException(
-          "Duplicate tag type %s".formatted(tagType.getNormalizedName()));
-    }
-    TYPES_BY_STANDARDIZED_NAME.put(tagType.getNormalizedName(), tagType);
+  public static Optional<TagType> findTagType(final String normalizedName) {
+    return Optional.ofNullable(TYPES_BY_STANDARDIZED_NAME.get(normalizedName));
   }
 }

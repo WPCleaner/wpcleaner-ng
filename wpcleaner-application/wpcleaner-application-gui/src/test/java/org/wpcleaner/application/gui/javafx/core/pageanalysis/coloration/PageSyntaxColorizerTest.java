@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
@@ -43,7 +44,10 @@ class PageSyntaxColorizerTest {
     // Given
     final PageAnalysisFactory factory =
         new PageAnalysisFactory(
-            new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
+            new ExtensionTagRepository(),
+            new InterwikiRepository(),
+            new NamespaceRepository(),
+            new ProtocolRepository());
     final String text = "Hello <!-- world --> !";
     final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
@@ -86,7 +90,10 @@ class PageSyntaxColorizerTest {
         WIKI, new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
     final PageAnalysisFactory factory =
         new PageAnalysisFactory(
-            interwikiRepository, new NamespaceRepository(), new ProtocolRepository());
+            new ExtensionTagRepository(),
+            interwikiRepository,
+            new NamespaceRepository(),
+            new ProtocolRepository());
     final String text = "Hello [[en:World]] !";
     final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
@@ -130,7 +137,10 @@ class PageSyntaxColorizerTest {
         WIKI, new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
     final PageAnalysisFactory factory =
         new PageAnalysisFactory(
-            interwikiRepository, new NamespaceRepository(), new ProtocolRepository());
+            new ExtensionTagRepository(),
+            interwikiRepository,
+            new NamespaceRepository(),
+            new ProtocolRepository());
     final String text = "Hello [[fr:World]] !";
     final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
@@ -173,7 +183,10 @@ class PageSyntaxColorizerTest {
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     final PageAnalysisFactory factory =
         new PageAnalysisFactory(
-            new InterwikiRepository(), new NamespaceRepository(), protocolRepository);
+            new ExtensionTagRepository(),
+            new InterwikiRepository(),
+            new NamespaceRepository(),
+            protocolRepository);
     final String text = "Hello [https://example.com World] !";
     final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
