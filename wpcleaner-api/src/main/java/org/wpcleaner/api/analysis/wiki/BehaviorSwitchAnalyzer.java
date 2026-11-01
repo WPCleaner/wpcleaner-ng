@@ -72,17 +72,6 @@ final class BehaviorSwitchAnalyzer {
 
   private boolean matchesAlias(final int begin, final String alias, final boolean caseSensitive) {
     return text.regionMatches(!caseSensitive, begin, alias, 0, alias.length())
-        && isContinuous(begin, alias.length());
-  }
-
-  private boolean isContinuous(final int begin, final int length) {
-    final TextBrowser.Cursor cursor = textBrowser.cursor(begin);
-    for (int offset = 1; offset < length; offset++) {
-      cursor.moveNext();
-      if (!cursor.samePart() || cursor.getIndex() != begin + offset) {
-        return false;
-      }
-    }
-    return true;
+        && textBrowser.isContinuous(begin, alias.length());
   }
 }
