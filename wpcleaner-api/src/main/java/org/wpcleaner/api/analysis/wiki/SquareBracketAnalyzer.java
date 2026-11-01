@@ -28,13 +28,13 @@ final class SquareBracketAnalyzer {
   private static final String AUTHORIZED_AFTER_2_OPEN = new String(new char[] {PIPE, CLOSE});
   private static final String UNAUTHORIZED_AFTER_1_OPEN =
       new String(new char[] {OPEN, PIPE, ' ', CLOSE, '\n'});
-  private static final String UNAUTHORIZED_AFTER_1_OPEN_AND_SEPARATOR =
-      new String(new char[] {OPEN, CLOSE, '\n'});
   private static final String UNAUTHORIZED_AFTER_2_OPEN =
       new String(new char[] {OPEN, PIPE, CLOSE, '\n'});
-  private static final String UNAUTHORIZED_AFTER_2_OPEN_AND_SEPARATOR =
-      new String(new char[] {OPEN, CLOSE, '\n'});
+  private static final char NEW_LINE = '\n';
+  private static final char SPACE = ' ';
   private static final int TWO = 2;
+  private static final int THREE = 3;
+  private static final String DOUBLE_CLOSE = new String(new char[] {CLOSE, CLOSE});
 
   private final String text;
   private final CommentedText commentedText;
@@ -84,7 +84,7 @@ final class SquareBracketAnalyzer {
     if (target == null) {
       return;
     }
-    final String value = extractValue(cursor, ' ', UNAUTHORIZED_AFTER_1_OPEN_AND_SEPARATOR);
+    final String value = extractExternalLinkText(cursor);
     if (cursor.getIndex() >= text.length() || text.charAt(cursor.getIndex()) != CLOSE) {
       return;
     }
@@ -109,17 +109,33 @@ final class SquareBracketAnalyzer {
       }
       return;
     }
-    final String value = extractValue(cursor, PIPE, UNAUTHORIZED_AFTER_2_OPEN_AND_SEPARATOR);
+    final String value = extractInternalLinkText(cursor);
     if (cursor.getIndex() >= text.length() || text.charAt(cursor.getIndex()) != CLOSE) {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
-    if (passClosingBrackets(cursor) < TWO) {
+    final int closingBracketsCount = passClosingBrackets(cursor);
+    if (closingBracketsCount < TWO) {
       return;
     }
-    elementFactory.persist(firstOpeningBracket, firstClosingBracket + TWO, target, value);
+    persist2SquareBracketsResult(
+        firstOpeningBracket, firstClosingBracket, closingBracketsCount, target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
+    }
+  }
+
+  private void persist2SquareBracketsResult(
+      final int firstOpeningBracket,
+      final int firstClosingBracket,
+      final int closingBracketsCount,
+      final String target,
+      @Nullable final String value) {
+    if (value != null && value.indexOf(OPEN) >= 0 && closingBracketsCount >= THREE) {
+      elementFactory.persist(
+          firstOpeningBracket, firstClosingBracket + THREE, target, value + CLOSE);
+    } else {
+      elementFactory.persist(firstOpeningBracket, firstClosingBracket + TWO, target, value);
     }
   }
 
@@ -160,22 +176,71 @@ final class SquareBracketAnalyzer {
   }
 
   @Nullable
-  private String extractValue(
-      final TextBrowser.Cursor cursor, final char separator, final String unauthorized) {
-    if (cursor.getIndex() >= text.length() || text.charAt(cursor.getIndex()) != separator) {
+  private String extractInternalLinkText(final TextBrowser.Cursor cursor) {
+    if (!isAt(cursor, PIPE)) {
       return null;
     }
     cursor.moveNext();
     final int beginValue = cursor.getIndex();
-    cursor.moveAfterUntil(unauthorized);
-    final int cursorIndex = cursor.getIndex();
-    if (cursorIndex >= text.length()) {
+    while (cursor.getIndex() < text.length()) {
+      final int index = cursor.getIndex();
+      if (isDoubled(index, OPEN)) {
+        return null;
+      }
+      if (isDoubled(index, CLOSE)) {
+        return text.substring(beginValue, index);
+      }
+      cursor.moveNext();
+    }
+    return null;
+  }
+
+  @Nullable
+  private String extractExternalLinkText(final TextBrowser.Cursor cursor) {
+    if (!isAt(cursor, SPACE)) {
       return null;
     }
-    if (text.charAt(cursorIndex) != CLOSE) {
-      return null;
+    cursor.moveNext();
+    final int beginValue = cursor.getIndex();
+    while (cursor.getIndex() < text.length()) {
+      final int index = cursor.getIndex();
+      final char currentChar = text.charAt(index);
+      if (currentChar == NEW_LINE) {
+        return null;
+      }
+      if (currentChar == CLOSE) {
+        return text.substring(beginValue, index);
+      }
+      if (isDoubled(index, OPEN)) {
+        if (!passInternalLink(cursor, index)) {
+          return null;
+        }
+      } else {
+        cursor.moveNext();
+      }
     }
-    return text.substring(beginValue, cursorIndex);
+    return null;
+  }
+
+  private boolean passInternalLink(final TextBrowser.Cursor cursor, final int linkBegin) {
+    final int linkEnd = text.indexOf(DOUBLE_CLOSE, linkBegin + TWO);
+    if (linkEnd < 0) {
+      return false;
+    }
+    while (cursor.getIndex() < linkEnd + TWO) {
+      cursor.moveNext();
+    }
+    return true;
+  }
+
+  private boolean isAt(final TextBrowser.Cursor cursor, final char expected) {
+    return cursor.getIndex() < text.length() && text.charAt(cursor.getIndex()) == expected;
+  }
+
+  private boolean isDoubled(final int index, final char expected) {
+    return index + 1 < text.length()
+        && text.charAt(index) == expected
+        && text.charAt(index + 1) == expected;
   }
 
   List<CategoryElement> getCategories() {
