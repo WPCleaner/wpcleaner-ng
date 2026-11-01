@@ -357,4 +357,32 @@ class PageAnalysisTest {
     Assertions.assertThat(analysis.getCategories())
         .containsExactly(new CategoryElement(0, text.length(), "Catégorie", "My category", null));
   }
+
+  @DisplayName("should analyze internal link followed by a closing bracket")
+  @Test
+  void analyzeInternalLinkFollowedByClosingBracket() {
+    // GIVEN
+    final String text = "[[a|b]]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(0, 7, "a", null, "b"));
+  }
+
+  @DisplayName("should analyze external link followed by a closing bracket")
+  @Test
+  void analyzeExternalLinkFollowedByClosingBracket() {
+    // GIVEN
+    final String text = "[https://example.com/ b]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getExternalLinks())
+        .containsExactly(new ExternalLinkElement(0, 24, "https://example.com/", "b"));
+  }
 }

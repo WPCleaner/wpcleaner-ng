@@ -41,6 +41,10 @@ final class PageAnalysisTestFactory {
             "Catégorie",
             List.of("Catégories"),
             CaseType.FIRST_LETTER));
+    namespaceRepository.addNamespace(
+        WIKI,
+        new Namespace(
+            CommonNamespaces.FILE.id, "File", "Fichier", List.of("Image"), CaseType.FIRST_LETTER));
     final ProtocolRepository protocolRepository = new ProtocolRepository();
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     protocolRepository.addProtocol(WIKI, new Protocol("http://"));
@@ -53,6 +57,17 @@ final class PageAnalysisTestFactory {
                 "currentyear", List.of("ANNEEACTUELLE", "CURRENTYEAR"), true, false, true),
             new MagicWord("defaultsort", List.of("CLEFDETRI:", "DEFAULTSORT:"), true, true, false),
             new MagicWord("if", List.of("si", "if"), false, true, false),
+            new MagicWord("img_alt", List.of("alt=$1"), true, false, false),
+            new MagicWord("img_right", List.of("droite", "right"), true, false, false),
+            new MagicWord(
+                "img_thumbnail", List.of("vignette", "thumb", "thumbnail"), true, false, false),
+            new MagicWord(
+                "img_upright",
+                List.of("redresse", "redresse=$1", "upright", "upright=$1"),
+                true,
+                false,
+                false),
+            new MagicWord("img_width", List.of("$1px"), true, false, false),
             new MagicWord("language", List.of("#LANGUE", "#LANGUAGE"), false, true, false),
             new MagicWord("lc", List.of("MINUS:", "LC:"), false, true, false),
             new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, true, true))

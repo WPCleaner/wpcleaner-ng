@@ -41,6 +41,7 @@ final class SquareBracketAnalyzer {
   @Nullable private final Namespace categoryNamespace;
   private final List<Interwiki> interwikis;
   private final List<Protocol> protocols;
+  private final ImageAnalyzer imageAnalyzer;
   private final List<CategoryElement> categories;
   private final List<ExternalLinkElement> externalLinks;
   private final List<InternalLinkElement> internalLinks;
@@ -51,12 +52,14 @@ final class SquareBracketAnalyzer {
       final String text,
       final List<Interwiki> interwikis,
       final List<Namespace> namespaces,
-      final List<Protocol> protocols) {
+      final List<Protocol> protocols,
+      final ImageAnalyzer imageAnalyzer) {
     this.text = text;
     this.categoryNamespace =
         Namespace.findNamespace(namespaces, CommonNamespaces.CATEGORY.id).orElse(null);
     this.interwikis = interwikis;
     this.protocols = protocols;
+    this.imageAnalyzer = imageAnalyzer;
     this.categories = new ArrayList<>();
     this.externalLinks = new ArrayList<>();
     this.internalLinks = new ArrayList<>();
@@ -95,12 +98,7 @@ final class SquareBracketAnalyzer {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
-    final int closingBracketsCount = passClosingBrackets(cursor);
-    if (closingBracketsCount != 1) {
-      return;
-    }
-    persist1SquareBracketResult(
-        firstOpeningBracket, firstClosingBracket + closingBracketsCount, target, value);
+    persist1SquareBracketResult(firstOpeningBracket, firstClosingBracket + 1, target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
@@ -114,17 +112,21 @@ final class SquareBracketAnalyzer {
     if (target == null) {
       return;
     }
+    if (imageAnalyzer.analyze(firstOpeningBracket, target, cursor.getIndex())) {
+      while (reverseCursor.getIndex() >= firstOpeningBracket) {
+        reverseCursor.movePrevious();
+      }
+      return;
+    }
     final String value = extractValue(cursor, PIPE, UNAUTHORIZED_AFTER_2_OPEN_AND_SEPARATOR);
     if (cursor.getIndex() >= text.length() || text.charAt(cursor.getIndex()) != CLOSE) {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
-    final int closingBracketsCount = passClosingBrackets(cursor);
-    if (closingBracketsCount != TWO) {
+    if (passClosingBrackets(cursor) < TWO) {
       return;
     }
-    persist2SquareBracketsResult(
-        firstOpeningBracket, firstClosingBracket + closingBracketsCount, target, value);
+    persist2SquareBracketsResult(firstOpeningBracket, firstClosingBracket + TWO, target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
