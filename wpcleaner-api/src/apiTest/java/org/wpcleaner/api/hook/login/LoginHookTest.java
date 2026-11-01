@@ -16,6 +16,8 @@ import org.wpcleaner.api.SpringBootTestConfig;
 import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.progress.ProgressTracker;
+import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
+import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
@@ -26,6 +28,7 @@ import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 @SpringBootTest(classes = SpringBootTestConfig.class)
 class LoginHookTest {
 
+  @Autowired private ExtensionTagRepository extensionTagRepository;
   @Autowired private InterwikiRepository interwikiRepository;
   @Autowired private LoginHook loginHook;
   @Autowired private ProtocolRepository protocolRepository;
@@ -80,6 +83,21 @@ class LoginHookTest {
     Assertions.assertThat(protocols).as("protocols").isNotEmpty();
     for (final Protocol protocol : protocols) {
       Assertions.assertThat(protocol.value()).as("value").isNotNull().isNotEmpty();
+    }
+  }
+
+  @DisplayName("Execute login hook and populate ExtensionTagRepository")
+  @Test
+  void executeHookPopulatesExtensionTagRepository() {
+    // WHEN
+    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
+
+    // THEN
+    final List<ExtensionTag> extensionTags =
+        extensionTagRepository.getExtensionTags(WikimediaDefinitions.META);
+    Assertions.assertThat(extensionTags).as("extensionTags").contains(new ExtensionTag("nowiki"));
+    for (final ExtensionTag extensionTag : extensionTags) {
+      Assertions.assertThat(extensionTag.name()).as("name").isNotEmpty().doesNotContain("<", ">");
     }
   }
 }

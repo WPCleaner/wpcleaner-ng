@@ -37,7 +37,7 @@ final class TagAnalyzer {
   void analyze() {
     final TextBrowser.Cursor cursor = textBrowser.cursor();
     while (cursor.getIndex() < text.length()) {
-      analyze(cursor).ifPresent(tag -> persistTag(tag, cursor));
+      analyze(cursor).ifPresent(this::persistTag);
     }
     completeTags.sort(Element.COMPARATOR);
   }
@@ -50,21 +50,17 @@ final class TagAnalyzer {
     return completeTags;
   }
 
-  private void persistTag(final TagElement tag, final TextBrowser.Cursor cursor) {
+  private void persistTag(final TagElement tag) {
     tags.add(tag);
     switch (tag.kind()) {
-      case START -> persistStartTag(tag, cursor);
+      case START -> persistStartTag(tag);
       case END -> persistEndTag(tag);
       case SELF_CLOSING -> {}
     }
   }
 
-  private void persistStartTag(final TagElement startTag, final TextBrowser.Cursor cursor) {
+  private void persistStartTag(final TagElement startTag) {
     if (startTag.type().map(TagType::isVoid).orElse(false)) {
-      return;
-    }
-    if (!startTag.hasWikiContent()) {
-      passNonWikiContent(startTag, cursor);
       return;
     }
     unmatchedStartTags
@@ -77,26 +73,6 @@ final class TagAnalyzer {
     if (startTags != null && !startTags.isEmpty()) {
       completeTags.add(new CompleteTagElement(startTags.pop(), endTag));
     }
-  }
-
-  private void passNonWikiContent(final TagElement startTag, final TextBrowser.Cursor cursor) {
-    final TextBrowser.Cursor contentCursor = cursor.copy();
-    while (contentCursor.getIndex() < text.length()) {
-      final Optional<TagElement> endTag =
-          analyze(contentCursor).filter(tag -> isEndTagOf(tag, startTag));
-      if (endTag.isPresent()) {
-        tags.add(endTag.get());
-        completeTags.add(new CompleteTagElement(startTag, endTag.get()));
-        while (cursor.getIndex() < endTag.get().end()) {
-          cursor.moveNext();
-        }
-        return;
-      }
-    }
-  }
-
-  private static boolean isEndTagOf(final TagElement tag, final TagElement startTag) {
-    return TagKind.END == tag.kind() && tag.normalizedName().equals(startTag.normalizedName());
   }
 
   private Optional<TagElement> analyze(final TextBrowser.Cursor cursor) {

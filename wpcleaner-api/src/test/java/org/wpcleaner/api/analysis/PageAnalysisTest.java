@@ -6,10 +6,12 @@ package org.wpcleaner.api.analysis;
  */
 
 import java.util.List;
+import java.util.stream.Stream;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
@@ -19,6 +21,8 @@ import org.wpcleaner.api.analysis.tag.TagAttribute;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.api.repository.CaseType;
+import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
+import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -138,8 +142,17 @@ class PageAnalysisTest {
     final ProtocolRepository protocolRepository = new ProtocolRepository();
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     protocolRepository.addProtocol(WIKI, new Protocol("http://"));
+    final ExtensionTagRepository extensionTagRepository = new ExtensionTagRepository();
+    Stream.of("nowiki", "pre", "ref", "references", "math", "inputbox")
+        .forEach(name -> extensionTagRepository.addExtensionTag(WIKI, new ExtensionTag(name)));
     return new PageAnalysis(
-        wiki, "Title", text, new InterwikiRepository(), namespaceRepository, protocolRepository);
+        wiki,
+        "Title",
+        text,
+        extensionTagRepository,
+        new InterwikiRepository(),
+        namespaceRepository,
+        protocolRepository);
   }
 
   @DisplayName("should analyze language link when interwiki has language attribute")
@@ -160,6 +173,7 @@ class PageAnalysisTest {
             WIKI,
             "Title",
             text,
+            new ExtensionTagRepository(),
             interwikiRepository,
             namespaceRepository,
             new ProtocolRepository());
@@ -187,6 +201,7 @@ class PageAnalysisTest {
             WIKI,
             "Title",
             text,
+            new ExtensionTagRepository(),
             interwikiRepository,
             namespaceRepository,
             new ProtocolRepository());
@@ -313,6 +328,7 @@ class PageAnalysisTest {
             WIKI,
             "Title",
             text,
+            new ExtensionTagRepository(),
             interwikiRepository,
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -337,6 +353,7 @@ class PageAnalysisTest {
             WIKI,
             "Title",
             text,
+            new ExtensionTagRepository(),
             interwikiRepository,
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -362,6 +379,7 @@ class PageAnalysisTest {
             WIKI,
             "Title",
             text,
+            new ExtensionTagRepository(),
             interwikiRepository,
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -598,5 +616,156 @@ class PageAnalysisTest {
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
         .containsExactly(new InternalLinkElement(0, 8, "Link", null, null));
+  }
+
+  @DisplayName("should end nowiki before a comment it contains")
+  @Test
+  void analyzeCommentStartInsideNowiki() {
+    // GIVEN
+    final String text = "<nowiki><!--</nowiki>-->[[Link]]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getComments()).isEmpty();
+    Assertions.assertThat(analysis.getCompleteTags()).hasSize(1);
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(24, text.length(), "Link", null, null));
+  }
+
+  @DisplayName("should not start nowiki inside a comment")
+  @Test
+  void analyzeNowikiStartInsideComment() {
+    // GIVEN
+    final String text = "<!--<nowiki>-->[[Link]]</nowiki>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getComments()).containsExactly(new CommentElement(0, 15));
+    Assertions.assertThat(analysis.getTags())
+        .containsExactly(new TagElement(23, text.length(), "nowiki", TagKind.END, List.of()));
+    Assertions.assertThat(analysis.getCompleteTags()).isEmpty();
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(15, 23, "Link", null, null));
+  }
+
+  @DisplayName("should not detect comments inside nowiki")
+  @Test
+  void analyzeCommentInsideNowiki() {
+    // GIVEN
+    final String text = "<nowiki><!-- comment --></nowiki>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getComments()).isEmpty();
+  }
+
+  @DisplayName("should detect comments inside tags with wiki content")
+  @Test
+  void analyzeCommentInsideRef() {
+    // GIVEN
+    final String text = "<ref><!-- [[Link]] --></ref>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getComments()).containsExactly(new CommentElement(5, 22));
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+  }
+
+  @DisplayName("should end an extension tag at its first end tag")
+  @Test
+  void analyzeNestedExtensionTags() {
+    // GIVEN
+    final String text = "<ref>a<ref>b</ref>c</ref>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    final TagElement outerStartTag = new TagElement(0, 5, "ref", TagKind.START, List.of());
+    final TagElement innerStartTag = new TagElement(6, 11, "ref", TagKind.START, List.of());
+    final TagElement firstEndTag = new TagElement(12, 18, "ref", TagKind.END, List.of());
+    final TagElement secondEndTag = new TagElement(19, 25, "ref", TagKind.END, List.of());
+    Assertions.assertThat(analysis.getTags())
+        .containsExactly(outerStartTag, innerStartTag, firstEndTag, secondEndTag);
+    Assertions.assertThat(analysis.getCompleteTags())
+        .containsExactly(new CompleteTagElement(outerStartTag, firstEndTag));
+  }
+
+  @DisplayName("should run an unclosed comment to the end of the text")
+  @Test
+  void analyzeUnclosedComment() {
+    // GIVEN
+    final String text = "[[Link]]<!-- [[Other]]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getComments())
+        .containsExactly(new CommentElement(8, text.length()));
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(0, 8, "Link", null, null));
+  }
+
+  @DisplayName("should analyze self-closing extension tag")
+  @Test
+  void analyzeSelfClosingExtensionTag() {
+    // GIVEN
+    final String text = "<ref name=\"a\" />[[Link]]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags())
+        .containsExactly(
+            new TagElement(
+                0, 16, "ref", TagKind.SELF_CLOSING, List.of(new TagAttribute("name", "a"))));
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(16, text.length(), "Link", null, null));
+  }
+
+  @DisplayName("should not analyze content of unknown extension tags")
+  @Test
+  void analyzeUnknownExtensionTag() {
+    // GIVEN
+    final String text = "<inputbox>[[Link]]</inputbox>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getCompleteTags()).hasSize(1);
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+  }
+
+  @DisplayName("should analyze nowiki content when the wiki has no nowiki extension tag")
+  @Test
+  void analyzeNowikiWithoutExtensionTag() {
+    // GIVEN
+    final String text = "<nowiki>[[Link]]</nowiki>";
+
+    // WHEN
+    final PageAnalysis analysis =
+        new PageAnalysis(
+            WIKI,
+            "Title",
+            text,
+            new ExtensionTagRepository(),
+            new InterwikiRepository(),
+            new NamespaceRepository(),
+            new ProtocolRepository());
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(8, 16, "Link", null, null));
   }
 }

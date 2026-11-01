@@ -15,6 +15,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -41,7 +42,10 @@ class PageContentDisplayTest extends JavaFxTest {
                   new JavaFxStylePropertiesRegistry(new StylePropertiesRegistry(List.of())));
           final PageAnalysisFactory pageAnalysisFactory =
               new PageAnalysisFactory(
-                  new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
+                  new ExtensionTagRepository(),
+                  new InterwikiRepository(),
+                  new NamespaceRepository(),
+                  new ProtocolRepository());
 
           final PageContentDisplay display =
               new PageContentDisplay(

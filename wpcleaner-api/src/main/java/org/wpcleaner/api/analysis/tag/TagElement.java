@@ -30,8 +30,4 @@ public record TagElement(
   public Optional<TagType> type() {
     return TagTypeRepository.findTagType(normalizedName());
   }
-
-  public boolean hasWikiContent() {
-    return type().map(TagType::hasWikiContent).orElse(true);
-  }
 }

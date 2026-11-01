@@ -36,7 +36,11 @@ public final class TextBrowser {
   }
 
   public Cursor cursor() {
-    return new Cursor();
+    return new Cursor(0);
+  }
+
+  public Cursor cursor(final int index) {
+    return new Cursor(index);
   }
 
   public ReverseCursor reverseCursor() {
@@ -49,18 +53,10 @@ public final class TextBrowser {
     private boolean jump;
     private int currentExclude;
 
-    private Cursor() {
+    private Cursor(final int start) {
       this.currentExclude = 0;
       this.jump = false;
-      this.index = computeAfter(-1);
-    }
-
-    public Cursor copy() {
-      final Cursor copy = new Cursor();
-      copy.index = index;
-      copy.jump = jump;
-      copy.currentExclude = currentExclude;
-      return copy;
+      this.index = computeAfter(start - 1);
     }
 
     public int getIndex() {
@@ -125,7 +121,7 @@ public final class TextBrowser {
     }
 
     public Cursor toCursor() {
-      final Cursor cursor = new Cursor();
+      final Cursor cursor = new Cursor(0);
       cursor.index = index;
       cursor.jump = false;
       cursor.currentExclude = 0;

@@ -11,7 +11,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
-import org.wpcleaner.api.analysis.comment.CommentContainer;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
@@ -30,7 +29,6 @@ public class WikiContainer {
   private final InterwikiRepository interwikiRepository;
   private final NamespaceRepository namespaceRepository;
   private final ProtocolRepository protocolRepository;
-  private final CommentContainer comments;
   private final TagContainer tags;
   private final List<CategoryElement> categories;
   private final List<ExternalLinkElement> externalLinks;
@@ -43,7 +41,6 @@ public class WikiContainer {
   public WikiContainer(
       final WikiDefinition wiki,
       final String text,
-      final CommentContainer comments,
       final TagContainer tags,
       final InterwikiRepository interwikiRepository,
       final NamespaceRepository namespaceRepository,
@@ -53,7 +50,6 @@ public class WikiContainer {
     this.interwikiRepository = interwikiRepository;
     this.namespaceRepository = namespaceRepository;
     this.protocolRepository = protocolRepository;
-    this.comments = comments;
     this.tags = tags;
     this.categories = new ArrayList<>();
     this.externalLinks = new ArrayList<>();
@@ -93,7 +89,6 @@ public class WikiContainer {
     try {
       if (!done) {
         final TextBrowser textBrowser = new TextBrowser(text);
-        textBrowser.addExclusions(comments.getComments());
         textBrowser.addExclusions(tags.getExclusions());
         final WikiAnalyzer analyzer =
             new WikiAnalyzer(

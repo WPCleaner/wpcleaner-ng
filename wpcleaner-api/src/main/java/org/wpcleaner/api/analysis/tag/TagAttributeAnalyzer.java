@@ -10,18 +10,18 @@ import java.util.List;
 import java.util.Optional;
 import org.wpcleaner.api.analysis.TextBrowser;
 
-final class TagAttributeAnalyzer {
+public final class TagAttributeAnalyzer {
 
   private static final String ATTRIBUTE_NAME_END = " \n\t\"'<>/=";
   private static final String UNQUOTED_ATTRIBUTE_VALUE_END = " \n\t\"'<>";
 
   private final String text;
 
-  TagAttributeAnalyzer(final String text) {
+  public TagAttributeAnalyzer(final String text) {
     this.text = text;
   }
 
-  List<TagAttribute> extractAttributes(final TextBrowser.Cursor cursor) {
+  public List<TagAttribute> extractAttributes(final TextBrowser.Cursor cursor) {
     final List<TagAttribute> attributes = new ArrayList<>();
     Optional<TagAttribute> attribute = extractAttribute(cursor);
     while (attribute.isPresent()) {

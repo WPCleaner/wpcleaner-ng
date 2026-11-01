@@ -54,6 +54,7 @@ public final class GuiLogin {
   private static final String LOGIN_TOKEN = "login-token+\\";
   private static final Set<SiteInfoParameters.Properties> SITE_INFO_PROPERTIES =
       Set.of(
+          SiteInfoParameters.Properties.EXTENSION_TAGS,
           SiteInfoParameters.Properties.INTERWIKI_MAP,
           SiteInfoParameters.Properties.NAMESPACES,
           SiteInfoParameters.Properties.NAMESPACE_ALIASES,
