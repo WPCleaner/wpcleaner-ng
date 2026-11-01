@@ -22,12 +22,15 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.analysis.category;
   exports org.wpcleaner.api.analysis.comment;
   exports org.wpcleaner.api.analysis.externallink;
+  exports org.wpcleaner.api.analysis.function;
   exports org.wpcleaner.api.analysis.include;
   exports org.wpcleaner.api.analysis.internallink;
   exports org.wpcleaner.api.analysis.interwikilink;
   exports org.wpcleaner.api.analysis.languagelink;
+  exports org.wpcleaner.api.analysis.parameter;
   exports org.wpcleaner.api.analysis.preprocessor;
   exports org.wpcleaner.api.analysis.tag;
+  exports org.wpcleaner.api.analysis.template;
   exports org.wpcleaner.api.analysis;
   exports org.wpcleaner.api.api.edit;
   exports org.wpcleaner.api.api.login;
@@ -47,6 +50,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.progress;
   exports org.wpcleaner.api.repository.extensiontag;
   exports org.wpcleaner.api.repository.interwiki;
+  exports org.wpcleaner.api.repository.magicword;
   exports org.wpcleaner.api.repository.namespace;
   exports org.wpcleaner.api.repository.protocol;
   exports org.wpcleaner.api.repository.tag;
@@ -59,12 +63,15 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.analysis.category;
   opens org.wpcleaner.api.analysis.comment;
   opens org.wpcleaner.api.analysis.externallink;
+  opens org.wpcleaner.api.analysis.function;
   opens org.wpcleaner.api.analysis.include;
   opens org.wpcleaner.api.analysis.internallink;
   opens org.wpcleaner.api.analysis.interwikilink;
   opens org.wpcleaner.api.analysis.languagelink;
+  opens org.wpcleaner.api.analysis.parameter;
   opens org.wpcleaner.api.analysis.preprocessor;
   opens org.wpcleaner.api.analysis.tag;
+  opens org.wpcleaner.api.analysis.template;
   opens org.wpcleaner.api.analysis;
   opens org.wpcleaner.api.api.edit;
   opens org.wpcleaner.api.api.login;
@@ -84,6 +91,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.progress;
   opens org.wpcleaner.api.repository.extensiontag;
   opens org.wpcleaner.api.repository.interwiki;
+  opens org.wpcleaner.api.repository.magicword;
   opens org.wpcleaner.api.repository.namespace;
   opens org.wpcleaner.api.repository.protocol;
   opens org.wpcleaner.api.repository.tag;

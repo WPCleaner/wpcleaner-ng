@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
@@ -118,6 +119,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicWordRepository(),
             namespaceRepository,
             new ProtocolRepository());
 
@@ -147,6 +149,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicWordRepository(),
             namespaceRepository,
             new ProtocolRepository());
 
@@ -275,6 +278,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
 
@@ -301,6 +305,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
 
@@ -328,6 +333,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
 

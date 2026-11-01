@@ -40,7 +40,6 @@ final class WikiAnalyzer {
       final char currentChar = text.charAt(cursor.getIndex());
       switch (currentChar) {
         case SquareBracketAnalyzer.OPEN -> squareBracketAnalyzer.analyzeSquareBracket(cursor);
-        case '{' -> analyzeCurlyBracket(cursor);
         case '=' -> analyzeEqual(cursor);
         case '_' -> analyzeUnderscore(cursor);
         default -> {}
@@ -69,11 +68,6 @@ final class WikiAnalyzer {
 
   List<LanguageLinkElement> getLanguageLinks() {
     return squareBracketAnalyzer.getLanguageLinks();
-  }
-
-  @SuppressWarnings({"unused", "UnusedVariable"})
-  private void analyzeCurlyBracket(final TextBrowser.ReverseCursor cursor) {
-    // TODO
   }
 
   @SuppressWarnings("unused")

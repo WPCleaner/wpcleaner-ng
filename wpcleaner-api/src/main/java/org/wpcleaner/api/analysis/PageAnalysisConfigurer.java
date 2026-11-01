@@ -17,9 +17,12 @@ class PageAnalysisConfigurer {
     loginHook.addSiteInfoProperties(
         Set.of(
             SiteInfoParameters.Properties.EXTENSION_TAGS,
+            SiteInfoParameters.Properties.FUNCTION_HOOKS,
             SiteInfoParameters.Properties.INTERWIKI_MAP,
+            SiteInfoParameters.Properties.MAGIC_WORDS,
             SiteInfoParameters.Properties.NAMESPACES,
             SiteInfoParameters.Properties.NAMESPACE_ALIASES,
-            SiteInfoParameters.Properties.PROTOCOLS));
+            SiteInfoParameters.Properties.PROTOCOLS,
+            SiteInfoParameters.Properties.VARIABLES));
   }
 }

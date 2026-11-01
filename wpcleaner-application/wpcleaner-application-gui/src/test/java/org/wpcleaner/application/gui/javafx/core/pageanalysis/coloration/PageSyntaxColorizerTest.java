@@ -15,6 +15,7 @@ import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -46,6 +47,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             new InterwikiRepository(),
+            new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
     final String text = "Hello <!-- world --> !";
@@ -92,6 +94,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
     final String text = "Hello [[en:World]] !";
@@ -139,6 +142,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
     final String text = "Hello [[fr:World]] !";
@@ -185,6 +189,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new ExtensionTagRepository(),
             new InterwikiRepository(),
+            new MagicWordRepository(),
             new NamespaceRepository(),
             protocolRepository);
     final String text = "Hello [https://example.com World] !";
