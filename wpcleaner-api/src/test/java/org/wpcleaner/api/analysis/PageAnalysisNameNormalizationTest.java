@@ -8,7 +8,9 @@ package org.wpcleaner.api.analysis;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.image.ImageElement;
+import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 
@@ -77,5 +79,40 @@ class PageAnalysisNameNormalizationTest {
     Assertions.assertThat(analysis.getImages())
         .map(ImageElement::title)
         .containsExactly(new PageTitle(6, "My picture.jpg"), new PageTitle(6, "X y.png"));
+  }
+
+  @DisplayName("should normalize internal link titles")
+  @Test
+  void normalizeInternalLinkTitles() {
+    // GIVEN
+    final String text =
+        "[[paris_(ville)#Histoire|Paris]] [[:catégorie:Villes]] [[#Section]] [[Utilisateur:bob]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .map(InternalLinkElement::title)
+        .containsExactly(
+            new PageTitle(0, "Paris (ville)"),
+            new PageTitle(14, "Villes"),
+            null,
+            new PageTitle(2, "Bob"));
+  }
+
+  @DisplayName("should normalize category titles")
+  @Test
+  void normalizeCategoryTitles() {
+    // GIVEN
+    final String text = "[[Catégorie:villes_de  France|Paris]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getCategories())
+        .map(CategoryElement::title)
+        .containsExactly(new PageTitle(14, "Villes de France"));
   }
 }

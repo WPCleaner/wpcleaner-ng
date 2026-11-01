@@ -99,7 +99,8 @@ class PageAnalysisTemplateTest {
                 List.of(new TemplateParameter(4, 11, null, "[[a|b]]")),
                 List.of()));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(4, 11, "a", null, "b", false));
+        .containsExactly(
+            new InternalLinkElement(4, 11, "a", new PageTitle(0, "A"), null, "b", false));
   }
 
   @DisplayName("should analyze nested templates")

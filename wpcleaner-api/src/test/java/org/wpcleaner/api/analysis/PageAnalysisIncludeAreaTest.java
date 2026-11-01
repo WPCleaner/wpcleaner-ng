@@ -13,6 +13,7 @@ import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.include.IncludeAreaElement;
 import org.wpcleaner.api.analysis.include.IncludeAreaType;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.tag.TagKind;
 
@@ -32,7 +33,8 @@ class PageAnalysisIncludeAreaTest {
         .containsExactly(new IncludeAreaElement(0, text.length(), IncludeAreaType.INCLUDE_ONLY));
     Assertions.assertThat(analysis.getCompleteTags()).hasSize(1);
     Assertions.assertThat(analysis.getCategories())
-        .containsExactly(new CategoryElement(13, 28, "Catégorie", "A", null));
+        .containsExactly(
+            new CategoryElement(13, 28, "Catégorie", "A", new PageTitle(14, "A"), null));
   }
 
   @DisplayName("should run an unclosed includeonly to the end of the text")
@@ -86,7 +88,8 @@ class PageAnalysisIncludeAreaTest {
             new IncludeAreaElement(0, 26, IncludeAreaType.NO_INCLUDE),
             new IncludeAreaElement(26, text.length(), IncludeAreaType.INCLUDE_ONLY));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(39, 47, "Link", null, null, false));
+        .containsExactly(
+            new InternalLinkElement(39, 47, "Link", new PageTitle(0, "Link"), null, null, false));
   }
 
   @DisplayName("should analyze onlyinclude areas")

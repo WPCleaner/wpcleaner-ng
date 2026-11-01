@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 
 class PageAnalysisLeadingColonTest {
 
@@ -44,7 +45,14 @@ class PageAnalysisLeadingColonTest {
     Assertions.assertThat(analysis.getCategories()).isEmpty();
     Assertions.assertThat(analysis.getInternalLinks())
         .containsExactly(
-            new InternalLinkElement(0, text.length(), "Catégorie:Paris", null, "Paris", true));
+            new InternalLinkElement(
+                0,
+                text.length(),
+                "Catégorie:Paris",
+                new PageTitle(14, "Paris"),
+                null,
+                "Paris",
+                true));
   }
 
   @DisplayName("should analyze interwiki and internal links with leading colon")
@@ -62,6 +70,8 @@ class PageAnalysisLeadingColonTest {
             new InterwikiLinkElement(0, 13, "wikt", "mot", null, null, true),
             new InterwikiLinkElement(14, 26, "wikt", "mot", null, null, false));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(27, text.length(), "Page", null, null, true));
+        .containsExactly(
+            new InternalLinkElement(
+                27, text.length(), "Page", new PageTitle(0, "Page"), null, null, true));
   }
 }

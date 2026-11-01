@@ -13,6 +13,7 @@ import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -24,6 +25,7 @@ final class SquareBracketElementFactory {
 
   @Nullable private final Namespace categoryNamespace;
   private final List<Interwiki> interwikis;
+  private final PageTitleNormalizer pageTitleNormalizer;
   private final List<CategoryElement> categories;
   private final List<InternalLinkElement> internalLinks;
   private final List<InterwikiLinkElement> interwikiLinks;
@@ -33,6 +35,7 @@ final class SquareBracketElementFactory {
     this.categoryNamespace =
         Namespace.findNamespace(namespaces, CommonNamespaces.CATEGORY.id).orElse(null);
     this.interwikis = interwikis;
+    this.pageTitleNormalizer = new PageTitleNormalizer(namespaces);
     this.categories = new ArrayList<>();
     this.internalLinks = new ArrayList<>();
     this.interwikiLinks = new ArrayList<>();
@@ -88,7 +91,14 @@ final class SquareBracketElementFactory {
     } else if (!leadingColon
         && categoryNamespace != null
         && categoryNamespace.isPossibleName(beforeColumn)) {
-      categories.add(new CategoryElement(begin, end, beforeColumn, afterColumn.trim(), value));
+      categories.add(
+          new CategoryElement(
+              begin,
+              end,
+              beforeColumn,
+              afterColumn.trim(),
+              pageTitleNormalizer.normalize(linkTarget, CommonNamespaces.MAIN.id).orElse(null),
+              value));
     } else {
       persistInternalLink(linkParts, linkTarget);
     }
@@ -101,6 +111,7 @@ final class SquareBracketElementFactory {
             linkParts.begin(),
             linkParts.end(),
             anchoredTarget.target(),
+            pageTitleNormalizer.normalize(target, CommonNamespaces.MAIN.id).orElse(null),
             anchoredTarget.anchor(),
             linkParts.text(),
             linkParts.leadingColon()));
