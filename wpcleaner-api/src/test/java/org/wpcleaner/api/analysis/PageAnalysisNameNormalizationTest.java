@@ -115,4 +115,45 @@ class PageAnalysisNameNormalizationTest {
         .map(CategoryElement::title)
         .containsExactly(new PageTitle(14, "Villes de France"));
   }
+
+  @DisplayName("should decode character references in titles")
+  @Test
+  void normalizeTitlesWithCharacterReferences() {
+    // GIVEN
+    final String text =
+        "[[World War&nbsp;I]] [[Caf&eacute;]] [[A&#38;B]] [[&#x4E2D;&#25991;]] [[Fake&unknown;x]]"
+            + " {{Mod&egrave;le:X}}";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .extracting(InternalLinkElement::target, InternalLinkElement::title)
+        .containsExactly(
+            Assertions.tuple("World War&nbsp;I", new PageTitle(0, "World War I")),
+            Assertions.tuple("Caf&eacute;", new PageTitle(0, "Café")),
+            Assertions.tuple("A&#38;B", new PageTitle(0, "A&B")),
+            Assertions.tuple("&#x4E2D;&#25991;", new PageTitle(0, "中文")),
+            Assertions.tuple("Fake&unknown;x", new PageTitle(0, "Fake&unknown;x")));
+    Assertions.assertThat(analysis.getTemplates())
+        .map(TemplateElement::title)
+        .containsExactly(new PageTitle(10, "X"));
+  }
+
+  @DisplayName("should not split anchor inside a numeric character reference")
+  @Test
+  void normalizeTitleWithReferenceAndAnchor() {
+    // GIVEN
+    final String text = "[[A&#38;B#Section]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .extracting(
+            InternalLinkElement::target, InternalLinkElement::anchor, InternalLinkElement::title)
+        .containsExactly(Assertions.tuple("A&#38;B", "Section", new PageTitle(0, "A&B")));
+  }
 }
