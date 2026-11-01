@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
+import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -81,6 +82,10 @@ final class WikiAnalyzer {
 
   List<ListItemElement> getListItems() {
     return blockLevelAnalyzer.getListItems();
+  }
+
+  List<PreformattedElement> getPreformattedBlocks() {
+    return blockLevelAnalyzer.getPreformattedBlocks();
   }
 
   List<ParagraphElement> getParagraphs() {

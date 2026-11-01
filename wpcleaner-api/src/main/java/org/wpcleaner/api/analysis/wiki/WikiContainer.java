@@ -22,6 +22,7 @@ import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.magiclink.MagicLinkElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
+import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
@@ -55,6 +56,7 @@ public class WikiContainer {
   private final List<ListItemElement> listItems;
   private final List<MagicLinkElement> magicLinks;
   private final List<ParagraphElement> paragraphs;
+  private final List<PreformattedElement> preformattedBlocks;
   private final List<TableElement> tables;
   private final Lock lock = new ReentrantLock();
   private boolean done;
@@ -88,6 +90,7 @@ public class WikiContainer {
     this.listItems = new ArrayList<>();
     this.magicLinks = new ArrayList<>();
     this.paragraphs = new ArrayList<>();
+    this.preformattedBlocks = new ArrayList<>();
     this.tables = new ArrayList<>();
     this.done = false;
   }
@@ -142,6 +145,11 @@ public class WikiContainer {
     return paragraphs;
   }
 
+  public List<PreformattedElement> getPreformattedBlocks() {
+    ensureAnalyzed();
+    return preformattedBlocks;
+  }
+
   public List<TableElement> getTables() {
     ensureAnalyzed();
     return tables;
@@ -171,7 +179,8 @@ public class WikiContainer {
                 protocolRepository.getProtocols(wiki),
                 imageAnalyzer,
                 new BehaviorSwitchAnalyzer(text, textBrowser, magicWords),
-                new BlockLevelAnalyzer(text, textBrowser, preprocessor, containers));
+                new BlockLevelAnalyzer(
+                    text, textBrowser, preprocessor, containers, tags.getTags()));
         analyzer.analyze();
         behaviorSwitches.addAll(analyzer.getBehaviorSwitches());
         categories.addAll(analyzer.getCategories());
@@ -199,6 +208,7 @@ public class WikiContainer {
         externalLinks.addAll(magicLinkAnalyzer.getFreeExternalLinks());
         externalLinks.sort(Element.COMPARATOR);
         paragraphs.addAll(analyzer.getParagraphs());
+        preformattedBlocks.addAll(analyzer.getPreformattedBlocks());
         tables.addAll(analyzer.getTables());
         done = true;
       }

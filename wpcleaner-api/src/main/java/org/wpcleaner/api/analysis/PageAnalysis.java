@@ -20,6 +20,7 @@ import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.magiclink.MagicLinkElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
+import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
@@ -127,6 +128,10 @@ public final class PageAnalysis {
 
   public List<ParagraphElement> getParagraphs() {
     return wikiElements.getParagraphs();
+  }
+
+  public List<PreformattedElement> getPreformattedBlocks() {
+    return wikiElements.getPreformattedBlocks();
   }
 
   public List<TableElement> getTables() {

@@ -33,6 +33,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.analysis.magiclink;
   exports org.wpcleaner.api.analysis.paragraph;
   exports org.wpcleaner.api.analysis.parameter;
+  exports org.wpcleaner.api.analysis.preformatted;
   exports org.wpcleaner.api.analysis.preprocessor;
   exports org.wpcleaner.api.analysis.table;
   exports org.wpcleaner.api.analysis.tag;
@@ -82,6 +83,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.analysis.magiclink;
   opens org.wpcleaner.api.analysis.paragraph;
   opens org.wpcleaner.api.analysis.parameter;
+  opens org.wpcleaner.api.analysis.preformatted;
   opens org.wpcleaner.api.analysis.preprocessor;
   opens org.wpcleaner.api.analysis.table;
   opens org.wpcleaner.api.analysis.tag;

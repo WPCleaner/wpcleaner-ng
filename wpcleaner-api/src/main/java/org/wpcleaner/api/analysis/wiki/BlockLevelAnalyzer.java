@@ -9,8 +9,10 @@ import java.util.List;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
+import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.table.TableElement;
+import org.wpcleaner.api.analysis.tag.TagElement;
 
 final class BlockLevelAnalyzer {
 
@@ -22,12 +24,14 @@ final class BlockLevelAnalyzer {
       final String text,
       final TextBrowser textBrowser,
       final PreprocessorContainer preprocessor,
-      final TextContainers containers) {
+      final TextContainers containers,
+      final List<TagElement> tags) {
     final LineAnalyzer lineAnalyzer = new LineAnalyzer(text, textBrowser, preprocessor, containers);
     this.listItemAnalyzer = new ListItemAnalyzer(text, lineAnalyzer);
     this.tableAnalyzer = new TableAnalyzer(text, lineAnalyzer);
     this.paragraphAnalyzer =
-        new ParagraphAnalyzer(text, lineAnalyzer, containers, preprocessor.getTitles());
+        new ParagraphAnalyzer(
+            text, lineAnalyzer, containers, new BlockTagMatcher(tags), preprocessor.getTitles());
   }
 
   void analyze() {
@@ -42,6 +46,10 @@ final class BlockLevelAnalyzer {
 
   List<ParagraphElement> getParagraphs() {
     return paragraphAnalyzer.getParagraphs();
+  }
+
+  List<PreformattedElement> getPreformattedBlocks() {
+    return paragraphAnalyzer.getPreformattedBlocks();
   }
 
   List<TableElement> getTables() {
