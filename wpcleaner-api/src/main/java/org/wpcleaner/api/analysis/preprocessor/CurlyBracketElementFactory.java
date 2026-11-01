@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.comment.CommentElement;
+import org.wpcleaner.api.analysis.comment.CommentedText;
 import org.wpcleaner.api.analysis.function.FunctionElement;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
@@ -234,55 +235,4 @@ final class CurlyBracketElementFactory {
   }
 
   private record FunctionName(String name, MagicWord functionHook, int separator) {}
-
-  private record CommentedText(String text, List<CommentElement> comments) {
-
-    private String withoutComments(final int begin, final int end) {
-      final StringBuilder result = new StringBuilder();
-      int index = begin;
-      for (final CommentElement comment : commentsBetween(begin, end)) {
-        result.append(text, index, comment.begin());
-        index = comment.end();
-      }
-      result.append(text, index, end);
-      return result.toString();
-    }
-
-    private int indexOutsideComments(final char searched, final int begin, final int end) {
-      int index = begin;
-      for (final CommentElement comment : commentsBetween(begin, end)) {
-        final int found = text.substring(index, comment.begin()).indexOf(searched);
-        if (found >= 0) {
-          return index + found;
-        }
-        index = comment.end();
-      }
-      final int found = text.substring(index, end).indexOf(searched);
-      return found >= 0 ? index + found : -1;
-    }
-
-    private int skipWhitespaceAndComments(final int begin, final int end) {
-      int index = begin;
-      boolean skipped = true;
-      while (skipped) {
-        skipped = false;
-        while (index < end && Character.isWhitespace(text.charAt(index))) {
-          index++;
-        }
-        for (final CommentElement comment : comments) {
-          if (comment.begin() == index && comment.end() <= end) {
-            index = comment.end();
-            skipped = true;
-          }
-        }
-      }
-      return index;
-    }
-
-    private List<CommentElement> commentsBetween(final int begin, final int end) {
-      return comments.stream()
-          .filter(comment -> comment.begin() >= begin && comment.end() <= end)
-          .toList();
-    }
-  }
 }
