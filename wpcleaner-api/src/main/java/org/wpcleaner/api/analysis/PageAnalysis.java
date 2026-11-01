@@ -21,6 +21,7 @@ import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.template.TemplateElement;
+import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
@@ -114,6 +115,10 @@ public final class PageAnalysis {
 
   public List<ParameterElement> getParameters() {
     return preprocessor.getParameters();
+  }
+
+  public List<TitleElement> getTitles() {
+    return preprocessor.getTitles();
   }
 
   public List<TagElement> getTags() {

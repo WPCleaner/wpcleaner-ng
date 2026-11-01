@@ -58,11 +58,13 @@ final class PreprocessorAnalyzer {
   private final List<CompleteTagElement> nonWikiTags;
   private final List<IncludeAreaElement> includeAreas;
   private final CurlyBracketElementFactory curlyBracketElementFactory;
+  private final TitleElementFactory titleElementFactory;
 
   PreprocessorAnalyzer(
       final String text,
       final Set<String> extensionTagNames,
-      final CurlyBracketElementFactory curlyBracketElementFactory) {
+      final CurlyBracketElementFactory curlyBracketElementFactory,
+      final TitleElementFactory titleElementFactory) {
     this.text = text;
     this.extensionTagNames = extensionTagNames;
     this.textBrowser = new TextBrowser(text);
@@ -74,6 +76,7 @@ final class PreprocessorAnalyzer {
     this.nonWikiTags = new ArrayList<>();
     this.includeAreas = new ArrayList<>();
     this.curlyBracketElementFactory = curlyBracketElementFactory;
+    this.titleElementFactory = titleElementFactory;
   }
 
   void analyze() {
@@ -114,7 +117,8 @@ final class PreprocessorAnalyzer {
         new BracketStack(
             text,
             end,
-            curlyBrackets -> curlyBracketElementFactory.persist(curlyBrackets, comments));
+            curlyBrackets -> curlyBracketElementFactory.persist(curlyBrackets, comments),
+            titleLine -> titleElementFactory.persist(titleLine, comments));
     int index = begin;
     while (index < end) {
       if (text.charAt(index) == TagElement.TOKEN_START) {
@@ -123,6 +127,7 @@ final class PreprocessorAnalyzer {
         index = bracketStack.analyze(index);
       }
     }
+    bracketStack.finish();
   }
 
   private int analyzeTagStart(
