@@ -32,18 +32,18 @@ final class ListItemAnalyzer {
   }
 
   private void analyzeLine(final LineAnalyzer.Line line) {
-    int prefixEnd = line.begin();
+    int prefixEnd = line.contentBegin();
     while (prefixEnd < line.end() && PREFIX_CHARACTERS.indexOf(text.charAt(prefixEnd)) >= 0) {
       prefixEnd++;
     }
-    if (prefixEnd == line.begin()) {
+    if (prefixEnd == line.contentBegin()) {
       return;
     }
     listItems.add(
         new ListItemElement(
-            line.begin(),
+            line.contentBegin(),
             line.end(),
-            text.substring(line.begin(), prefixEnd),
+            text.substring(line.contentBegin(), prefixEnd),
             text.substring(prefixEnd, line.end()).trim()));
   }
 }

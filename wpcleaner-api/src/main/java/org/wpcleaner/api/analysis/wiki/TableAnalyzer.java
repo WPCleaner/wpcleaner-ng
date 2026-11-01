@@ -68,7 +68,7 @@ final class TableAnalyzer {
   }
 
   private void analyzeLine(final LineAnalyzer.Line line, final Deque<TableBuilder> openTables) {
-    final int lineStart = skipWhitespace(line.begin(), line.end());
+    final int lineStart = skipWhitespace(line.contentBegin(), line.end());
     final int tableStart = findTableStart(lineStart, line.end());
     final TableBuilder table = openTables.peek();
     if (tableStart >= 0) {

@@ -19,6 +19,7 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
+import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
@@ -48,6 +49,7 @@ public class WikiContainer {
   private final List<InterwikiLinkElement> interwikiLinks;
   private final List<LanguageLinkElement> languageLinks;
   private final List<ListItemElement> listItems;
+  private final List<ParagraphElement> paragraphs;
   private final List<TableElement> tables;
   private final Lock lock = new ReentrantLock();
   private boolean done;
@@ -77,6 +79,7 @@ public class WikiContainer {
     this.interwikiLinks = new ArrayList<>();
     this.languageLinks = new ArrayList<>();
     this.listItems = new ArrayList<>();
+    this.paragraphs = new ArrayList<>();
     this.tables = new ArrayList<>();
     this.done = false;
   }
@@ -121,6 +124,11 @@ public class WikiContainer {
     return listItems;
   }
 
+  public List<ParagraphElement> getParagraphs() {
+    ensureAnalyzed();
+    return paragraphs;
+  }
+
   public List<TableElement> getTables() {
     ensureAnalyzed();
     return tables;
@@ -140,7 +148,6 @@ public class WikiContainer {
                 namespaceRepository.getNamespaces(wiki),
                 new ImageParameterFactory(magicWords),
                 preprocessor.getCurlyBracketElements());
-        final LineAnalyzer lineAnalyzer = new LineAnalyzer(text, textBrowser, preprocessor);
         final WikiAnalyzer analyzer =
             new WikiAnalyzer(
                 text,
@@ -150,8 +157,7 @@ public class WikiContainer {
                 protocolRepository.getProtocols(wiki),
                 imageAnalyzer,
                 new BehaviorSwitchAnalyzer(text, textBrowser, magicWords),
-                new ListItemAnalyzer(text, lineAnalyzer),
-                new TableAnalyzer(text, lineAnalyzer));
+                new BlockLevelAnalyzer(text, textBrowser, preprocessor));
         analyzer.analyze();
         behaviorSwitches.addAll(analyzer.getBehaviorSwitches());
         categories.addAll(analyzer.getCategories());
@@ -162,6 +168,7 @@ public class WikiContainer {
         interwikiLinks.addAll(analyzer.getInterwikiLinks());
         languageLinks.addAll(analyzer.getLanguageLinks());
         listItems.addAll(analyzer.getListItems());
+        paragraphs.addAll(analyzer.getParagraphs());
         tables.addAll(analyzer.getTables());
         done = true;
       }

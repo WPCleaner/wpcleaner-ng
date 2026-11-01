@@ -43,6 +43,23 @@ public final class TextBrowser {
     return new Cursor(index);
   }
 
+  public boolean isInsideExclusion(final int index) {
+    int low = 0;
+    int high = exclusions.size() - 1;
+    while (low <= high) {
+      final int middle = (low + high) >>> 1;
+      final Element exclusion = exclusions.get(middle);
+      if (index <= exclusion.begin()) {
+        high = middle - 1;
+      } else if (index >= exclusion.end()) {
+        low = middle + 1;
+      } else {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public boolean isContinuous(final int begin, final int length) {
     final Cursor cursor = new Cursor(begin);
     for (int offset = 1; offset < length; offset++) {

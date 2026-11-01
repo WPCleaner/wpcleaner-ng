@@ -86,4 +86,18 @@ class PageAnalysisListItemTest {
     Assertions.assertThat(analysis.getListItems())
         .containsExactly(new ListItemElement(6, 9, "*", "a"));
   }
+
+  @DisplayName("should analyze list item after a comment at line start")
+  @Test
+  void analyzeListItemAfterComment() {
+    // GIVEN
+    final String text = "<!-- c -->* item";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getListItems())
+        .containsExactly(new ListItemElement(10, 16, "*", "item"));
+  }
 }

@@ -17,6 +17,7 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
+import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.table.TableElement;
@@ -114,6 +115,10 @@ public final class PageAnalysis {
 
   public List<ListItemElement> getListItems() {
     return wikiElements.getListItems();
+  }
+
+  public List<ParagraphElement> getParagraphs() {
+    return wikiElements.getParagraphs();
   }
 
   public List<TableElement> getTables() {
