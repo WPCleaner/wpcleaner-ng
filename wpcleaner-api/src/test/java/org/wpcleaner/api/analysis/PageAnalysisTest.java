@@ -13,6 +13,7 @@ import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
@@ -175,7 +176,8 @@ class PageAnalysisTest {
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
         .containsExactly(
-            new InternalLinkElement(0, text.length(), "Link", "Anchor", "Some text", false));
+            new InternalLinkElement(
+                0, text.length(), "Link", new PageTitle(0, "Link"), "Anchor", "Some text", false));
   }
 
   @DisplayName("should analyze internal link without text nor anchor")
@@ -189,7 +191,9 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "Link", null, null, false));
+        .containsExactly(
+            new InternalLinkElement(
+                0, text.length(), "Link", new PageTitle(0, "Link"), null, null, false));
   }
 
   @DisplayName("should analyze internal link with empty text")
@@ -203,7 +207,9 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "Link", null, "", false));
+        .containsExactly(
+            new InternalLinkElement(
+                0, text.length(), "Link", new PageTitle(0, "Link"), null, "", false));
   }
 
   @DisplayName("should analyze internal link to an anchor of the same page")
@@ -217,7 +223,8 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "", "Section", null, false));
+        .containsExactly(
+            new InternalLinkElement(0, text.length(), "", null, "Section", null, false));
   }
 
   @DisplayName("should analyze category parts")
@@ -232,7 +239,13 @@ class PageAnalysisTest {
     // THEN
     Assertions.assertThat(analysis.getCategories())
         .containsExactly(
-            new CategoryElement(0, text.length(), "Catégorie", "My category", "Sort key"));
+            new CategoryElement(
+                0,
+                text.length(),
+                "Catégorie",
+                "My category",
+                new PageTitle(14, "My category"),
+                "Sort key"));
   }
 
   @DisplayName("should analyze external link parts")
@@ -363,7 +376,14 @@ class PageAnalysisTest {
     // THEN
     Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
     Assertions.assertThat(analysis.getCategories())
-        .containsExactly(new CategoryElement(0, text.length(), "Catégorie", "My category", null));
+        .containsExactly(
+            new CategoryElement(
+                0,
+                text.length(),
+                "Catégorie",
+                "My category",
+                new PageTitle(14, "My category"),
+                null));
   }
 
   @DisplayName("should analyze internal link followed by a closing bracket")
@@ -377,7 +397,8 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, 7, "a", null, "b", false));
+        .containsExactly(
+            new InternalLinkElement(0, 7, "a", new PageTitle(0, "A"), null, "b", false));
   }
 
   @DisplayName("should analyze external link followed by a closing bracket")

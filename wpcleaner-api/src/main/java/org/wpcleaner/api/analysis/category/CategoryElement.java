@@ -7,7 +7,13 @@ package org.wpcleaner.api.analysis.category;
 
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 
 public record CategoryElement(
-    int begin, int end, String namespace, String name, @Nullable String sortKey)
+    int begin,
+    int end,
+    String namespace,
+    String name,
+    @Nullable PageTitle title,
+    @Nullable String sortKey)
     implements Element {}

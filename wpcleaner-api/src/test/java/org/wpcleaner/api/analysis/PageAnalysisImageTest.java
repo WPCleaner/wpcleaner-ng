@@ -145,7 +145,9 @@ class PageAnalysisImageTest {
                     new ImageParameter(13, 21, "vignette", "img_thumbnail", null),
                     new ImageParameter(22, 45, "Voir [[Paris|la ville]]", null, null))));
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(27, 45, "Paris", null, "la ville", false));
+        .containsExactly(
+            new InternalLinkElement(
+                27, 45, "Paris", new PageTitle(0, "Paris"), null, "la ville", false));
   }
 
   @DisplayName("should keep the closing bracket of an external link inside the caption")
@@ -254,6 +256,8 @@ class PageAnalysisImageTest {
     // THEN
     Assertions.assertThat(analysis.getImages()).isEmpty();
     Assertions.assertThat(analysis.getInternalLinks())
-        .containsExactly(new InternalLinkElement(0, text.length(), "File:X.jpg", null, null, true));
+        .containsExactly(
+            new InternalLinkElement(
+                0, text.length(), "File:X.jpg", new PageTitle(6, "X.jpg"), null, null, true));
   }
 }
