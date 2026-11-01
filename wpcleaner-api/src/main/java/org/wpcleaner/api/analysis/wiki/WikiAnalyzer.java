@@ -18,9 +18,6 @@ import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.table.TableElement;
-import org.wpcleaner.api.repository.interwiki.Interwiki;
-import org.wpcleaner.api.repository.namespace.Namespace;
-import org.wpcleaner.api.repository.protocol.Protocol;
 
 final class WikiAnalyzer {
 
@@ -34,9 +31,7 @@ final class WikiAnalyzer {
   WikiAnalyzer(
       final String text,
       final TextBrowser textBrowser,
-      final List<Interwiki> interwikis,
-      final List<Namespace> namespaces,
-      final List<Protocol> protocols,
+      final SquareBracketAnalyzer squareBracketAnalyzer,
       final ImageAnalyzer imageAnalyzer,
       final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer,
       final BlockLevelAnalyzer blockLevelAnalyzer) {
@@ -45,8 +40,7 @@ final class WikiAnalyzer {
     this.imageAnalyzer = imageAnalyzer;
     this.behaviorSwitchAnalyzer = behaviorSwitchAnalyzer;
     this.blockLevelAnalyzer = blockLevelAnalyzer;
-    this.squareBracketAnalyzer =
-        new SquareBracketAnalyzer(text, interwikis, namespaces, protocols, imageAnalyzer);
+    this.squareBracketAnalyzer = squareBracketAnalyzer;
   }
 
   void analyze() {

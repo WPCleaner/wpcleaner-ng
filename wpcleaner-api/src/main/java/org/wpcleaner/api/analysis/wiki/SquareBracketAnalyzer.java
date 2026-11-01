@@ -10,6 +10,7 @@ import java.util.List;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.analysis.comment.CommentedText;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
@@ -36,6 +37,7 @@ final class SquareBracketAnalyzer {
   private static final int TWO = 2;
 
   private final String text;
+  private final CommentedText commentedText;
   private final List<Protocol> protocols;
   private final ImageAnalyzer imageAnalyzer;
   private final SquareBracketElementFactory elementFactory;
@@ -43,11 +45,13 @@ final class SquareBracketAnalyzer {
 
   SquareBracketAnalyzer(
       final String text,
+      final CommentedText commentedText,
       final List<Interwiki> interwikis,
       final List<Namespace> namespaces,
       final List<Protocol> protocols,
       final ImageAnalyzer imageAnalyzer) {
     this.text = text;
+    this.commentedText = commentedText;
     this.protocols = protocols;
     this.imageAnalyzer = imageAnalyzer;
     this.elementFactory = new SquareBracketElementFactory(interwikis, namespaces);
@@ -152,7 +156,7 @@ final class SquareBracketAnalyzer {
     if (authorized.indexOf(nextChar) < 0) {
       return null;
     }
-    return text.substring(beginTarget, cursor.getIndex());
+    return commentedText.withoutComments(beginTarget, cursorIndex);
   }
 
   @Nullable

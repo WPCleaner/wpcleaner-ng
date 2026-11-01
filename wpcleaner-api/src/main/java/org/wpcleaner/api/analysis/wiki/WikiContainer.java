@@ -14,6 +14,7 @@ import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.analysis.comment.CommentedText;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.gallery.GalleryElement;
 import org.wpcleaner.api.analysis.image.ImageElement;
@@ -183,9 +184,13 @@ public class WikiContainer {
             new WikiAnalyzer(
                 text,
                 textBrowser,
-                interwikiRepository.getInterwikis(wiki),
-                namespaceRepository.getNamespaces(wiki),
-                protocolRepository.getProtocols(wiki),
+                new SquareBracketAnalyzer(
+                    text,
+                    new CommentedText(text, preprocessor.getComments()),
+                    interwikiRepository.getInterwikis(wiki),
+                    namespaceRepository.getNamespaces(wiki),
+                    protocolRepository.getProtocols(wiki),
+                    imageAnalyzer),
                 imageAnalyzer,
                 new BehaviorSwitchAnalyzer(text, textBrowser, magicWords),
                 new BlockLevelAnalyzer(
