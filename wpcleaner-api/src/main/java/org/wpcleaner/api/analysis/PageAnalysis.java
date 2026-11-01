@@ -9,6 +9,7 @@ import java.util.List;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.include.IncludeAreaElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
@@ -62,6 +63,10 @@ public final class PageAnalysis {
 
   public List<CategoryElement> getCategories() {
     return wikiElements.getCategories();
+  }
+
+  public List<IncludeAreaElement> getIncludeAreas() {
+    return preprocessor.getIncludeAreas();
   }
 
   public List<ExternalLinkElement> getExternalLinks() {
