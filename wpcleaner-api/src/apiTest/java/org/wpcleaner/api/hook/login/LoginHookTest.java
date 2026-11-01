@@ -20,6 +20,8 @@ import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magicword.MagicWord;
+import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.repository.tag.TagRepository;
@@ -31,6 +33,7 @@ class LoginHookTest {
   @Autowired private ExtensionTagRepository extensionTagRepository;
   @Autowired private InterwikiRepository interwikiRepository;
   @Autowired private LoginHook loginHook;
+  @Autowired private MagicWordRepository magicWordRepository;
   @Autowired private ProtocolRepository protocolRepository;
   @Autowired private TagRepository tagRepository;
 
@@ -98,6 +101,24 @@ class LoginHookTest {
     Assertions.assertThat(extensionTags).as("extensionTags").contains(new ExtensionTag("nowiki"));
     for (final ExtensionTag extensionTag : extensionTags) {
       Assertions.assertThat(extensionTag.name()).as("name").isNotEmpty().doesNotContain("<", ">");
+    }
+  }
+
+  @DisplayName("Execute login hook and populate MagicWordRepository")
+  @Test
+  void executeHookPopulatesMagicWordRepository() {
+    // WHEN
+    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
+
+    // THEN
+    final List<MagicWord> magicWords = magicWordRepository.getMagicWords(WikimediaDefinitions.META);
+    Assertions.assertThat(magicWords)
+        .as("magicWords")
+        .anySatisfy(magicWord -> Assertions.assertThat(magicWord.functionHook()).isTrue())
+        .anySatisfy(magicWord -> Assertions.assertThat(magicWord.variable()).isTrue());
+    for (final MagicWord magicWord : magicWords) {
+      Assertions.assertThat(magicWord.name()).as("name").isNotEmpty();
+      Assertions.assertThat(magicWord.aliases()).as("aliases").isNotEmpty();
     }
   }
 }

@@ -9,21 +9,26 @@ import java.util.List;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.function.FunctionElement;
 import org.wpcleaner.api.analysis.include.IncludeAreaElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
+import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class PageAnalysis {
 
   private final String title;
@@ -38,11 +43,13 @@ public final class PageAnalysis {
       final String text,
       final ExtensionTagRepository extensionTagRepository,
       final InterwikiRepository interwikiRepository,
+      final MagicWordRepository magicWordRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
     this.title = title;
     this.text = text;
-    this.preprocessor = new PreprocessorContainer(wiki, text, extensionTagRepository);
+    this.preprocessor =
+        new PreprocessorContainer(wiki, text, extensionTagRepository, magicWordRepository);
     this.tags = new TagContainer(text, preprocessor);
     this.wikiElements =
         new WikiContainer(
@@ -83,6 +90,18 @@ public final class PageAnalysis {
 
   public List<LanguageLinkElement> getLanguageLinks() {
     return wikiElements.getLanguageLinks();
+  }
+
+  public List<TemplateElement> getTemplates() {
+    return preprocessor.getTemplates();
+  }
+
+  public List<FunctionElement> getFunctions() {
+    return preprocessor.getFunctions();
+  }
+
+  public List<ParameterElement> getParameters() {
+    return preprocessor.getParameters();
   }
 
   public List<TagElement> getTags() {

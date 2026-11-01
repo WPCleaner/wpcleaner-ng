@@ -17,6 +17,7 @@ import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 
@@ -393,6 +394,7 @@ class PageAnalysisTagTest {
             text,
             new ExtensionTagRepository(),
             new InterwikiRepository(),
+            new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
 

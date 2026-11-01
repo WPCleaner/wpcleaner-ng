@@ -55,10 +55,13 @@ public final class GuiLogin {
   private static final Set<SiteInfoParameters.Properties> SITE_INFO_PROPERTIES =
       Set.of(
           SiteInfoParameters.Properties.EXTENSION_TAGS,
+          SiteInfoParameters.Properties.FUNCTION_HOOKS,
           SiteInfoParameters.Properties.INTERWIKI_MAP,
+          SiteInfoParameters.Properties.MAGIC_WORDS,
           SiteInfoParameters.Properties.NAMESPACES,
           SiteInfoParameters.Properties.NAMESPACE_ALIASES,
-          SiteInfoParameters.Properties.PROTOCOLS);
+          SiteInfoParameters.Properties.PROTOCOLS,
+          SiteInfoParameters.Properties.VARIABLES);
   private static final Set<TagsParameters.Properties> TAGS_PROPERTIES =
       Set.of(
           TagsParameters.Properties.ACTIVE,

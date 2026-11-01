@@ -57,8 +57,12 @@ final class PreprocessorAnalyzer {
   private final List<CompleteTagElement> completeTags;
   private final List<CompleteTagElement> nonWikiTags;
   private final List<IncludeAreaElement> includeAreas;
+  private final CurlyBracketElementFactory curlyBracketElementFactory;
 
-  PreprocessorAnalyzer(final String text, final Set<String> extensionTagNames) {
+  PreprocessorAnalyzer(
+      final String text,
+      final Set<String> extensionTagNames,
+      final CurlyBracketElementFactory curlyBracketElementFactory) {
     this.text = text;
     this.extensionTagNames = extensionTagNames;
     this.textBrowser = new TextBrowser(text);
@@ -69,6 +73,7 @@ final class PreprocessorAnalyzer {
     this.completeTags = new ArrayList<>();
     this.nonWikiTags = new ArrayList<>();
     this.includeAreas = new ArrayList<>();
+    this.curlyBracketElementFactory = curlyBracketElementFactory;
   }
 
   void analyze() {
@@ -105,14 +110,27 @@ final class PreprocessorAnalyzer {
 
   private void analyze(final int begin, final int end) {
     final Set<String> namesWithoutEndTag = new HashSet<>();
-    int index = text.indexOf(TagElement.TOKEN_START, begin);
-    while (index >= 0 && index < end) {
-      final int nextIndex =
-          text.startsWith(CommentElement.TOKEN_START, index)
-              ? analyzeComment(index, end)
-              : analyzeExtensionTag(index, end, namesWithoutEndTag);
-      index = text.indexOf(TagElement.TOKEN_START, nextIndex);
+    final BracketStack bracketStack =
+        new BracketStack(
+            text,
+            end,
+            curlyBrackets -> curlyBracketElementFactory.persist(curlyBrackets, comments));
+    int index = begin;
+    while (index < end) {
+      if (text.charAt(index) == TagElement.TOKEN_START) {
+        index = analyzeTagStart(index, end, namesWithoutEndTag);
+      } else {
+        index = bracketStack.analyze(index);
+      }
     }
+  }
+
+  private int analyzeTagStart(
+      final int begin, final int end, final Set<String> namesWithoutEndTag) {
+    if (text.startsWith(CommentElement.TOKEN_START, begin)) {
+      return analyzeComment(begin, end);
+    }
+    return analyzeExtensionTag(begin, end, namesWithoutEndTag);
   }
 
   private int analyzeComment(final int begin, final int end) {

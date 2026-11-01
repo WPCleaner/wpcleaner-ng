@@ -8,6 +8,7 @@ package org.wpcleaner.api.analysis;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -17,16 +18,19 @@ public class PageAnalysisFactory {
 
   private final ExtensionTagRepository extensionTagRepository;
   private final InterwikiRepository interwikiRepository;
+  private final MagicWordRepository magicWordRepository;
   private final NamespaceRepository namespaceRepository;
   private final ProtocolRepository protocolRepository;
 
   public PageAnalysisFactory(
       final ExtensionTagRepository extensionTagRepository,
       final InterwikiRepository interwikiRepository,
+      final MagicWordRepository magicWordRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
     this.extensionTagRepository = extensionTagRepository;
     this.interwikiRepository = interwikiRepository;
+    this.magicWordRepository = magicWordRepository;
     this.namespaceRepository = namespaceRepository;
     this.protocolRepository = protocolRepository;
   }
@@ -38,6 +42,7 @@ public class PageAnalysisFactory {
         text,
         extensionTagRepository,
         interwikiRepository,
+        magicWordRepository,
         namespaceRepository,
         protocolRepository);
   }
