@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.analysis.gallery.GalleryImage;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.tag.TagKind;
@@ -154,8 +155,13 @@ final class PageComparator {
     compareSets(
         "image",
         parse.images().stream().map(PageComparator::normalize).collect(Collectors.toSet()),
-        analysis.getImages().stream()
-            .map(image -> image.title().text())
+        Stream.concat(
+                analysis.getImages().stream().map(image -> image.title().text()),
+                analysis.getGalleries().stream()
+                    .flatMap(gallery -> gallery.images().stream())
+                    .map(GalleryImage::title)
+                    .filter(Objects::nonNull)
+                    .map(PageTitle::text))
             .collect(Collectors.toSet()));
     compareSets(
         "external link",

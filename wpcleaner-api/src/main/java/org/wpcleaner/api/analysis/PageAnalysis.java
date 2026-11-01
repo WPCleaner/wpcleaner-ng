@@ -11,6 +11,7 @@ import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.function.FunctionElement;
+import org.wpcleaner.api.analysis.gallery.GalleryElement;
 import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.include.IncludeAreaElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
@@ -101,6 +102,10 @@ public final class PageAnalysis {
 
   public List<ExternalLinkElement> getExternalLinks() {
     return wikiElements.getExternalLinks();
+  }
+
+  public List<GalleryElement> getGalleries() {
+    return wikiElements.getGalleries();
   }
 
   public List<ImageElement> getImages() {

@@ -24,14 +24,10 @@ public record ImageElement(
   }
 
   public Optional<ImageParameter> findCaption() {
-    return parameters.reversed().stream()
-        .filter(parameter -> parameter.magicWord() == null)
-        .findFirst();
+    return ImageParameter.findCaption(parameters);
   }
 
   public Optional<ImageParameter> findParameter(final String magicWord) {
-    return parameters.reversed().stream()
-        .filter(parameter -> magicWord.equals(parameter.magicWord()))
-        .findFirst();
+    return ImageParameter.findParameter(parameters, magicWord);
   }
 }

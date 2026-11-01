@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.image.ImageParameter;
@@ -18,6 +19,8 @@ final class ImageParameterFactory {
 
   private static final String MAGIC_WORD_PREFIX = "img_";
   private static final String ARGUMENT_PLACEHOLDER = "$1";
+  private static final Set<String> GALLERY_MAGIC_WORDS =
+      Set.of("img_alt", "img_class", "img_lang", "img_link", "img_page", "img_width");
   private static final Pattern NUMERIC =
       Pattern.compile("[+-]?(\\d+\\.?\\d*|\\.\\d+)([eE][+-]?\\d+)?");
   private static final Pattern ANY = Pattern.compile(".*", Pattern.DOTALL);
@@ -34,6 +37,15 @@ final class ImageParameterFactory {
         magicWords.stream()
             .filter(magicWord -> magicWord.name().startsWith(MAGIC_WORD_PREFIX))
             .toList();
+  }
+
+  private ImageParameterFactory(final List<MagicWord> magicWords, final Set<String> names) {
+    this.imageMagicWords =
+        magicWords.stream().filter(magicWord -> names.contains(magicWord.name())).toList();
+  }
+
+  static ImageParameterFactory forGallery(final List<MagicWord> magicWords) {
+    return new ImageParameterFactory(magicWords, GALLERY_MAGIC_WORDS);
   }
 
   ImageParameter create(final String text, final int begin, final int end) {
