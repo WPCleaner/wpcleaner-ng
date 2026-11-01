@@ -95,11 +95,12 @@ final class SquareBracketAnalyzer {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
-    cursor.moveAfterWhile(CLOSE);
-    if (cursor.getIndex() - firstClosingBracket != 1) {
+    final int closingBracketsCount = passClosingBrackets(cursor);
+    if (closingBracketsCount != 1) {
       return;
     }
-    persist1SquareBracketResult(firstOpeningBracket, cursor.getIndex(), target, value);
+    persist1SquareBracketResult(
+        firstOpeningBracket, firstClosingBracket + closingBracketsCount, target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
@@ -118,14 +119,26 @@ final class SquareBracketAnalyzer {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
-    cursor.moveAfterWhile(CLOSE);
-    if (cursor.getIndex() - firstClosingBracket != TWO) {
+    final int closingBracketsCount = passClosingBrackets(cursor);
+    if (closingBracketsCount != TWO) {
       return;
     }
-    persist2SquareBracketsResult(firstOpeningBracket, cursor.getIndex(), target, value);
+    persist2SquareBracketsResult(
+        firstOpeningBracket, firstClosingBracket + closingBracketsCount, target, value);
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
+  }
+
+  private int passClosingBrackets(final TextBrowser.Cursor cursor) {
+    int closingBracketsCount = 0;
+    do {
+      closingBracketsCount++;
+      cursor.moveNext();
+    } while (cursor.samePart()
+        && cursor.getIndex() < text.length()
+        && text.charAt(cursor.getIndex()) == CLOSE);
+    return closingBracketsCount;
   }
 
   private void persist1SquareBracketResult(

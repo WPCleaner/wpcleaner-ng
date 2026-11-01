@@ -13,6 +13,7 @@ import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
@@ -42,7 +43,13 @@ public final class PageAnalysis {
     this.tags = new TagContainer(text, comments);
     this.wikiElements =
         new WikiContainer(
-            wiki, text, comments, interwikiRepository, namespaceRepository, protocolRepository);
+            wiki,
+            text,
+            comments,
+            tags,
+            interwikiRepository,
+            namespaceRepository,
+            protocolRepository);
   }
 
   public String getTitle() {
@@ -79,5 +86,9 @@ public final class PageAnalysis {
 
   public List<TagElement> getTags() {
     return tags.getTags();
+  }
+
+  public List<CompleteTagElement> getCompleteTags() {
+    return tags.getCompleteTags();
   }
 }

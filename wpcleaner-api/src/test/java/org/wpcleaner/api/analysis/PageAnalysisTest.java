@@ -14,6 +14,10 @@ import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.tag.CompleteTagElement;
+import org.wpcleaner.api.analysis.tag.TagAttribute;
+import org.wpcleaner.api.analysis.tag.TagElement;
+import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
@@ -381,5 +385,218 @@ class PageAnalysisTest {
     Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
     Assertions.assertThat(analysis.getCategories())
         .containsExactly(new CategoryElement(0, text.length(), "Catégorie", "My category", null));
+  }
+
+  @DisplayName("should ignore internal links in every comment")
+  @Test
+  void analyzeInternalLinksInSeveralComments() {
+    // GIVEN
+    final String text = "<!-- [[A]] --><!-- [[B]] -->[[C]]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(28, text.length(), "C", null, null));
+  }
+
+  @DisplayName("should analyze tag attributes")
+  @Test
+  void analyzeTagAttributes() {
+    // GIVEN
+    final String text = "<span class=\"a b\" title = 'c' data-x=y hidden>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags())
+        .containsExactly(
+            new TagElement(
+                0,
+                text.length(),
+                "span",
+                TagKind.START,
+                List.of(
+                    new TagAttribute("class", "a b"),
+                    new TagAttribute("title", "c"),
+                    new TagAttribute("data-x", "y"),
+                    new TagAttribute("hidden", null))));
+  }
+
+  @DisplayName("should analyze tag with a slash in an attribute value")
+  @Test
+  void analyzeTagWithSlashInAttributeValue() {
+    // GIVEN
+    final String text = "<a href=\"https://example.com/\" rel=nofollow/>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags())
+        .containsExactly(
+            new TagElement(
+                0,
+                text.length(),
+                "a",
+                TagKind.SELF_CLOSING,
+                List.of(
+                    new TagAttribute("href", "https://example.com/"),
+                    new TagAttribute("rel", "nofollow"))));
+  }
+
+  @DisplayName("should analyze tag kinds")
+  @Test
+  void analyzeTagKinds() {
+    // GIVEN
+    final String text = "<b><br/></B >";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags())
+        .containsExactly(
+            new TagElement(0, 3, "b", TagKind.START, List.of()),
+            new TagElement(3, 8, "br", TagKind.SELF_CLOSING, List.of()),
+            new TagElement(8, 13, "B", TagKind.END, List.of()));
+  }
+
+  @DisplayName("should not analyze tag when name does not start with a letter")
+  @Test
+  void analyzeTagNotStartingWithLetter() {
+    // GIVEN
+    final String text = "x <5 and y> 3";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags()).isEmpty();
+  }
+
+  @DisplayName("should match start and end tags")
+  @Test
+  void analyzeCompleteTags() {
+    // GIVEN
+    final String text = "<b><span><span></span></span><br></B>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    final List<TagElement> tags = analysis.getTags();
+    Assertions.assertThat(analysis.getCompleteTags())
+        .containsExactly(
+            new CompleteTagElement(tags.get(0), tags.get(6)),
+            new CompleteTagElement(tags.get(1), tags.get(4)),
+            new CompleteTagElement(tags.get(2), tags.get(3)));
+  }
+
+  @DisplayName("should not match unclosed tags")
+  @Test
+  void analyzeUnclosedTags() {
+    // GIVEN
+    final String text = "<b>Bold</i>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags()).hasSize(2);
+    Assertions.assertThat(analysis.getCompleteTags()).isEmpty();
+  }
+
+  @DisplayName("should not analyze tags nor links inside nowiki")
+  @Test
+  void analyzeNowiki() {
+    // GIVEN
+    final String text = "<NoWiki><b>[[Link]]</b></nowiki>[[Other]]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    final TagElement startTag = new TagElement(0, 8, "NoWiki", TagKind.START, List.of());
+    final TagElement endTag = new TagElement(23, 32, "nowiki", TagKind.END, List.of());
+    Assertions.assertThat(analysis.getTags()).containsExactly(startTag, endTag);
+    Assertions.assertThat(analysis.getCompleteTags())
+        .containsExactly(new CompleteTagElement(startTag, endTag));
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(32, text.length(), "Other", null, null));
+  }
+
+  @DisplayName("should not analyze links inside pre")
+  @Test
+  void analyzePre() {
+    // GIVEN
+    final String text = "<pre>[[Link]]</pre>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getCompleteTags()).hasSize(1);
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+  }
+
+  @DisplayName("should analyze links after unclosed nowiki")
+  @Test
+  void analyzeUnclosedNowiki() {
+    // GIVEN
+    final String text = "<nowiki>[[Link]]";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getCompleteTags()).isEmpty();
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(8, text.length(), "Link", null, null));
+  }
+
+  @DisplayName("should analyze links inside tags with wiki content")
+  @Test
+  void analyzeLinkInsideRef() {
+    // GIVEN
+    final String text = "<ref name=\"a\">[[Link]]</ref>";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getCompleteTags()).hasSize(1);
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(14, 22, "Link", null, null));
+  }
+
+  @DisplayName("should not analyze links inside tag attributes")
+  @Test
+  void analyzeLinkInsideTagAttribute() {
+    // GIVEN
+    final String text = "<span title=\"[[Link]]\">";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags()).hasSize(1);
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+  }
+
+  @DisplayName("should analyze internal link followed by a comment")
+  @Test
+  void analyzeInternalLinkFollowedByComment() {
+    // GIVEN
+    final String text = "[[Link]]<!-- comment -->";
+
+    // WHEN
+    final PageAnalysis analysis = createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(new InternalLinkElement(0, 8, "Link", null, null));
   }
 }

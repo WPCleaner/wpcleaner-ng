@@ -19,8 +19,20 @@ public final class TextBrowser {
   }
 
   public void addExclusions(final List<? extends Element> excludes) {
-    this.exclusions.addAll(excludes);
-    this.exclusions.sort(Element.COMPARATOR);
+    final List<Element> sortedExclusions = new ArrayList<>(exclusions);
+    sortedExclusions.addAll(excludes);
+    sortedExclusions.sort(Element.COMPARATOR);
+    exclusions.clear();
+    for (final Element exclusion : sortedExclusions) {
+      final int lastIndex = exclusions.size() - 1;
+      if (lastIndex >= 0 && exclusion.begin() <= exclusions.get(lastIndex).end()) {
+        final Element last = exclusions.get(lastIndex);
+        exclusions.set(
+            lastIndex, new Exclusion(last.begin(), Math.max(last.end(), exclusion.end())));
+      } else {
+        exclusions.add(new Exclusion(exclusion.begin(), exclusion.end()));
+      }
+    }
   }
 
   public Cursor cursor() {
@@ -43,6 +55,14 @@ public final class TextBrowser {
       this.index = computeAfter(-1);
     }
 
+    public Cursor copy() {
+      final Cursor copy = new Cursor();
+      copy.index = index;
+      copy.jump = jump;
+      copy.currentExclude = currentExclude;
+      return copy;
+    }
+
     public int getIndex() {
       return index;
     }
@@ -59,13 +79,6 @@ public final class TextBrowser {
     public void moveAfterWhitespace() {
       jump = false;
       while (index < text.length() && Character.isWhitespace(text.charAt(index))) {
-        index = computeAfter(index);
-      }
-    }
-
-    public void moveAfterWhile(final char authorized) {
-      jump = false;
-      while (index < text.length() && text.charAt(index) == authorized) {
         index = computeAfter(index);
       }
     }
@@ -98,7 +111,7 @@ public final class TextBrowser {
     private int currentExclude;
 
     private ReverseCursor() {
-      this.currentExclude = 0;
+      this.currentExclude = exclusions.size() - 1;
       this.jump = false;
       this.index = computeBefore(text.length());
     }
@@ -139,16 +152,18 @@ public final class TextBrowser {
 
     private int computeBefore(final int start) {
       int result = start - 1;
-      while (currentExclude >= 0
-          && currentExclude < exclusions.size()
-          && result < exclusions.get(currentExclude).end()) {
-        result = Math.min(result, exclusions.get(currentExclude).begin());
-        if (!jump) {
-          jump = true;
+      while (currentExclude >= 0 && result < exclusions.get(currentExclude).end()) {
+        if (result >= exclusions.get(currentExclude).begin()) {
+          result = exclusions.get(currentExclude).begin() - 1;
+          if (!jump) {
+            jump = true;
+          }
         }
         currentExclude--;
       }
       return result;
     }
   }
+
+  private record Exclusion(int begin, int end) implements Element {}
 }

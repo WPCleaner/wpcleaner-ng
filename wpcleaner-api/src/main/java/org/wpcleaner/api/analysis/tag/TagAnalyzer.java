@@ -5,29 +5,98 @@ package org.wpcleaner.api.analysis.tag;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 
 final class TagAnalyzer {
 
   private final String text;
   private final TextBrowser textBrowser;
+  private final TagAttributeAnalyzer attributeAnalyzer;
+  private final List<TagElement> tags;
+  private final List<CompleteTagElement> completeTags;
+  private final Map<String, Deque<TagElement>> unmatchedStartTags;
 
   TagAnalyzer(final String text, final TextBrowser textBrowser) {
     this.text = text;
     this.textBrowser = textBrowser;
+    this.attributeAnalyzer = new TagAttributeAnalyzer(text);
+    this.tags = new ArrayList<>();
+    this.completeTags = new ArrayList<>();
+    this.unmatchedStartTags = new HashMap<>();
   }
 
-  List<TagElement> analyze() {
-    final List<TagElement> result = new ArrayList<>();
+  void analyze() {
     final TextBrowser.Cursor cursor = textBrowser.cursor();
     while (cursor.getIndex() < text.length()) {
-      analyze(cursor).ifPresent(result::add);
+      analyze(cursor).ifPresent(tag -> persistTag(tag, cursor));
     }
-    return result;
+    completeTags.sort(Element.COMPARATOR);
+  }
+
+  List<TagElement> getTags() {
+    return tags;
+  }
+
+  List<CompleteTagElement> getCompleteTags() {
+    return completeTags;
+  }
+
+  private void persistTag(final TagElement tag, final TextBrowser.Cursor cursor) {
+    tags.add(tag);
+    switch (tag.kind()) {
+      case START -> persistStartTag(tag, cursor);
+      case END -> persistEndTag(tag);
+      case SELF_CLOSING -> {}
+    }
+  }
+
+  private void persistStartTag(final TagElement startTag, final TextBrowser.Cursor cursor) {
+    if (startTag.type().map(TagType::isVoid).orElse(false)) {
+      return;
+    }
+    if (!startTag.hasWikiContent()) {
+      passNonWikiContent(startTag, cursor);
+      return;
+    }
+    unmatchedStartTags
+        .computeIfAbsent(startTag.normalizedName(), name -> new ArrayDeque<>())
+        .push(startTag);
+  }
+
+  private void persistEndTag(final TagElement endTag) {
+    final Deque<TagElement> startTags = unmatchedStartTags.get(endTag.normalizedName());
+    if (startTags != null && !startTags.isEmpty()) {
+      completeTags.add(new CompleteTagElement(startTags.pop(), endTag));
+    }
+  }
+
+  private void passNonWikiContent(final TagElement startTag, final TextBrowser.Cursor cursor) {
+    final TextBrowser.Cursor contentCursor = cursor.copy();
+    while (contentCursor.getIndex() < text.length()) {
+      final Optional<TagElement> endTag =
+          analyze(contentCursor).filter(tag -> isEndTagOf(tag, startTag));
+      if (endTag.isPresent()) {
+        tags.add(endTag.get());
+        completeTags.add(new CompleteTagElement(startTag, endTag.get()));
+        while (cursor.getIndex() < endTag.get().end()) {
+          cursor.moveNext();
+        }
+        return;
+      }
+    }
+  }
+
+  private static boolean isEndTagOf(final TagElement tag, final TagElement startTag) {
+    return TagKind.END == tag.kind() && tag.normalizedName().equals(startTag.normalizedName());
   }
 
   private Optional<TagElement> analyze(final TextBrowser.Cursor cursor) {
@@ -37,85 +106,58 @@ final class TagAnalyzer {
       return Optional.empty();
     }
     cursor.moveNext();
-    passOptionalSlash(text, cursor);
+    final boolean endTag = passOptionalSlash(cursor);
     final String tagName = extractTagName(cursor);
     if (tagName == null) {
       return Optional.empty();
     }
     cursor.moveAfterWhitespace();
-    passAttributes(cursor);
-    passOptionalSlash(text, cursor);
+    final List<TagAttribute> attributes = attributeAnalyzer.extractAttributes(cursor);
+    final boolean selfClosing = passOptionalSlash(cursor);
     if (cursor.getIndex() >= text.length()
         || TagElement.TOKEN_END != text.charAt(cursor.getIndex())) {
       return Optional.empty();
     }
-    final TagElement tag = new TagElement(begin, cursor.getIndex() + 1, tagName);
+    final TagElement tag =
+        new TagElement(
+            begin, cursor.getIndex() + 1, tagName, computeKind(endTag, selfClosing), attributes);
     cursor.moveNext();
     return Optional.of(tag);
+  }
+
+  private static TagKind computeKind(final boolean endTag, final boolean selfClosing) {
+    if (endTag) {
+      return TagKind.END;
+    }
+    if (selfClosing) {
+      return TagKind.SELF_CLOSING;
+    }
+    return TagKind.START;
   }
 
   @Nullable
   private String extractTagName(final TextBrowser.Cursor cursor) {
     final int startName = cursor.getIndex();
+    if (startName >= text.length() || !Character.isLetter(text.charAt(startName))) {
+      return null;
+    }
     while (cursor.getIndex() < text.length()
         && Character.isLetterOrDigit(text.charAt(cursor.getIndex()))
         && cursor.samePart()) {
       cursor.moveNext();
     }
-    if (!cursor.samePart() || cursor.getIndex() == startName) {
+    if (!cursor.samePart()) {
       return null;
     }
     return text.substring(startName, cursor.getIndex());
   }
 
-  private void passAttributes(final TextBrowser.Cursor cursor) {
-    final int startAttribute = cursor.getIndex();
-    final String excludedChar = " \n<>/";
-    while (cursor.getIndex() < text.length()
-        && excludedChar.indexOf(text.charAt(cursor.getIndex())) < 0
-        && cursor.samePart()) {
+  private boolean passOptionalSlash(final TextBrowser.Cursor cursor) {
+    if (cursor.getIndex() < text.length()
+        && TagElement.TOKEN_SLASH == text.charAt(cursor.getIndex())) {
       cursor.moveNext();
+      return true;
     }
-    cursor.moveAfterWhitespace();
-    if (cursor.getIndex() >= text.length() || cursor.getIndex() == startAttribute) {
-      return;
-    }
-    if (text.charAt(cursor.getIndex()) != TagElement.TOKEN_ATTRIBUTE_VALUE) {
-      passAttributes(cursor);
-      return;
-    }
-    cursor.moveNext();
-    if (cursor.getIndex() >= text.length()) {
-      return;
-    }
-    passAttributeValue(cursor);
-    passAttributes(cursor);
-  }
-
-  private void passAttributeValue(final TextBrowser.Cursor cursor) {
-    final char startValueChar = text.charAt(cursor.getIndex());
-    if (startValueChar == '"' || startValueChar == '\'') {
-      final String excludedChars = "<>" + startValueChar;
-      do {
-        cursor.moveNext();
-      } while (cursor.getIndex() < text.length()
-          && excludedChars.indexOf(text.charAt(cursor.getIndex())) < 0);
-      if (cursor.getIndex() < text.length() && text.charAt(cursor.getIndex()) == startValueChar) {
-        cursor.moveNext();
-      }
-    } else {
-      final String excludedChars = " \n\"'<>/";
-      while (cursor.getIndex() < text.length()
-          && excludedChars.indexOf(text.charAt(cursor.getIndex())) < 0) {
-        cursor.moveNext();
-      }
-    }
-    cursor.moveAfterWhitespace();
-  }
-
-  private static void passOptionalSlash(final String text, final TextBrowser.Cursor cursor) {
-    if (cursor.getIndex() < text.length() && '/' == text.charAt(cursor.getIndex())) {
-      cursor.moveNext();
-    }
+    return false;
   }
 }

@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -30,6 +31,7 @@ public class WikiContainer {
   private final NamespaceRepository namespaceRepository;
   private final ProtocolRepository protocolRepository;
   private final CommentContainer comments;
+  private final TagContainer tags;
   private final List<CategoryElement> categories;
   private final List<ExternalLinkElement> externalLinks;
   private final List<InternalLinkElement> internalLinks;
@@ -42,6 +44,7 @@ public class WikiContainer {
       final WikiDefinition wiki,
       final String text,
       final CommentContainer comments,
+      final TagContainer tags,
       final InterwikiRepository interwikiRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
@@ -51,6 +54,7 @@ public class WikiContainer {
     this.namespaceRepository = namespaceRepository;
     this.protocolRepository = protocolRepository;
     this.comments = comments;
+    this.tags = tags;
     this.categories = new ArrayList<>();
     this.externalLinks = new ArrayList<>();
     this.internalLinks = new ArrayList<>();
@@ -90,6 +94,7 @@ public class WikiContainer {
       if (!done) {
         final TextBrowser textBrowser = new TextBrowser(text);
         textBrowser.addExclusions(comments.getComments());
+        textBrowser.addExclusions(tags.getExclusions());
         final WikiAnalyzer analyzer =
             new WikiAnalyzer(
                 text,
