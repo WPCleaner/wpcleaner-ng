@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -119,6 +120,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             namespaceRepository,
             new ProtocolRepository());
@@ -149,6 +151,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             namespaceRepository,
             new ProtocolRepository());
@@ -278,6 +281,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -305,6 +309,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());
@@ -333,6 +338,7 @@ class PageAnalysisTest {
             text,
             new ExtensionTagRepository(),
             interwikiRepository,
+            new MagicLinkRepository(),
             new MagicWordRepository(),
             new NamespaceRepository(),
             new ProtocolRepository());

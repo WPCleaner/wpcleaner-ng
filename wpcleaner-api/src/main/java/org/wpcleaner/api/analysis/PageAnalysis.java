@@ -17,6 +17,7 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
+import org.wpcleaner.api.analysis.magiclink.MagicLinkElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
@@ -29,6 +30,7 @@ import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -49,6 +51,7 @@ public final class PageAnalysis {
       final String text,
       final ExtensionTagRepository extensionTagRepository,
       final InterwikiRepository interwikiRepository,
+      final MagicLinkRepository magicLinkRepository,
       final MagicWordRepository magicWordRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
@@ -64,6 +67,7 @@ public final class PageAnalysis {
             preprocessor,
             tags,
             interwikiRepository,
+            magicLinkRepository,
             magicWordRepository,
             namespaceRepository,
             protocolRepository);
@@ -115,6 +119,10 @@ public final class PageAnalysis {
 
   public List<ListItemElement> getListItems() {
     return wikiElements.getListItems();
+  }
+
+  public List<MagicLinkElement> getMagicLinks() {
+    return wikiElements.getMagicLinks();
   }
 
   public List<ParagraphElement> getParagraphs() {

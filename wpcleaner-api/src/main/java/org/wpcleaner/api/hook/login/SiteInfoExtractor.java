@@ -14,6 +14,7 @@ public class SiteInfoExtractor {
 
   private final ExtensionTagExtractor extensionTagExtractor;
   private final InterwikiExtractor interwikiExtractor;
+  private final MagicLinkExtractor magicLinkExtractor;
   private final MagicWordExtractor magicWordExtractor;
   private final NamespaceExtractor namespaceExtractor;
   private final ProtocolExtractor protocolExtractor;
@@ -21,11 +22,13 @@ public class SiteInfoExtractor {
   public SiteInfoExtractor(
       final ExtensionTagExtractor extensionTagExtractor,
       final InterwikiExtractor interwikiExtractor,
+      final MagicLinkExtractor magicLinkExtractor,
       final MagicWordExtractor magicWordExtractor,
       final NamespaceExtractor namespaceExtractor,
       final ProtocolExtractor protocolExtractor) {
     this.extensionTagExtractor = extensionTagExtractor;
     this.interwikiExtractor = interwikiExtractor;
+    this.magicLinkExtractor = magicLinkExtractor;
     this.magicWordExtractor = magicWordExtractor;
     this.namespaceExtractor = namespaceExtractor;
     this.protocolExtractor = protocolExtractor;
@@ -37,5 +40,6 @@ public class SiteInfoExtractor {
     protocolExtractor.extract(wiki, siteInfo);
     extensionTagExtractor.extract(wiki, siteInfo);
     magicWordExtractor.extract(wiki, siteInfo);
+    magicLinkExtractor.extract(wiki, siteInfo);
   }
 }

@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -45,6 +46,7 @@ class PageContentDisplayTest extends JavaFxTest {
               new PageAnalysisFactory(
                   new ExtensionTagRepository(),
                   new InterwikiRepository(),
+                  new MagicLinkRepository(),
                   new MagicWordRepository(),
                   new NamespaceRepository(),
                   new ProtocolRepository());

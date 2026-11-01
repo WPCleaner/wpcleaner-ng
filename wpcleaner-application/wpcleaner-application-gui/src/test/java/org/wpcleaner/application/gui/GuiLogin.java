@@ -57,6 +57,7 @@ public final class GuiLogin {
           SiteInfoParameters.Properties.DOUBLE_UNDERSCORES,
           SiteInfoParameters.Properties.EXTENSION_TAGS,
           SiteInfoParameters.Properties.FUNCTION_HOOKS,
+          SiteInfoParameters.Properties.GENERAL,
           SiteInfoParameters.Properties.INTERWIKI_MAP,
           SiteInfoParameters.Properties.MAGIC_WORDS,
           SiteInfoParameters.Properties.NAMESPACES,
