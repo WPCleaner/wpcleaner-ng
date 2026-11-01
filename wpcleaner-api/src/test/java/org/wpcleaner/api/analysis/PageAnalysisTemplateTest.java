@@ -28,7 +28,7 @@ class PageAnalysisTemplateTest {
 
     // THEN
     Assertions.assertThat(analysis.getTemplates())
-        .containsExactly(new TemplateElement(0, text.length(), "Hello", List.of()));
+        .containsExactly(new TemplateElement(0, text.length(), "Hello", List.of(), List.of()));
     Assertions.assertThat(analysis.getFunctions()).isEmpty();
   }
 
@@ -50,7 +50,8 @@ class PageAnalysisTemplateTest {
                 "Infobox",
                 List.of(
                     new TemplateParameter(11, 25, "name", " Paris "),
-                    new TemplateParameter(26, 32, null, "France"))));
+                    new TemplateParameter(26, 32, null, "France")),
+                List.of()));
   }
 
   @DisplayName("should split parameter name at the first equal sign only")
@@ -66,7 +67,11 @@ class PageAnalysisTemplateTest {
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
             new TemplateElement(
-                0, text.length(), "T", List.of(new TemplateParameter(4, 9, "a", "b=c"))));
+                0,
+                text.length(),
+                "T",
+                List.of(new TemplateParameter(4, 9, "a", "b=c")),
+                List.of()));
   }
 
   @DisplayName("should not split parameters at a pipe inside an internal link")
@@ -82,7 +87,11 @@ class PageAnalysisTemplateTest {
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
             new TemplateElement(
-                0, text.length(), "T", List.of(new TemplateParameter(4, 11, null, "[[a|b]]"))));
+                0,
+                text.length(),
+                "T",
+                List.of(new TemplateParameter(4, 11, null, "[[a|b]]")),
+                List.of()));
     Assertions.assertThat(analysis.getInternalLinks())
         .containsExactly(new InternalLinkElement(4, 11, "a", null, "b"));
   }
@@ -100,8 +109,13 @@ class PageAnalysisTemplateTest {
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
             new TemplateElement(
-                0, text.length(), "A", List.of(new TemplateParameter(4, 11, null, "{{B|x}}"))),
-            new TemplateElement(4, 11, "B", List.of(new TemplateParameter(8, 9, null, "x"))));
+                0,
+                text.length(),
+                "A",
+                List.of(new TemplateParameter(4, 11, null, "{{B|x}}")),
+                List.of()),
+            new TemplateElement(
+                4, 11, "B", List.of(new TemplateParameter(8, 9, null, "x")), List.of()));
   }
 
   @DisplayName("should ignore comments in template name and pipes inside comments")
@@ -120,7 +134,8 @@ class PageAnalysisTemplateTest {
                 0,
                 text.length(),
                 "Hello",
-                List.of(new TemplateParameter(18, 30, null, "a<!-- | -->b"))));
+                List.of(new TemplateParameter(18, 30, null, "a<!-- | -->b")),
+                List.of()));
   }
 
   @DisplayName("should analyze templates inside tags with wiki content separately")
@@ -136,8 +151,13 @@ class PageAnalysisTemplateTest {
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
             new TemplateElement(
-                0, 20, "T", List.of(new TemplateParameter(4, 18, null, "<ref>a|b</ref>"))),
-            new TemplateElement(25, 32, "X", List.of(new TemplateParameter(29, 30, null, "y"))));
+                0,
+                20,
+                "T",
+                List.of(new TemplateParameter(4, 18, null, "<ref>a|b</ref>")),
+                List.of()),
+            new TemplateElement(
+                25, 32, "X", List.of(new TemplateParameter(29, 30, null, "y")), List.of()));
   }
 
   @DisplayName("should not analyze templates inside nowiki")
@@ -164,7 +184,7 @@ class PageAnalysisTemplateTest {
 
     // THEN
     Assertions.assertThat(analysis.getTemplates())
-        .containsExactly(new TemplateElement(4, text.length(), "B", List.of()));
+        .containsExactly(new TemplateElement(4, text.length(), "B", List.of(), List.of()));
   }
 
   @DisplayName("should not close a template inside an unclosed internal link")
@@ -223,7 +243,7 @@ class PageAnalysisTemplateTest {
     Assertions.assertThat(analysis.getParameters())
         .containsExactly(new ParameterElement(2, 9, "1", null));
     Assertions.assertThat(analysis.getTemplates())
-        .containsExactly(new TemplateElement(0, text.length(), "{{{1}}}", List.of()));
+        .containsExactly(new TemplateElement(0, text.length(), "{{{1}}}", List.of(), List.of()));
   }
 
   @DisplayName("should analyze parser function with a hash")
@@ -246,7 +266,8 @@ class PageAnalysisTemplateTest {
                 List.of(
                     new TemplateParameter(6, 9, null, " x "),
                     new TemplateParameter(10, 15, null, " yes "),
-                    new TemplateParameter(16, 20, null, " no "))));
+                    new TemplateParameter(16, 20, null, " no ")),
+                List.of()));
     Assertions.assertThat(analysis.getTemplates()).isEmpty();
   }
 
@@ -310,8 +331,8 @@ class PageAnalysisTemplateTest {
     // THEN
     Assertions.assertThat(analysis.getFunctions())
         .containsExactly(
-            new FunctionElement(0, 12, "PAGENAME", "pagename", List.of()),
-            new FunctionElement(12, 23, "NOMPAGE", "pagename", List.of()));
+            new FunctionElement(0, 12, "PAGENAME", "pagename", List.of(), List.of()),
+            new FunctionElement(12, 23, "NOMPAGE", "pagename", List.of(), List.of()));
     Assertions.assertThat(analysis.getTemplates())
         .extracting(TemplateElement::name)
         .containsExactly("CURRENTYEAR");
@@ -334,6 +355,7 @@ class PageAnalysisTemplateTest {
                 text.length(),
                 "PAGENAME",
                 "pagename",
-                List.of(new TemplateParameter(11, 14, null, "Foo"))));
+                List.of(new TemplateParameter(11, 14, null, "Foo")),
+                List.of()));
   }
 }

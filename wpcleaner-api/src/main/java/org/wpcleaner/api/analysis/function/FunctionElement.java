@@ -10,10 +10,16 @@ import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
 
 public record FunctionElement(
-    int begin, int end, String name, String magicWord, List<TemplateParameter> parameters)
+    int begin,
+    int end,
+    String name,
+    String magicWord,
+    List<TemplateParameter> parameters,
+    List<String> modifiers)
     implements Element {
 
   public FunctionElement {
     parameters = List.copyOf(parameters);
+    modifiers = List.copyOf(modifiers);
   }
 }

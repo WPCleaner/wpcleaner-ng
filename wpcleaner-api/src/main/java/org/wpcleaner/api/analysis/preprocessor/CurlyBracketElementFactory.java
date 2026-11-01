@@ -8,6 +8,7 @@ package org.wpcleaner.api.analysis.preprocessor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.comment.CommentElement;
@@ -22,6 +23,9 @@ final class CurlyBracketElementFactory {
   private static final char FUNCTION_SEPARATOR = ':';
   private static final String FUNCTION_PREFIX = "#";
   private static final int PARAMETER_COUNT = 3;
+  private static final Set<String> SUBST_MODIFIERS = Set.of("subst", "safesubst");
+  private static final Set<String> MESSAGE_MODIFIERS = Set.of("msgnw", "msg");
+  private static final Set<String> RAW_MODIFIERS = Set.of("raw");
 
   private final String text;
   private final List<MagicWord> magicWords;
@@ -83,8 +87,11 @@ final class CurlyBracketElementFactory {
   private void persistTemplateOrFunction(
       final CurlyBrackets curlyBrackets, final CommentedText commentedText) {
     final CurlyBrackets.Part namePart = curlyBrackets.parts().getFirst();
+    final List<String> modifiers = new ArrayList<>();
+    int nameBegin =
+        stripModifier(SUBST_MODIFIERS, namePart.begin(), namePart.end(), commentedText, modifiers);
     if (curlyBrackets.parts().size() == 1) {
-      final String name = commentedText.withoutComments(namePart.begin(), namePart.end()).trim();
+      final String name = commentedText.withoutComments(nameBegin, namePart.end()).trim();
       final Optional<MagicWord> variable = findMagicWord(name, MagicWord::variable);
       if (variable.isPresent()) {
         functions.add(
@@ -93,29 +100,56 @@ final class CurlyBracketElementFactory {
                 curlyBrackets.end(),
                 name,
                 variable.get().name(),
-                List.of()));
+                List.of(),
+                modifiers));
         return;
       }
     }
+    nameBegin =
+        stripModifier(MESSAGE_MODIFIERS, nameBegin, namePart.end(), commentedText, modifiers);
+    nameBegin = stripModifier(RAW_MODIFIERS, nameBegin, namePart.end(), commentedText, modifiers);
     final int separator =
-        commentedText.indexOutsideComments(FUNCTION_SEPARATOR, namePart.begin(), namePart.end());
+        commentedText.indexOutsideComments(FUNCTION_SEPARATOR, nameBegin, namePart.end());
     if (separator >= 0) {
-      final String name = commentedText.withoutComments(namePart.begin(), separator).trim();
+      final String name = commentedText.withoutComments(nameBegin, separator).trim();
       final Optional<MagicWord> functionHook = findFunctionHook(name);
       if (functionHook.isPresent()) {
-        persistFunction(curlyBrackets, name, functionHook.get(), separator);
+        persistFunction(
+            curlyBrackets, new FunctionName(name, functionHook.get(), separator), modifiers);
         return;
       }
     }
-    persistTemplate(curlyBrackets, commentedText);
+    persistTemplate(curlyBrackets, commentedText, nameBegin, modifiers);
+  }
+
+  private int stripModifier(
+      final Set<String> modifierNames,
+      final int begin,
+      final int end,
+      final CommentedText commentedText,
+      final List<String> modifiers) {
+    final int aliasBegin = commentedText.skipWhitespaceAndComments(begin, end);
+    for (final MagicWord magicWord : magicWords) {
+      if (modifierNames.contains(magicWord.name())) {
+        for (final String alias : magicWord.aliases()) {
+          if (aliasBegin + alias.length() <= end
+              && text.regionMatches(
+                  !magicWord.caseSensitive(), aliasBegin, alias, 0, alias.length())) {
+            modifiers.add(magicWord.name());
+            return aliasBegin + alias.length();
+          }
+        }
+      }
+    }
+    return begin;
   }
 
   private void persistFunction(
       final CurlyBrackets curlyBrackets,
-      final String name,
-      final MagicWord functionHook,
-      final int separator) {
+      final FunctionName functionName,
+      final List<String> modifiers) {
     final CurlyBrackets.Part namePart = curlyBrackets.parts().getFirst();
+    final int separator = functionName.separator();
     final List<TemplateParameter> functionParameters = new ArrayList<>();
     functionParameters.add(
         new TemplateParameter(
@@ -128,15 +162,19 @@ final class CurlyBracketElementFactory {
         new FunctionElement(
             curlyBrackets.begin(),
             curlyBrackets.end(),
-            name,
-            functionHook.name(),
-            functionParameters));
+            functionName.name(),
+            functionName.functionHook().name(),
+            functionParameters,
+            modifiers));
   }
 
   private void persistTemplate(
-      final CurlyBrackets curlyBrackets, final CommentedText commentedText) {
+      final CurlyBrackets curlyBrackets,
+      final CommentedText commentedText,
+      final int nameBegin,
+      final List<String> modifiers) {
     final CurlyBrackets.Part namePart = curlyBrackets.parts().getFirst();
-    final String name = commentedText.withoutComments(namePart.begin(), namePart.end()).trim();
+    final String name = commentedText.withoutComments(nameBegin, namePart.end()).trim();
     if (name.isEmpty()) {
       return;
     }
@@ -146,7 +184,8 @@ final class CurlyBracketElementFactory {
             .map(part -> createTemplateParameter(part, commentedText))
             .toList();
     templates.add(
-        new TemplateElement(curlyBrackets.begin(), curlyBrackets.end(), name, templateParameters));
+        new TemplateElement(
+            curlyBrackets.begin(), curlyBrackets.end(), name, templateParameters, modifiers));
   }
 
   private TemplateParameter createTemplateParameter(
@@ -179,6 +218,8 @@ final class CurlyBracketElementFactory {
     return text.substring(part.begin(), part.end());
   }
 
+  private record FunctionName(String name, MagicWord functionHook, int separator) {}
+
   private record CommentedText(String text, List<CommentElement> comments) {
 
     private String withoutComments(final int begin, final int end) {
@@ -203,6 +244,24 @@ final class CurlyBracketElementFactory {
       }
       final int found = text.substring(index, end).indexOf(searched);
       return found >= 0 ? index + found : -1;
+    }
+
+    private int skipWhitespaceAndComments(final int begin, final int end) {
+      int index = begin;
+      boolean skipped = true;
+      while (skipped) {
+        skipped = false;
+        while (index < end && Character.isWhitespace(text.charAt(index))) {
+          index++;
+        }
+        for (final CommentElement comment : comments) {
+          if (comment.begin() == index && comment.end() <= end) {
+            index = comment.end();
+            skipped = true;
+          }
+        }
+      }
+      return index;
     }
 
     private List<CommentElement> commentsBetween(final int begin, final int end) {

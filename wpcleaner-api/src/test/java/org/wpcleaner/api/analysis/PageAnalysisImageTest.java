@@ -167,7 +167,8 @@ class PageAnalysisImageTest {
             new ImageParameter(19, 26, "{{T|a}}", null, null));
     Assertions.assertThat(analysis.getTemplates())
         .containsExactly(
-            new TemplateElement(19, 26, "T", List.of(new TemplateParameter(23, 24, null, "a"))));
+            new TemplateElement(
+                19, 26, "T", List.of(new TemplateParameter(23, 24, null, "a")), List.of()));
   }
 
   @DisplayName("should not split parameters at a pipe inside a comment")
