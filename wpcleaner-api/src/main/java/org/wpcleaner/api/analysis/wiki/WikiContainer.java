@@ -15,12 +15,14 @@ import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.gallery.GalleryElement;
 import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.magiclink.MagicLinkElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
@@ -49,6 +51,7 @@ public class WikiContainer {
   private final List<BehaviorSwitchElement> behaviorSwitches;
   private final List<CategoryElement> categories;
   private final List<ExternalLinkElement> externalLinks;
+  private final List<GalleryElement> galleries;
   private final List<ImageElement> images;
   private final List<InternalLinkElement> internalLinks;
   private final List<InterwikiLinkElement> interwikiLinks;
@@ -83,6 +86,7 @@ public class WikiContainer {
     this.behaviorSwitches = new ArrayList<>();
     this.categories = new ArrayList<>();
     this.externalLinks = new ArrayList<>();
+    this.galleries = new ArrayList<>();
     this.images = new ArrayList<>();
     this.internalLinks = new ArrayList<>();
     this.interwikiLinks = new ArrayList<>();
@@ -108,6 +112,11 @@ public class WikiContainer {
   public List<ExternalLinkElement> getExternalLinks() {
     ensureAnalyzed();
     return externalLinks;
+  }
+
+  public List<GalleryElement> getGalleries() {
+    ensureAnalyzed();
+    return galleries;
   }
 
   public List<ImageElement> getImages() {
@@ -209,6 +218,15 @@ public class WikiContainer {
                 .toList(),
             images);
         magicLinks.addAll(magicLinkAnalyzer.getMagicLinks());
+        galleries.addAll(
+            new GalleryAnalyzer(
+                    text,
+                    textBrowser,
+                    new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki)),
+                    ImageParameterFactory.forGallery(magicWords),
+                    preprocessor.getCurlyBracketElements(),
+                    preprocessor.getComments())
+                .analyze(preprocessor.getCompleteTags()));
         externalLinks.addAll(magicLinkAnalyzer.getFreeExternalLinks());
         externalLinks.sort(Element.COMPARATOR);
         paragraphs.addAll(analyzer.getParagraphs());

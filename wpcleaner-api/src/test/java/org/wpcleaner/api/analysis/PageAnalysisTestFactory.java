@@ -69,7 +69,7 @@ final class PageAnalysisTestFactory {
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     protocolRepository.addProtocol(WIKI, new Protocol("http://"));
     final ExtensionTagRepository extensionTagRepository = new ExtensionTagRepository();
-    Stream.of("nowiki", "pre", "ref", "references", "math", "inputbox")
+    Stream.of("nowiki", "pre", "ref", "references", "math", "inputbox", "gallery")
         .forEach(name -> extensionTagRepository.addExtensionTag(WIKI, new ExtensionTag(name)));
     final MagicLinkRepository magicLinkRepository = new MagicLinkRepository();
     magicLinkRepository.enableMagicLink(WIKI, MagicLinkType.ISBN);
@@ -82,6 +82,7 @@ final class PageAnalysisTestFactory {
                 "defaultsort", List.of("CLEFDETRI:", "DEFAULTSORT:"), true, false, true, false),
             new MagicWord("if", List.of("si", "if"), false, false, true, false),
             new MagicWord("img_alt", List.of("alt=$1"), true, false, false, false),
+            new MagicWord("img_link", List.of("lien=$1", "link=$1"), true, false, false, false),
             new MagicWord("img_right", List.of("droite", "right"), true, false, false, false),
             new MagicWord(
                 "img_thumbnail",
