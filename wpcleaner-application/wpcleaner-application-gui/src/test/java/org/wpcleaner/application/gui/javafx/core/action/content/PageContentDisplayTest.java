@@ -18,6 +18,8 @@ import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
@@ -25,6 +27,8 @@ import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyn
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 
 class PageContentDisplayTest extends JavaFxTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.FR;
 
   @DisplayName("PageContentDisplay initializes children and properties properly")
   @Test
@@ -40,7 +44,8 @@ class PageContentDisplayTest extends JavaFxTest {
                   new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
 
           final PageContentDisplay display =
-              new PageContentDisplay(colorizer, pageAnalysisFactory, "User:Test", "Page content");
+              new PageContentDisplay(
+                  colorizer, pageAnalysisFactory, WIKI, "User:Test", "Page content");
 
           Assertions.assertThat(display.getChildren()).hasSize(2);
           final Label label = lookup(display, PageContentDisplay.TITLE_ID, Label.class);
@@ -54,7 +59,7 @@ class PageContentDisplayTest extends JavaFxTest {
           Assertions.assertThat(display.getMaxWidth()).isEqualTo(Double.MAX_VALUE);
           Assertions.assertThat(HBox.getHgrow(display)).isEqualTo(Priority.ALWAYS);
 
-          display.updateText("User:Updated", "Updated content", pageAnalysisFactory);
+          display.updateText(WIKI, "User:Updated", "Updated content", pageAnalysisFactory);
           Assertions.assertThat(label.getText()).isEqualTo("User:Updated");
         });
   }

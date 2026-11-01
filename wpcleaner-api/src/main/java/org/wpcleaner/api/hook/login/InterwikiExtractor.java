@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
 public class InterwikiExtractor {
@@ -20,13 +21,15 @@ public class InterwikiExtractor {
     this.repository = repository;
   }
 
-  public void extract(final SiteInfo siteInfo) {
-    siteInfo.interwikiMap().forEach(this::extractInterwiki);
+  public void extract(final WikiDefinition wiki, final SiteInfo siteInfo) {
+    siteInfo.interwikiMap().forEach(interwiki -> extractInterwiki(wiki, interwiki));
   }
 
   private void extractInterwiki(
+      final WikiDefinition wiki,
       final org.wpcleaner.api.api.query.meta.siteinfo.Interwiki interwiki) {
     repository.addInterwiki(
+        wiki,
         new Interwiki(
             interwiki.prefix(),
             Objects.requireNonNullElse(interwiki.local(), Boolean.FALSE),

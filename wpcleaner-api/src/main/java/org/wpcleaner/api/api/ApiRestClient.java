@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
-public class ApiRestClient {
+public class ApiRestClient implements LogoutHook {
 
   private final ApiLogInterceptor logInterceptor;
   private final RestClient.Builder clientBuilder;
@@ -28,6 +28,11 @@ public class ApiRestClient {
 
   public RestClient getRestClient(final WikiDefinition wiki) {
     return restClients.computeIfAbsent(wiki, this::createRestClient);
+  }
+
+  @Override
+  public void logout(final ConnectedUser user) {
+    restClients.clear();
   }
 
   private RestClient createRestClient(final WikiDefinition wiki) {

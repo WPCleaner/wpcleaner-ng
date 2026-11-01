@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.repository.protocol.Protocol;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
 public class ProtocolExtractor {
@@ -19,11 +20,11 @@ public class ProtocolExtractor {
     this.repository = repository;
   }
 
-  public void extract(final SiteInfo siteInfo) {
-    siteInfo.protocols().forEach(this::extractProtocol);
+  public void extract(final WikiDefinition wiki, final SiteInfo siteInfo) {
+    siteInfo.protocols().forEach(protocolValue -> extractProtocol(wiki, protocolValue));
   }
 
-  private void extractProtocol(final String protocolValue) {
-    repository.addProtocol(new Protocol(protocolValue));
+  private void extractProtocol(final WikiDefinition wiki, final String protocolValue) {
+    repository.addProtocol(wiki, new Protocol(protocolValue));
   }
 }

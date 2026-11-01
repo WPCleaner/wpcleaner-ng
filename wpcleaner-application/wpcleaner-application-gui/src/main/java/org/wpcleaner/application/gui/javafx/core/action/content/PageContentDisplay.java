@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
@@ -25,6 +26,7 @@ public final class PageContentDisplay extends VBox {
   public PageContentDisplay(
       final PageSyntaxColorizer colorizer,
       final PageAnalysisFactory pageAnalysisFactory,
+      final WikiDefinition wiki,
       final String pageTitle,
       final String pageContent) {
     super(5);
@@ -39,7 +41,7 @@ public final class PageContentDisplay extends VBox {
     this.scrollPane.setId(CONTENT_ID);
     final PageAnalysisArea previewArea = scrollPane.getArea();
     previewArea.setPrefHeight(700);
-    previewArea.updateText(pageTitle, pageContent, pageAnalysisFactory);
+    previewArea.updateText(wiki, pageTitle, pageContent, pageAnalysisFactory);
     setVgrow(scrollPane, Priority.ALWAYS);
 
     getChildren().addAll(label, scrollPane);
@@ -54,10 +56,11 @@ public final class PageContentDisplay extends VBox {
   }
 
   public void updateText(
+      final WikiDefinition wiki,
       final String pageTitle,
       final String pageContent,
       final PageAnalysisFactory pageAnalysisFactory) {
     label.setText(pageTitle);
-    scrollPane.getArea().updateText(pageTitle, pageContent, pageAnalysisFactory);
+    scrollPane.getArea().updateText(wiki, pageTitle, pageContent, pageAnalysisFactory);
   }
 }

@@ -93,7 +93,7 @@ public class ApiEditWrapper implements DisposableBean {
 
   private Edit editInternal(final WikiDefinition wiki, final EditQuery query) {
     final EditQueryCommon.Builder builder = query.common().builder();
-    final List<String> tagsToUse = computeTags();
+    final List<String> tagsToUse = computeTags(wiki);
     builder.tags(tagsToUse);
     final String prefix = tagsToUse.isEmpty() ? prefixWithoutTags : prefixWithTag;
     if (!prefix.isBlank()) {
@@ -114,7 +114,7 @@ public class ApiEditWrapper implements DisposableBean {
 
   private Move moveInternal(final WikiDefinition wiki, final MoveQuery query) {
     final MoveQueryCommon.Builder builder = query.common().builder();
-    final List<String> tagsToUse = computeTags();
+    final List<String> tagsToUse = computeTags(wiki);
     builder.tags(tagsToUse);
     final String prefix = tagsToUse.isEmpty() ? prefixWithoutTags : prefixWithTag;
     if (!prefix.isBlank() && query.common().reason() != null) {
@@ -124,9 +124,9 @@ public class ApiEditWrapper implements DisposableBean {
     return apiMove.move(wiki, query.withCommon(builder.build()));
   }
 
-  private List<String> computeTags() {
+  private List<String> computeTags(final WikiDefinition wiki) {
     return tags.stream()
-        .map(tagRepository::getSimilarTag)
+        .map(tag -> tagRepository.getSimilarTag(wiki, tag))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .map(Tag::name)

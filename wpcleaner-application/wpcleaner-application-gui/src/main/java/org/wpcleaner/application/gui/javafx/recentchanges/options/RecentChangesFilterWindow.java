@@ -63,8 +63,10 @@ public final class RecentChangesFilterWindow
     this.onFilterValidated = Objects.requireNonNull(onFilterValidated);
     stage.setTitle(GT._T("Recent changes filter"));
 
-    final List<Namespace> availableNamespaces = services.namespaceRepository().getNamespaces();
-    final List<Tag> availableTags = services.tagRepository().getTags();
+    final List<Namespace> availableNamespaces =
+        services.namespaceRepository().getNamespaces(services.user().getCurrentUser().wiki());
+    final List<Tag> availableTags =
+        services.tagRepository().getTags(services.user().getCurrentUser().wiki());
 
     nameField = createNameField(initialFilter);
     namespaceCheckComboBox = createNamespaceCheckComboBox(availableNamespaces, initialFilter);

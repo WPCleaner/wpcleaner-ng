@@ -127,7 +127,11 @@ public final class RecentChangesDetailsPanel extends VBox {
     if (result.content != null) {
       final FilteredRecentChange rc = selectedRecentChange.get();
       if (rc != null) {
-        contentArea.updateText(rc.title(), result.content, services.pageAnalysisFactory());
+        contentArea.updateText(
+            services.user().getCurrentUser().wiki(),
+            rc.title(),
+            result.content,
+            services.pageAnalysisFactory());
       } else {
         contentArea.replaceText(result.content);
       }

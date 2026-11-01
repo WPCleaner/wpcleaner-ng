@@ -61,8 +61,10 @@ public final class RecentChangesOptionsWindow
     this.onOptionsValidated = Objects.requireNonNull(onOptionsValidated);
     stage.setTitle(GT._T("Recent changes options"));
 
-    final List<Namespace> availableNamespaces = services.namespaceRepository().getNamespaces();
-    final List<Tag> availableTags = services.tagRepository().getTags();
+    final List<Namespace> availableNamespaces =
+        services.namespaceRepository().getNamespaces(services.user().getCurrentUser().wiki());
+    final List<Tag> availableTags =
+        services.tagRepository().getTags(services.user().getCurrentUser().wiki());
 
     nameField = createNameField(initialOptions);
     namespaceComboBox = createNamespaceComboBox(availableNamespaces, initialOptions);

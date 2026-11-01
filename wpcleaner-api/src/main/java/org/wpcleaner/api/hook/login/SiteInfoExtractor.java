@@ -7,6 +7,7 @@ package org.wpcleaner.api.hook.login;
 
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
 public class SiteInfoExtractor {
@@ -24,9 +25,9 @@ public class SiteInfoExtractor {
     this.protocolExtractor = protocolExtractor;
   }
 
-  public void extract(final SiteInfo siteInfo) {
-    namespaceExtractor.extract(siteInfo);
-    interwikiExtractor.extract(siteInfo);
-    protocolExtractor.extract(siteInfo);
+  public void extract(final WikiDefinition wiki, final SiteInfo siteInfo) {
+    namespaceExtractor.extract(wiki, siteInfo);
+    interwikiExtractor.extract(wiki, siteInfo);
+    protocolExtractor.extract(wiki, siteInfo);
   }
 }

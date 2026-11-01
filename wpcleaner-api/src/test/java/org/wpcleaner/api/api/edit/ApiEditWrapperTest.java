@@ -64,7 +64,7 @@ class ApiEditWrapperTest {
   void setUp() {
     tagRepository = new TagRepository();
     tokenRepository = new TokenRepository(apiTokens);
-    user = new CurrentUserService(knownDefinitions, tokenRepository);
+    user = new CurrentUserService(knownDefinitions, List.of(tokenRepository));
     loginAsBot();
     wrapper = createWrapper(THROTTLE_PERIOD);
   }
@@ -162,12 +162,29 @@ class ApiEditWrapperTest {
   @DisplayName("Edit uses the first known tag and the prefix for tagged edits")
   @Test
   void editWithKnownTag() {
-    tagRepository.addTag(new Tag(true, true, null, null, null, "wpcleanerng", List.of()));
+    tagRepository.addTag(WIKI, new Tag(true, true, null, null, null, "wpcleanerng", List.of()));
     wrapper.setTags(List.of("unknown", "WPCleanerNG"));
     wrapper.setPrefixes("WPCleanerNG v1", "v1");
     givenCsrfToken();
     mockApiEdit
         .givenEdit(WIKI, editQuery("v1 - Summary", List.of("wpcleanerng"), CSRF_TOKEN))
+        .willReturn(EDIT);
+
+    final Edit edit = wrapper.edit(WIKI, editQuery("Summary", null, null));
+
+    Assertions.assertThat(edit).isEqualTo(EDIT);
+  }
+
+  @DisplayName("Edit ignores the tags known on another wiki")
+  @Test
+  void editWithTagKnownOnAnotherWiki() {
+    tagRepository.addTag(
+        OTHER_WIKI, new Tag(true, true, null, null, null, "wpcleanerng", List.of()));
+    wrapper.setTags(List.of("WPCleanerNG"));
+    wrapper.setPrefixes("WPCleanerNG v1", "v1");
+    givenCsrfToken();
+    mockApiEdit
+        .givenEdit(WIKI, editQuery("WPCleanerNG v1 - Summary", List.of(), CSRF_TOKEN))
         .willReturn(EDIT);
 
     final Edit edit = wrapper.edit(WIKI, editQuery("Summary", null, null));
@@ -224,7 +241,7 @@ class ApiEditWrapperTest {
   @DisplayName("Move uses the first known tag and the prefix for tagged moves")
   @Test
   void moveWithKnownTag() {
-    tagRepository.addTag(new Tag(true, true, null, null, null, "wpcleanerng", List.of()));
+    tagRepository.addTag(WIKI, new Tag(true, true, null, null, null, "wpcleanerng", List.of()));
     wrapper.setTags(List.of("WPCleanerNG"));
     wrapper.setPrefixes("WPCleanerNG v1", "v1");
     givenCsrfToken();

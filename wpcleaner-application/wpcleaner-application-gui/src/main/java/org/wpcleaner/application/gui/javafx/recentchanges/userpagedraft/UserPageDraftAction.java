@@ -92,7 +92,7 @@ public final class UserPageDraftAction implements RecentChangesConfigurableActio
       final FilteredRecentChange rc, final WikiDefinition wiki, final UserPageDraftConfig config) {
     final Namespace userNamespace =
         Namespace.findNamespace(
-                services.namespaceRepository().getNamespaces(), CommonNamespaces.USER.id)
+                services.namespaceRepository().getNamespaces(wiki), CommonNamespaces.USER.id)
             .orElseThrow(() -> new IllegalStateException("USER namespace not found"));
     final int colon = rc.title().indexOf(':');
     final String username = colon >= 0 ? rc.title().substring(colon + 1) : rc.title();
@@ -100,7 +100,7 @@ public final class UserPageDraftAction implements RecentChangesConfigurableActio
         userNamespace.name() + ":" + userNamespace.caseType().normalize(username);
     final Namespace userTalkNamespace =
         Namespace.findNamespace(
-                services.namespaceRepository().getNamespaces(), CommonNamespaces.USER_TALK.id)
+                services.namespaceRepository().getNamespaces(wiki), CommonNamespaces.USER_TALK.id)
             .orElseThrow(() -> new IllegalStateException("USER_TALK namespace not found"));
     final String userTalkPageTitle =
         userTalkNamespace.name() + ":" + userTalkNamespace.caseType().normalize(username);

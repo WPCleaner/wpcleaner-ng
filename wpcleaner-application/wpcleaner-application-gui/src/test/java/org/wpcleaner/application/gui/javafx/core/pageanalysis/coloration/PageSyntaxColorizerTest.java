@@ -17,11 +17,15 @@ import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.core.style.StylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 
 class PageSyntaxColorizerTest {
+
+  private static final WikiDefinition WIKI = WikipediaDefinitions.FR;
 
   @DisplayName("computeStyleSpans colors comments and leaves normal text unstyled")
   @Test
@@ -41,7 +45,7 @@ class PageSyntaxColorizerTest {
         new PageAnalysisFactory(
             new InterwikiRepository(), new NamespaceRepository(), new ProtocolRepository());
     final String text = "Hello <!-- world --> !";
-    final PageAnalysis analysis = factory.analysis("Title", text);
+    final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
     // When
     final StyleSpans<String> spans = colorizer.computeStyleSpans(analysis);
@@ -79,12 +83,12 @@ class PageSyntaxColorizerTest {
     // Given
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
+        WIKI, new Interwiki("en", true, "https://en.wikipedia.org/wiki/", "English", null));
     final PageAnalysisFactory factory =
         new PageAnalysisFactory(
             interwikiRepository, new NamespaceRepository(), new ProtocolRepository());
     final String text = "Hello [[en:World]] !";
-    final PageAnalysis analysis = factory.analysis("Title", text);
+    final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
     // When
     final StyleSpans<String> spans = colorizer.computeStyleSpans(analysis);
@@ -123,12 +127,12 @@ class PageSyntaxColorizerTest {
     // Given
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
-        new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
+        WIKI, new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/", null, null));
     final PageAnalysisFactory factory =
         new PageAnalysisFactory(
             interwikiRepository, new NamespaceRepository(), new ProtocolRepository());
     final String text = "Hello [[fr:World]] !";
-    final PageAnalysis analysis = factory.analysis("Title", text);
+    final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
     // When
     final StyleSpans<String> spans = colorizer.computeStyleSpans(analysis);
@@ -166,12 +170,12 @@ class PageSyntaxColorizerTest {
 
     // Given
     final ProtocolRepository protocolRepository = new ProtocolRepository();
-    protocolRepository.addProtocol(new Protocol("https://"));
+    protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     final PageAnalysisFactory factory =
         new PageAnalysisFactory(
             new InterwikiRepository(), new NamespaceRepository(), protocolRepository);
     final String text = "Hello [https://example.com World] !";
-    final PageAnalysis analysis = factory.analysis("Title", text);
+    final PageAnalysis analysis = factory.analysis(WIKI, "Title", text);
 
     // When
     final StyleSpans<String> spans = colorizer.computeStyleSpans(analysis);

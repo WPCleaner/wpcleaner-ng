@@ -96,7 +96,10 @@ public final class PageAnalysisPanel extends StackPane {
       return;
     }
 
-    analysisArea.updateAnalysis(services.pageAnalysisFactory().analysis(pageName, slot.content()));
+    analysisArea.updateAnalysis(
+        services
+            .pageAnalysisFactory()
+            .analysis(services.user().getCurrentUser().wiki(), pageName, slot.content()));
   }
 
   private void updateAnalysisAreaWithError(final Exception e) {

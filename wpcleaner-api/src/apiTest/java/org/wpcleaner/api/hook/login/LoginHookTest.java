@@ -46,7 +46,7 @@ class LoginHookTest {
     loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
 
     // THEN
-    final List<Tag> tags = tagRepository.getTags();
+    final List<Tag> tags = tagRepository.getTags(WikimediaDefinitions.META);
     Assertions.assertThat(tags).as("tags").isNotEmpty();
     for (final Tag tag : tags) {
       Assertions.assertThat(tag.name()).as("name").isNotNull().isNotEmpty();
@@ -61,7 +61,7 @@ class LoginHookTest {
     loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
 
     // THEN
-    final List<Interwiki> interwikis = interwikiRepository.getInterwikis();
+    final List<Interwiki> interwikis = interwikiRepository.getInterwikis(WikimediaDefinitions.META);
     Assertions.assertThat(interwikis).as("interwikis").isNotEmpty();
     for (final Interwiki interwiki : interwikis) {
       Assertions.assertThat(interwiki.prefix()).as("prefix").isNotNull().isNotEmpty();
@@ -76,7 +76,7 @@ class LoginHookTest {
     loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
 
     // THEN
-    final List<Protocol> protocols = protocolRepository.getProtocols();
+    final List<Protocol> protocols = protocolRepository.getProtocols(WikimediaDefinitions.META);
     Assertions.assertThat(protocols).as("protocols").isNotEmpty();
     for (final Protocol protocol : protocols) {
       Assertions.assertThat(protocol.value()).as("value").isNotNull().isNotEmpty();
