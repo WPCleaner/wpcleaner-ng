@@ -11,6 +11,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
+import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.image.ImageElement;
@@ -20,6 +21,7 @@ import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
+import org.wpcleaner.api.repository.magicword.MagicWord;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -36,6 +38,7 @@ public class WikiContainer {
   private final ProtocolRepository protocolRepository;
   private final PreprocessorContainer preprocessor;
   private final TagContainer tags;
+  private final List<BehaviorSwitchElement> behaviorSwitches;
   private final List<CategoryElement> categories;
   private final List<ExternalLinkElement> externalLinks;
   private final List<ImageElement> images;
@@ -62,6 +65,7 @@ public class WikiContainer {
     this.protocolRepository = protocolRepository;
     this.preprocessor = preprocessor;
     this.tags = tags;
+    this.behaviorSwitches = new ArrayList<>();
     this.categories = new ArrayList<>();
     this.externalLinks = new ArrayList<>();
     this.images = new ArrayList<>();
@@ -69,6 +73,11 @@ public class WikiContainer {
     this.interwikiLinks = new ArrayList<>();
     this.languageLinks = new ArrayList<>();
     this.done = false;
+  }
+
+  public List<BehaviorSwitchElement> getBehaviorSwitches() {
+    ensureAnalyzed();
+    return behaviorSwitches;
   }
 
   public List<CategoryElement> getCategories() {
@@ -107,12 +116,13 @@ public class WikiContainer {
       if (!done) {
         final TextBrowser textBrowser = new TextBrowser(text);
         textBrowser.addExclusions(tags.getExclusions());
+        final List<MagicWord> magicWords = magicWordRepository.getMagicWords(wiki);
         final ImageAnalyzer imageAnalyzer =
             new ImageAnalyzer(
                 text,
                 textBrowser,
                 namespaceRepository.getNamespaces(wiki),
-                new ImageParameterFactory(magicWordRepository.getMagicWords(wiki)),
+                new ImageParameterFactory(magicWords),
                 preprocessor.getCurlyBracketElements());
         final WikiAnalyzer analyzer =
             new WikiAnalyzer(
@@ -121,8 +131,10 @@ public class WikiContainer {
                 interwikiRepository.getInterwikis(wiki),
                 namespaceRepository.getNamespaces(wiki),
                 protocolRepository.getProtocols(wiki),
-                imageAnalyzer);
+                imageAnalyzer,
+                new BehaviorSwitchAnalyzer(text, textBrowser, magicWords));
         analyzer.analyze();
+        behaviorSwitches.addAll(analyzer.getBehaviorSwitches());
         categories.addAll(analyzer.getCategories());
         externalLinks.addAll(analyzer.getExternalLinks());
         images.addAll(analyzer.getImages());

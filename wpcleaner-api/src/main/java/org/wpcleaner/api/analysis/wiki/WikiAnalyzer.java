@@ -7,6 +7,7 @@ package org.wpcleaner.api.analysis.wiki;
 
 import java.util.List;
 import org.wpcleaner.api.analysis.TextBrowser;
+import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.image.ImageElement;
@@ -23,6 +24,7 @@ final class WikiAnalyzer {
   private final TextBrowser textBrowser;
   private final SquareBracketAnalyzer squareBracketAnalyzer;
   private final ImageAnalyzer imageAnalyzer;
+  private final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer;
 
   WikiAnalyzer(
       final String text,
@@ -30,28 +32,32 @@ final class WikiAnalyzer {
       final List<Interwiki> interwikis,
       final List<Namespace> namespaces,
       final List<Protocol> protocols,
-      final ImageAnalyzer imageAnalyzer) {
+      final ImageAnalyzer imageAnalyzer,
+      final BehaviorSwitchAnalyzer behaviorSwitchAnalyzer) {
     this.text = text;
     this.textBrowser = textBrowser;
     this.imageAnalyzer = imageAnalyzer;
+    this.behaviorSwitchAnalyzer = behaviorSwitchAnalyzer;
     this.squareBracketAnalyzer =
         new SquareBracketAnalyzer(text, interwikis, namespaces, protocols, imageAnalyzer);
   }
 
   void analyze() {
+    behaviorSwitchAnalyzer.analyze();
     final TextBrowser.ReverseCursor cursor = textBrowser.reverseCursor();
     while (cursor.getIndex() >= 0) {
       final int currentIndex = cursor.getIndex();
-      final char currentChar = text.charAt(cursor.getIndex());
-      switch (currentChar) {
-        case SquareBracketAnalyzer.OPEN -> squareBracketAnalyzer.analyzeSquareBracket(cursor);
-        case '_' -> analyzeUnderscore(cursor);
-        default -> {}
+      if (text.charAt(currentIndex) == SquareBracketAnalyzer.OPEN) {
+        squareBracketAnalyzer.analyzeSquareBracket(cursor);
       }
       if (cursor.getIndex() >= currentIndex) {
         cursor.movePrevious();
       }
     }
+  }
+
+  List<BehaviorSwitchElement> getBehaviorSwitches() {
+    return behaviorSwitchAnalyzer.getBehaviorSwitches();
   }
 
   List<CategoryElement> getCategories() {
@@ -76,10 +82,5 @@ final class WikiAnalyzer {
 
   List<LanguageLinkElement> getLanguageLinks() {
     return squareBracketAnalyzer.getLanguageLinks();
-  }
-
-  @SuppressWarnings("unused")
-  private void analyzeUnderscore(final TextBrowser.ReverseCursor cursor) {
-    // TODO
   }
 }

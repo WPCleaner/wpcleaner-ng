@@ -12,6 +12,7 @@ public record MagicWord(
     String name,
     List<String> aliases,
     boolean caseSensitive,
+    boolean doubleUnderscore,
     boolean functionHook,
     boolean variable) {
 

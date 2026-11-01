@@ -32,6 +32,7 @@ class ExtensionTagExtractorTest {
             List.of(),
             Map.of(),
             List.of(),
+            List.of(),
             List.of("<ref>", "<NoWiki>", "<pre>"),
             List.of(),
             List.of(),

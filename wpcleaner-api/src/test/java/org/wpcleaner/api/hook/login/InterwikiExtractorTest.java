@@ -38,6 +38,7 @@ class InterwikiExtractorTest {
             List.of(),
             List.of(),
             List.of(),
+            List.of(),
             null,
             List.of(apiInterwiki),
             List.of(),

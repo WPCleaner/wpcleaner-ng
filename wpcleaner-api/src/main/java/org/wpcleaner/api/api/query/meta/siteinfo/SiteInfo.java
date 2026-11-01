@@ -17,6 +17,8 @@ public record SiteInfo(
         List<DbReplicationLag> dbReplicationLag,
     @JsonProperty("defaultoptions") @JsonSetter(nulls = Nulls.AS_EMPTY)
         Map<String, Object> defaultOptions,
+    @JsonProperty("doubleunderscores") @JsonSetter(nulls = Nulls.AS_EMPTY)
+        List<String> doubleUnderscores,
     @JsonProperty("extensions") @JsonSetter(nulls = Nulls.AS_EMPTY) List<Extension> extensions,
     @JsonProperty("extensiontags") @JsonSetter(nulls = Nulls.AS_EMPTY) List<String> extensionTags,
     @JsonProperty("fileextensions") @JsonSetter(nulls = Nulls.AS_EMPTY)
@@ -47,8 +49,8 @@ public record SiteInfo(
 
   public static SiteInfo ofEmpty() {
     return new SiteInfo(
-        List.of(), Map.of(), List.of(), List.of(), List.of(), List.of(), null, List.of(), List.of(),
-        Map.of(), List.of(), List.of(), List.of(), Map.of(), List.of(), null, null, List.of(),
-        List.of(), List.of(), null, null, List.of(), List.of());
+        List.of(), Map.of(), List.of(), List.of(), List.of(), List.of(), List.of(), null, List.of(),
+        List.of(), Map.of(), List.of(), List.of(), List.of(), Map.of(), List.of(), null, null,
+        List.of(), List.of(), List.of(), null, null, List.of(), List.of());
   }
 }

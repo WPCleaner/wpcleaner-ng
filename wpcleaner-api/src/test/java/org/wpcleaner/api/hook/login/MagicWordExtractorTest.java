@@ -20,7 +20,8 @@ class MagicWordExtractorTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
 
-  @DisplayName("Should extract magic words with their function hook and variable flags")
+  @DisplayName(
+      "Should extract magic words with their double underscore, function hook and variable flags")
   @Test
   void extract() {
     // GIVEN
@@ -31,6 +32,7 @@ class MagicWordExtractorTest {
         new SiteInfo(
             List.of(),
             Map.of(),
+            List.of("notoc"),
             List.of(),
             List.of(),
             List.of(),
@@ -46,7 +48,9 @@ class MagicWordExtractorTest {
                 new org.wpcleaner.api.api.query.meta.siteinfo.MagicWord(
                     List.of("NOMPAGE", "PAGENAME"), true, "pagename"),
                 new org.wpcleaner.api.api.query.meta.siteinfo.MagicWord(
-                    List.of("ANNEEACTUELLE", "CURRENTYEAR"), null, "currentyear")),
+                    List.of("ANNEEACTUELLE", "CURRENTYEAR"), null, "currentyear"),
+                new org.wpcleaner.api.api.query.meta.siteinfo.MagicWord(
+                    List.of("__AUCUNSOMMAIRE__", "__NOTOC__"), false, "notoc")),
             List.of(),
             Map.of(),
             List.of(),
@@ -67,8 +71,10 @@ class MagicWordExtractorTest {
     Assertions.assertThat(repository.getMagicWords(WIKI))
         .containsExactly(
             new MagicWord(
-                "currentyear", List.of("ANNEEACTUELLE", "CURRENTYEAR"), false, false, true),
-            new MagicWord("if", List.of("si", "if"), false, true, false),
-            new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, true, true));
+                "currentyear", List.of("ANNEEACTUELLE", "CURRENTYEAR"), false, false, false, true),
+            new MagicWord("if", List.of("si", "if"), false, false, true, false),
+            new MagicWord(
+                "notoc", List.of("__AUCUNSOMMAIRE__", "__NOTOC__"), false, true, false, false),
+            new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, false, true, true));
   }
 }

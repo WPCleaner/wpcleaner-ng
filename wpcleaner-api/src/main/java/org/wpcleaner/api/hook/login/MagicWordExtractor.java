@@ -34,6 +34,7 @@ public class MagicWordExtractor {
             magicWord.name(),
             magicWord.aliases(),
             Boolean.TRUE.equals(magicWord.caseSensitive()),
+            siteInfo.doubleUnderscores().contains(magicWord.name()),
             siteInfo.functionHooks().contains(magicWord.name()),
             siteInfo.variables().contains(magicWord.name())));
   }

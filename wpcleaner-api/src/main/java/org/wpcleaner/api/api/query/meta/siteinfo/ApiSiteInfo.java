@@ -48,6 +48,7 @@ public class ApiSiteInfo {
                 new SiteInfo(
                     q.dbReplicationLag(),
                     q.defaultOptions(),
+                    q.doubleUnderscores(),
                     q.extensions(),
                     q.extensionTags(),
                     q.fileExtensions(),
@@ -119,6 +120,8 @@ public class ApiSiteInfo {
           List<DbReplicationLag> dbReplicationLag,
       @JsonProperty("defaultoptions") @JsonSetter(nulls = Nulls.AS_EMPTY)
           Map<String, Object> defaultOptions,
+      @JsonProperty("doubleunderscores") @JsonSetter(nulls = Nulls.AS_EMPTY)
+          List<String> doubleUnderscores,
       @JsonProperty("extensions") @JsonSetter(nulls = Nulls.AS_EMPTY) List<Extension> extensions,
       @JsonProperty("extensiontags") @JsonSetter(nulls = Nulls.AS_EMPTY) List<String> extensionTags,
       @JsonProperty("fileextensions") @JsonSetter(nulls = Nulls.AS_EMPTY)

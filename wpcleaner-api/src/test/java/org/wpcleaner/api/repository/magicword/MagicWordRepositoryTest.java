@@ -21,10 +21,11 @@ class MagicWordRepositoryTest {
   void addMagicWord() {
     // GIVEN
     final MagicWordRepository repository = new MagicWordRepository();
-    final MagicWord pagename = new MagicWord("pagename", List.of("PAGENAME"), true, true, true);
-    final MagicWord ifMagicWord = new MagicWord("if", List.of("if"), false, true, false);
+    final MagicWord pagename =
+        new MagicWord("pagename", List.of("PAGENAME"), true, false, true, true);
+    final MagicWord ifMagicWord = new MagicWord("if", List.of("if"), false, false, true, false);
     final MagicWord duplicatePagename =
-        new MagicWord("pagename", List.of("PAGENAME"), true, true, true);
+        new MagicWord("pagename", List.of("PAGENAME"), true, false, true, true);
 
     // WHEN
     repository.addMagicWord(WIKI, pagename);
@@ -41,7 +42,8 @@ class MagicWordRepositoryTest {
   void addMagicWordForEachWiki() {
     // GIVEN
     final MagicWordRepository repository = new MagicWordRepository();
-    final MagicWord pagename = new MagicWord("pagename", List.of("PAGENAME"), true, true, true);
+    final MagicWord pagename =
+        new MagicWord("pagename", List.of("PAGENAME"), true, false, true, true);
 
     // WHEN
     repository.addMagicWord(WIKI, pagename);
