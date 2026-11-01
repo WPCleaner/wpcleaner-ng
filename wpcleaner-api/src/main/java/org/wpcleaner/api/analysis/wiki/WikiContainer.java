@@ -18,6 +18,7 @@ import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
+import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
@@ -45,6 +46,7 @@ public class WikiContainer {
   private final List<InternalLinkElement> internalLinks;
   private final List<InterwikiLinkElement> interwikiLinks;
   private final List<LanguageLinkElement> languageLinks;
+  private final List<ListItemElement> listItems;
   private final Lock lock = new ReentrantLock();
   private boolean done;
 
@@ -72,6 +74,7 @@ public class WikiContainer {
     this.internalLinks = new ArrayList<>();
     this.interwikiLinks = new ArrayList<>();
     this.languageLinks = new ArrayList<>();
+    this.listItems = new ArrayList<>();
     this.done = false;
   }
 
@@ -110,6 +113,11 @@ public class WikiContainer {
     return languageLinks;
   }
 
+  public List<ListItemElement> getListItems() {
+    ensureAnalyzed();
+    return listItems;
+  }
+
   private void ensureAnalyzed() {
     lock.lock();
     try {
@@ -132,7 +140,8 @@ public class WikiContainer {
                 namespaceRepository.getNamespaces(wiki),
                 protocolRepository.getProtocols(wiki),
                 imageAnalyzer,
-                new BehaviorSwitchAnalyzer(text, textBrowser, magicWords));
+                new BehaviorSwitchAnalyzer(text, textBrowser, magicWords),
+                new ListItemAnalyzer(text, textBrowser, preprocessor));
         analyzer.analyze();
         behaviorSwitches.addAll(analyzer.getBehaviorSwitches());
         categories.addAll(analyzer.getCategories());
@@ -142,6 +151,7 @@ public class WikiContainer {
         internalLinks.addAll(analyzer.getInternalLinks());
         interwikiLinks.addAll(analyzer.getInterwikiLinks());
         languageLinks.addAll(analyzer.getLanguageLinks());
+        listItems.addAll(analyzer.getListItems());
         done = true;
       }
     } finally {
