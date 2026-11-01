@@ -161,6 +161,7 @@ public class WikiContainer {
                 namespaceRepository.getNamespaces(wiki),
                 new ImageParameterFactory(magicWords),
                 preprocessor.getCurlyBracketElements());
+        final TextContainers containers = new TextContainers(text, preprocessor);
         final WikiAnalyzer analyzer =
             new WikiAnalyzer(
                 text,
@@ -170,7 +171,7 @@ public class WikiContainer {
                 protocolRepository.getProtocols(wiki),
                 imageAnalyzer,
                 new BehaviorSwitchAnalyzer(text, textBrowser, magicWords),
-                new BlockLevelAnalyzer(text, textBrowser, preprocessor));
+                new BlockLevelAnalyzer(text, textBrowser, preprocessor, containers));
         analyzer.analyze();
         behaviorSwitches.addAll(analyzer.getBehaviorSwitches());
         categories.addAll(analyzer.getCategories());
@@ -182,12 +183,21 @@ public class WikiContainer {
         languageLinks.addAll(analyzer.getLanguageLinks());
         listItems.addAll(analyzer.getListItems());
         final MagicLinkAnalyzer magicLinkAnalyzer =
-            new MagicLinkAnalyzer(text, textBrowser, magicLinkRepository.getMagicLinks(wiki));
+            new MagicLinkAnalyzer(
+                text,
+                textBrowser,
+                magicLinkRepository.getMagicLinks(wiki),
+                protocolRepository.getProtocols(wiki),
+                containers,
+                preprocessor.getCurlyBracketElements());
         magicLinkAnalyzer.analyze(
             Stream.of(categories, externalLinks, internalLinks, interwikiLinks, languageLinks)
                 .<Element>flatMap(List::stream)
-                .toList());
+                .toList(),
+            images);
         magicLinks.addAll(magicLinkAnalyzer.getMagicLinks());
+        externalLinks.addAll(magicLinkAnalyzer.getFreeExternalLinks());
+        externalLinks.sort(Element.COMPARATOR);
         paragraphs.addAll(analyzer.getParagraphs());
         tables.addAll(analyzer.getTables());
         done = true;

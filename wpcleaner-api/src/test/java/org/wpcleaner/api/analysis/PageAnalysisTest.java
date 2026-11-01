@@ -246,7 +246,7 @@ class PageAnalysisTest {
     // THEN
     Assertions.assertThat(analysis.getExternalLinks())
         .containsExactly(
-            new ExternalLinkElement(0, text.length(), "https://example.com/", "Hello world"));
+            new ExternalLinkElement(0, text.length(), "https://example.com/", "Hello world", true));
   }
 
   @DisplayName("should analyze external link without text")
@@ -260,7 +260,8 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getExternalLinks())
-        .containsExactly(new ExternalLinkElement(0, text.length(), "https://example.com/", null));
+        .containsExactly(
+            new ExternalLinkElement(0, text.length(), "https://example.com/", null, true));
   }
 
   @DisplayName("should analyze language link parts")
@@ -389,6 +390,6 @@ class PageAnalysisTest {
 
     // THEN
     Assertions.assertThat(analysis.getExternalLinks())
-        .containsExactly(new ExternalLinkElement(0, 24, "https://example.com/", "b"));
+        .containsExactly(new ExternalLinkElement(0, 24, "https://example.com/", "b", true));
   }
 }
