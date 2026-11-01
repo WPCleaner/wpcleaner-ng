@@ -39,6 +39,7 @@ public enum ApiParameters {
     EDIT("edit"),
     LOGIN("login"),
     MOVE("move"),
+    PARSE("parse"),
     QUERY("query"),
     ;
 
