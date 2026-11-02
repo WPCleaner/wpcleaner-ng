@@ -5,4 +5,6 @@ package org.wpcleaner.api.analysis.wiki;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-record Area(int begin, int end) {}
+import org.wpcleaner.api.analysis.Element;
+
+record Area(int begin, int end) implements Element {}

@@ -5,15 +5,11 @@ package org.wpcleaner.api.analysis.wiki;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
@@ -22,7 +18,6 @@ import org.wpcleaner.api.analysis.gallery.GalleryElement;
 import org.wpcleaner.api.analysis.gallery.GalleryImage;
 import org.wpcleaner.api.analysis.image.ImageParameter;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
-import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -30,13 +25,10 @@ import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 final class GalleryAnalyzer {
 
   private static final char NEW_LINE = '\n';
-  private static final char PERCENT = '%';
-  private static final int HEX_LENGTH = 2;
-  private static final Pattern INVALID_TITLE_CHARACTERS = Pattern.compile("[<>\\[\\]{}|]");
 
   private final String text;
   private final TextBrowser textBrowser;
-  private final PageTitleNormalizer pageTitleNormalizer;
+  private final TitleDecoder titleDecoder;
   private final ImageParameterFactory parameterFactory;
   private final Map<Integer, Integer> curlyBracketEnds;
   private final List<CommentElement> comments;
@@ -44,13 +36,13 @@ final class GalleryAnalyzer {
   GalleryAnalyzer(
       final String text,
       final TextBrowser textBrowser,
-      final PageTitleNormalizer pageTitleNormalizer,
+      final TitleDecoder titleDecoder,
       final ImageParameterFactory parameterFactory,
       final List<? extends Element> curlyBracketElements,
       final List<CommentElement> comments) {
     this.text = text;
     this.textBrowser = textBrowser;
-    this.pageTitleNormalizer = pageTitleNormalizer;
+    this.titleDecoder = titleDecoder;
     this.parameterFactory = parameterFactory;
     this.curlyBracketEnds = new HashMap<>();
     curlyBracketElements.forEach(
@@ -96,11 +88,7 @@ final class GalleryAnalyzer {
 
   @Nullable
   private PageTitle createTitle(final String name) {
-    final String decodedName = name.indexOf(PERCENT) < 0 ? name : decodePercent(name);
-    if (INVALID_TITLE_CHARACTERS.matcher(decodedName).find()) {
-      return null;
-    }
-    return pageTitleNormalizer.normalize(decodedName, CommonNamespaces.FILE.id).orElse(null);
+    return titleDecoder.decode(name, CommonNamespaces.FILE.id).orElse(null);
   }
 
   private boolean isBlankWithoutComments(final int begin, final int end) {
@@ -114,27 +102,6 @@ final class GalleryAnalyzer {
       }
     }
     return index >= end || text.substring(index, end).isBlank();
-  }
-
-  private static String decodePercent(final String value) {
-    final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-    final StringBuilder decoded = new StringBuilder(value.length());
-    int index = 0;
-    while (index < value.length()) {
-      if (value.charAt(index) == PERCENT
-          && index + HEX_LENGTH < value.length()
-          && HexFormat.isHexDigit(value.charAt(index + 1))
-          && HexFormat.isHexDigit(value.charAt(index + HEX_LENGTH))) {
-        bytes.write(HexFormat.fromHexDigits(value, index + 1, index + HEX_LENGTH + 1));
-        index += HEX_LENGTH + 1;
-      } else {
-        decoded.append(bytes.toString(StandardCharsets.UTF_8));
-        bytes.reset();
-        decoded.append(value.charAt(index));
-        index++;
-      }
-    }
-    return decoded.append(bytes.toString(StandardCharsets.UTF_8)).toString();
   }
 
   private final class ParameterScan {

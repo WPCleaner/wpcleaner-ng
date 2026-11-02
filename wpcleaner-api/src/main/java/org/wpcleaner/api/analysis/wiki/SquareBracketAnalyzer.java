@@ -8,6 +8,7 @@ package org.wpcleaner.api.analysis.wiki;
 import java.util.ArrayList;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentedText;
@@ -56,6 +57,11 @@ final class SquareBracketAnalyzer {
     this.imageAnalyzer = imageAnalyzer;
     this.elementFactory = new SquareBracketElementFactory(interwikis, namespaces);
     this.externalLinks = new ArrayList<>();
+  }
+
+  Element persistRedirectLink(
+      final int begin, final int end, final String target, @Nullable final String value) {
+    return elementFactory.persistRedirectLink(begin, end, target, value);
   }
 
   void analyzeSquareBracket(final TextBrowser.ReverseCursor reverseCursor) {
