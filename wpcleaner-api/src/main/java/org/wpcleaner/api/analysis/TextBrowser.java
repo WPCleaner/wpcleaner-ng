@@ -71,6 +71,20 @@ public final class TextBrowser {
     return true;
   }
 
+  private int countExclusionsBeginningAtOrBefore(final int index) {
+    int low = 0;
+    int high = exclusions.size();
+    while (low < high) {
+      final int middle = (low + high) >>> 1;
+      if (exclusions.get(middle).begin() <= index) {
+        low = middle + 1;
+      } else {
+        high = middle;
+      }
+    }
+    return low;
+  }
+
   public ReverseCursor reverseCursor() {
     return new ReverseCursor();
   }
@@ -82,9 +96,10 @@ public final class TextBrowser {
     private int currentExclude;
 
     private Cursor(final int start) {
-      this.currentExclude = 0;
-      this.jump = false;
-      this.index = computeAfter(start - 1);
+      this.currentExclude = countExclusionsBeginningAtOrBefore(start);
+      this.jump = currentExclude > 0;
+      this.index =
+          currentExclude > 0 ? Math.max(start, exclusions.get(currentExclude - 1).end()) : start;
     }
 
     public int getIndex() {
