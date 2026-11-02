@@ -15,6 +15,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
@@ -35,7 +36,7 @@ final class MagicLinkAnalyzer {
   private static final String SPACES = "(?>" + SPACE + "+)";
   private static final String SPACE_OR_DASH = "(?:-|" + SPACE + ")";
   private static final String MAGIC_LINK =
-      "\\b(?:(RFC|PMID)"
+      "(?:(RFC|PMID)"
           + SPACES
           + "([0-9]+)\\b|(ISBN)"
           + SPACES
@@ -44,6 +45,7 @@ final class MagicLinkAnalyzer {
           + "?)?(?:[0-9]"
           + SPACE_OR_DASH
           + "?){9}[0-9Xx]\\b))";
+  private static final String MAGIC_LINK_FIRST_LETTERS = "RPI";
   private static final Pattern URL_END_ENTITY =
       Pattern.compile("&(lt|gt|nbsp|#x0*(3[CcEe]|[Aa]0)|#0*(60|62|160));");
   private static final Pattern TRAILING_ENTITY =
@@ -85,7 +87,15 @@ final class MagicLinkAnalyzer {
         curlyBracketElements.stream()
             .map(Element::begin)
             .collect(Collectors.toCollection(TreeSet::new));
-    this.pattern = Pattern.compile("(" + createUrlPattern() + ")|" + MAGIC_LINK);
+    this.pattern =
+        Pattern.compile(
+            "(?=["
+                + createFirstLetters()
+                + "])\\b(?:("
+                + createUrlPattern()
+                + ")|"
+                + MAGIC_LINK
+                + ")");
     this.magicLinks = new ArrayList<>();
     this.freeExternalLinks = new ArrayList<>();
   }
@@ -172,11 +182,26 @@ final class MagicLinkAnalyzer {
         .orElse(0);
   }
 
+  private String createFirstLetters() {
+    return Stream.concat(
+            protocols.stream().map(Protocol::value), Stream.of(MAGIC_LINK_FIRST_LETTERS.split("")))
+        .mapToInt(value -> value.codePointAt(0))
+        .flatMap(
+            firstLetter ->
+                IntStream.of(
+                    firstLetter,
+                    Character.toLowerCase(firstLetter),
+                    Character.toUpperCase(firstLetter)))
+        .distinct()
+        .mapToObj(firstLetter -> "\\x{" + Integer.toHexString(firstLetter) + "}")
+        .collect(Collectors.joining());
+  }
+
   private String createUrlPattern() {
     if (protocols.isEmpty()) {
       return NO_MATCH;
     }
-    return "\\b(?i:"
+    return "(?i:"
         + protocols.stream()
             .map(protocol -> Pattern.quote(protocol.value()))
             .collect(Collectors.joining("|"))
