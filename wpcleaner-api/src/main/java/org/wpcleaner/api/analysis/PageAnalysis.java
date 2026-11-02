@@ -43,6 +43,9 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @SuppressWarnings("PMD.CouplingBetweenObjects")
 public final class PageAnalysis {
 
+  private static final String WINDOWS_LINE_END = "\r\n";
+  private static final String LINE_END = "\n";
+
   private final String title;
   private final String text;
   private final PreprocessorContainer preprocessor;
@@ -60,15 +63,15 @@ public final class PageAnalysis {
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
     this.title = title;
-    this.text = text;
+    this.text = text.replace(WINDOWS_LINE_END, LINE_END);
     this.preprocessor =
         new PreprocessorContainer(
-            wiki, text, extensionTagRepository, magicWordRepository, namespaceRepository);
-    this.tags = new TagContainer(text, preprocessor);
+            wiki, this.text, extensionTagRepository, magicWordRepository, namespaceRepository);
+    this.tags = new TagContainer(this.text, preprocessor);
     this.wikiElements =
         new WikiContainer(
             wiki,
-            text,
+            this.text,
             preprocessor,
             tags,
             interwikiRepository,
