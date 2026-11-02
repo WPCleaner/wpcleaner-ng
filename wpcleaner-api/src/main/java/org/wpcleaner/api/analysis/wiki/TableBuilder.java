@@ -118,11 +118,11 @@ final class TableBuilder {
     }
 
     private TableCell build() {
-      return new TableCell(begin, end, header, attributes, content());
+      return new TableCell(begin, end, contentBegin, header, attributes, content());
     }
 
     private TableCaption buildCaption() {
-      return new TableCaption(begin, end, attributes, content());
+      return new TableCaption(begin, end, contentBegin, attributes, content());
     }
 
     private String content() {

@@ -6,10 +6,12 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
  */
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,13 @@ import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegi
 
 @Service
 public class PageSyntaxColorizer {
+
+  private static final String NO_STYLE = "";
+  private static final Comparator<StyledRange> INNERMOST_FIRST =
+      Comparator.comparingInt(StyledRange::begin)
+          .reversed()
+          .thenComparingInt(StyledRange::end)
+          .thenComparing(StyledRange::styleName);
 
   private final List<PageSyntaxRule> rules;
   private final JavaFxStylePropertiesRegistry styleRegistry;
@@ -29,90 +38,85 @@ public class PageSyntaxColorizer {
   }
 
   public StyleSpans<String> computeStyleSpans(final PageAnalysis pageAnalysis) {
-    final StyleSpansBuilder<String> spansBuilder = new StyleSpansBuilder<>();
     final String text = pageAnalysis.getText();
+    final SpansBuilder spansBuilder = new SpansBuilder();
     if (text.isEmpty()) {
-      spansBuilder.add("", 0);
       return spansBuilder.create();
     }
-
-    final List<StyledRange> ranges = new ArrayList<>();
-    for (final PageSyntaxRule rule : rules) {
-      final String style = styleRegistry.getStyle(rule.getStyleName());
-      for (final PageSyntaxRule.RuleRange range : rule.getRanges(pageAnalysis)) {
-        ranges.add(new StyledRange(range.begin(), range.end(), style));
+    final List<StyledRange> ranges = collectRanges(pageAnalysis, text.length());
+    final SortedSet<Integer> boundaries = new TreeSet<>(List.of(0, text.length()));
+    ranges.forEach(
+        range -> {
+          boundaries.add(range.begin());
+          boundaries.add(range.end());
+        });
+    final Queue<StyledRange> activeRanges = new PriorityQueue<>(INNERMOST_FIRST);
+    int nextRange = 0;
+    int segmentBegin = 0;
+    for (final int segmentEnd : boundaries.tailSet(1)) {
+      while (nextRange < ranges.size() && ranges.get(nextRange).begin() <= segmentBegin) {
+        activeRanges.add(ranges.get(nextRange));
+        nextRange++;
       }
-    }
-    Collections.sort(ranges);
-    deduplicateStyledRanges(ranges, 0);
-
-    int lastKwEnd = 0;
-    for (final StyledRange range : ranges) {
-      final int start = range.begin();
-      final int end = range.end();
-
-      if (start < lastKwEnd) {
-        continue;
+      while (!activeRanges.isEmpty() && activeRanges.peek().end() <= segmentBegin) {
+        activeRanges.poll();
       }
-
-      if (start > lastKwEnd) {
-        spansBuilder.add("", start - lastKwEnd);
-      }
-      spansBuilder.add(range.styleName(), end - start);
-      lastKwEnd = end;
-    }
-
-    if (lastKwEnd < text.length()) {
-      spansBuilder.add("", text.length() - lastKwEnd);
+      final StyledRange innermostRange = activeRanges.peek();
+      spansBuilder.add(
+          innermostRange == null ? NO_STYLE : innermostRange.styleName(),
+          segmentEnd - segmentBegin);
+      segmentBegin = segmentEnd;
     }
     return spansBuilder.create();
   }
 
-  private void deduplicateStyledRanges(final List<StyledRange> ranges, final int startAt) {
-    if (startAt > ranges.size() - 2) {
-      return;
-    }
-    final int currentEnd = ranges.get(startAt).end();
-    final int nextBegin = ranges.get(startAt + 1).begin();
-    if (currentEnd > nextBegin) {
-      final int nextEnd = ranges.get(startAt + 1).end();
-      final String styleName = ranges.get(startAt).styleName();
-      if (currentEnd > nextEnd) {
-        ranges.add(startAt + 2, new StyledRange(nextEnd, currentEnd, styleName));
+  private List<StyledRange> collectRanges(final PageAnalysis pageAnalysis, final int length) {
+    final List<StyledRange> ranges = new ArrayList<>();
+    for (final PageSyntaxRule rule : rules) {
+      final String style = styleRegistry.getStyle(rule.getStyleName());
+      for (final PageSyntaxRule.RuleRange range : rule.getRanges(pageAnalysis)) {
+        final int begin = Math.max(0, range.begin());
+        final int end = Math.min(length, range.end());
+        if (begin < end) {
+          ranges.add(new StyledRange(begin, end, style));
+        }
       }
-      final int currentBegin = ranges.get(startAt).begin();
-      ranges.set(startAt, new StyledRange(currentBegin, nextBegin, styleName));
     }
-    deduplicateStyledRanges(ranges, startAt + 1);
+    ranges.sort(Comparator.comparingInt(StyledRange::begin));
+    return ranges;
   }
 
-  private record StyledRange(int begin, int end, String styleName)
-      implements Comparable<StyledRange> {
+  private record StyledRange(int begin, int end, String styleName) {}
 
-    @Override
-    public int compareTo(final StyledRange other) {
-      return Comparator.comparingInt(StyledRange::begin)
-          .thenComparingInt(StyledRange::end)
-          .thenComparing(StyledRange::styleName)
-          .compare(this, other);
+  private static final class SpansBuilder {
+
+    private final StyleSpansBuilder<String> builder = new StyleSpansBuilder<>();
+    private String pendingStyle = NO_STYLE;
+    private int pendingLength;
+    private boolean spanAdded;
+
+    private void add(final String style, final int length) {
+      if (!style.equals(pendingStyle)) {
+        flush();
+        pendingStyle = style;
+      }
+      pendingLength += length;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj) {
-        return true;
+    private StyleSpans<String> create() {
+      flush();
+      if (!spanAdded) {
+        builder.add(NO_STYLE, 0);
       }
-      if (!(obj instanceof StyledRange(int otherBegin, int otherEnd, String otherName))) {
-        return false;
-      }
-      return this.begin == otherBegin
-          && this.end == otherEnd
-          && Objects.equals(this.styleName, otherName);
+      return builder.create();
     }
 
-    @Override
-    public int hashCode() {
-      return Objects.hash(this.begin, this.end, this.styleName);
+    private void flush() {
+      if (pendingLength > 0) {
+        builder.add(pendingStyle, pendingLength);
+        pendingLength = 0;
+        spanAdded = true;
+      }
     }
   }
 }

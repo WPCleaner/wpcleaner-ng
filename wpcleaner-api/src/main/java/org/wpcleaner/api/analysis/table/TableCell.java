@@ -8,4 +8,9 @@ package org.wpcleaner.api.analysis.table;
 import org.jspecify.annotations.Nullable;
 
 public record TableCell(
-    int begin, int end, boolean header, @Nullable String attributes, String content) {}
+    int begin,
+    int end,
+    int contentBegin,
+    boolean header,
+    @Nullable String attributes,
+    String content) {}

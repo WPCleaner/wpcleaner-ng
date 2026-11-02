@@ -7,4 +7,5 @@ package org.wpcleaner.api.analysis.table;
 
 import org.jspecify.annotations.Nullable;
 
-public record TableCaption(int begin, int end, @Nullable String attributes, String content) {}
+public record TableCaption(
+    int begin, int end, int contentBegin, @Nullable String attributes, String content) {}
