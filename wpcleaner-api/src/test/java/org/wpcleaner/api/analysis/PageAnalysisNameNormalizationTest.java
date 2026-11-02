@@ -39,7 +39,7 @@ class PageAnalysisNameNormalizationTest {
   @Test
   void normalizeTransclusionsInOtherNamespaces() {
     // GIVEN
-    final String text = "{{:main page}}{{Utilisatrice:Bob/sub}}{{Foo:bar}}";
+    final String text = "{{:main page}}{{Utilisatrice:Bob/sub}}{{Foo:bar}}{{:Modèle:x}}";
 
     // WHEN
     final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
@@ -50,7 +50,8 @@ class PageAnalysisNameNormalizationTest {
         .containsExactly(
             new PageTitle(0, "Main page"),
             new PageTitle(2, "Bob/sub"),
-            new PageTitle(10, "Foo:bar"));
+            new PageTitle(10, "Foo:bar"),
+            new PageTitle(10, "X"));
   }
 
   @DisplayName("should not analyze template with an empty normalized name")
