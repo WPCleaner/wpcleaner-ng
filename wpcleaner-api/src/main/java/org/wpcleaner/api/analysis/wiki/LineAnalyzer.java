@@ -117,11 +117,18 @@ final class LineAnalyzer {
   }
 
   private int findSkippedElementEnd(final int from, final int to, final int limit) {
-    return skippedElementEnds.subMap(from, true, to, true).values().stream()
-        .mapToInt(Integer::intValue)
-        .filter(skippedElementEnd -> skippedElementEnd <= limit)
-        .max()
-        .orElse(-1);
+    final Integer firstSkippedElement = skippedElementEnds.ceilingKey(from);
+    if (firstSkippedElement == null || firstSkippedElement > to) {
+      return -1;
+    }
+    int result = -1;
+    for (final int skippedElementEnd :
+        skippedElementEnds.subMap(firstSkippedElement, true, to, true).values()) {
+      if (skippedElementEnd <= limit) {
+        result = Math.max(result, skippedElementEnd);
+      }
+    }
+    return result;
   }
 
   private final class OpenSkippedElements {

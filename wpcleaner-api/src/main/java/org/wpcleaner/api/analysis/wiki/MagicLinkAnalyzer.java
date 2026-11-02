@@ -6,6 +6,7 @@ package org.wpcleaner.api.analysis.wiki;
  */
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Optional;
@@ -98,11 +99,12 @@ final class MagicLinkAnalyzer {
   }
 
   void analyze(final List<? extends Element> links, final List<ImageElement> images) {
-    final List<Area> linkAreas =
-        Stream.concat(
-                links.stream().map(link -> new Area(link.begin(), link.end())),
-                images.stream().flatMap(MagicLinkAnalyzer::computeImageAreasWithoutCaption))
-            .toList();
+    final LinkAreas linkAreas =
+        new LinkAreas(
+            Stream.concat(
+                    links.stream().map(link -> new Area(link.begin(), link.end())),
+                    images.stream().flatMap(MagicLinkAnalyzer::computeImageAreasWithoutCaption))
+                .toList());
     final Matcher matcher = pattern.matcher(text);
     while (matcher.find()) {
       final int begin = matcher.start();
@@ -119,10 +121,10 @@ final class MagicLinkAnalyzer {
   }
 
   private boolean isOutsideOtherElements(
-      final int begin, final int end, final List<Area> linkAreas) {
+      final int begin, final int end, final LinkAreas linkAreas) {
     return !textBrowser.isInsideExclusion(begin)
         && textBrowser.isContinuous(begin, end - begin)
-        && linkAreas.stream().noneMatch(area -> area.begin() < end && begin < area.end());
+        && !linkAreas.overlaps(begin, end);
   }
 
   private Optional<ExternalLinkElement> createFreeExternalLink(final int begin, final int end) {
@@ -202,5 +204,35 @@ final class MagicLinkAnalyzer {
         .map(
             magicLinkType ->
                 new MagicLinkElement(matcher.start(), matcher.end(), magicLinkType, number));
+  }
+
+  private static final class LinkAreas {
+
+    private final List<Area> areas;
+    private final int[] maxEnds;
+
+    private LinkAreas(final List<Area> unsortedAreas) {
+      this.areas = unsortedAreas.stream().sorted(Comparator.comparingInt(Area::begin)).toList();
+      this.maxEnds = new int[areas.size()];
+      int maxEnd = Integer.MIN_VALUE;
+      for (int area = 0; area < areas.size(); area++) {
+        maxEnd = Math.max(maxEnd, areas.get(area).end());
+        maxEnds[area] = maxEnd;
+      }
+    }
+
+    private boolean overlaps(final int begin, final int end) {
+      int low = 0;
+      int high = areas.size();
+      while (low < high) {
+        final int middle = (low + high) >>> 1;
+        if (areas.get(middle).begin() < end) {
+          low = middle + 1;
+        } else {
+          high = middle;
+        }
+      }
+      return low > 0 && maxEnds[low - 1] > begin;
+    }
   }
 }
