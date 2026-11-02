@@ -8,6 +8,7 @@ package org.wpcleaner.api.analysis;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.wpcleaner.api.analysis.listitem.ListItemDefinition;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
 
 class PageAnalysisListItemTest {
@@ -99,5 +100,62 @@ class PageAnalysisListItemTest {
     // THEN
     Assertions.assertThat(analysis.getListItems())
         .containsExactly(new ListItemElement(10, 16, "*", "item"));
+  }
+
+  @DisplayName("should split a term and its definition")
+  @Test
+  void analyzeDefinition() {
+    // GIVEN
+    final String text = "; a : b\n; c";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getListItems())
+        .containsExactly(
+            new ListItemElement(0, 7, ";", "a", new ListItemDefinition(4, 7, "b")),
+            new ListItemElement(8, 11, ";", "c"));
+  }
+
+  @DisplayName("should not split a term on colons inside other elements")
+  @Test
+  void analyzeDefinitionAfterElementsWithColons() {
+    // GIVEN
+    final String text =
+        "; [[a:b]] [http://x.org c:d] http://y.org/ <span>e:f</span>"
+            + "<!-- g:h --><nowiki>:</nowiki>{{T|i:j}}<ref>k:l</ref> : m";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    final int colon = text.lastIndexOf(':');
+    Assertions.assertThat(analysis.getListItems())
+        .containsExactly(
+            new ListItemElement(
+                0,
+                text.length(),
+                ";",
+                text.substring(2, colon).trim(),
+                new ListItemDefinition(colon, text.length(), "m")));
+  }
+
+  @DisplayName("should split a term opened anywhere in the prefix, like MediaWiki")
+  @Test
+  void analyzeDefinitionWithLongerPrefixes() {
+    // GIVEN
+    final String text = ";: a : b\n;: c : d\n*; e : f\n* g : h";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getListItems())
+        .containsExactly(
+            new ListItemElement(0, 8, ";:", "a", new ListItemDefinition(5, 8, "b")),
+            new ListItemElement(9, 17, ";:", "c : d"),
+            new ListItemElement(18, 26, "*;", "e", new ListItemDefinition(23, 26, "f")),
+            new ListItemElement(27, 34, "*", "g : h"));
   }
 }

@@ -6,6 +6,7 @@ package org.wpcleaner.api.analysis.wiki;
  */
 
 import java.util.List;
+import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
@@ -56,6 +57,10 @@ final class WikiAnalyzer {
         cursor.movePrevious();
       }
     }
+  }
+
+  void analyzeDefinitions(final List<? extends Element> skippedElements) {
+    blockLevelAnalyzer.analyzeDefinitions(skippedElements);
   }
 
   List<BehaviorSwitchElement> getBehaviorSwitches() {
