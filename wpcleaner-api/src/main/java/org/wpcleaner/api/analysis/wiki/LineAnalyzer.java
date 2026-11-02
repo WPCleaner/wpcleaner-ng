@@ -6,9 +6,12 @@ package org.wpcleaner.api.analysis.wiki;
  */
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +47,7 @@ final class LineAnalyzer {
             .collect(Collectors.toMap(CommentElement::begin, CommentElement::end, Math::max));
     this.containers = containers;
     this.lines = new ArrayList<>();
-    analyze();
+    analyze(new OpenSkippedElements());
   }
 
   List<Line> getLines() {
@@ -70,12 +73,12 @@ final class LineAnalyzer {
     return -1;
   }
 
-  private void analyze() {
+  private void analyze(final OpenSkippedElements openSkippedElements) {
     int lineBegin = 0;
     while (lineBegin >= 0 && lineBegin < text.length()) {
       final Area container = containers.findContainer(lineBegin);
       if (!textBrowser.isInsideExclusion(lineBegin)
-          && !isInsideSkippedElement(lineBegin, container)) {
+          && !openSkippedElements.isInsideSkippedElement(lineBegin, container)) {
         final int lineEnd = findLineEnd(lineBegin, container.end());
         lines.add(new Line(lineBegin, skipComments(lineBegin, lineEnd), lineEnd, container));
       }
@@ -92,13 +95,6 @@ final class LineAnalyzer {
       commentEnd = commentEnds.get(contentBegin);
     }
     return contentBegin;
-  }
-
-  private boolean isInsideSkippedElement(final int lineBegin, final Area container) {
-    return skippedElementEnds.subMap(container.begin(), true, lineBegin, false).values().stream()
-        .anyMatch(
-            skippedElementEnd ->
-                skippedElementEnd > lineBegin && skippedElementEnd <= container.end());
   }
 
   private int findLineEnd(final int lineBegin, final int containerEnd) {
@@ -126,6 +122,35 @@ final class LineAnalyzer {
         .filter(skippedElementEnd -> skippedElementEnd <= limit)
         .max()
         .orElse(-1);
+  }
+
+  private final class OpenSkippedElements {
+
+    private final List<Area> skippedElements =
+        skippedElementEnds.entrySet().stream()
+            .map(skippedElement -> new Area(skippedElement.getKey(), skippedElement.getValue()))
+            .toList();
+    private final Queue<Area> openElements =
+        new PriorityQueue<>(Comparator.comparingInt(Area::end));
+    private int nextElement;
+
+    private boolean isInsideSkippedElement(final int lineBegin, final Area container) {
+      while (nextElement < skippedElements.size()
+          && skippedElements.get(nextElement).begin() < lineBegin) {
+        openElements.add(skippedElements.get(nextElement));
+        nextElement++;
+      }
+      Area firstClosed = openElements.peek();
+      while (firstClosed != null && firstClosed.end() <= lineBegin) {
+        openElements.poll();
+        firstClosed = openElements.peek();
+      }
+      return openElements.stream()
+          .anyMatch(
+              skippedElement ->
+                  skippedElement.begin() >= container.begin()
+                      && skippedElement.end() <= container.end());
+    }
   }
 
   record Line(int begin, int contentBegin, int end, Area container) {}
