@@ -14,6 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.wpcleaner.api.analysis.Element;
@@ -115,7 +116,8 @@ final class PageComparator {
     return new ParseTreeElement(element.kind(), begin, end, element.level());
   }
 
-  void compareWikiElements(final PageAnalysis analysis, final Parse parse) {
+  void compareWikiElements(
+      final PageAnalysis analysis, final Parse parse, final UnaryOperator<Set<String>> usedImages) {
     final Set<String> wpCleanerCategories =
         analysis.getCategories().stream()
             .map(CategoryElement::title)
@@ -152,9 +154,7 @@ final class PageComparator {
             .map(PageComparator::normalize)
             .collect(Collectors.toSet()),
         wpCleanerCategories);
-    compareSets(
-        "image",
-        parse.images().stream().map(PageComparator::normalize).collect(Collectors.toSet()),
+    final Set<String> wpCleanerImages =
         Stream.concat(
                 analysis.getImages().stream().map(image -> image.title().text()),
                 analysis.getGalleries().stream()
@@ -162,7 +162,13 @@ final class PageComparator {
                     .map(GalleryImage::title)
                     .filter(Objects::nonNull)
                     .map(PageTitle::text))
-            .collect(Collectors.toSet()));
+            .collect(Collectors.toSet());
+    final Set<String> mediaWikiImages =
+        parse.images().stream().map(PageComparator::normalize).collect(Collectors.toSet());
+    compareSets(
+        "image",
+        withoutRedirectTargets(mediaWikiImages, wpCleanerImages, usedImages),
+        wpCleanerImages);
     compareSets(
         "external link",
         parse.externalLinks().stream().map(PageComparator::decodeUrl).collect(Collectors.toSet()),
@@ -217,6 +223,23 @@ final class PageComparator {
         wpCleanerElements.stream()
             .map(element -> describeRange(text, element.begin(), element.end()))
             .collect(Collectors.toSet()));
+  }
+
+  private static Set<String> withoutRedirectTargets(
+      final Set<String> mediaWikiImages,
+      final Set<String> wpCleanerImages,
+      final UnaryOperator<Set<String>> usedImages) {
+    if (wpCleanerImages.containsAll(mediaWikiImages)) {
+      return mediaWikiImages;
+    }
+    final Set<String> redirectTargets =
+        usedImages.apply(wpCleanerImages).stream()
+            .map(PageComparator::normalize)
+            .filter(image -> !wpCleanerImages.contains(image))
+            .collect(Collectors.toSet());
+    return mediaWikiImages.stream()
+        .filter(image -> !redirectTargets.contains(image))
+        .collect(Collectors.toSet());
   }
 
   private void compareSets(
