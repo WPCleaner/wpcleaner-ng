@@ -135,8 +135,21 @@ class PageAnalysisComparisonTest {
                         ParseParameters.Properties.PARSE_TREE,
                         ParseParameters.Properties.TEMPLATES))));
     final PageAnalysis blankedAnalysis = pageAnalysisFactory.analysis(wiki, title, blankedContent);
-    comparator.compareWikiElements(blankedAnalysis, blankedParse);
+    comparator.compareWikiElements(
+        blankedAnalysis, blankedParse, images -> retrieveUsedImages(wiki, images));
     report.addPage(wiki, title, revisionId(page), comparator.getDifferences());
+  }
+
+  private Set<String> retrieveUsedImages(final WikiDefinition wiki, final Set<String> images) {
+    return Set.copyOf(
+        apiParse
+            .parse(
+                wiki,
+                new ParseQuery(
+                    PARSE_TITLE,
+                    images.stream().map("[[File:%s]]"::formatted).collect(Collectors.joining("\n")),
+                    Set.of(ParseParameters.Properties.IMAGES)))
+            .images());
   }
 
   private List<Page> retrievePages(final WikiDefinition wiki) {
