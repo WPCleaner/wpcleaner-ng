@@ -40,15 +40,14 @@ public final class PageTitleNormalizer {
     if (!text.isEmpty() && text.charAt(0) == NAMESPACE_SEPARATOR) {
       namespace = CommonNamespaces.MAIN.id;
       text = normalizeSpaces(text.substring(1));
-    } else {
-      final int separator = text.indexOf(NAMESPACE_SEPARATOR);
-      if (separator > 0) {
-        final Optional<Namespace> prefixNamespace =
-            findNamespace(normalizeSpaces(text.substring(0, separator)));
-        if (prefixNamespace.isPresent()) {
-          namespace = prefixNamespace.get().id();
-          text = normalizeSpaces(text.substring(separator + 1));
-        }
+    }
+    final int separator = text.indexOf(NAMESPACE_SEPARATOR);
+    if (separator > 0) {
+      final Optional<Namespace> prefixNamespace =
+          findNamespace(normalizeSpaces(text.substring(0, separator)));
+      if (prefixNamespace.isPresent()) {
+        namespace = prefixNamespace.get().id();
+        text = normalizeSpaces(text.substring(separator + 1));
       }
     }
     if (text.isEmpty()) {
