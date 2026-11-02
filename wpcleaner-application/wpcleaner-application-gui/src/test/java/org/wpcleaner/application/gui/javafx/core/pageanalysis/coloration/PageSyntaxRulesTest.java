@@ -102,6 +102,19 @@ class PageSyntaxRulesTest {
             "IMAGE:23");
   }
 
+  @DisplayName("computeStyleSpans colors the prefix and the colon of definition lists")
+  @Test
+  void colorDefinitionList() {
+    // GIVEN
+    final PageAnalysis analysis = analyze("; a : b");
+
+    // WHEN
+    final List<String> spans = describeSpans(analysis);
+
+    // THEN
+    Assertions.assertThat(spans).containsExactly("LIST_ITEM:1", "-:3", "LIST_ITEM:1", "-:2");
+  }
+
   @DisplayName("computeStyleSpans colors table syntax but not cell contents")
   @Test
   void colorTableSyntax() {

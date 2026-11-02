@@ -235,7 +235,6 @@ public class WikiContainer {
         interwikiLinks.sort(Element.COMPARATOR);
         languageLinks.addAll(analyzer.getLanguageLinks());
         languageLinks.sort(Element.COMPARATOR);
-        listItems.addAll(analyzer.getListItems());
         final MagicLinkAnalyzer magicLinkAnalyzer =
             new MagicLinkAnalyzer(
                 text,
@@ -261,6 +260,22 @@ public class WikiContainer {
                 .analyze(preprocessor.getCompleteTags()));
         externalLinks.addAll(magicLinkAnalyzer.getFreeExternalLinks());
         externalLinks.sort(Element.COMPARATOR);
+        analyzer.analyzeDefinitions(
+            Stream.of(
+                    categories,
+                    externalLinks,
+                    images,
+                    internalLinks,
+                    interwikiLinks,
+                    languageLinks,
+                    magicLinks,
+                    preprocessor.getCurlyBracketElements(),
+                    preprocessor.getComments(),
+                    tags.getTags(),
+                    tags.getCompleteTags())
+                .<Element>flatMap(List::stream)
+                .toList());
+        listItems.addAll(analyzer.getListItems());
         paragraphs.addAll(analyzer.getParagraphs());
         preformattedBlocks.addAll(analyzer.getPreformattedBlocks());
         tables.addAll(analyzer.getTables());

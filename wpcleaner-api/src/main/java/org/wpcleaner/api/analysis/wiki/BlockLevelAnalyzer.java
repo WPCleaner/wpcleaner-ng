@@ -6,6 +6,7 @@ package org.wpcleaner.api.analysis.wiki;
  */
 
 import java.util.List;
+import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
@@ -40,6 +41,10 @@ final class BlockLevelAnalyzer {
     listItemAnalyzer.analyze();
     tableAnalyzer.analyze();
     paragraphAnalyzer.analyze(tableAnalyzer.getTables());
+  }
+
+  void analyzeDefinitions(final List<? extends Element> skippedElements) {
+    listItemAnalyzer.analyzeDefinitions(skippedElements);
   }
 
   List<ListItemElement> getListItems() {

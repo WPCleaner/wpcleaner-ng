@@ -6,6 +6,8 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration;
  */
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
@@ -21,7 +23,14 @@ public class ListItemSyntaxRule implements PageSyntaxRule {
   @Override
   public List<RuleRange> getRanges(final PageAnalysis pageAnalysis) {
     return pageAnalysis.getListItems().stream()
-        .map(item -> new RuleRange(item.begin(), item.begin() + item.prefix().length()))
+        .flatMap(
+            item ->
+                Stream.concat(
+                    Stream.of(new RuleRange(item.begin(), item.begin() + item.prefix().length())),
+                    Optional.ofNullable(item.definition()).stream()
+                        .map(
+                            definition ->
+                                new RuleRange(definition.begin(), definition.begin() + 1))))
         .toList();
   }
 }
