@@ -6,6 +6,7 @@ package org.wpcleaner.api.analysis;
  */
 
 import java.util.List;
+import java.util.Optional;
 import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentElement;
@@ -23,6 +24,7 @@ import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
+import org.wpcleaner.api.analysis.redirect.RedirectElement;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
@@ -142,6 +144,10 @@ public final class PageAnalysis {
 
   public List<TableElement> getTables() {
     return wikiElements.getTables();
+  }
+
+  public Optional<RedirectElement> getRedirect() {
+    return wikiElements.getRedirect();
   }
 
   public List<TemplateElement> getTemplates() {

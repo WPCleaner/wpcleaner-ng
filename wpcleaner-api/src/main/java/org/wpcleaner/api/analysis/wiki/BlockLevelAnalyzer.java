@@ -25,8 +25,10 @@ final class BlockLevelAnalyzer {
       final TextBrowser textBrowser,
       final PreprocessorContainer preprocessor,
       final TextContainers containers,
-      final List<TagElement> tags) {
-    final LineAnalyzer lineAnalyzer = new LineAnalyzer(text, textBrowser, preprocessor, containers);
+      final List<TagElement> tags,
+      final int firstLineBegin) {
+    final LineAnalyzer lineAnalyzer =
+        new LineAnalyzer(text, textBrowser, preprocessor, containers, firstLineBegin);
     this.listItemAnalyzer = new ListItemAnalyzer(text, lineAnalyzer);
     this.tableAnalyzer = new TableAnalyzer(text, lineAnalyzer);
     this.paragraphAnalyzer =

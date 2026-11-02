@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
@@ -20,7 +21,6 @@ import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 
-@SuppressWarnings("PMD.DataClass")
 final class SquareBracketElementFactory {
 
   private static final String LEADING_COLON = ":";
@@ -79,16 +79,7 @@ final class SquareBracketElementFactory {
         languageLinks.add(
             new LanguageLinkElement(begin, end, beforeColumn, afterColumn.trim(), value));
       } else {
-        final AnchoredTarget anchoredTarget = AnchoredTarget.split(afterColumn);
-        interwikiLinks.add(
-            new InterwikiLinkElement(
-                begin,
-                end,
-                beforeColumn,
-                anchoredTarget.target(),
-                anchoredTarget.anchor(),
-                value,
-                leadingColon));
+        persistInterwikiLink(linkParts, beforeColumn, afterColumn);
       }
     } else if (!leadingColon
         && categoryNamespace != null
@@ -106,9 +97,42 @@ final class SquareBracketElementFactory {
     }
   }
 
-  private void persistInternalLink(final LinkParts linkParts, final String target) {
+  Element persistRedirectLink(
+      final int begin, final int end, final String target, @Nullable final String value) {
+    final String targetWithoutLeadingSpaces = target.stripLeading();
+    final boolean leadingColon = targetWithoutLeadingSpaces.startsWith(LEADING_COLON);
+    final String linkTarget =
+        leadingColon ? targetWithoutLeadingSpaces.substring(LEADING_COLON.length()) : target;
+    final LinkParts linkParts = new LinkParts(begin, end, value, leadingColon);
+    final int column = linkTarget.indexOf(':');
+    if (column > 0) {
+      final String beforeColumn = linkTarget.substring(0, column).trim();
+      if (Interwiki.findInterwiki(interwikis, beforeColumn).isPresent()) {
+        return persistInterwikiLink(linkParts, beforeColumn, linkTarget.substring(column + 1));
+      }
+    }
+    return persistInternalLink(linkParts, linkTarget);
+  }
+
+  private InterwikiLinkElement persistInterwikiLink(
+      final LinkParts linkParts, final String prefix, final String target) {
     final AnchoredTarget anchoredTarget = AnchoredTarget.split(target);
-    internalLinks.add(
+    final InterwikiLinkElement interwikiLink =
+        new InterwikiLinkElement(
+            linkParts.begin(),
+            linkParts.end(),
+            prefix,
+            anchoredTarget.target(),
+            anchoredTarget.anchor(),
+            linkParts.text(),
+            linkParts.leadingColon());
+    interwikiLinks.add(interwikiLink);
+    return interwikiLink;
+  }
+
+  private InternalLinkElement persistInternalLink(final LinkParts linkParts, final String target) {
+    final AnchoredTarget anchoredTarget = AnchoredTarget.split(target);
+    final InternalLinkElement internalLink =
         new InternalLinkElement(
             linkParts.begin(),
             linkParts.end(),
@@ -116,7 +140,9 @@ final class SquareBracketElementFactory {
             pageTitleNormalizer.normalize(target, CommonNamespaces.MAIN.id).orElse(null),
             anchoredTarget.anchor(),
             linkParts.text(),
-            linkParts.leadingColon()));
+            linkParts.leadingColon());
+    internalLinks.add(internalLink);
+    return internalLink;
   }
 
   private record LinkParts(int begin, int end, @Nullable String text, boolean leadingColon) {}

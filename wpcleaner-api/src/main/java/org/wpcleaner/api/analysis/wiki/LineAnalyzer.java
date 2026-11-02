@@ -34,7 +34,8 @@ final class LineAnalyzer {
       final String text,
       final TextBrowser textBrowser,
       final PreprocessorContainer preprocessor,
-      final TextContainers containers) {
+      final TextContainers containers,
+      final int firstLineBegin) {
     this.text = text;
     this.textBrowser = textBrowser;
     this.skippedElementEnds = new TreeMap<>();
@@ -47,7 +48,7 @@ final class LineAnalyzer {
             .collect(Collectors.toMap(CommentElement::begin, CommentElement::end, Math::max));
     this.containers = containers;
     this.lines = new ArrayList<>();
-    analyze(new OpenSkippedElements());
+    analyze(new OpenSkippedElements(), firstLineBegin);
   }
 
   List<Line> getLines() {
@@ -73,8 +74,8 @@ final class LineAnalyzer {
     return -1;
   }
 
-  private void analyze(final OpenSkippedElements openSkippedElements) {
-    int lineBegin = 0;
+  private void analyze(final OpenSkippedElements openSkippedElements, final int firstLineBegin) {
+    int lineBegin = firstLineBegin;
     while (lineBegin >= 0 && lineBegin < text.length()) {
       final Area container = containers.findContainer(lineBegin);
       if (!textBrowser.isInsideExclusion(lineBegin)

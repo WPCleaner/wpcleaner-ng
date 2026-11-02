@@ -7,9 +7,11 @@ package org.wpcleaner.api.analysis.wiki;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.TextBrowser;
 import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
@@ -27,6 +29,7 @@ import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
 import org.wpcleaner.api.analysis.preprocessor.PreprocessorContainer;
+import org.wpcleaner.api.analysis.redirect.RedirectElement;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
@@ -62,6 +65,7 @@ public class WikiContainer {
   private final List<ParagraphElement> paragraphs;
   private final List<PreformattedElement> preformattedBlocks;
   private final List<TableElement> tables;
+  @Nullable private RedirectElement redirect;
   private final Lock lock = new ReentrantLock();
   private boolean done;
 
@@ -165,13 +169,26 @@ public class WikiContainer {
     return tables;
   }
 
+  public Optional<RedirectElement> getRedirect() {
+    ensureAnalyzed();
+    return Optional.ofNullable(redirect);
+  }
+
   private void ensureAnalyzed() {
     lock.lock();
     try {
       if (!done) {
+        final List<MagicWord> magicWords = magicWordRepository.getMagicWords(wiki);
+        final TitleDecoder titleDecoder =
+            new TitleDecoder(new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki)));
+        final Optional<RedirectAnalyzer.Redirect> redirectArea =
+            new RedirectAnalyzer(text, magicWords, titleDecoder).analyze();
+        final int contentBegin =
+            redirectArea.map(RedirectAnalyzer.Redirect::contentBegin).orElse(0);
         final TextBrowser textBrowser = new TextBrowser(text);
         textBrowser.addExclusions(tags.getExclusions());
-        final List<MagicWord> magicWords = magicWordRepository.getMagicWords(wiki);
+        redirectArea.ifPresent(
+            area -> textBrowser.addExclusions(List.of(new Area(0, area.contentBegin()))));
         final ImageAnalyzer imageAnalyzer =
             new ImageAnalyzer(
                 text,
@@ -180,21 +197,31 @@ public class WikiContainer {
                 new ImageParameterFactory(magicWords),
                 preprocessor.getCurlyBracketElements());
         final TextContainers containers = new TextContainers(text, preprocessor);
+        final SquareBracketAnalyzer squareBracketAnalyzer =
+            new SquareBracketAnalyzer(
+                text,
+                new CommentedText(text, preprocessor.getComments()),
+                interwikiRepository.getInterwikis(wiki),
+                namespaceRepository.getNamespaces(wiki),
+                protocolRepository.getProtocols(wiki),
+                imageAnalyzer);
+        redirect =
+            redirectArea
+                .map(
+                    area ->
+                        area.toElement(
+                            squareBracketAnalyzer.persistRedirectLink(
+                                area.linkBegin(), area.end(), area.target(), area.linkText())))
+                .orElse(null);
         final WikiAnalyzer analyzer =
             new WikiAnalyzer(
                 text,
                 textBrowser,
-                new SquareBracketAnalyzer(
-                    text,
-                    new CommentedText(text, preprocessor.getComments()),
-                    interwikiRepository.getInterwikis(wiki),
-                    namespaceRepository.getNamespaces(wiki),
-                    protocolRepository.getProtocols(wiki),
-                    imageAnalyzer),
+                squareBracketAnalyzer,
                 imageAnalyzer,
                 new BehaviorSwitchAnalyzer(text, textBrowser, magicWords),
                 new BlockLevelAnalyzer(
-                    text, textBrowser, preprocessor, containers, tags.getTags()));
+                    text, textBrowser, preprocessor, containers, tags.getTags(), contentBegin));
         analyzer.analyze();
         behaviorSwitches.addAll(analyzer.getBehaviorSwitches());
         categories.addAll(analyzer.getCategories());
@@ -227,7 +254,7 @@ public class WikiContainer {
             new GalleryAnalyzer(
                     text,
                     textBrowser,
-                    new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki)),
+                    titleDecoder,
                     ImageParameterFactory.forGallery(magicWords),
                     preprocessor.getCurlyBracketElements(),
                     preprocessor.getComments())

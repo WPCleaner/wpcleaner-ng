@@ -109,7 +109,9 @@ final class PageAnalysisTestFactory {
             new MagicWord("safesubst", List.of("SAFESUBST:"), false, false, false, false),
             new MagicWord("subst", List.of("SUBST:"), false, false, false, false),
             new MagicWord("lc", List.of("MINUS:", "LC:"), false, false, true, false),
-            new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, false, true, true))
+            new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, false, true, true),
+            new MagicWord(
+                "redirect", List.of("#REDIRECTION", "#REDIRECT"), false, false, false, false))
         .forEach(magicWord -> magicWordRepository.addMagicWord(WIKI, magicWord));
     return new PageAnalysis(
         wiki,
