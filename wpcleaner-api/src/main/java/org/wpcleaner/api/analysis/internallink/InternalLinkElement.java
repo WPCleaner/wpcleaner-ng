@@ -17,4 +17,14 @@ public record InternalLinkElement(
     @Nullable String anchor,
     @Nullable String text,
     boolean leadingColon)
-    implements Element {}
+    implements Element {
+
+  private static final char ANCHOR = '#';
+
+  public String displayedText() {
+    if (text != null) {
+      return text;
+    }
+    return anchor == null ? target : target + ANCHOR + anchor;
+  }
+}

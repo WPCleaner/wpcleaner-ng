@@ -15,9 +15,12 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTestConfiguration;
+import org.wpcleaner.lib.check.Replacement;
 
 @SpringBootTest(classes = CheckSpringBootTestConfiguration.class)
 class CheckAlgorithm048Test {
+
+  private static final int ALGORITHM = 48;
 
   @Autowired private CheckAlgorithm048 algorithm;
 
@@ -35,7 +38,34 @@ class CheckAlgorithm048Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            new CheckError(48, 0, 15), new CheckError(48, 16, 36), new CheckError(48, 46, 62));
+            new CheckError(ALGORITHM, 0, 15, textOrBold("Tour Eiffel", false)),
+            new CheckError(ALGORITHM, 16, 36, textOrBold("tour", false)),
+            new CheckError(ALGORITHM, 46, 62, textOrBold("Tour Eiffel", false)));
+  }
+
+  @DisplayName("should fix automatically links in bold or after the first title")
+  @Test
+  void fixLinksInBoldOrAfterFirstTitle() {
+    // GIVEN
+    final String text =
+        "'''[[Paris]]''' est une ville.\n== Histoire ==\n[[Paris|La ville]] et l'[[Paris]]";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    final int afterTitle = text.indexOf("[[Paris|");
+    final int afterApostrophe = text.lastIndexOf("[[Paris]]");
+    Assertions.assertThat(errors)
+        .containsExactly(
+            new CheckError(ALGORITHM, 3, 12, List.of(new Replacement("Paris", true))),
+            new CheckError(ALGORITHM, afterTitle, afterTitle + 18, textOrBold("La ville", true)),
+            new CheckError(
+                ALGORITHM,
+                afterApostrophe - 1,
+                afterApostrophe + 9,
+                List.of(new Replacement("'Paris", true), new Replacement("''''Paris'''", false))));
   }
 
   @DisplayName("should report links to a section of the page only in the main namespace")
@@ -53,8 +83,38 @@ class CheckAlgorithm048Test {
                 "Utilisateur:Paris", "[[Utilisateur:Paris#Histoire|histoire]]"));
 
     // THEN
-    Assertions.assertThat(mainErrors).containsExactly(new CheckError(48, 0, text.length()));
+    Assertions.assertThat(mainErrors)
+        .containsExactly(
+            new CheckError(
+                ALGORITHM,
+                0,
+                text.length(),
+                List.of(new Replacement("[[#Histoire|histoire]]", true))));
     Assertions.assertThat(userErrors).isEmpty();
+  }
+
+  @DisplayName("should not fix automatically links to footnotes or without text")
+  @Test
+  void fixLinksToSectionManually() {
+    // GIVEN
+    final String text = "[[Paris#cite_note-1|1]] [[Paris#Histoire]] [[Paris#]]";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            new CheckError(ALGORITHM, 0, 23, List.of(new Replacement("[[#cite_note-1|1]]", false))),
+            new CheckError(
+                ALGORITHM,
+                24,
+                42,
+                List.of(
+                    new Replacement("[[#Histoire|Histoire]]", false),
+                    new Replacement("[[#Histoire|Paris#Histoire]]", false))),
+            new CheckError(ALGORITHM, 43, 53, List.of()));
   }
 
   @DisplayName("should not report links in ignored areas")
@@ -73,7 +133,9 @@ class CheckAlgorithm048Test {
     // THEN
     final int noIncludeLink = text.lastIndexOf("[[Paris]]");
     Assertions.assertThat(errors)
-        .containsExactly(new CheckError(48, noIncludeLink, noIncludeLink + 9));
+        .containsExactly(
+            new CheckError(
+                ALGORITHM, noIncludeLink, noIncludeLink + 9, textOrBold("Paris", false)));
   }
 
   @DisplayName("should not report anything on ignored pages")
@@ -93,5 +155,9 @@ class CheckAlgorithm048Test {
 
     // THEN
     Assertions.assertThat(errors).containsOnly(List.of());
+  }
+
+  private static List<Replacement> textOrBold(final String text, final boolean automatic) {
+    return List.of(new Replacement(text, automatic), new Replacement("'''" + text + "'''", false));
   }
 }

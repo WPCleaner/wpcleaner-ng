@@ -80,4 +80,19 @@ class PageAnalysisLinkTextTest {
         .extracting(InternalLinkElement::begin, InternalLinkElement::end, InternalLinkElement::text)
         .containsExactly(Assertions.tuple(19, 26, "d"));
   }
+
+  @DisplayName("should display the text of a link, or its target with its anchor")
+  @Test
+  void analyzeDisplayedText() {
+    // GIVEN
+    final String text = "[[Paris| la ville ]] [[:Paris]] [[Paris#Histoire]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .map(InternalLinkElement::displayedText)
+        .containsExactly(" la ville ", "Paris", "Paris#Histoire");
+  }
 }

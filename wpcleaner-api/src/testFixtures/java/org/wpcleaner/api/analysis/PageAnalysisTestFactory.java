@@ -7,6 +7,7 @@ package org.wpcleaner.api.analysis;
 
 import java.util.List;
 import java.util.stream.Stream;
+import org.jspecify.annotations.NonNull;
 import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
@@ -45,6 +46,34 @@ public final class PageAnalysisTestFactory {
 
   public static PageAnalysis createPageAnalysis(
       final WikiDefinition wiki, final String title, final String text) {
+    final NamespaceRepository namespaceRepository = createNamespaceRepository();
+    final InterwikiRepository interwikiRepository = createInterwikiRepository();
+    final ProtocolRepository protocolRepository = createProtocolRepository();
+    final ExtensionTagRepository extensionTagRepository = createExtensionTagRepository();
+    final MagicLinkRepository magicLinkRepository = createMagicLingRepository();
+    final MagicWordRepository magicWordRepository = createMagicWordRepository();
+    return new PageAnalysis(
+        wiki,
+        title,
+        text,
+        extensionTagRepository,
+        interwikiRepository,
+        magicLinkRepository,
+        magicWordRepository,
+        namespaceRepository,
+        protocolRepository);
+  }
+
+  private static @NonNull InterwikiRepository createInterwikiRepository() {
+    final InterwikiRepository interwikiRepository = new InterwikiRepository();
+    interwikiRepository.addInterwiki(
+        WIKI, new Interwiki("en", false, "https://en.wikipedia.org/wiki/$1", "English", null));
+    interwikiRepository.addInterwiki(
+        WIKI, new Interwiki("wikt", false, "https://fr.wiktionary.org/wiki/$1", null, null));
+    return interwikiRepository;
+  }
+
+  private static @NonNull NamespaceRepository createNamespaceRepository() {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     namespaceRepository.addNamespace(
         WIKI,
@@ -78,14 +107,17 @@ public final class PageAnalysisTestFactory {
         WIKI,
         new Namespace(
             CommonNamespaces.TEMPLATE.id, "Template", "Modèle", List.of(), CaseType.FIRST_LETTER));
-    final InterwikiRepository interwikiRepository = new InterwikiRepository();
-    interwikiRepository.addInterwiki(
-        WIKI, new Interwiki("en", false, "https://en.wikipedia.org/wiki/$1", "English", null));
-    interwikiRepository.addInterwiki(
-        WIKI, new Interwiki("wikt", false, "https://fr.wiktionary.org/wiki/$1", null, null));
+    return namespaceRepository;
+  }
+
+  private static @NonNull ProtocolRepository createProtocolRepository() {
     final ProtocolRepository protocolRepository = new ProtocolRepository();
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     protocolRepository.addProtocol(WIKI, new Protocol("http://"));
+    return protocolRepository;
+  }
+
+  private static @NonNull ExtensionTagRepository createExtensionTagRepository() {
     final ExtensionTagRepository extensionTagRepository = new ExtensionTagRepository();
     Stream.of(
             "nowiki",
@@ -98,9 +130,17 @@ public final class PageAnalysisTestFactory {
             "imagemap",
             "section")
         .forEach(name -> extensionTagRepository.addExtensionTag(WIKI, new ExtensionTag(name)));
+    return extensionTagRepository;
+  }
+
+  private static @NonNull MagicLinkRepository createMagicLingRepository() {
     final MagicLinkRepository magicLinkRepository = new MagicLinkRepository();
     magicLinkRepository.enableMagicLink(WIKI, MagicLinkType.ISBN);
     magicLinkRepository.enableMagicLink(WIKI, MagicLinkType.PMID);
+    return magicLinkRepository;
+  }
+
+  private static @NonNull MagicWordRepository createMagicWordRepository() {
     final MagicWordRepository magicWordRepository = new MagicWordRepository();
     Stream.of(
             new MagicWord(
@@ -141,15 +181,6 @@ public final class PageAnalysisTestFactory {
             new MagicWord(
                 "redirect", List.of("#REDIRECTION", "#REDIRECT"), false, false, false, false))
         .forEach(magicWord -> magicWordRepository.addMagicWord(WIKI, magicWord));
-    return new PageAnalysis(
-        wiki,
-        title,
-        text,
-        extensionTagRepository,
-        interwikiRepository,
-        magicLinkRepository,
-        magicWordRepository,
-        namespaceRepository,
-        protocolRepository);
+    return magicWordRepository;
   }
 }
