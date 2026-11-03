@@ -17,6 +17,7 @@ folder name only**, even when nested:
 
 - `:wpcleaner-api` – MediaWiki API client (`org.wpcleaner.api.api.*`)
 - `:wpcleaner-application-base`, `:wpcleaner-application-gui` (under `wpcleaner-application/`)
+- `:wpcleaner-lib-check` (under `wpcleaner-lib/`) – Check Wiki algorithms on a `PageAnalysis` (`org.wpcleaner.lib.check.*`)
 - `:wpcleaner-lib-image` (under `wpcleaner-lib/`)
 - `:wpcleaner-dependencies` – enforced platform (dependency versions)
 - `:wpcleaner-translations`
