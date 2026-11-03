@@ -5,6 +5,7 @@ package org.wpcleaner.api.analysis;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.Collection;
 import java.util.Comparator;
 
 public interface Element {
@@ -15,4 +16,12 @@ public interface Element {
   int begin();
 
   int end();
+
+  default boolean isInside(final Element element) {
+    return element.begin() <= begin() && end() <= element.end();
+  }
+
+  default boolean isInsideOne(final Collection<? extends Element> elements) {
+    return elements.stream().anyMatch(this::isInside);
+  }
 }

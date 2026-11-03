@@ -2,7 +2,7 @@
 .gradle
 **/build/
 !src/**/build/
-/build-logic/.kotlin/
+**/.kotlin/
 
 # Security
 **/credentials.json

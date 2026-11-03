@@ -2,15 +2,14 @@ plugins { id("wpcleaner.module.java-library") }
 
 dependencies {
   api(enforcedPlatform(project(":wpcleaner-dependencies")))
+  api(project(":wpcleaner-lib-image"))
   api("com.fasterxml.jackson.core:jackson-annotations")
   api("com.fasterxml.jackson.core:jackson-databind")
-  implementation(project(":wpcleaner-lib-image"))
+  api("org.springframework.boot:spring-boot-starter-web")
   implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
   implementation("org.springframework.boot:spring-boot-starter")
-  implementation("org.springframework.boot:spring-boot-starter-web")
   runtimeOnly("org.apache.httpcomponents.client5:httpclient5")
   testFixturesApi("org.springframework.boot:spring-boot-starter-test")
-  testFixturesImplementation("org.springframework.boot:spring-boot-starter-web")
 }
 
 testing {

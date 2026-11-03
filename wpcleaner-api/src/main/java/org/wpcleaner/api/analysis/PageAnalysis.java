@@ -20,6 +20,8 @@ import org.wpcleaner.api.analysis.interwikilink.InterwikiLinkElement;
 import org.wpcleaner.api.analysis.languagelink.LanguageLinkElement;
 import org.wpcleaner.api.analysis.listitem.ListItemElement;
 import org.wpcleaner.api.analysis.magiclink.MagicLinkElement;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
 import org.wpcleaner.api.analysis.paragraph.ParagraphElement;
 import org.wpcleaner.api.analysis.parameter.ParameterElement;
 import org.wpcleaner.api.analysis.preformatted.PreformattedElement;
@@ -36,17 +38,19 @@ import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
+import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
-@SuppressWarnings("PMD.CouplingBetweenObjects")
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessiveImports"})
 public final class PageAnalysis {
 
   private static final String WINDOWS_LINE_END = "\r\n";
   private static final String LINE_END = "\n";
 
   private final String title;
+  private final PageTitle pageTitle;
   private final String text;
   private final PreprocessorContainer preprocessor;
   private final TagContainer tags;
@@ -63,6 +67,10 @@ public final class PageAnalysis {
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
     this.title = title;
+    this.pageTitle =
+        new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki))
+            .normalize(title, CommonNamespaces.MAIN.id)
+            .orElseGet(() -> new PageTitle(CommonNamespaces.MAIN.id, title));
     this.text = text.replace(WINDOWS_LINE_END, LINE_END);
     this.preprocessor =
         new PreprocessorContainer(
@@ -83,6 +91,10 @@ public final class PageAnalysis {
 
   public String getTitle() {
     return title;
+  }
+
+  public PageTitle getPageTitle() {
+    return pageTitle;
   }
 
   public String getText() {

@@ -24,17 +24,27 @@ import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
-final class PageAnalysisTestFactory {
+public final class PageAnalysisTestFactory {
 
-  static final WikiDefinition WIKI = WikipediaDefinitions.FR;
+  public static final WikiDefinition WIKI = WikipediaDefinitions.FR;
+  private static final String DEFAULT_TITLE = "Title";
 
   private PageAnalysisTestFactory() {}
 
-  static PageAnalysis createPageAnalysis(final String text) {
-    return createPageAnalysis(WIKI, text);
+  public static PageAnalysis createPageAnalysis(final String text) {
+    return createPageAnalysis(WIKI, DEFAULT_TITLE, text);
   }
 
-  static PageAnalysis createPageAnalysis(final WikiDefinition wiki, final String text) {
+  public static PageAnalysis createPageAnalysis(final String title, final String text) {
+    return createPageAnalysis(WIKI, title, text);
+  }
+
+  public static PageAnalysis createPageAnalysis(final WikiDefinition wiki, final String text) {
+    return createPageAnalysis(wiki, DEFAULT_TITLE, text);
+  }
+
+  public static PageAnalysis createPageAnalysis(
+      final WikiDefinition wiki, final String title, final String text) {
     final NamespaceRepository namespaceRepository = new NamespaceRepository();
     namespaceRepository.addNamespace(
         WIKI,
@@ -59,6 +69,14 @@ final class PageAnalysisTestFactory {
     namespaceRepository.addNamespace(
         WIKI,
         new Namespace(
+            CommonNamespaces.USER_TALK.id,
+            "User talk",
+            "Discussion utilisateur",
+            List.of("Discussion utilisatrice"),
+            CaseType.FIRST_LETTER));
+    namespaceRepository.addNamespace(
+        WIKI,
+        new Namespace(
             CommonNamespaces.TEMPLATE.id, "Template", "Modèle", List.of(), CaseType.FIRST_LETTER));
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
     interwikiRepository.addInterwiki(
@@ -69,7 +87,16 @@ final class PageAnalysisTestFactory {
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     protocolRepository.addProtocol(WIKI, new Protocol("http://"));
     final ExtensionTagRepository extensionTagRepository = new ExtensionTagRepository();
-    Stream.of("nowiki", "pre", "ref", "references", "math", "inputbox", "gallery")
+    Stream.of(
+            "nowiki",
+            "pre",
+            "ref",
+            "references",
+            "math",
+            "inputbox",
+            "gallery",
+            "imagemap",
+            "section")
         .forEach(name -> extensionTagRepository.addExtensionTag(WIKI, new ExtensionTag(name)));
     final MagicLinkRepository magicLinkRepository = new MagicLinkRepository();
     magicLinkRepository.enableMagicLink(WIKI, MagicLinkType.ISBN);
@@ -109,13 +136,14 @@ final class PageAnalysisTestFactory {
             new MagicWord("safesubst", List.of("SAFESUBST:"), false, false, false, false),
             new MagicWord("subst", List.of("SUBST:"), false, false, false, false),
             new MagicWord("lc", List.of("MINUS:", "LC:"), false, false, true, false),
+            new MagicWord("lst", List.of("lst", "section"), false, false, true, false),
             new MagicWord("pagename", List.of("NOMPAGE", "PAGENAME"), true, false, true, true),
             new MagicWord(
                 "redirect", List.of("#REDIRECTION", "#REDIRECT"), false, false, false, false))
         .forEach(magicWord -> magicWordRepository.addMagicWord(WIKI, magicWord));
     return new PageAnalysis(
         wiki,
-        "Title",
+        title,
         text,
         extensionTagRepository,
         interwikiRepository,

@@ -177,4 +177,17 @@ class PageAnalysisNameNormalizationTest {
             new PageTitle(0, "𐐀x"),
             new PageTitle(0, "Élan"));
   }
+
+  @DisplayName("should normalize the title of the analyzed page")
+  @Test
+  void normalizePageTitle() {
+    // GIVEN
+    final String title = "Utilisatrice:bob_the builder";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(title, "");
+
+    // THEN
+    Assertions.assertThat(analysis.getPageTitle()).isEqualTo(new PageTitle(2, "Bob the builder"));
+  }
 }
