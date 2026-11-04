@@ -14,12 +14,14 @@ import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindowServices;
+import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
 public record JavaFxAnalysisWindowServices(
     JavaFxActionServices actionServices,
     ApiRevisions apiRevisions,
+    CheckAlgorithmRegistry checkAlgorithmRegistry,
     PageSyntaxColorizer colorizer,
     ImageLoader imageLoader,
     PageAnalysisFactory pageAnalysisFactory,
