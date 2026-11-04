@@ -20,8 +20,7 @@ import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
-import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
-import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisScrollPane;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisCheckPane;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 public final class PageAnalysisPanel extends StackPane {
@@ -29,8 +28,7 @@ public final class PageAnalysisPanel extends StackPane {
   private final JavaFxWindow<?> owner;
   private final JavaFxAnalysisWindowServices services;
   private final String pageName;
-  private final PageAnalysisScrollPane scrollPane;
-  private final PageAnalysisArea analysisArea;
+  private final PageAnalysisCheckPane checkPane;
 
   public PageAnalysisPanel(
       final JavaFxWindow<?> owner,
@@ -39,16 +37,16 @@ public final class PageAnalysisPanel extends StackPane {
     this.owner = owner;
     this.services = services;
     this.pageName = pageName;
-    this.scrollPane = new PageAnalysisScrollPane(services.colorizer());
-    this.analysisArea = scrollPane.getArea();
-    this.analysisArea.setEditable(true);
+    this.checkPane =
+        new PageAnalysisCheckPane(services.colorizer(), services.checkAlgorithmRegistry());
+    this.checkPane.getArea().setEditable(true);
     initialize();
   }
 
   private void initialize() {
     final VBox mainContainer = new VBox();
-    VBox.setVgrow(scrollPane, Priority.ALWAYS);
-    mainContainer.getChildren().add(scrollPane);
+    VBox.setVgrow(checkPane, Priority.ALWAYS);
+    mainContainer.getChildren().add(checkPane);
     getChildren().add(mainContainer);
 
     loadPageContent();
@@ -96,7 +94,7 @@ public final class PageAnalysisPanel extends StackPane {
       return;
     }
 
-    analysisArea.updateAnalysis(
+    checkPane.updateAnalysis(
         services
             .pageAnalysisFactory()
             .analysis(services.user().getCurrentUser().wiki(), pageName, slot.content()));

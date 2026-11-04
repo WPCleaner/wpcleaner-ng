@@ -14,6 +14,7 @@ module org.wpcleaner.application.gui {
   requires transitive org.jspecify;
   requires transitive org.wpcleaner.api;
   requires transitive org.wpcleaner.application.base;
+  requires transitive org.wpcleaner.lib.check;
   requires transitive org.wpcleaner.lib.image;
   requires transitive spring.boot.autoconfigure;
   requires transitive spring.boot;

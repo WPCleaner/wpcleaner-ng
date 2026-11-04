@@ -30,4 +30,17 @@ class CheckAlgorithmRegistryTest {
     Assertions.assertThat(algorithm).map(CheckAlgorithm::number).contains(number);
     Assertions.assertThat(registry.findAlgorithm(0)).isEmpty();
   }
+
+  @DisplayName("should name the algorithms with their number")
+  @Test
+  void name() {
+    // GIVEN
+    final CheckAlgorithm algorithm = registry.findAlgorithm(48).orElseThrow();
+
+    // WHEN
+    final String name = algorithm.name();
+
+    // THEN
+    Assertions.assertThat(name).isEqualTo("Error No. 48");
+  }
 }

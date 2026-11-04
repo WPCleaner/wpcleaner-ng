@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class PageAnalysisStylePropertiesInitializer implements StylePropertiesInitializer {
 
   public static final String CATEGORY = "pageAnalysis.category";
+  public static final String CHECK_ERROR = "pageAnalysis.checkError";
   public static final String COMMENT = "pageAnalysis.comment";
   public static final String EXTERNAL_LINK = "pageAnalysis.externalLink";
   public static final String IMAGE = "pageAnalysis.image";
@@ -36,6 +37,14 @@ public class PageAnalysisStylePropertiesInitializer implements StylePropertiesIn
                 .withBackground(true)
                 .withBackgroundColor(new Color(153, 255, 153))
                 .withItalic(true)
+                .build()),
+        Map.entry(
+            CHECK_ERROR,
+            StyleProperties.builder()
+                .withForeground(true)
+                .withForegroundColor(Color.WHITE)
+                .withBackground(true)
+                .withBackgroundColor(Color.RED)
                 .build()),
         Map.entry(
             COMMENT,

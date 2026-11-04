@@ -15,7 +15,9 @@ import java.util.TreeSet;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
+import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 
 @Service
@@ -68,6 +70,27 @@ public class PageSyntaxColorizer {
       segmentBegin = segmentEnd;
     }
     return spansBuilder.create();
+  }
+
+  public StyleSpans<String> highlight(
+      final StyleSpans<String> styleSpans, final List<? extends Element> elements) {
+    final String highlightStyle =
+        styleRegistry.getStyle(PageAnalysisStylePropertiesInitializer.CHECK_ERROR);
+    final int length = styleSpans.length();
+    final SpansBuilder spansBuilder = new SpansBuilder();
+    int position = 0;
+    for (final Element element :
+        elements.stream().sorted(Comparator.comparingInt(Element::begin)).toList()) {
+      final int begin = Math.max(position, element.begin());
+      final int end = Math.min(length, element.end());
+      if (begin < end) {
+        spansBuilder.add(NO_STYLE, begin - position);
+        spansBuilder.add(highlightStyle, end - begin);
+        position = end;
+      }
+    }
+    spansBuilder.add(NO_STYLE, length - position);
+    return styleSpans.overlay(spansBuilder.create(), String::concat);
   }
 
   private List<StyledRange> collectRanges(final PageAnalysis pageAnalysis, final int length) {

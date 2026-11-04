@@ -20,6 +20,7 @@ dependencies {
   api(enforcedPlatform(project(":wpcleaner-dependencies")))
   implementation(project(":wpcleaner-api"))
   implementation(project(":wpcleaner-application-base"))
+  implementation(project(":wpcleaner-lib-check"))
   implementation("org.openjfx:javafx-base:${javafxVersion}:${javafxPlatform}")
   implementation("org.openjfx:javafx-controls:${javafxVersion}:${javafxPlatform}")
   implementation("org.openjfx:javafx-graphics:${javafxVersion}:${javafxPlatform}")
