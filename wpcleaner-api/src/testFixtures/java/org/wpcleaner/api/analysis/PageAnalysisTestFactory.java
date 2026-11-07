@@ -46,22 +46,17 @@ public final class PageAnalysisTestFactory {
 
   public static PageAnalysis createPageAnalysis(
       final WikiDefinition wiki, final String title, final String text) {
-    final NamespaceRepository namespaceRepository = createNamespaceRepository();
-    final InterwikiRepository interwikiRepository = createInterwikiRepository();
-    final ProtocolRepository protocolRepository = createProtocolRepository();
-    final ExtensionTagRepository extensionTagRepository = createExtensionTagRepository();
-    final MagicLinkRepository magicLinkRepository = createMagicLingRepository();
-    final MagicWordRepository magicWordRepository = createMagicWordRepository();
-    return new PageAnalysis(
-        wiki,
-        title,
-        text,
-        extensionTagRepository,
-        interwikiRepository,
-        magicLinkRepository,
-        magicWordRepository,
-        namespaceRepository,
-        protocolRepository);
+    return createPageAnalysisFactory().analysis(wiki, title, text);
+  }
+
+  public static PageAnalysisFactory createPageAnalysisFactory() {
+    return new PageAnalysisFactory(
+        createExtensionTagRepository(),
+        createInterwikiRepository(),
+        createMagicLingRepository(),
+        createMagicWordRepository(),
+        createNamespaceRepository(),
+        createProtocolRepository());
   }
 
   private static @NonNull InterwikiRepository createInterwikiRepository() {

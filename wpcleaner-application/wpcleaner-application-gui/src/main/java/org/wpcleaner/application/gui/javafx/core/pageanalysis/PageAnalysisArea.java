@@ -30,7 +30,9 @@ public final class PageAnalysisArea extends InlineCssTextArea {
   }
 
   public void updateAnalysis(final PageAnalysis analysis) {
-    super.replaceText(analysis.getText());
+    if (!getText().equals(analysis.getText())) {
+      super.replaceText(analysis.getText());
+    }
     syntaxSpans = colorizer.computeStyleSpans(analysis);
     setStyleSpans(0, syntaxSpans);
   }

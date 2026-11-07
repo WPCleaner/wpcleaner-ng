@@ -15,6 +15,8 @@ import org.jspecify.annotations.Nullable;
 public final class CheckErrorsListView extends ListView<CheckAlgorithmErrors> {
 
   private static final int DOUBLE_CLICK_COUNT = 2;
+  private static final String FIXED_STYLE =
+      "-fx-control-inner-background: #CCFFCC; -fx-control-inner-background-alt: #CCFFCC;";
 
   public CheckErrorsListView(final Consumer<CheckAlgorithmErrors> doubleClickAction) {
     super();
@@ -46,6 +48,7 @@ public final class CheckErrorsListView extends ListView<CheckAlgorithmErrors> {
     protected void updateItem(@Nullable final CheckAlgorithmErrors item, final boolean empty) {
       super.updateItem(item, empty);
       setText(empty || item == null ? null : createText(item));
+      setStyle(!empty && item != null && item.errors().isEmpty() ? FIXED_STYLE : "");
     }
 
     private static String createText(final CheckAlgorithmErrors item) {
