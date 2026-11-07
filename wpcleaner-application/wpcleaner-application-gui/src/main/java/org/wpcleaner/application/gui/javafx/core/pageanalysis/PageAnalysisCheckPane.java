@@ -52,7 +52,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
     final PageAnalysisArea area = getArea();
     analysisDelay.setOnFinished(_ -> refreshAnalysis());
     area.textProperty().addListener((_, _, _) -> analysisDelay.playFromStart());
-    area.setOnContextMenuRequested(this::showContextMenu);
+    area.addEventFilter(ContextMenuEvent.CONTEXT_MENU_REQUESTED, this::prepareContextMenu);
   }
 
   public CheckErrorsListView getErrorsListView() {
@@ -115,16 +115,15 @@ public final class PageAnalysisCheckPane extends SplitPane {
     }
   }
 
-  private void showContextMenu(final ContextMenuEvent event) {
+  private void prepareContextMenu(final ContextMenuEvent event) {
     final PageAnalysisArea area = getArea();
     final OptionalInt position = area.hit(event.getX(), event.getY()).getCharacterIndex();
-    if (position.isPresent()) {
-      final CheckErrorsContextMenu contextMenu = createContextMenu(position.getAsInt());
-      if (!contextMenu.getItems().isEmpty()) {
-        contextMenu.show(area, event.getScreenX(), event.getScreenY());
-      }
-    }
-    event.consume();
+    area.setContextMenu(
+        position.stream()
+            .mapToObj(this::createContextMenu)
+            .filter(contextMenu -> !contextMenu.getItems().isEmpty())
+            .findFirst()
+            .orElse(null));
   }
 
   private void applyReplacement(final CheckError error, final Replacement replacement) {
