@@ -34,7 +34,6 @@ public final class PageAnalysisPanel extends StackPane {
   public PageAnalysisPanel(
       final JavaFxWindow<?> owner,
       final JavaFxAnalysisWindowServices services,
-      final JavaFxImageLoader imageLoader,
       final String pageName) {
     this.owner = owner;
     this.services = services;
@@ -42,7 +41,7 @@ public final class PageAnalysisPanel extends StackPane {
     this.checkPane =
         new PageAnalysisCheckPane(
             services.colorizer(),
-            imageLoader,
+            new JavaFxImageLoader(services.imageLoader()),
             services.checkAlgorithmRegistry(),
             services.pageAnalysisFactory());
     this.checkPane.getArea().setEditable(true);

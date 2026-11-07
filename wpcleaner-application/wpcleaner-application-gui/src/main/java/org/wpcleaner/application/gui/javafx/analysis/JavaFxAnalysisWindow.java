@@ -40,7 +40,7 @@ public final class JavaFxAnalysisWindow extends JavaFxWindow<JavaFxAnalysisWindo
 
   public void analyze(final String pageName) {
     final Tab tab = new Tab(pageName);
-    final PageAnalysisPanel panel = new PageAnalysisPanel(this, services, imageLoader, pageName);
+    final PageAnalysisPanel panel = new PageAnalysisPanel(this, services, pageName);
     tab.setContent(panel);
     tabPane.getTabs().add(tab);
     tabPane.getSelectionModel().select(tab);
