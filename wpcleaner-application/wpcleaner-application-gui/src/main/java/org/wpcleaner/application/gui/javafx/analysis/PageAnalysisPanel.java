@@ -20,6 +20,7 @@ import org.wpcleaner.api.progress.LongRunningTask;
 import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
+import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisCheckPane;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
@@ -38,7 +39,11 @@ public final class PageAnalysisPanel extends StackPane {
     this.services = services;
     this.pageName = pageName;
     this.checkPane =
-        new PageAnalysisCheckPane(services.colorizer(), services.checkAlgorithmRegistry());
+        new PageAnalysisCheckPane(
+            services.colorizer(),
+            new JavaFxImageLoader(services.imageLoader()),
+            services.checkAlgorithmRegistry(),
+            services.pageAnalysisFactory());
     this.checkPane.getArea().setEditable(true);
     initialize();
   }

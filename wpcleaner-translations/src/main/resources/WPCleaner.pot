@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-04 20:53+0100\n"
+"POT-Creation-Date: 2026-11-07 10:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -280,7 +280,7 @@ msgid "Code:"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:166
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:166
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:167
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftConfigWindow.java:96
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/options/RecentChangesFilterWindow.java:129
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/options/RecentChangesOptionsWindow.java:126
@@ -290,7 +290,7 @@ msgid "OK"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/WikiDefinitionWindow.java:171
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:171
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:172
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftConfigWindow.java:101
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/options/RecentChangesFilterWindow.java:134
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/options/RecentChangesOptionsWindow.java:131
@@ -358,8 +358,12 @@ msgstr ""
 msgid "Warning for %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/PageAnalysisCheckPane.java:34
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsPane.java:52
 msgid "Check Wiki errors"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsPane.java:60
+msgid "Automatic fixes"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveLastButton.java:25
@@ -509,90 +513,90 @@ msgstr ""
 msgid "Retrieving help URL"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:64
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:70
 msgid "Retrieving page content"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:80
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:86
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:93
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:105
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:92
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:99
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:111
 msgid "Error loading the page"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:80
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:86
 msgid "Page not found."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:86
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:92
 msgid "No revisions found for this page."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:93
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:99
 msgid "No content found for this page."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:106
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:112
 #, java-printf-format
 msgid "Error retrieving page content: %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:73
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:74
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftConfigWindow.java:52
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:66
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingConfigWindow.java:49
 msgid "User page"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:81
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:82
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftConfigWindow.java:60
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:74
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingConfigWindow.java:53
 msgid "User talk page"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:92
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:93
 msgid "Move to draft"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:97
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:98
 msgid "Confirm User Page Draft Action"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:193
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:194
 msgid "Please provide all required configuration elements."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:201
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:202
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:164
 msgid "Success"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:202
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:203
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:165
 msgid "Action completed successfully"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:204
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:205
 msgid "The user page has been moved to draft and replaced, and the talk page updated."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:211
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:212
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:173
 #, java-printf-format
 msgid "Error updating pages: %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:219
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:220
 msgid "Moving user page to draft"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:222
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:223
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:181
 msgid "Updating user page"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:225
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagedraft/UserPageDraftActionWindow.java:226
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingActionWindow.java:184
 msgid "Updating user talk page"
 msgstr ""

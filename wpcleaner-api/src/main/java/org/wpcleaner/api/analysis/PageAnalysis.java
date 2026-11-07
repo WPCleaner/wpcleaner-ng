@@ -49,6 +49,7 @@ public final class PageAnalysis {
   private static final String WINDOWS_LINE_END = "\r\n";
   private static final String LINE_END = "\n";
 
+  private final WikiDefinition wiki;
   private final String title;
   private final PageTitle pageTitle;
   private final String text;
@@ -66,6 +67,7 @@ public final class PageAnalysis {
       final MagicWordRepository magicWordRepository,
       final NamespaceRepository namespaceRepository,
       final ProtocolRepository protocolRepository) {
+    this.wiki = wiki;
     this.title = title;
     this.pageTitle =
         new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki))
@@ -87,6 +89,10 @@ public final class PageAnalysis {
             magicWordRepository,
             namespaceRepository,
             protocolRepository);
+  }
+
+  public WikiDefinition getWiki() {
+    return wiki;
   }
 
   public String getTitle() {
