@@ -19,7 +19,7 @@ record UserPageDraftConfig(
     @JsonProperty("userPage") ContentReplaceConfiguration userPage,
     @JsonProperty("userTalkPage") ContentAppendConfiguration userTalkPage) {
   @JsonCreator
-  public UserPageDraftConfig(
+  UserPageDraftConfig(
       @Nullable final MoveToDraftConfiguration moveToDraft,
       @Nullable final ContentReplaceConfiguration userPage,
       @Nullable final ContentAppendConfiguration userTalkPage) {
@@ -32,7 +32,7 @@ record UserPageDraftConfig(
   }
 
   @JsonIgnore
-  public boolean isComplete() {
+  boolean isComplete() {
     return moveToDraft.isComplete() && userPage.isComplete() && userTalkPage.isComplete();
   }
 }

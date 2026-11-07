@@ -45,7 +45,7 @@ final class UserPageHostingActionWindow extends JavaFxWindow<JavaFxRecentChanges
   private final ContentAppendAction userTalkPageAction;
   private final String userName;
 
-  public UserPageHostingActionWindow(
+  UserPageHostingActionWindow(
       final JavaFxRecentChangesWindowServices services,
       final Stage owner,
       final WikiDefinition wiki,

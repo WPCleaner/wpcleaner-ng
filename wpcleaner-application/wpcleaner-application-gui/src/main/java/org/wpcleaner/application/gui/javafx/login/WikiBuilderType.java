@@ -26,7 +26,7 @@ enum WikiBuilderType {
     this.image = image;
   }
 
-  public ImageCollection getImage() {
+  ImageCollection getImage() {
     return image;
   }
 

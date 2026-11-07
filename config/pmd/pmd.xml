@@ -44,6 +44,8 @@
     <exclude name="ShortMethodName"/>
     <!-- Excluded for re-definition -->
     <exclude name="TooManyStaticImports"/>
+    <!-- This rule goes against our coding standards -->
+    <exclude name="LocalVariableDeclarationShouldBeAtStartOfBlock"/>
   </rule>
   <rule ref="category/java/codestyle.xml/TooManyStaticImports">
     <properties>
@@ -54,8 +56,6 @@
   <rule ref="category/java/design.xml">
     <!-- No obligation to follow the Law of Demeter (only talk to friends) -->
     <exclude name="LawOfDemeter"/>
-    <!-- Relaxed rule -->
-    <exclude name="UseUtilityClass"/>
     <!-- Rule is incorrectly configured -->
     <exclude name="LoosePackageCoupling"/>
     <!-- Excluded for re-definition -->

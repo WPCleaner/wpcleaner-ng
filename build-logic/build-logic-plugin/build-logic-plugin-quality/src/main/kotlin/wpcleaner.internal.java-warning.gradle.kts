@@ -13,6 +13,9 @@ afterEvaluate {
           "-Werror"
         )
       )
+      if (JavaVersion.current().isCompatibleWith(JavaVersion.toVersion("25"))) {
+        options.compilerArgs.add("-Xlint:-classfile")
+      }
     }
   }
 }

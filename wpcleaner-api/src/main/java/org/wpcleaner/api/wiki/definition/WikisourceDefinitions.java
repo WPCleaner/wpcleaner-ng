@@ -14,10 +14,10 @@ import org.wpcleaner.api.wiki.builder.WikisourceBuilder;
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 final class WikisourceDefinitions implements WikiDefinitions {
 
-  public static final WikiDefinition BN =
+  static final WikiDefinition BN =
       WikisourceBuilder.ltr("bn", "Bengali Wikisource", WikiWarning.BENGALI);
-  public static final WikiDefinition ES = WikisourceBuilder.ltr("es", "Wikisource en español");
-  public static final WikiDefinition FR = WikisourceBuilder.ltr("fr", "Wikisource en français");
+  static final WikiDefinition ES = WikisourceBuilder.ltr("es", "Wikisource en español");
+  static final WikiDefinition FR = WikisourceBuilder.ltr("fr", "Wikisource en français");
 
   private WikisourceDefinitions() {
     // Class defining only constants discovered by introspection

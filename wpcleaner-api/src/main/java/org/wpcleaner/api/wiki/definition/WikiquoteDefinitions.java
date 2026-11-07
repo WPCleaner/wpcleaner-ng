@@ -14,9 +14,9 @@ import org.wpcleaner.api.wiki.builder.WikiquoteBuilder;
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 final class WikiquoteDefinitions implements WikiDefinitions {
 
-  public static final WikiDefinition CA = WikiquoteBuilder.ltr("ca", "Viquidites");
-  public static final WikiDefinition FR = WikiquoteBuilder.ltr("fr", "Wikiquote en français");
-  public static final WikiDefinition IT = WikiquoteBuilder.ltr("it", "Wikiquote");
+  static final WikiDefinition CA = WikiquoteBuilder.ltr("ca", "Viquidites");
+  static final WikiDefinition FR = WikiquoteBuilder.ltr("fr", "Wikiquote en français");
+  static final WikiDefinition IT = WikiquoteBuilder.ltr("it", "Wikiquote");
 
   private WikiquoteDefinitions() {
     // Class defining only constants discovered by introspection

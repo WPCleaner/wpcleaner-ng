@@ -44,7 +44,7 @@ tasks {
               exclude("**/.gradle/**")
             }
           }
-        }
+        },
       )
     inputs.files(javaFiles)
     val relativeDir = rootDir
@@ -57,7 +57,7 @@ tasks {
         subprojects.map { proj ->
           proj.tasks.matching { it.name.startsWith("spotless") }
         }
-      }
+      },
     )
 
     doLast {
@@ -124,7 +124,7 @@ tasks {
         val exitCode = process.waitFor()
         if (exitCode != 0) {
           throw GradleException(
-            "msgmerge failed for ${poFile.name} with exit code $exitCode: $output"
+            "msgmerge failed for ${poFile.name} with exit code $exitCode: $output",
           )
         }
       }

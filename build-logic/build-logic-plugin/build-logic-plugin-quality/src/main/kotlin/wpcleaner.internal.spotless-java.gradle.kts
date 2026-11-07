@@ -6,24 +6,27 @@ import org.wpcleaner.buildlogic.plugin.quality.formatter.JavaTestStepFormatterSt
 import org.wpcleaner.buildlogic.plugin.quality.formatter.PreconditionsFormatterStep
 import org.wpcleaner.buildlogic.plugin.quality.formatter.ReturnOperationFormatterStep
 
-plugins { id("com.diffplug.spotless") }
+plugins { id("wpcleaner.internal.spotless") }
 
 val qualityExtension: QualityExtension = QualityExtension.create(project)
 
 spotless {
     java {
-        googleJavaFormat("1.30.0")
+        toggleOffOn()
+        forbidWildcardImports()
+        googleJavaFormat("1.35.0")
         addStep(AnnotationOrderFormatterStep())
         addStep(EmptyLineFormatterStep())
         addStep(JavaModuleFormatterStep())
         addStep(JavaTestStepFormatterStep())
         addStep(PreconditionsFormatterStep())
         addStep(ReturnOperationFormatterStep())
+        target("src/*/java/**/*.java")
         val disabledSourceSet: Iterable<SourceSet> = qualityExtension.getDisabledSourceSet(project)
-        val sourceSets: List<SourceDirectorySet> = disabledSourceSet.map { it.allJava }
-        if (sourceSets.isNotEmpty()) {
+        val excludedPaths = disabledSourceSet.map { "src/${it.name}/**" }
+        if (excludedPaths.isNotEmpty()) {
             project.logger.info("Disable spotless-java for {}:{}", project.name, disabledSourceSet)
-            targetExclude(sourceSets)
+            targetExclude(excludedPaths)
         }
     }
 }

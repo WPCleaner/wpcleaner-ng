@@ -13,7 +13,7 @@ import org.wpcleaner.api.wiki.builder.WikibooksBuilder;
 @Order(0)
 final class WikibooksDefinitions implements WikiDefinitions {
 
-  public static final WikiDefinition BN =
+  static final WikiDefinition BN =
       WikibooksBuilder.ltr("bn", "Bengali Wikibooks", WikiWarning.BENGALI);
 
   private WikibooksDefinitions() {

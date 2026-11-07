@@ -11,15 +11,15 @@ import org.wpcleaner.api.wiki.builder.WiktionaryBuilder;
 
 @Component
 @Order(0)
-@SuppressWarnings({"PMD.DataClass", "SpellCheckingInspection", "unused"})
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 final class WiktionaryDefinitions implements WikiDefinitions {
 
-  public static final WikiDefinition BN =
+  static final WikiDefinition BN =
       WiktionaryBuilder.ltr("bn", "Bengali Wiktionary", WikiWarning.BENGALI);
-  public static final WikiDefinition EN = WiktionaryBuilder.ltr("en", "English Wiktionary");
-  public static final WikiDefinition FR = WiktionaryBuilder.ltr("fr", "Wiktionnaire en français");
-  public static final WikiDefinition PT = WiktionaryBuilder.ltr("pt", "Portuguese Wiktionary");
-  public static final WikiDefinition SV = WiktionaryBuilder.ltr("sv", "Swedish Wiktionary");
+  static final WikiDefinition EN = WiktionaryBuilder.ltr("en", "English Wiktionary");
+  static final WikiDefinition FR = WiktionaryBuilder.ltr("fr", "Wiktionnaire en français");
+  static final WikiDefinition PT = WiktionaryBuilder.ltr("pt", "Portuguese Wiktionary");
+  static final WikiDefinition SV = WiktionaryBuilder.ltr("sv", "Swedish Wiktionary");
 
   private WiktionaryDefinitions() {
     // Class defining only constants discovered by introspection

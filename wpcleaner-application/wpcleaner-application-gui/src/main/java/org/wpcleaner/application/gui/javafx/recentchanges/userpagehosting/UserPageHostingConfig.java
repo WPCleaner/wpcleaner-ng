@@ -17,7 +17,7 @@ record UserPageHostingConfig(
     @JsonProperty("userPage") ContentReplaceConfiguration userPage,
     @JsonProperty("userTalkPage") ContentAppendConfiguration userTalkPage) {
   @JsonCreator
-  public UserPageHostingConfig(
+  UserPageHostingConfig(
       @Nullable final ContentReplaceConfiguration userPage,
       @Nullable final ContentAppendConfiguration userTalkPage) {
     this.userPage =
@@ -27,7 +27,7 @@ record UserPageHostingConfig(
   }
 
   @JsonIgnore
-  public boolean isComplete() {
+  boolean isComplete() {
     return userPage.isComplete() && userTalkPage.isComplete();
   }
 }

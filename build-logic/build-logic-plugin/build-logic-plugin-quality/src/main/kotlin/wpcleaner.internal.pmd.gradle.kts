@@ -5,10 +5,29 @@ plugins { id("pmd") }
 val qualityExtension: QualityExtension = QualityExtension.create(project)
 
 pmd {
-    toolVersion = "7.17.0"
+    toolVersion = "7.29.0"
     isConsoleOutput = true
     ruleSetFiles = project.rootProject.files("config/pmd/pmd-test.xml")
     ruleSets = listOf()
+    incrementalAnalysis.set(true)
+}
+
+val javaToolchains = project.extensions.getByType<JavaToolchainService>()
+val javaExtension = project.extensions.getByType<JavaPluginExtension>()
+
+dependencies {
+    add(
+        "pmdAux",
+        javaToolchains.launcherFor(javaExtension.toolchain).map { launcher ->
+            val installationPath = launcher.metadata.installationPath
+            val jrtFs = installationPath.file("lib/jrt-fs.jar").asFile
+            if (jrtFs.exists()) {
+                project.files(jrtFs)
+            } else {
+                project.files(installationPath.file("lib/rt.jar").asFile)
+            }
+        },
+    )
 }
 
 tasks.named<Pmd>("pmdMain") { ruleSetFiles = project.rootProject.files("config/pmd/pmd.xml") }

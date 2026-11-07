@@ -1,10 +1,11 @@
 import org.wpcleaner.buildlogic.plugin.quality.formatter.KotlinDependenciesFormatterStep
 
-plugins { id("com.diffplug.spotless") }
+plugins { id("wpcleaner.internal.spotless") }
 
 spotless {
   kotlinGradle {
-    ktfmt().googleStyle()
+    toggleOffOn()
+    ktfmt("0.65").googleStyle()
     addStep(KotlinDependenciesFormatterStep())
   }
 }

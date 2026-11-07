@@ -14,8 +14,8 @@ import org.wpcleaner.api.wiki.builder.WikiversityBuilder;
 @SuppressWarnings({"SpellCheckingInspection", "unused"})
 final class WikiversityDefinitions implements WikiDefinitions {
 
-  public static final WikiDefinition FR = WikiversityBuilder.ltr("fr", "Wikiversité en Français");
-  public static final WikiDefinition IT = WikiversityBuilder.ltr("it", "Wikiversità");
+  static final WikiDefinition FR = WikiversityBuilder.ltr("fr", "Wikiversité en Français");
+  static final WikiDefinition IT = WikiversityBuilder.ltr("it", "Wikiversità");
 
   private WikiversityDefinitions() {
     // Class defining only constants discovered by introspection

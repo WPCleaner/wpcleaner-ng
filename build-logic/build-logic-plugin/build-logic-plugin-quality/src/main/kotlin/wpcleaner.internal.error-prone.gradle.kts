@@ -9,8 +9,9 @@ plugins {
 val qualityExtension: QualityExtension = QualityExtension.create(project)
 
 dependencies {
-    errorprone("com.google.errorprone:error_prone_core:2.50.0")
-    annotationProcessor("com.uber.nullaway:nullaway:0.13.6")
+    errorprone("com.google.errorprone:error_prone_core:2.51.0")
+    errorprone("com.uber.nullaway:nullaway:0.14.3")
+    annotationProcessor("com.uber.nullaway:nullaway:0.14.3")
 }
 
 tasks.withType<JavaCompile>().configureEach {

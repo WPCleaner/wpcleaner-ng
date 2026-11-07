@@ -34,7 +34,7 @@ final class UserPageHostingConfigWindow extends JavaFxWindow<JavaFxRecentChanges
   private final ContentReplaceConfigurationPane userPageGroup;
   private final ContentAppendConfigurationPane userTalkPageGroup;
 
-  public UserPageHostingConfigWindow(
+  UserPageHostingConfigWindow(
       final JavaFxRecentChangesWindowServices services,
       final Stage owner,
       @Nullable final UserPageHostingConfig initialConfig,

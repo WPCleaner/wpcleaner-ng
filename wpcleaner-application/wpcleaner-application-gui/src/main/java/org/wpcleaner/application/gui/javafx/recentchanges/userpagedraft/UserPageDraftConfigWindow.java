@@ -37,7 +37,7 @@ final class UserPageDraftConfigWindow extends JavaFxWindow<JavaFxRecentChangesWi
   private final ContentReplaceConfigurationPane userPageGroup;
   private final ContentAppendConfigurationPane userTalkPageGroup;
 
-  public UserPageDraftConfigWindow(
+  UserPageDraftConfigWindow(
       final JavaFxRecentChangesWindowServices services,
       final Stage owner,
       @Nullable final UserPageDraftConfig initialConfig,

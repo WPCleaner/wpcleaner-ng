@@ -68,7 +68,7 @@ public abstract class JavaFxWindow<S extends JavaFxWindowServices> {
     scene.addEventFilter(
         KeyEvent.KEY_PRESSED,
         event -> {
-          if (KeyCode.F1.equals(event.getCode())) {
+          if (KeyCode.F1 == event.getCode()) {
             event.consume();
             displayHelp();
           }

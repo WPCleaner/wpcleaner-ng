@@ -16,10 +16,3 @@ project.plugins.withId("java") {
 }
 
 project.plugins.withId("java-library") { }
-
-project.plugins.withId("com.diffplug.spotless") {
-  tasks.withType<com.diffplug.gradle.spotless.SpotlessTask>().configureEach {
-    notCompatibleWithConfigurationCache("Spotless has classloader issues under configuration cache when run with clean")
-  }
-}
-

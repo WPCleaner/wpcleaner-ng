@@ -14,9 +14,9 @@ import org.wpcleaner.api.wiki.builder.WikivoyageBuilder;
 @SuppressWarnings("unused")
 final class WikivoyageDefinitions implements WikiDefinitions {
 
-  public static final WikiDefinition BN =
+  static final WikiDefinition BN =
       WikivoyageBuilder.ltr("bn", "Bengali Wikivoyage", WikiWarning.BENGALI);
-  public static final WikiDefinition FR = WikivoyageBuilder.ltr("fr", "Wikivoyage en français");
+  static final WikiDefinition FR = WikivoyageBuilder.ltr("fr", "Wikivoyage en français");
 
   private WikivoyageDefinitions() {
     // Class defining only constants discovered by introspection

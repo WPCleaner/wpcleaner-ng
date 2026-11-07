@@ -50,7 +50,8 @@ final class UserPageDraftActionWindow extends JavaFxWindow<JavaFxRecentChangesWi
   private final ContentReplaceAction userPageAction;
   private final ContentAppendAction userTalkPageAction;
 
-  public UserPageDraftActionWindow(
+  @SuppressWarnings("PMD.ExcessiveParameterList")
+  UserPageDraftActionWindow(
       final JavaFxRecentChangesWindowServices services,
       final Stage owner,
       final WikiDefinition wiki,
@@ -182,7 +183,7 @@ final class UserPageDraftActionWindow extends JavaFxWindow<JavaFxRecentChangesWi
     return new Scene(root);
   }
 
-  public String getUserName() {
+  String getUserName() {
     return userName;
   }
 

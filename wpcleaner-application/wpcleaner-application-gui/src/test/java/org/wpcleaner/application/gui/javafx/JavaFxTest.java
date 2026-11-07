@@ -47,7 +47,7 @@ public class JavaFxTest {
         });
   }
 
-  @SuppressWarnings("PMD.AvoidCatchingThrowable")
+  @SuppressWarnings("PMD.AvoidCatchingGenericException")
   protected <T> T callOnJavaFx(final Supplier<T> supplier)
       throws InterruptedException, ExecutionException, TimeoutException {
     final CompletableFuture<T> future = new CompletableFuture<>();
