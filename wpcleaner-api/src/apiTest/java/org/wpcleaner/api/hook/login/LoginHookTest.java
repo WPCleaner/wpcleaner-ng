@@ -49,7 +49,10 @@ class LoginHookTest {
             TagsParameters.Properties.DISPLAY_NAME));
 
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
+    loginHook.executeHook(
+        WikimediaDefinitions.META,
+        WPCleanerConfigurationLoader.GENERAL_USERNAME,
+        new ProgressTracker(_ -> {}));
 
     // THEN
     final List<Tag> tags = tagRepository.getTags(WikimediaDefinitions.META);
@@ -64,7 +67,10 @@ class LoginHookTest {
   @Test
   void executeHookPopulatesInterwikiRepository() {
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
+    loginHook.executeHook(
+        WikimediaDefinitions.META,
+        WPCleanerConfigurationLoader.GENERAL_USERNAME,
+        new ProgressTracker(_ -> {}));
 
     // THEN
     final List<Interwiki> interwikis = interwikiRepository.getInterwikis(WikimediaDefinitions.META);
@@ -79,7 +85,10 @@ class LoginHookTest {
   @Test
   void executeHookPopulatesProtocolRepository() {
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
+    loginHook.executeHook(
+        WikimediaDefinitions.META,
+        WPCleanerConfigurationLoader.GENERAL_USERNAME,
+        new ProgressTracker(_ -> {}));
 
     // THEN
     final List<Protocol> protocols = protocolRepository.getProtocols(WikimediaDefinitions.META);
@@ -93,7 +102,10 @@ class LoginHookTest {
   @Test
   void executeHookPopulatesExtensionTagRepository() {
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
+    loginHook.executeHook(
+        WikimediaDefinitions.META,
+        WPCleanerConfigurationLoader.GENERAL_USERNAME,
+        new ProgressTracker(_ -> {}));
 
     // THEN
     final List<ExtensionTag> extensionTags =
@@ -108,7 +120,10 @@ class LoginHookTest {
   @Test
   void executeHookPopulatesMagicWordRepository() {
     // WHEN
-    loginHook.executeHook(WikimediaDefinitions.META, new ProgressTracker(_ -> {}));
+    loginHook.executeHook(
+        WikimediaDefinitions.META,
+        WPCleanerConfigurationLoader.GENERAL_USERNAME,
+        new ProgressTracker(_ -> {}));
 
     // THEN
     final List<MagicWord> magicWords = magicWordRepository.getMagicWords(WikimediaDefinitions.META);

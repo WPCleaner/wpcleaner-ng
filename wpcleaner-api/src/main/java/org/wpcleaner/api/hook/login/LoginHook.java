@@ -30,21 +30,25 @@ public class LoginHook {
   private final Set<SiteInfoParameters.Properties> siteInfoProperties;
   private final TagRepository tagRepository;
   private final Set<TagsParameters.Properties> tagsProperties;
+  private final WPCleanerConfigurationLoader configurationLoader;
 
   public LoginHook(
       final ApiSiteInfo apiSiteInfo,
       final ApiTags apiTags,
       final SiteInfoExtractor siteInfoExtractor,
-      final TagRepository tagRepository) {
+      final TagRepository tagRepository,
+      final WPCleanerConfigurationLoader configurationLoader) {
     this.apiSiteInfo = apiSiteInfo;
     this.apiTags = apiTags;
     this.siteInfoExtractor = siteInfoExtractor;
     this.siteInfoProperties = EnumSet.noneOf(SiteInfoParameters.Properties.class);
     this.tagRepository = tagRepository;
     this.tagsProperties = EnumSet.noneOf(TagsParameters.Properties.class);
+    this.configurationLoader = configurationLoader;
   }
 
-  public void executeHook(final WikiDefinition wiki, final ProgressTracker tracker) {
+  public void executeHook(
+      final WikiDefinition wiki, final String username, final ProgressTracker tracker) {
     if (!siteInfoProperties.isEmpty()) {
       try (ProgressStep _ = tracker.start(GT._T("Retrieving site information"))) {
         siteInfoExtractor.extract(
@@ -56,6 +60,9 @@ public class LoginHook {
         final List<Tag> tags = apiTags.retrieveTags(wiki, Limit.max(), null, tagsProperties);
         tagRepository.addTags(wiki, tags);
       }
+    }
+    try (ProgressStep _ = tracker.start(GT._T("Retrieving WPCleaner configuration"))) {
+      configurationLoader.load(wiki, username);
     }
   }
 

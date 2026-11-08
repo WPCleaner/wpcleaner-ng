@@ -61,8 +61,8 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
             Objects.requireNonNull(tokens.login(), GT._T("Login token is null")));
       }
     }
-    loginHook.executeHook(input.wiki, tracker);
     final String compactUsername = compactUsername(input.username);
+    loginHook.executeHook(input.wiki, compactUsername, tracker);
     currentUserService.login(input.wiki(), compactUsername, input.demo());
     try (ProgressStep _ =
         tracker.start(GT._T("Retrieving information about user %s", input.username))) {

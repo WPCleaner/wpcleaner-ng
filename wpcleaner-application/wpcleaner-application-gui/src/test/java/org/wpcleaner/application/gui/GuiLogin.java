@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.TestComponent;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -27,6 +28,8 @@ import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
+import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
+import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -74,6 +77,7 @@ public final class GuiLogin {
   private final LoginProcessor loginProcessor;
   private final MockRestServiceServer mediaWikiServer;
   private final MockApiLogin mockApiLogin;
+  private final MockApiRevisions mockApiRevisions;
   private final MockApiSiteInfo mockApiSiteInfo;
   private final MockApiTags mockApiTags;
   private final MockApiTokens mockApiTokens;
@@ -83,6 +87,7 @@ public final class GuiLogin {
       final LoginProcessor loginProcessor,
       final MockRestServiceServer mediaWikiServer,
       final MockApiLogin mockApiLogin,
+      final MockApiRevisions mockApiRevisions,
       final MockApiSiteInfo mockApiSiteInfo,
       final MockApiTags mockApiTags,
       final MockApiTokens mockApiTokens,
@@ -90,6 +95,7 @@ public final class GuiLogin {
     this.loginProcessor = loginProcessor;
     this.mediaWikiServer = mediaWikiServer;
     this.mockApiLogin = mockApiLogin;
+    this.mockApiRevisions = mockApiRevisions;
     this.mockApiSiteInfo = mockApiSiteInfo;
     this.mockApiTags = mockApiTags;
     this.mockApiTokens = mockApiTokens;
@@ -130,13 +136,21 @@ public final class GuiLogin {
 
   private void givenLoginHookAndUser(
       final WikiDefinition wiki, final String username, final LoginData data) {
+    final String compactUsername = compactUsername(username);
     mockApiSiteInfo
         .givenRequestSiteInfo(wiki, SITE_INFO_PROPERTIES, null, null, null)
         .willReturn(createSiteInfo(data.namespaces()));
     mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(data.tags());
+    WPCleanerConfigurationExpectations.givenConfiguration(
+        mockApiRevisions, wiki, compactUsername, null, data.userConfiguration());
     mockApiUsers
-        .givenRetrieveUser(wiki, username)
-        .willReturn(createUser(username, data.groups(), data.rights()));
+        .givenRetrieveUser(wiki, compactUsername)
+        .willReturn(createUser(compactUsername, data.groups(), data.rights()));
+  }
+
+  private static String compactUsername(final String username) {
+    final int atSignIndex = username.indexOf('@');
+    return atSignIndex < 0 ? username : username.substring(0, atSignIndex);
   }
 
   private static SiteInfo createSiteInfo(final List<Namespace> namespaces) {
@@ -180,10 +194,26 @@ public final class GuiLogin {
   }
 
   public record LoginData(
-      List<Namespace> namespaces, List<Tag> tags, List<String> groups, List<String> rights) {
+      List<Namespace> namespaces,
+      List<Tag> tags,
+      List<String> groups,
+      List<String> rights,
+      @Nullable String userConfiguration) {
+
+    public LoginData(
+        final List<Namespace> namespaces,
+        final List<Tag> tags,
+        final List<String> groups,
+        final List<String> rights) {
+      this(namespaces, tags, groups, rights, null);
+    }
 
     public static LoginData of(final List<Namespace> namespaces) {
       return new LoginData(namespaces, List.of(), List.of(), List.of());
+    }
+
+    public LoginData withUserConfiguration(final String configuration) {
+      return new LoginData(namespaces, tags, groups, rights, configuration);
     }
   }
 }
