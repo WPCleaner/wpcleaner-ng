@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
-import org.wpcleaner.api.api.ApiRestClient;
+import org.wpcleaner.api.api.UserAgent;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
@@ -28,9 +28,11 @@ public class CheckWikiServer {
   private static final Pattern ELEMENT_SEPARATOR = Pattern.compile("\\|");
 
   private final RestClient.Builder clientBuilder;
+  private final UserAgent userAgent;
 
-  public CheckWikiServer(final RestClient.Builder clientBuilder) {
+  public CheckWikiServer(final RestClient.Builder clientBuilder, final UserAgent userAgent) {
     this.clientBuilder = clientBuilder;
+    this.userAgent = userAgent;
   }
 
   public static MultiValueMap<String, String> createListParameters(
@@ -52,7 +54,7 @@ public class CheckWikiServer {
     final String response =
         clientBuilder
             .clone()
-            .defaultHeader(HttpHeaders.USER_AGENT, ApiRestClient.USER_AGENT)
+            .defaultHeader(HttpHeaders.USER_AGENT, userAgent.getValue())
             .build()
             .post()
             .uri(LIST_URL)

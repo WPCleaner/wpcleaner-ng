@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
+import org.wpcleaner.api.api.ApiRequestExpectation;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 public final class MockCheckWikiServer {
@@ -31,6 +32,7 @@ public final class MockCheckWikiServer {
     server
         .expect(MockRestRequestMatchers.requestTo(CheckWikiServer.LIST_URL))
         .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+        .andExpect(ApiRequestExpectation.userAgent())
         .andExpect(
             MockRestRequestMatchers.content()
                 .formData(CheckWikiServer.createListParameters(wiki, errorNumber, limit)))

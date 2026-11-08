@@ -14,6 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.hamcrest.Matchers;
 import org.jspecify.annotations.Nullable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.client.MockClientHttpRequest;
@@ -61,13 +62,19 @@ public final class ApiRequestExpectation {
         new ApiRequestExpectation(
             mediaWikiServer
                 .expect(MockRestRequestMatchers.requestTo(Matchers.startsWith(wiki.apiUrl())))
-                .andExpect(MockRestRequestMatchers.method(method)));
+                .andExpect(MockRestRequestMatchers.method(method))
+                .andExpect(userAgent()));
     expectation.queryParam(ApiParameters.ACTION.value, action.value);
     expectation.queryParam(
         ApiParameters.ERROR_FORMAT.value, ApiParameters.ErrorFormat.PLAIN_TEXT.value);
     expectation.queryParam(ApiParameters.FORMAT.value, ApiParameters.Format.JSON.value);
     expectation.queryParam(ApiParameters.FORMAT_VERSION.value, ApiParameters.FORMAT_VERSION_VALUE);
     return expectation;
+  }
+
+  public static RequestMatcher userAgent() {
+    return MockRestRequestMatchers.header(
+        HttpHeaders.USER_AGENT, Matchers.startsWith(UserAgent.CLIENT_NAME + "/"));
   }
 
   private ApiRequestExpectation(final ResponseActions request) {

@@ -27,3 +27,17 @@ testing {
     }
   }
 }
+
+val versionResourcesDirectory = layout.buildDirectory.dir("generated/resources/version")
+val generateVersionResource =
+  tasks.register<WriteProperties>("generateVersionResource") {
+    description = "Generates the resource holding the version of the project"
+    destinationFile = versionResourcesDirectory.map {
+      it.file("org/wpcleaner/api/api/version.properties")
+    }
+    property("version", project.version.toString())
+  }
+
+sourceSets.main {
+  resources.srcDir(files(versionResourcesDirectory).builtBy(generateVersionResource))
+}
