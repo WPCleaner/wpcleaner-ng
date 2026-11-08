@@ -6,13 +6,15 @@ package org.wpcleaner.api.api.edit;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.Instant;
 import org.jspecify.annotations.Nullable;
 
 public record Edit(
     @JsonProperty("result") String result,
     @JsonProperty("pageid") @Nullable Integer pageId,
     @JsonProperty("title") @Nullable String title,
-    @JsonProperty("nochange") @Nullable Boolean noChange) {
+    @JsonProperty("nochange") @Nullable Boolean noChange,
+    @JsonProperty("newtimestamp") @Nullable Instant newTimestamp) {
 
   public static final String RESULT_SUCCESS = "Success";
 }

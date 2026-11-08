@@ -44,7 +44,7 @@ class ApiEditWrapperTest {
   private static final String OTHER_CSRF_TOKEN = "other-csrf-token+\\";
   private static final Duration THROTTLE_PERIOD = Duration.ofMinutes(1);
   private static final Duration SHORT_THROTTLE_PERIOD = Duration.ofSeconds(1);
-  private static final Edit EDIT = new Edit(Edit.RESULT_SUCCESS, 1234, "Test", null);
+  private static final Edit EDIT = new Edit(Edit.RESULT_SUCCESS, 1234, "Test", null, null);
   private static final Move MOVE = new Move("User:Test", "Drafting", false, "User:Test/Draft");
 
   @Autowired private ApiEdit apiEdit;

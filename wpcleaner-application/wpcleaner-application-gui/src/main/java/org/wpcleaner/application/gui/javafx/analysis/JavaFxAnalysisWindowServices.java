@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.javafx.analysis;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.api.api.edit.ApiEditWrapper;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
@@ -15,13 +16,16 @@ import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyn
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindowServices;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
+import org.wpcleaner.lib.check.CheckWikiSummary;
 import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
 public record JavaFxAnalysisWindowServices(
     JavaFxActionServices actionServices,
+    ApiEditWrapper apiEdit,
     ApiRevisions apiRevisions,
     CheckAlgorithmRegistry checkAlgorithmRegistry,
+    CheckWikiSummary checkWikiSummary,
     PageSyntaxColorizer colorizer,
     ImageLoader imageLoader,
     PageAnalysisFactory pageAnalysisFactory,

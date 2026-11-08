@@ -43,6 +43,7 @@ import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
+import org.wpcleaner.lib.check.CheckAlgorithm;
 
 @GuiSpringBootTest
 @Import(PageAnalysisCheckPaneFactory.class)
@@ -545,6 +546,34 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(button.getText()).isEmpty();
     Assertions.assertThat(button.getGraphic()).isInstanceOf(ImageView.class);
     Assertions.assertThat(button.getTooltip().getText()).isEqualTo("Automatic fixes");
+  }
+
+  @DisplayName("should give the algorithms with fewer errors than initially as fixed")
+  @Test
+  void getFixedAlgorithms() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final PageAnalysisCheckPane pane = createPane();
+    runOnJavaFx(
+        () -> {
+          pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, TEXT));
+          pane.resetInitialErrors();
+        });
+    Assertions.assertThat(callOnJavaFx(pane::getFixedAlgorithms)).isEmpty();
+
+    // WHEN
+    runOnJavaFx(
+        () -> {
+          PageAnalysisCheckPaneFactory.show(pane);
+          lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class).fire();
+        });
+
+    // THEN
+    Assertions.assertThat(pane.getErrorsListView().getItems())
+        .singleElement()
+        .satisfies(errors -> Assertions.assertThat(errors.errors()).hasSize(1));
+    Assertions.assertThat(callOnJavaFx(pane::getFixedAlgorithms))
+        .extracting(CheckAlgorithm::number)
+        .containsExactly(48);
   }
 
   @DisplayName("should not apply the replacements that are not automatic")
