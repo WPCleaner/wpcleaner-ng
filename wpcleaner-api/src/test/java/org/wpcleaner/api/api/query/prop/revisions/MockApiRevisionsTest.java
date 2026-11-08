@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpServerErrorException;
 import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.api.Limit;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 
 @ApiSpringBootTest
@@ -44,7 +45,7 @@ class MockApiRevisionsTest {
                     RevisionsParameters.Properties.TIMESTAMP))
             .rvContinue("20260101|1")
             .section(2)
-            .slots(Set.of("main"))
+            .slots(Set.of(Slot.MAIN))
             .start(Instant.parse("2026-10-28T00:00:00Z"))
             .startId(999)
             .tag("mw-undo")
@@ -59,7 +60,7 @@ class MockApiRevisionsTest {
             123,
             "abc",
             12,
-            Map.of("main", new RevisionSlot("Main page content", "wikitext", "def", 17)),
+            Map.of(Slot.MAIN.value, new RevisionSlot("Main page content", "wikitext", "def", 17)),
             List.of("mw-undo"),
             Instant.parse("2026-10-27T12:34:56Z"),
             "Author",

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.wpcleaner.api.SpringBootTestConfig;
 import org.wpcleaner.api.api.Limit;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.wiki.definition.WikimediaDefinitions;
 
 @SpringBootTest(classes = SpringBootTestConfig.class)
@@ -101,7 +102,7 @@ class ApiRevisionsTest {
                     RevisionsParameters.Properties.TIMESTAMP,
                     RevisionsParameters.Properties.USER,
                     RevisionsParameters.Properties.USER_ID))
-            .slots(Set.of("main"))
+            .slots(Set.of(Slot.MAIN))
             .build();
 
     // WHEN
@@ -123,9 +124,8 @@ class ApiRevisionsTest {
       Assertions.assertThat(revision.userId()).as("userId").isNotNull();
 
       // Slots
-      Assertions.assertThat(revision.slots()).as("slots").containsKey("main");
-      final RevisionSlot mainSlot = revision.slots().get("main");
-      Assertions.assertThat(mainSlot).as("mainSlot").isNotNull();
+      Assertions.assertThat(revision.slots()).as("slots").containsKey(Slot.MAIN.value);
+      final RevisionSlot mainSlot = revision.mainSlot().orElseThrow();
       Assertions.assertThat(mainSlot.content()).as("content").isNotNull();
       Assertions.assertThat(mainSlot.contentModel()).as("contentModel").isNotNull();
       Assertions.assertThat(mainSlot.sha1()).as("sha1").isNotNull();

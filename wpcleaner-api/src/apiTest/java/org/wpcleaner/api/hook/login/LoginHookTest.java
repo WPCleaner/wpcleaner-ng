@@ -52,7 +52,7 @@ class LoginHookTest {
     loginHook.executeHook(
         WikimediaDefinitions.META,
         WPCleanerConfigurationLoader.GENERAL_USERNAME,
-        new ProgressTracker(_ -> {}));
+        ProgressTracker.NOOP);
 
     // THEN
     final List<Tag> tags = tagRepository.getTags(WikimediaDefinitions.META);
@@ -70,7 +70,7 @@ class LoginHookTest {
     loginHook.executeHook(
         WikimediaDefinitions.META,
         WPCleanerConfigurationLoader.GENERAL_USERNAME,
-        new ProgressTracker(_ -> {}));
+        ProgressTracker.NOOP);
 
     // THEN
     final List<Interwiki> interwikis = interwikiRepository.getInterwikis(WikimediaDefinitions.META);
@@ -88,7 +88,7 @@ class LoginHookTest {
     loginHook.executeHook(
         WikimediaDefinitions.META,
         WPCleanerConfigurationLoader.GENERAL_USERNAME,
-        new ProgressTracker(_ -> {}));
+        ProgressTracker.NOOP);
 
     // THEN
     final List<Protocol> protocols = protocolRepository.getProtocols(WikimediaDefinitions.META);
@@ -105,7 +105,7 @@ class LoginHookTest {
     loginHook.executeHook(
         WikimediaDefinitions.META,
         WPCleanerConfigurationLoader.GENERAL_USERNAME,
-        new ProgressTracker(_ -> {}));
+        ProgressTracker.NOOP);
 
     // THEN
     final List<ExtensionTag> extensionTags =
@@ -123,7 +123,7 @@ class LoginHookTest {
     loginHook.executeHook(
         WikimediaDefinitions.META,
         WPCleanerConfigurationLoader.GENERAL_USERNAME,
-        new ProgressTracker(_ -> {}));
+        ProgressTracker.NOOP);
 
     // THEN
     final List<MagicWord> magicWords = magicWordRepository.getMagicWords(WikimediaDefinitions.META);

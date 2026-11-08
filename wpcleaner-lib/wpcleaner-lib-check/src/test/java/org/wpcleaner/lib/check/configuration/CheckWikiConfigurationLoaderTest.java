@@ -64,7 +64,7 @@ class CheckWikiConfigurationLoaderTest {
     givenTranslationPage(Map.of());
 
     // WHEN
-    loader.execute(WIKI, new ProgressTracker(_ -> {}));
+    loader.execute(WIKI, ProgressTracker.NOOP);
 
     // THEN
     mediaWikiServer.verify();
@@ -92,7 +92,7 @@ class CheckWikiConfigurationLoaderTest {
     givenTranslationPage(Map.of("error_048_prio_frwiki", "0", "error_048_prio_enwiki", "1"));
 
     // WHEN
-    loader.execute(WIKI, new ProgressTracker(_ -> {}));
+    loader.execute(WIKI, ProgressTracker.NOOP);
 
     // THEN
     mediaWikiServer.verify();
@@ -111,7 +111,7 @@ class CheckWikiConfigurationLoaderTest {
     wpcleanerRepository.setConfiguration(WIKI, WPCleanerConfiguration.EMPTY);
 
     // WHEN
-    loader.execute(WIKI, new ProgressTracker(_ -> {}));
+    loader.execute(WIKI, ProgressTracker.NOOP);
 
     // THEN
     mediaWikiServer.verify();
@@ -130,7 +130,7 @@ class CheckWikiConfigurationLoaderTest {
             Map.of("check_wiki_translation_page", TRANSLATION_PAGE), Map.of()));
 
     // WHEN
-    loader.execute(wiki, new ProgressTracker(_ -> {}));
+    loader.execute(wiki, ProgressTracker.NOOP);
 
     // THEN
     mediaWikiServer.verify();

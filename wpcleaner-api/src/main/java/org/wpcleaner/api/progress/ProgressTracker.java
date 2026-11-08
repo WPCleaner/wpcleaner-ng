@@ -12,6 +12,8 @@ import java.util.function.Consumer;
 
 public final class ProgressTracker {
 
+  public static final ProgressTracker NOOP = new ProgressTracker(_ -> {});
+
   private final List<ProgressStep> currentSteps = new ArrayList<>();
   private final Consumer<List<String>> tracked;
   private final ReentrantLock lock = new ReentrantLock();

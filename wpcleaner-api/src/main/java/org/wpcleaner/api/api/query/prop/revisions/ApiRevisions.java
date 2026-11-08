@@ -129,7 +129,8 @@ public class ApiRevisions {
     builder.queryParamCollection(
         RevisionsParameters.PROPERTIES.value, options.properties(), properties -> properties.value);
     builder.queryParam(RevisionsParameters.SECTION.value, options.section());
-    builder.queryParamCollection(RevisionsParameters.SLOTS.value, options.slots());
+    builder.queryParamCollection(
+        RevisionsParameters.SLOTS.value, options.slots(), slot -> slot.value);
     builder.queryParam(RevisionsParameters.START.value, options.start());
     builder.queryParam(RevisionsParameters.START_ID.value, options.startId());
     builder.queryParam(RevisionsParameters.TAG.value, options.tag());

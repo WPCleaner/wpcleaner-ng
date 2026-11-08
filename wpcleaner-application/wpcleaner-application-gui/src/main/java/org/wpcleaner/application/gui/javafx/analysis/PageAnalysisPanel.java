@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.Revision;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
@@ -70,7 +71,7 @@ public final class PageAnalysisPanel extends StackPane {
         final RevisionsQuery query =
             RevisionsQuery.emptyBuilder()
                 .properties(Set.of(RevisionsParameters.Properties.CONTENT))
-                .slots(Set.of("main"))
+                .slots(Set.of(Slot.MAIN))
                 .build();
         return services
             .apiRevisions()
@@ -93,7 +94,7 @@ public final class PageAnalysisPanel extends StackPane {
     }
 
     final Revision revision = page.revisions().getFirst();
-    final RevisionSlot slot = revision.slots().get("main");
+    final RevisionSlot slot = revision.mainSlot().orElse(null);
     if (slot == null || slot.content() == null) {
       showWarning(GT._T("Error loading the page"), GT._T("No content found for this page."));
       return;

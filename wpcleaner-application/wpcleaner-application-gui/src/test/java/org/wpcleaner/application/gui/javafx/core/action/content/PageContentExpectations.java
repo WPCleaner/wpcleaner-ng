@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.javafx.core.action.content;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.Revision;
@@ -22,7 +23,7 @@ public final class PageContentExpectations {
       RevisionsQuery.emptyBuilder()
           .properties(
               Set.of(RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.IDS))
-          .slots(Set.of("main"))
+          .slots(Set.of(Slot.MAIN))
           .build();
 
   private PageContentExpectations() {}
@@ -62,7 +63,7 @@ public final class PageContentExpectations {
             123,
             null,
             null,
-            Map.of("main", new RevisionSlot(content, null, null, null)),
+            Map.of(Slot.MAIN.value, new RevisionSlot(content, null, null, null)),
             List.of(),
             null,
             null,

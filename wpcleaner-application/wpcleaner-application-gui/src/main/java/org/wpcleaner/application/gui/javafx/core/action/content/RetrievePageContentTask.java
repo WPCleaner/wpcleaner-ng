@@ -8,8 +8,10 @@ package org.wpcleaner.application.gui.javafx.core.action.content;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
+import org.wpcleaner.api.api.query.prop.revisions.Revision;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
@@ -40,7 +42,7 @@ public final class RetrievePageContentTask implements LongRunningTask<String> {
               .properties(
                   Set.of(
                       RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.IDS))
-              .slots(Set.of("main"))
+              .slots(Set.of(Slot.MAIN))
               .build();
       final List<Page> pages = apiRevisions.retrieveRevisionsByTitle(wiki, List.of(title), query);
       return pages.stream()
@@ -54,8 +56,7 @@ public final class RetrievePageContentTask implements LongRunningTask<String> {
   private String extractContent(final Page page) {
     return page.revisions().stream()
         .findFirst()
-        .map(revision -> revision.slots().get("main"))
-        .filter(Objects::nonNull)
+        .flatMap(Revision::mainSlot)
         .map(RevisionSlot::content)
         .orElse("");
   }

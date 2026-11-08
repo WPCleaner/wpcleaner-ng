@@ -26,6 +26,7 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.analysis.table.TableElement;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.Revision;
@@ -41,7 +42,6 @@ import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 @SpringBootTest(classes = SpringBootTestConfig.class)
 class PageAnalysisPerformanceTest {
 
-  private static final String MAIN_SLOT = "main";
   private static final int WARMUP_RUNS = 2;
   private static final int MEASURED_RUNS = 5;
   private static final int MAXIMUM_PAGE_LENGTH = 2_000_000;
@@ -78,7 +78,7 @@ class PageAnalysisPerformanceTest {
     // WHEN
     for (final WikiDefinition wiki : List.of(WikipediaDefinitions.FR, WikipediaDefinitions.EN)) {
       loginHook.executeHook(
-          wiki, WPCleanerConfigurationLoader.GENERAL_USERNAME, new ProgressTracker(_ -> {}));
+          wiki, WPCleanerConfigurationLoader.GENERAL_USERNAME, ProgressTracker.NOOP);
       final Map<String, String> contents = retrieveContents(wiki, PAGES.get(wiki));
       contents.forEach(
           (title, content) ->
@@ -172,7 +172,7 @@ class PageAnalysisPerformanceTest {
             titles,
             RevisionsQuery.emptyBuilder()
                 .properties(Set.of(RevisionsParameters.Properties.CONTENT))
-                .slots(Set.of(MAIN_SLOT))
+                .slots(Set.of(Slot.MAIN))
                 .build());
     for (final String title : titles) {
       pages.stream()
@@ -187,8 +187,7 @@ class PageAnalysisPerformanceTest {
   private static Optional<String> findContent(final Page page) {
     return page.revisions().stream()
         .findFirst()
-        .map(Revision::slots)
-        .map(slots -> slots.get(MAIN_SLOT))
+        .flatMap(Revision::mainSlot)
         .map(RevisionSlot::content);
   }
 
