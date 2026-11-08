@@ -169,6 +169,25 @@ class CheckAlgorithm048Test {
     Assertions.assertThat(errors).containsOnly(List.of());
   }
 
+  @DisplayName("should ignore links in tags without wiki content, but not in undeclared tags")
+  @Test
+  void ignoreLinksInNonWikiTags() {
+    // GIVEN
+    final String text =
+        "<nowiki>[[Paris]]</nowiki> <mapframe width=200>[[Paris]]</mapframe>"
+            + " <timeline>[[Paris]]</timeline> <undeclared>[[Paris]]</undeclared> [[Paris]]";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    Assertions.assertThat(errors)
+        .extracting(CheckError::begin)
+        .containsExactly(
+            text.indexOf("<undeclared>") + "<undeclared>".length(), text.lastIndexOf("[[Paris]]"));
+  }
+
   @DisplayName("should ignore links in the templates to ignore, given by name or by group")
   @Test
   void ignoreLinksInIgnoredTemplates() {
