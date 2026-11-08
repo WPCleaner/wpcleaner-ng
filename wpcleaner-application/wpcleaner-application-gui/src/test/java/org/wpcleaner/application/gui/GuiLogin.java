@@ -55,6 +55,7 @@ public final class GuiLogin {
   public static final String PASSWORD = "p&ss+word";
 
   private static final String LOGIN_TOKEN = "login-token+\\";
+  private static final String CHECK_WIKI_TRANSLATION_PAGE = "Project:Check Wiki/Translation";
   private static final Set<SiteInfoParameters.Properties> SITE_INFO_PROPERTIES =
       Set.of(
           SiteInfoParameters.Properties.DOUBLE_UNDERSCORES,
@@ -141,8 +142,19 @@ public final class GuiLogin {
         .givenRequestSiteInfo(wiki, SITE_INFO_PROPERTIES, null, null, null)
         .willReturn(createSiteInfo(data.namespaces()));
     mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(data.tags());
+    final String checkWikiConfiguration = data.checkWikiConfiguration();
     WPCleanerConfigurationExpectations.givenConfiguration(
-        mockApiRevisions, wiki, compactUsername, null, data.userConfiguration());
+        mockApiRevisions,
+        wiki,
+        compactUsername,
+        checkWikiConfiguration == null
+            ? null
+            : "check_wiki_translation_page=%s END".formatted(CHECK_WIKI_TRANSLATION_PAGE),
+        data.userConfiguration());
+    if (checkWikiConfiguration != null) {
+      WPCleanerConfigurationExpectations.givenPage(
+          mockApiRevisions, wiki, CHECK_WIKI_TRANSLATION_PAGE, checkWikiConfiguration);
+    }
     mockApiUsers
         .givenRetrieveUser(wiki, compactUsername)
         .willReturn(createUser(compactUsername, data.groups(), data.rights()));
@@ -198,14 +210,15 @@ public final class GuiLogin {
       List<Tag> tags,
       List<String> groups,
       List<String> rights,
-      @Nullable String userConfiguration) {
+      @Nullable String userConfiguration,
+      @Nullable String checkWikiConfiguration) {
 
     public LoginData(
         final List<Namespace> namespaces,
         final List<Tag> tags,
         final List<String> groups,
         final List<String> rights) {
-      this(namespaces, tags, groups, rights, null);
+      this(namespaces, tags, groups, rights, null, null);
     }
 
     public static LoginData of(final List<Namespace> namespaces) {
@@ -213,7 +226,11 @@ public final class GuiLogin {
     }
 
     public LoginData withUserConfiguration(final String configuration) {
-      return new LoginData(namespaces, tags, groups, rights, configuration);
+      return new LoginData(namespaces, tags, groups, rights, configuration, checkWikiConfiguration);
+    }
+
+    public LoginData withCheckWikiConfiguration(final String configuration) {
+      return new LoginData(namespaces, tags, groups, rights, userConfiguration, configuration);
     }
   }
 }

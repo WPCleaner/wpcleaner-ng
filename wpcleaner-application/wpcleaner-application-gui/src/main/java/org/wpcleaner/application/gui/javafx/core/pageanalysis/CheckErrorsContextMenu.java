@@ -26,7 +26,7 @@ public final class CheckErrorsContextMenu extends ContextMenu {
         if (!getItems().isEmpty()) {
           getItems().add(new SeparatorMenuItem());
         }
-        final MenuItem algorithmItem = new MenuItem(algorithmErrors.algorithm().name());
+        final MenuItem algorithmItem = new MenuItem(algorithmErrors.name());
         algorithmItem.setDisable(true);
         getItems().add(algorithmItem);
         error.replacements().stream()

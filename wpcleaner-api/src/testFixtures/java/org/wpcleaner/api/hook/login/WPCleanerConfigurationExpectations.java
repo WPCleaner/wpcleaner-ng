@@ -41,10 +41,20 @@ public final class WPCleanerConfigurationExpectations {
       final WikiDefinition wiki,
       final String username,
       @Nullable final String content) {
-    final String title = WPCleanerConfigurationLoader.getConfigurationPage(username);
+    givenPage(
+        mockApiRevisions,
+        wiki,
+        WPCleanerConfigurationLoader.getConfigurationPage(username),
+        content);
+  }
+
+  public static void givenPage(
+      final MockApiRevisions mockApiRevisions,
+      final WikiDefinition wiki,
+      final String title,
+      @Nullable final String content) {
     mockApiRevisions
-        .givenRetrieveRevisionsByTitle(
-            wiki, List.of(title), WPCleanerConfigurationLoader.CONTENT_QUERY)
+        .givenRetrieveRevisionsByTitle(wiki, List.of(title), ConfigurationPageReader.CONTENT_QUERY)
         .willReturn(List.of(createPage(title, content)));
   }
 

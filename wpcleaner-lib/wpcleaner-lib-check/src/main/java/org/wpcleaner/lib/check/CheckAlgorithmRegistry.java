@@ -9,19 +9,47 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
+import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
+import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 
 @Service
 public class CheckAlgorithmRegistry {
 
   private final List<CheckAlgorithm> algorithms;
+  private final CheckWikiConfigurationRepository configurationRepository;
 
-  public CheckAlgorithmRegistry(final List<CheckAlgorithm> algorithms) {
+  public CheckAlgorithmRegistry(
+      final List<CheckAlgorithm> algorithms,
+      final CheckWikiConfigurationRepository configurationRepository) {
     this.algorithms =
         algorithms.stream().sorted(Comparator.comparingInt(CheckAlgorithm::number)).toList();
+    this.configurationRepository = configurationRepository;
   }
 
   public List<CheckAlgorithm> getAlgorithms() {
     return algorithms;
+  }
+
+  public List<CheckAlgorithm> getActiveAlgorithms(final WikiDefinition wiki) {
+    final CheckWikiConfiguration configuration = configurationRepository.getConfiguration(wiki);
+    return algorithms.stream()
+        .filter(
+            algorithm ->
+                configuration
+                    .getAlgorithm(algorithm.number())
+                    .filter(CheckAlgorithmConfiguration::isActive)
+                    .isPresent())
+        .toList();
+  }
+
+  public String getName(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
+    return configurationRepository
+        .getConfiguration(wiki)
+        .getAlgorithm(algorithm.number())
+        .flatMap(CheckAlgorithmConfiguration::shortDescription)
+        .orElseGet(algorithm::name);
   }
 
   public Optional<CheckAlgorithm> findAlgorithm(final int number) {

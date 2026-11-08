@@ -9,7 +9,9 @@ module org.wpcleaner.lib.check {
   requires transitive org.wpcleaner.api;
   requires transitive spring.context;
   exports org.wpcleaner.lib.check.algorithm;
+  exports org.wpcleaner.lib.check.configuration;
   exports org.wpcleaner.lib.check;
   opens org.wpcleaner.lib.check.algorithm;
+  opens org.wpcleaner.lib.check.configuration;
   opens org.wpcleaner.lib.check;
 }
