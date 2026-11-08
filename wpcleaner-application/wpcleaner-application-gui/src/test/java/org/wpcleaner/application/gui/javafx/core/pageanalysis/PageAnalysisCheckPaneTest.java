@@ -6,6 +6,7 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
  */
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -31,20 +32,19 @@ import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
-import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
-import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
-import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
-import org.wpcleaner.lib.image.ImageLoader;
 
 @GuiSpringBootTest
+@Import(PageAnalysisCheckPaneFactory.class)
 class PageAnalysisCheckPaneTest extends JavaFxTest {
 
   private static final String TITLE = "Paris";
@@ -58,10 +58,13 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
   private static final String INTRODUCTION = "Intro ";
   private static final Paint FIXED_BACKGROUND = Color.web("#CCFFCC");
 
-  @Autowired private PageSyntaxColorizer colorizer;
-  @Autowired private ImageLoader imageLoader;
-  @Autowired private CheckAlgorithmRegistry algorithmRegistry;
+  @Autowired private PageAnalysisCheckPaneFactory paneFactory;
   @Autowired private JavaFxStylePropertiesRegistry styleRegistry;
+
+  @BeforeEach
+  void setUp() {
+    paneFactory.givenCheckWikiConfiguration(Map.of("error_048_prio_frwiki", "3"));
+  }
 
   @DisplayName("should list only the algorithms detected in the page")
   @Test
@@ -125,6 +128,37 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
 
     // THEN
     Assertions.assertThat(callOnJavaFx(() -> displayedTexts(pane))).containsExactly("Error No. 48");
+  }
+
+  @DisplayName("should display the short description of the algorithm on the wiki")
+  @Test
+  void displayShortDescription() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    paneFactory.givenCheckWikiConfiguration(
+        Map.of("error_048_prio_frwiki", "3", "error_048_head_frwiki", "Lien vers l’article"));
+    final PageAnalysisCheckPane pane = createPane();
+
+    // WHEN
+    runOnJavaFx(() -> pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, TEXT)));
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> displayedTexts(pane)))
+        .containsExactly("Lien vers l’article (2)");
+  }
+
+  @DisplayName("should not run the algorithms deactivated on the wiki")
+  @Test
+  void listDeactivatedAlgorithm()
+      throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    paneFactory.givenCheckWikiConfiguration(Map.of("error_048_prio_frwiki", "0"));
+    final PageAnalysisCheckPane pane = createPane();
+
+    // WHEN
+    runOnJavaFx(() -> pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, TEXT)));
+
+    // THEN
+    Assertions.assertThat(pane.getErrorsListView().getItems()).isEmpty();
   }
 
   @DisplayName("should list no algorithm when no error is detected in the page")
@@ -514,13 +548,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
 
   private PageAnalysisCheckPane createPane()
       throws ExecutionException, InterruptedException, TimeoutException {
-    return callOnJavaFx(
-        () ->
-            new PageAnalysisCheckPane(
-                colorizer,
-                new JavaFxImageLoader(imageLoader),
-                algorithmRegistry,
-                PageAnalysisTestFactory.createPageAnalysisFactory()));
+    return callOnJavaFx(paneFactory::createPane);
   }
 
   private static void show(final PageAnalysisCheckPane pane) {

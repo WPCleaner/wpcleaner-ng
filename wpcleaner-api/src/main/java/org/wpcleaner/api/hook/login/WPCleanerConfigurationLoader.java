@@ -5,17 +5,8 @@ package org.wpcleaner.api.hook.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import org.springframework.stereotype.Service;
-import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
-import org.wpcleaner.api.api.query.prop.revisions.Page;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
-import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -24,19 +15,13 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 public class WPCleanerConfigurationLoader {
 
   public static final String GENERAL_USERNAME = "NicoV";
-  private static final String MAIN_SLOT = "main";
-  public static final RevisionsQuery CONTENT_QUERY =
-      RevisionsQuery.emptyBuilder()
-          .properties(Set.of(RevisionsParameters.Properties.CONTENT))
-          .slots(Set.of(MAIN_SLOT))
-          .build();
 
-  private final ApiRevisions apiRevisions;
+  private final ConfigurationPageReader pageReader;
   private final WPCleanerConfigurationRepository repository;
 
   public WPCleanerConfigurationLoader(
-      final ApiRevisions apiRevisions, final WPCleanerConfigurationRepository repository) {
-    this.apiRevisions = apiRevisions;
+      final ConfigurationPageReader pageReader, final WPCleanerConfigurationRepository repository) {
+    this.pageReader = pageReader;
     this.repository = repository;
   }
 
@@ -50,19 +35,9 @@ public class WPCleanerConfigurationLoader {
     repository.setConfiguration(
         wiki,
         new WPCleanerConfiguration(
-            retrieveProperties(wiki, generalPage),
-            userPage.equals(generalPage) ? Map.of() : retrieveProperties(wiki, userPage)));
-  }
-
-  private Map<String, String> retrieveProperties(final WikiDefinition wiki, final String title) {
-    return apiRevisions.retrieveRevisionsByTitle(wiki, List.of(title), CONTENT_QUERY).stream()
-        .filter(page -> !page.missing())
-        .map(Page::revisions)
-        .flatMap(List::stream)
-        .findFirst()
-        .flatMap(revision -> Optional.ofNullable(revision.slots().get(MAIN_SLOT)))
-        .map(RevisionSlot::content)
-        .map(ConfigurationParser::parse)
-        .orElse(Map.of());
+            pageReader.retrieveProperties(wiki, generalPage),
+            userPage.equals(generalPage)
+                ? Map.of()
+                : pageReader.retrieveProperties(wiki, userPage)));
   }
 }

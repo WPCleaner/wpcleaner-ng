@@ -52,7 +52,7 @@ public final class CheckErrorsListView extends ListView<CheckAlgorithmErrors> {
     }
 
     private static String createText(final CheckAlgorithmErrors item) {
-      final String name = item.algorithm().name();
+      final String name = item.name();
       final int errorsCount = item.errors().size();
       return errorsCount > 1 ? "%s (%d)".formatted(name, errorsCount) : name;
     }

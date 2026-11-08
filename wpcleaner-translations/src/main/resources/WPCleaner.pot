@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-08 09:52+0100\n"
+"POT-Creation-Date: 2026-11-08 10:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,15 +45,15 @@ msgstr ""
 msgid "Result returned was %s"
 msgstr ""
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:53
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:57
 msgid "Retrieving site information"
 msgstr ""
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:59
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:63
 msgid "Retrieving tags"
 msgstr ""
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:64
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:68
 msgid "Retrieving WPCleaner configuration"
 msgstr ""
 
@@ -939,6 +939,10 @@ msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/userpagehosting/UserPageHostingConfigWindow.java:45
 msgid "Configure User Page Hosting Prevention"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:47
+msgid "Retrieving Check Wiki configuration"
 msgstr ""
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/CheckAlgorithm.java:17

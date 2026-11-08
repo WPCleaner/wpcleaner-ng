@@ -8,6 +8,7 @@ package org.wpcleaner.api.hook.login;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.tags.ApiTags;
@@ -31,13 +32,15 @@ public class LoginHook {
   private final TagRepository tagRepository;
   private final Set<TagsParameters.Properties> tagsProperties;
   private final WPCleanerConfigurationLoader configurationLoader;
+  private final ObjectProvider<LoginStep> loginSteps;
 
   public LoginHook(
       final ApiSiteInfo apiSiteInfo,
       final ApiTags apiTags,
       final SiteInfoExtractor siteInfoExtractor,
       final TagRepository tagRepository,
-      final WPCleanerConfigurationLoader configurationLoader) {
+      final WPCleanerConfigurationLoader configurationLoader,
+      final ObjectProvider<LoginStep> loginSteps) {
     this.apiSiteInfo = apiSiteInfo;
     this.apiTags = apiTags;
     this.siteInfoExtractor = siteInfoExtractor;
@@ -45,6 +48,7 @@ public class LoginHook {
     this.tagRepository = tagRepository;
     this.tagsProperties = EnumSet.noneOf(TagsParameters.Properties.class);
     this.configurationLoader = configurationLoader;
+    this.loginSteps = loginSteps;
   }
 
   public void executeHook(
@@ -64,6 +68,7 @@ public class LoginHook {
     try (ProgressStep _ = tracker.start(GT._T("Retrieving WPCleaner configuration"))) {
       configurationLoader.load(wiki, username);
     }
+    loginSteps.orderedStream().forEach(loginStep -> loginStep.execute(wiki, tracker));
   }
 
   public void addSiteInfoProperties(final Set<SiteInfoParameters.Properties> properties) {

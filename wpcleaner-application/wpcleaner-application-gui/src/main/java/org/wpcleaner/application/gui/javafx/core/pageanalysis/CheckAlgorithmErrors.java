@@ -9,7 +9,7 @@ import java.util.List;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 
-public record CheckAlgorithmErrors(CheckAlgorithm algorithm, List<CheckError> errors) {
+public record CheckAlgorithmErrors(CheckAlgorithm algorithm, String name, List<CheckError> errors) {
 
   public CheckAlgorithmErrors {
     errors = List.copyOf(errors);

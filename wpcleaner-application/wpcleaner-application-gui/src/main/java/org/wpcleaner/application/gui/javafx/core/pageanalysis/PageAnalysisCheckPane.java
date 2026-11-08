@@ -67,8 +67,13 @@ public final class PageAnalysisCheckPane extends SplitPane {
     analysis = newAnalysis;
     getArea().updateAnalysis(newAnalysis);
     errorsPane.updateErrors(
-        algorithmRegistry.getAlgorithms().stream()
-            .map(algorithm -> new CheckAlgorithmErrors(algorithm, algorithm.analyze(newAnalysis)))
+        algorithmRegistry.getActiveAlgorithms(newAnalysis.getWiki()).stream()
+            .map(
+                algorithm ->
+                    new CheckAlgorithmErrors(
+                        algorithm,
+                        algorithmRegistry.getName(newAnalysis.getWiki(), algorithm),
+                        algorithm.analyze(newAnalysis)))
             .toList());
     highlightErrors(errorsPane.getSelectedErrors());
   }
@@ -81,6 +86,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
                 algorithmErrors ->
                     new CheckAlgorithmErrors(
                         algorithmErrors.algorithm(),
+                        algorithmErrors.name(),
                         algorithmErrors.errors().stream()
                             .filter(error -> error.begin() <= position && position < error.end())
                             .toList()))
