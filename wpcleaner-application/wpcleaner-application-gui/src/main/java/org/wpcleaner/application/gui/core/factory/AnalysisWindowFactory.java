@@ -8,4 +8,6 @@ package org.wpcleaner.application.gui.core.factory;
 public interface AnalysisWindowFactory {
 
   void displayAnalysisWindow(String pageName);
+
+  void displayAnalysisWindow(String pageName, int algorithmNumber);
 }

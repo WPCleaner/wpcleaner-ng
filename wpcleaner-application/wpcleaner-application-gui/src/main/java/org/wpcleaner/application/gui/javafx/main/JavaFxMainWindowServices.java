@@ -11,11 +11,14 @@ import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.factory.AnalysisWindowFactory;
+import org.wpcleaner.application.gui.core.factory.PageListWindowFactory;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindowServices;
 import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWindowFactory;
 import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
+import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
+import org.wpcleaner.lib.check.server.CheckWikiServer;
 import org.wpcleaner.lib.image.ImageLoader;
 
 @Service
@@ -24,8 +27,11 @@ public record JavaFxMainWindowServices(
     AnalysisWindowFactory analysisWindowFactory,
     ApiRandom apiRandom,
     ApiRevisions apiRevisions,
+    CheckAlgorithmRegistry checkAlgorithmRegistry,
+    CheckWikiServer checkWikiServer,
     ImageLoader imageLoader,
     InterestingSettingsManager interestingSettings,
+    PageListWindowFactory pageListWindowFactory,
     JavaFxRecentChangesWindowFactory recentChangesWindowFactory,
     UrlService urlService,
     CurrentUserService user,

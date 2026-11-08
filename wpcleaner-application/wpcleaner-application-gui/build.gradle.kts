@@ -31,4 +31,5 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter")
   compileOnly("org.jetbrains:annotations:26.1.0")
   testImplementation(testFixtures(project(":wpcleaner-api")))
+  testImplementation(testFixtures(project(":wpcleaner-lib-check")))
 }
