@@ -32,6 +32,7 @@ import org.wpcleaner.api.api.parse.ApiParse;
 import org.wpcleaner.api.api.parse.Parse;
 import org.wpcleaner.api.api.parse.ParseParameters;
 import org.wpcleaner.api.api.parse.ParseQuery;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.list.random.RandomPage;
 import org.wpcleaner.api.api.query.list.random.RandomParameters;
@@ -55,7 +56,6 @@ import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 class PageAnalysisComparisonTest {
 
   private static final String PARSE_TITLE = "WPCleanerNG analysis comparison";
-  private static final String MAIN_SLOT = "main";
   private static final String TEMPLATE_PLACEHOLDER = "x";
   private static final String REFERENCE_TAG = "ref";
   private static final String REFERENCE_GROUP_ATTRIBUTE = "group";
@@ -85,7 +85,7 @@ class PageAnalysisComparisonTest {
     // WHEN
     for (final WikiDefinition wiki : List.of(WikipediaDefinitions.FR, WikipediaDefinitions.EN)) {
       loginHook.executeHook(
-          wiki, WPCleanerConfigurationLoader.GENERAL_USERNAME, new ProgressTracker(_ -> {}));
+          wiki, WPCleanerConfigurationLoader.GENERAL_USERNAME, ProgressTracker.NOOP);
       final Set<String> extensionTags =
           extensionTagRepository.getExtensionTags(wiki).stream()
               .map(ExtensionTag::name)
@@ -173,15 +173,14 @@ class PageAnalysisComparisonTest {
         RevisionsQuery.emptyBuilder()
             .properties(
                 Set.of(RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.IDS))
-            .slots(Set.of(MAIN_SLOT))
+            .slots(Set.of(Slot.MAIN))
             .build());
   }
 
   private static Optional<String> findContent(final Page page) {
     return page.revisions().stream()
         .findFirst()
-        .map(Revision::slots)
-        .map(slots -> slots.get(MAIN_SLOT))
+        .flatMap(Revision::mainSlot)
         .map(RevisionSlot::content);
   }
 

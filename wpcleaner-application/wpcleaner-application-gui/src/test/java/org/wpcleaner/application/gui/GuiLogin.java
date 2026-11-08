@@ -112,7 +112,7 @@ public final class GuiLogin {
     givenLogin(wiki, username, data);
     loginProcessor.execute(
         LoginProcessor.Input.forLogin(wiki, username, PASSWORD.toCharArray()),
-        new ProgressTracker(_ -> {}));
+        ProgressTracker.NOOP);
     mediaWikiServer.verify();
     mediaWikiServer.reset();
   }

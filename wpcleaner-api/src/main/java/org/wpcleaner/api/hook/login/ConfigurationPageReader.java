@@ -7,11 +7,12 @@ package org.wpcleaner.api.hook.login;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
+import org.wpcleaner.api.api.query.prop.revisions.Revision;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
@@ -21,11 +22,10 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @Service
 public class ConfigurationPageReader {
 
-  private static final String MAIN_SLOT = "main";
   public static final RevisionsQuery CONTENT_QUERY =
       RevisionsQuery.emptyBuilder()
           .properties(Set.of(RevisionsParameters.Properties.CONTENT))
-          .slots(Set.of(MAIN_SLOT))
+          .slots(Set.of(Slot.MAIN))
           .build();
 
   private final ApiRevisions apiRevisions;
@@ -40,7 +40,7 @@ public class ConfigurationPageReader {
         .map(Page::revisions)
         .flatMap(List::stream)
         .findFirst()
-        .flatMap(revision -> Optional.ofNullable(revision.slots().get(MAIN_SLOT)))
+        .flatMap(Revision::mainSlot)
         .map(RevisionSlot::content)
         .map(ConfigurationParser::parse)
         .orElse(Map.of());

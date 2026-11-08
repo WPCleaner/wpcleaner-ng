@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.api.Limit;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters.Direction;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters.Properties;
 
@@ -23,7 +24,7 @@ public record RevisionsQuery(
     @Nullable Set<Properties> properties,
     @Nullable String rvContinue,
     @Nullable Integer section,
-    @Nullable Set<String> slots,
+    @Nullable Set<Slot> slots,
     @Nullable Instant start,
     @Nullable Integer startId,
     @Nullable String tag,
@@ -62,7 +63,7 @@ public record RevisionsQuery(
     @Nullable private Set<Properties> properties;
     @Nullable private String rvContinue;
     @Nullable private Integer section;
-    @Nullable private Set<String> slots;
+    @Nullable private Set<Slot> slots;
     @Nullable private Instant start;
     @Nullable private Integer startId;
     @Nullable private String tag;
@@ -113,7 +114,7 @@ public record RevisionsQuery(
       return this;
     }
 
-    public Builder slots(@Nullable final Set<String> slots) {
+    public Builder slots(@Nullable final Set<Slot> slots) {
       this.slots = slots;
       return this;
     }

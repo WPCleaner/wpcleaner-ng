@@ -8,6 +8,7 @@ package org.wpcleaner.api.hook.login;
 import java.util.List;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.Revision;
@@ -71,7 +72,7 @@ public final class WPCleanerConfigurationExpectations {
             123,
             null,
             null,
-            Map.of("main", new RevisionSlot(content, null, null, null)),
+            Map.of(Slot.MAIN.value, new RevisionSlot(content, null, null, null)),
             List.of(),
             null,
             null,

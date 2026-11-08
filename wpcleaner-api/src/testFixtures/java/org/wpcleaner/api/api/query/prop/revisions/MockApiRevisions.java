@@ -54,7 +54,8 @@ public final class MockApiRevisions {
     request.queryParamCollection(
         RevisionsParameters.PROPERTIES.value, options.properties(), properties -> properties.value);
     request.queryParam(RevisionsParameters.SECTION.value, options.section());
-    request.queryParamCollection(RevisionsParameters.SLOTS.value, options.slots());
+    request.queryParamCollection(
+        RevisionsParameters.SLOTS.value, options.slots(), slot -> slot.value);
     request.queryParam(RevisionsParameters.START.value, options.start());
     request.queryParam(RevisionsParameters.START_ID.value, options.startId());
     request.queryParam(RevisionsParameters.TAG.value, options.tag());

@@ -21,6 +21,7 @@ import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.prop.revisions.Page;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
@@ -157,8 +158,7 @@ public final class RecentChangesDetailsPanel extends VBox {
     return pages.stream()
         .flatMap(page -> page.revisions().stream())
         .filter(revision -> revId.equals(revision.revId()))
-        .map(revision -> revision.slots().get("main"))
-        .filter(Objects::nonNull)
+        .flatMap(revision -> revision.mainSlot().stream())
         .map(RevisionSlot::content)
         .filter(Objects::nonNull)
         .map(content -> content.replace("\r", ""))
@@ -172,7 +172,7 @@ public final class RecentChangesDetailsPanel extends VBox {
         RevisionsQuery.emptyBuilder()
             .properties(
                 Set.of(RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.IDS))
-            .slots(Set.of("main"))
+            .slots(Set.of(Slot.MAIN))
             .build();
     final List<Integer> revIds =
         Stream.of(oldRevid, revid).filter(Objects::nonNull).filter(value -> value != 0).toList();

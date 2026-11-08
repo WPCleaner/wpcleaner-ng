@@ -13,7 +13,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.api.query.Slot;
 
 @SuppressWarnings("PMD.ExcessiveParameterList")
 public record Revision(
@@ -57,5 +59,9 @@ public record Revision(
         timestamp,
         user,
         userId);
+  }
+
+  public Optional<RevisionSlot> mainSlot() {
+    return Optional.ofNullable(slots.get(Slot.MAIN.value));
   }
 }

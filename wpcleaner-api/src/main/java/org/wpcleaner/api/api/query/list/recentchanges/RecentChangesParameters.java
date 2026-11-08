@@ -104,17 +104,6 @@ public enum RecentChangesParameters {
     }
   }
 
-  public enum Slot {
-    MAIN("main"),
-    ;
-
-    public final String value;
-
-    Slot(final String value) {
-      this.value = value;
-    }
-  }
-
   public enum Type {
     @JsonProperty("categorize")
     CATEGORIZE("categorize"),
