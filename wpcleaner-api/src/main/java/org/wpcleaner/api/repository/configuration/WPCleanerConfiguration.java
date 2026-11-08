@@ -5,6 +5,7 @@ package org.wpcleaner.api.repository.configuration;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,15 +20,10 @@ public record WPCleanerConfiguration(
   }
 
   public Optional<String> getString(final WPCleanerParameter parameter) {
-    return getString(parameter.isUser(), userProperties, parameter)
-        .or(() -> getString(parameter.isGeneral(), generalProperties, parameter));
+    return parameter.getString(generalProperties, userProperties);
   }
 
-  private static Optional<String> getString(
-      final boolean allowed,
-      final Map<String, String> properties,
-      final WPCleanerParameter parameter) {
-    return Optional.ofNullable(allowed ? properties.get(parameter.value) : null)
-        .filter(value -> !value.isEmpty());
+  public List<String> getLines(final WPCleanerParameter parameter) {
+    return parameter.getLines(generalProperties, userProperties);
   }
 }

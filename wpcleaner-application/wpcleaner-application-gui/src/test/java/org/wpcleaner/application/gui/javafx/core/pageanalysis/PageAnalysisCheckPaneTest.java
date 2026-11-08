@@ -361,6 +361,27 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(items.get(2).getStyle()).isNullOrEmpty();
   }
 
+  @DisplayName("should suggest deleting a line of an image map")
+  @Test
+  void createContextMenuForDeletion()
+      throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    paneFactory.givenCheckWikiConfiguration(
+        Map.of("error_048_prio_frwiki", "3", "error_048_imagemap_frwiki", "true"));
+    final PageAnalysisCheckPane pane = createPane();
+    final String text = "<imagemap>\nImage:Carte.png\nrect 0 0 1 1 [[Paris]]\n</imagemap>";
+    runOnJavaFx(() -> pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, text)));
+
+    // WHEN
+    final List<MenuItem> items =
+        callOnJavaFx(() -> pane.createContextMenu(text.indexOf("rect")).getItems());
+
+    // THEN
+    Assertions.assertThat(items)
+        .extracting(MenuItem::getText)
+        .containsExactly("Error No. 48", "Delete");
+  }
+
   @DisplayName("should suggest nothing outside of the errors")
   @Test
   void createContextMenuOutsideErrors()

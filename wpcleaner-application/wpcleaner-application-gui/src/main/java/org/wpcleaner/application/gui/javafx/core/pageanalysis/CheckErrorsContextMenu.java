@@ -10,6 +10,7 @@ import java.util.function.BiConsumer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
 
@@ -40,7 +41,8 @@ public final class CheckErrorsContextMenu extends ContextMenu {
       final CheckError error,
       final Replacement replacement,
       final BiConsumer<CheckError, Replacement> replacementAction) {
-    final MenuItem item = new MenuItem(replacement.text());
+    final MenuItem item =
+        new MenuItem(replacement.text().isEmpty() ? GT._T("Delete") : replacement.text());
     if (replacement.automatic()) {
       item.setStyle(AUTOMATIC_STYLE);
     }
