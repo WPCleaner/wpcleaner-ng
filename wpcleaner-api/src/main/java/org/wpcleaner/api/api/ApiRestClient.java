@@ -15,6 +15,10 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 @Service
 public class ApiRestClient implements LogoutHook {
 
+  // TODO: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+  public static final String USER_AGENT =
+      "WikiCleanerBot (https://fr.wikipedia.org/wiki/Utilisateur:NicoV) WPCleanerNG/0.0";
+
   private final ApiLogInterceptor logInterceptor;
   private final RestClient.Builder clientBuilder;
   private final Map<WikiDefinition, RestClient> restClients;
@@ -42,10 +46,7 @@ public class ApiRestClient implements LogoutHook {
         .defaultHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8")
         .defaultHeader(HttpHeaders.ACCEPT_ENCODING, "gzip")
         .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-        .defaultHeader(
-            HttpHeaders.USER_AGENT,
-            "WikiCleanerBot (https://fr.wikipedia.org/wiki/Utilisateur:NicoV) WPCleanerNG/0.0")
-        // TODO: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+        .defaultHeader(HttpHeaders.USER_AGENT, USER_AGENT)
         .requestInterceptor(logInterceptor)
         .build();
   }

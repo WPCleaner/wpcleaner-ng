@@ -36,6 +36,7 @@ public final class PageAnalysisPanel extends StackPane {
   private final JavaFxWindow<?> owner;
   private final JavaFxAnalysisWindowServices services;
   private final String pageName;
+  @Nullable private final Integer algorithmNumber;
   private final PageAnalysisCheckPane checkPane;
   private final PageSavePane savePane;
   @Nullable private Instant baseTimestamp;
@@ -43,10 +44,12 @@ public final class PageAnalysisPanel extends StackPane {
   public PageAnalysisPanel(
       final JavaFxWindow<?> owner,
       final JavaFxAnalysisWindowServices services,
-      final String pageName) {
+      final String pageName,
+      @Nullable final Integer algorithmNumber) {
     this.owner = owner;
     this.services = services;
     this.pageName = pageName;
+    this.algorithmNumber = algorithmNumber;
     final JavaFxImageLoader imageLoader = new JavaFxImageLoader(services.imageLoader());
     this.checkPane =
         new PageAnalysisCheckPane(
@@ -124,6 +127,9 @@ public final class PageAnalysisPanel extends StackPane {
     checkPane.updateAnalysis(
         services.pageAnalysisFactory().analysis(getWiki(), pageName, slot.content()));
     resetInitialErrors();
+    if (algorithmNumber != null) {
+      checkPane.selectAlgorithm(algorithmNumber);
+    }
   }
 
   private void resetInitialErrors() {

@@ -32,6 +32,7 @@ import org.wpcleaner.lib.image.ImageSize;
 public final class CheckErrorsPane extends TitledPane {
 
   public static final String AUTOMATIC_FIXES_ID = "automatic-fixes";
+  public static final String ERRORS_ID = "check-errors";
   public static final String LINK_ID = "link";
 
   private final Button automaticFixesButton;
@@ -76,6 +77,7 @@ public final class CheckErrorsPane extends TitledPane {
     linkButton.setTooltip(new Tooltip(GT._T("Open the page describing the error")));
     linkButton.setDisable(true);
     linkButton.setOnAction(_ -> getSelectedLinkUrl().ifPresent(browseAction));
+    errorsListView.setId(ERRORS_ID);
     VBox.setVgrow(errorsListView, Priority.ALWAYS);
     setContent(new VBox(new ToolBar(automaticFixesButton, linkButton), errorsListView));
     errorsListView.getSelectionModel().selectedItemProperty().addListener(selectionListener);
@@ -131,6 +133,13 @@ public final class CheckErrorsPane extends TitledPane {
       selectionModel.selectedItemProperty().addListener(selectionListener);
     }
     automaticFixesButton.setDisable(findAutomaticFixes().isEmpty());
+  }
+
+  public void selectAlgorithm(final int algorithmNumber) {
+    errorsListView.getItems().stream()
+        .filter(algorithmErrors -> algorithmErrors.algorithm().number() == algorithmNumber)
+        .findFirst()
+        .ifPresent(errorsListView.getSelectionModel()::select);
   }
 
   public void resetInitialErrors() {

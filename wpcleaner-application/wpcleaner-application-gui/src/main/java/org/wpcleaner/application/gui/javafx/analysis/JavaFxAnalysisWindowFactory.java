@@ -22,6 +22,15 @@ public class JavaFxAnalysisWindowFactory implements AnalysisWindowFactory {
 
   @Override
   public void displayAnalysisWindow(final String pageName) {
+    analyze(pageName, null);
+  }
+
+  @Override
+  public void displayAnalysisWindow(final String pageName, final int algorithmNumber) {
+    analyze(pageName, algorithmNumber);
+  }
+
+  private void analyze(final String pageName, @Nullable final Integer algorithmNumber) {
     Platform.runLater(
         () -> {
           if (window == null || !window.getStage().isShowing()) {
@@ -29,7 +38,7 @@ public class JavaFxAnalysisWindowFactory implements AnalysisWindowFactory {
           } else {
             window.getStage().toFront();
           }
-          window.analyze(pageName);
+          window.analyze(pageName, algorithmNumber);
         });
   }
 }

@@ -82,6 +82,10 @@ public final class PageAnalysisCheckPane extends SplitPane {
     analysisListener = listener;
   }
 
+  public void selectAlgorithm(final int algorithmNumber) {
+    errorsPane.selectAlgorithm(algorithmNumber);
+  }
+
   public void resetInitialErrors() {
     errorsPane.resetInitialErrors();
   }

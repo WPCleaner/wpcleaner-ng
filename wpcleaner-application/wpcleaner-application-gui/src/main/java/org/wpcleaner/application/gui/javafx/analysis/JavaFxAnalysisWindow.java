@@ -11,6 +11,7 @@ import javafx.scene.control.TabPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 
 public final class JavaFxAnalysisWindow extends JavaFxWindow<JavaFxAnalysisWindowServices> {
@@ -39,8 +40,13 @@ public final class JavaFxAnalysisWindow extends JavaFxWindow<JavaFxAnalysisWindo
   }
 
   public void analyze(final String pageName) {
+    analyze(pageName, null);
+  }
+
+  public void analyze(final String pageName, @Nullable final Integer algorithmNumber) {
     final Tab tab = new Tab(pageName);
-    final PageAnalysisPanel panel = new PageAnalysisPanel(this, services, pageName);
+    final PageAnalysisPanel panel =
+        new PageAnalysisPanel(this, services, pageName, algorithmNumber);
     tab.setContent(panel);
     tabPane.getTabs().add(tab);
     tabPane.getSelectionModel().select(tab);
