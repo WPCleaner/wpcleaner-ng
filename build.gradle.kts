@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
   group = "org.wpcleaner"
-  version = "0.0.1-SNAPSHOT"
+  version = "${providers.gradleProperty("version.prefix").get()}-SNAPSHOT"
 
   repositories {
     mavenLocal()
