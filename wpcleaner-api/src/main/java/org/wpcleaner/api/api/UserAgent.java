@@ -8,8 +8,12 @@ package org.wpcleaner.api.api;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.SpringVersion;
 import org.springframework.stereotype.Component;
@@ -24,18 +28,22 @@ public class UserAgent {
   private static final String VERSION_RESOURCE = "version.properties";
   private static final String VERSION_PROPERTY = "version";
 
-  private final String value;
+  private final String client;
+  private final String contact;
+  private final String libraries;
+  private final ObjectProvider<CurrentUserService> currentUserService;
 
   public UserAgent(
-      @Value("${wpcleaner.api.user-agent.contact:" + DEFAULT_CONTACT + "}") final String contact) {
-    this.value =
-        "%s/%s (%s) spring-web/%s Java/%d"
+      @Value("${wpcleaner.api.user-agent.contact:" + DEFAULT_CONTACT + "}") final String contact,
+      final ObjectProvider<CurrentUserService> currentUserService) {
+    this.client = "%s/%s".formatted(CLIENT_NAME, getVersion());
+    this.contact = contact;
+    this.libraries =
+        "spring-web/%s Java/%d"
             .formatted(
-                CLIENT_NAME,
-                getVersion(),
-                contact,
                 Optional.ofNullable(SpringVersion.getVersion()).orElse(UNKNOWN_VERSION),
                 Runtime.version().feature());
+    this.currentUserService = currentUserService;
   }
 
   public static String getVersion() {
@@ -52,6 +60,20 @@ public class UserAgent {
   }
 
   public String getValue() {
-    return value;
+    return "%s (%s) %s"
+        .formatted(
+            client,
+            Stream.concat(Stream.of(contact), getUserContact().stream())
+                .collect(Collectors.joining("; ")),
+            libraries);
+  }
+
+  private Optional<String> getUserContact() {
+    final ConnectedUser user = currentUserService.getObject().getCurrentUser();
+    if (!user.isLoggedIn() || user.demo()) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(user.wiki().pageUri("User:%s".formatted(user.username())))
+        .map(URI::toASCIIString);
   }
 }

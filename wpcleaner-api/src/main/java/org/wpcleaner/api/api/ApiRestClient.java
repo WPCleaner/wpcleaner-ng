@@ -46,7 +46,7 @@ public class ApiRestClient implements LogoutHook {
         .defaultHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8")
         .defaultHeader(HttpHeaders.ACCEPT_ENCODING, "gzip")
         .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
-        .defaultHeader(HttpHeaders.USER_AGENT, userAgent.getValue())
+        .defaultRequest(request -> request.header(HttpHeaders.USER_AGENT, userAgent.getValue()))
         .requestInterceptor(logInterceptor)
         .build();
   }

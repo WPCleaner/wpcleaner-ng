@@ -53,11 +53,10 @@ public class CheckWikiServer {
     }
     final String response =
         clientBuilder
-            .clone()
-            .defaultHeader(HttpHeaders.USER_AGENT, userAgent.getValue())
             .build()
             .post()
             .uri(LIST_URL)
+            .header(HttpHeaders.USER_AGENT, userAgent.getValue())
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(createListParameters(wiki, errorNumber, limit))
             .retrieve()
