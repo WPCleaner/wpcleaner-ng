@@ -55,11 +55,23 @@ public class CheckAlgorithmRegistry {
   }
 
   public String getName(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
-    return configurationRepository
-        .getConfiguration(wiki)
-        .getAlgorithm(algorithm.number())
+    return getConfiguration(wiki, algorithm)
         .flatMap(CheckAlgorithmConfiguration::shortDescription)
         .orElseGet(algorithm::name);
+  }
+
+  public Optional<String> getDescription(
+      final WikiDefinition wiki, final CheckAlgorithm algorithm) {
+    return getConfiguration(wiki, algorithm).flatMap(CheckAlgorithmConfiguration::longDescription);
+  }
+
+  public Optional<String> getLink(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
+    return getConfiguration(wiki, algorithm).flatMap(CheckAlgorithmConfiguration::link);
+  }
+
+  private Optional<CheckAlgorithmConfiguration> getConfiguration(
+      final WikiDefinition wiki, final CheckAlgorithm algorithm) {
+    return configurationRepository.getConfiguration(wiki).getAlgorithm(algorithm.number());
   }
 
   public Optional<CheckAlgorithm> findAlgorithm(final int number) {

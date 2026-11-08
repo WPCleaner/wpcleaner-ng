@@ -5,13 +5,17 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javafx.scene.Scene;
+import javafx.scene.control.Labeled;
 import org.springframework.boot.test.context.TestComponent;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
@@ -25,16 +29,35 @@ public final class PageAnalysisCheckPaneFactory {
   private final ImageLoader imageLoader;
   private final CheckAlgorithmRegistry algorithmRegistry;
   private final CheckWikiConfigurationRepository checkWikiConfigurationRepository;
+  private final JavaFxActionServices actionServices;
 
   public PageAnalysisCheckPaneFactory(
       final PageSyntaxColorizer colorizer,
       final ImageLoader imageLoader,
       final CheckAlgorithmRegistry algorithmRegistry,
-      final CheckWikiConfigurationRepository checkWikiConfigurationRepository) {
+      final CheckWikiConfigurationRepository checkWikiConfigurationRepository,
+      final JavaFxActionServices actionServices) {
     this.colorizer = colorizer;
     this.imageLoader = imageLoader;
     this.algorithmRegistry = algorithmRegistry;
     this.checkWikiConfigurationRepository = checkWikiConfigurationRepository;
+    this.actionServices = actionServices;
+  }
+
+  public static void show(final PageAnalysisCheckPane pane) {
+    if (pane.getScene() == null) {
+      new Scene(pane, 800, 600);
+    }
+    pane.applyCss();
+    pane.layout();
+  }
+
+  public static List<Labeled> displayedCells(final PageAnalysisCheckPane pane) {
+    show(pane);
+    return pane.getErrorsListView().lookupAll(".list-cell").stream()
+        .map(Labeled.class::cast)
+        .filter(cell -> Objects.nonNull(cell.getText()))
+        .toList();
   }
 
   public PageAnalysisCheckPane createPane() {
@@ -42,7 +65,8 @@ public final class PageAnalysisCheckPaneFactory {
         colorizer,
         new JavaFxImageLoader(imageLoader),
         algorithmRegistry,
-        PageAnalysisTestFactory.createPageAnalysisFactory());
+        PageAnalysisTestFactory.createPageAnalysisFactory(),
+        actionServices::browse);
   }
 
   public void givenCheckWikiConfiguration(final Map<String, String> properties) {

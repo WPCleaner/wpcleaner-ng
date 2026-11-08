@@ -7,7 +7,6 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -230,7 +229,11 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
         });
 
     // WHEN
-    runOnJavaFx(() -> displayedCells(pane).getFirst().fireEvent(createClickEvent(2)));
+    runOnJavaFx(
+        () ->
+            PageAnalysisCheckPaneFactory.displayedCells(pane)
+                .getFirst()
+                .fireEvent(createClickEvent(2)));
 
     // THEN
     Assertions.assertThat(callOnJavaFx(pane.getArea()::getSelection))
@@ -250,7 +253,11 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
         });
 
     // WHEN
-    runOnJavaFx(() -> displayedCells(pane).getFirst().fireEvent(createClickEvent(1)));
+    runOnJavaFx(
+        () ->
+            PageAnalysisCheckPaneFactory.displayedCells(pane)
+                .getFirst()
+                .fireEvent(createClickEvent(1)));
 
     // THEN
     Assertions.assertThat(callOnJavaFx(pane.getArea()::getSelection))
@@ -455,7 +462,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     final Button button =
         callOnJavaFx(
             () -> {
-              show(pane);
+              PageAnalysisCheckPaneFactory.show(pane);
               return lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class);
             });
     Assertions.assertThat(button.isDisable()).isFalse();
@@ -483,7 +490,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     final Button button =
         callOnJavaFx(
             () -> {
-              show(pane);
+              PageAnalysisCheckPaneFactory.show(pane);
               return lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class);
             });
     Assertions.assertThat(callOnJavaFx(() -> displayedBackgrounds(pane)))
@@ -506,7 +513,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     runOnJavaFx(
         () -> {
           pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, AUTOMATIC_TEXT));
-          show(pane);
+          PageAnalysisCheckPaneFactory.show(pane);
           lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class).fire();
         });
 
@@ -530,7 +537,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     final Button button =
         callOnJavaFx(
             () -> {
-              show(pane);
+              PageAnalysisCheckPaneFactory.show(pane);
               return lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class);
             });
 
@@ -557,7 +564,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     final Button button =
         callOnJavaFx(
             () -> {
-              show(pane);
+              PageAnalysisCheckPaneFactory.show(pane);
               return lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class);
             });
     Assertions.assertThat(button.isDisable()).isTrue();
@@ -566,14 +573,6 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
   private PageAnalysisCheckPane createPane()
       throws ExecutionException, InterruptedException, TimeoutException {
     return callOnJavaFx(paneFactory::createPane);
-  }
-
-  private static void show(final PageAnalysisCheckPane pane) {
-    if (pane.getScene() == null) {
-      new Scene(pane, 800, 600);
-    }
-    pane.applyCss();
-    pane.layout();
   }
 
   private static Stage showInStage(final PageAnalysisCheckPane pane) {
@@ -644,20 +643,14 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
   }
 
   private static List<Paint> displayedBackgrounds(final PageAnalysisCheckPane pane) {
-    return displayedCells(pane).stream()
+    return PageAnalysisCheckPaneFactory.displayedCells(pane).stream()
         .map(cell -> cell.getBackground().getFills().getLast().getFill())
         .toList();
   }
 
   private static List<String> displayedTexts(final PageAnalysisCheckPane pane) {
-    return displayedCells(pane).stream().map(Labeled::getText).toList();
-  }
-
-  private static List<Labeled> displayedCells(final PageAnalysisCheckPane pane) {
-    show(pane);
-    return pane.getErrorsListView().lookupAll(".list-cell").stream()
-        .map(Labeled.class::cast)
-        .filter(cell -> Objects.nonNull(cell.getText()))
+    return PageAnalysisCheckPaneFactory.displayedCells(pane).stream()
+        .map(Labeled::getText)
         .toList();
   }
 

@@ -15,6 +15,8 @@ public record CheckAlgorithmConfiguration(
     int number, Map<String, String> properties, Set<PageTitle> whitelist) {
 
   private static final String PRIORITY = "prio";
+  private static final String LINK = "link";
+  private static final String LONG_DESCRIPTION = "desc";
   private static final String SHORT_DESCRIPTION = "head";
   private static final String WHITELIST = "whitelist";
   private static final String WHITELIST_PAGE = "whitelistpage";
@@ -44,6 +46,14 @@ public record CheckAlgorithmConfiguration(
 
   public Optional<String> shortDescription() {
     return getProperty(SHORT_DESCRIPTION);
+  }
+
+  public Optional<String> longDescription() {
+    return getProperty(LONG_DESCRIPTION);
+  }
+
+  public Optional<String> link() {
+    return getProperty(LINK);
   }
 
   public Optional<String> whitelistPage() {

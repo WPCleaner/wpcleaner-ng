@@ -44,7 +44,8 @@ public final class PageAnalysisPanel extends StackPane {
             services.colorizer(),
             new JavaFxImageLoader(services.imageLoader()),
             services.checkAlgorithmRegistry(),
-            services.pageAnalysisFactory());
+            services.pageAnalysisFactory(),
+            services.actionServices()::browse);
     this.checkPane.getArea().setEditable(true);
     initialize();
   }
