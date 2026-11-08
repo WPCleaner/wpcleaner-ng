@@ -33,6 +33,7 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.hook.login.LoginHook;
+import org.wpcleaner.api.hook.login.WPCleanerConfigurationLoader;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
@@ -76,7 +77,8 @@ class PageAnalysisPerformanceTest {
 
     // WHEN
     for (final WikiDefinition wiki : List.of(WikipediaDefinitions.FR, WikipediaDefinitions.EN)) {
-      loginHook.executeHook(wiki, new ProgressTracker(_ -> {}));
+      loginHook.executeHook(
+          wiki, WPCleanerConfigurationLoader.GENERAL_USERNAME, new ProgressTracker(_ -> {}));
       final Map<String, String> contents = retrieveContents(wiki, PAGES.get(wiki));
       contents.forEach(
           (title, content) ->

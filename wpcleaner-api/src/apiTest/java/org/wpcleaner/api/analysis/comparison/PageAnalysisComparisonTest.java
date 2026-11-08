@@ -43,6 +43,7 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.hook.login.LoginHook;
+import org.wpcleaner.api.hook.login.WPCleanerConfigurationLoader;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTag;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
@@ -83,7 +84,8 @@ class PageAnalysisComparisonTest {
 
     // WHEN
     for (final WikiDefinition wiki : List.of(WikipediaDefinitions.FR, WikipediaDefinitions.EN)) {
-      loginHook.executeHook(wiki, new ProgressTracker(_ -> {}));
+      loginHook.executeHook(
+          wiki, WPCleanerConfigurationLoader.GENERAL_USERNAME, new ProgressTracker(_ -> {}));
       final Set<String> extensionTags =
           extensionTagRepository.getExtensionTags(wiki).stream()
               .map(ExtensionTag::name)

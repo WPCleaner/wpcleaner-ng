@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-07 10:53+0100\n"
+"POT-Creation-Date: 2026-11-08 09:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,12 +45,16 @@ msgstr ""
 msgid "Result returned was %s"
 msgstr ""
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:49
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:53
 msgid "Retrieving site information"
 msgstr ""
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:55
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:59
 msgid "Retrieving tags"
+msgstr ""
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:64
+msgid "Retrieving WPCleaner configuration"
 msgstr ""
 
 #: wpcleaner-api/src/main/java/org/wpcleaner/api/repository/token/TokenRepository.java:43
@@ -513,30 +517,30 @@ msgstr ""
 msgid "Retrieving help URL"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:70
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:69
 msgid "Retrieving page content"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:86
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:92
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:99
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:111
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:85
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:91
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:98
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:110
 msgid "Error loading the page"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:86
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:85
 msgid "Page not found."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:92
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:91
 msgid "No revisions found for this page."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:99
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:98
 msgid "No content found for this page."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:112
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:111
 #, java-printf-format
 msgid "Error retrieving page content: %s"
 msgstr ""
