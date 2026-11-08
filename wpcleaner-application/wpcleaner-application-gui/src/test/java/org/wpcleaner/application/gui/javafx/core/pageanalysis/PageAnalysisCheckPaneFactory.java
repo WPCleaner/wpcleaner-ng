@@ -7,8 +7,10 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import org.springframework.boot.test.context.TestComponent;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
@@ -44,11 +46,17 @@ public final class PageAnalysisCheckPaneFactory {
   }
 
   public void givenCheckWikiConfiguration(final Map<String, String> properties) {
+    givenCheckWikiConfiguration(properties, Set.of());
+  }
+
+  public void givenCheckWikiConfiguration(
+      final Map<String, String> properties, final Set<PageTitle> whitelist) {
     checkWikiConfigurationRepository.setConfiguration(
         PageAnalysisTestFactory.WIKI,
         CheckWikiConfiguration.of(
-            properties,
-            Map.of(),
-            Objects.requireNonNull(PageAnalysisTestFactory.WIKI.checkWikiCode())));
+                properties,
+                Map.of(),
+                Objects.requireNonNull(PageAnalysisTestFactory.WIKI.checkWikiCode()))
+            .withWhitelists(_ -> whitelist));
   }
 }

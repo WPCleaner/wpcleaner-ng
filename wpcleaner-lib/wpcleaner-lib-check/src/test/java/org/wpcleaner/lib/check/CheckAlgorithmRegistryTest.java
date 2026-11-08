@@ -8,12 +8,15 @@ package org.wpcleaner.lib.check;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.ApiSpringBootTest;
+import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
@@ -95,6 +98,26 @@ class CheckAlgorithmRegistryTest {
 
     // THEN
     Assertions.assertThat(algorithms).isEmpty();
+  }
+
+  @DisplayName("should not give the algorithms whose whitelist contains the analyzed page")
+  @Test
+  void getActiveAlgorithmsForWhitelistedPage() {
+    // GIVEN
+    configurationRepository.setConfiguration(
+        WIKI,
+        CheckWikiConfiguration.of(Map.of("error_048_prio_frwiki", "3"), Map.of(), "frwiki")
+            .withWhitelists(_ -> Set.of(new PageTitle(0, "Paris"))));
+
+    // WHEN
+    final List<CheckAlgorithm> whitelistedAlgorithms =
+        registry.getActiveAlgorithms(PageAnalysisTestFactory.createPageAnalysis("Paris", ""));
+    final List<CheckAlgorithm> otherAlgorithms =
+        registry.getActiveAlgorithms(PageAnalysisTestFactory.createPageAnalysis("Lyon", ""));
+
+    // THEN
+    Assertions.assertThat(whitelistedAlgorithms).isEmpty();
+    Assertions.assertThat(otherAlgorithms).extracting(CheckAlgorithm::number).containsExactly(48);
   }
 
   @DisplayName("should name the algorithms with their short description on the wiki")

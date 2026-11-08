@@ -67,7 +67,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
     analysis = newAnalysis;
     getArea().updateAnalysis(newAnalysis);
     errorsPane.updateErrors(
-        algorithmRegistry.getActiveAlgorithms(newAnalysis.getWiki()).stream()
+        algorithmRegistry.getActiveAlgorithms(newAnalysis).stream()
             .map(
                 algorithm ->
                     new CheckAlgorithmErrors(

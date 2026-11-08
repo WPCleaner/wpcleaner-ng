@@ -8,7 +8,9 @@ package org.wpcleaner.lib.check;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import org.springframework.stereotype.Service;
+import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
@@ -33,14 +35,22 @@ public class CheckAlgorithmRegistry {
   }
 
   public List<CheckAlgorithm> getActiveAlgorithms(final WikiDefinition wiki) {
+    return getAlgorithms(wiki, CheckAlgorithmConfiguration::isActive);
+  }
+
+  public List<CheckAlgorithm> getActiveAlgorithms(final PageAnalysis analysis) {
+    return getAlgorithms(
+        analysis.getWiki(),
+        configuration ->
+            configuration.isActive() && !configuration.isWhitelisted(analysis.getPageTitle()));
+  }
+
+  private List<CheckAlgorithm> getAlgorithms(
+      final WikiDefinition wiki, final Predicate<CheckAlgorithmConfiguration> filter) {
     final CheckWikiConfiguration configuration = configurationRepository.getConfiguration(wiki);
     return algorithms.stream()
         .filter(
-            algorithm ->
-                configuration
-                    .getAlgorithm(algorithm.number())
-                    .filter(CheckAlgorithmConfiguration::isActive)
-                    .isPresent())
+            algorithm -> configuration.getAlgorithm(algorithm.number()).filter(filter).isPresent())
         .toList();
   }
 

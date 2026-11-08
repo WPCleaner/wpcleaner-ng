@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.geometry.Bounds;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
@@ -152,6 +154,21 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
       throws ExecutionException, InterruptedException, TimeoutException {
     // GIVEN
     paneFactory.givenCheckWikiConfiguration(Map.of("error_048_prio_frwiki", "0"));
+    final PageAnalysisCheckPane pane = createPane();
+
+    // WHEN
+    runOnJavaFx(() -> pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, TEXT)));
+
+    // THEN
+    Assertions.assertThat(pane.getErrorsListView().getItems()).isEmpty();
+  }
+
+  @DisplayName("should not run the algorithms whose whitelist contains the page")
+  @Test
+  void listWhitelistedPage() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    paneFactory.givenCheckWikiConfiguration(
+        Map.of("error_048_prio_frwiki", "3"), Set.of(new PageTitle(0, TITLE)));
     final PageAnalysisCheckPane pane = createPane();
 
     // WHEN

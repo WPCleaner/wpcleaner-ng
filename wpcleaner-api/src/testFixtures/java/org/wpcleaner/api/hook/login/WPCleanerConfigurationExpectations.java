@@ -59,7 +59,18 @@ public final class WPCleanerConfigurationExpectations {
         .willReturn(List.of(createPage(title, content)));
   }
 
-  private static Page createPage(final String title, @Nullable final String content) {
+  public static void givenPages(
+      final MockApiRevisions mockApiRevisions,
+      final WikiDefinition wiki,
+      final List<String> titles,
+      final Map<String, String> contentByTitle) {
+    mockApiRevisions
+        .givenRetrieveRevisionsByTitle(wiki, titles, ConfigurationPageReader.CONTENT_QUERY)
+        .willReturn(
+            titles.stream().map(title -> createPage(title, contentByTitle.get(title))).toList());
+  }
+
+  public static Page createPage(final String title, @Nullable final String content) {
     if (content == null) {
       return new Page(true, 2, null, List.of(), title);
     }

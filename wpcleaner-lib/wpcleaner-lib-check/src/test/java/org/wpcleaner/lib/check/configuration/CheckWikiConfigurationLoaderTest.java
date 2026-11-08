@@ -7,6 +7,7 @@ package org.wpcleaner.lib.check.configuration;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +15,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.wpcleaner.api.ApiSpringBootTest;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
+import org.wpcleaner.api.hook.login.ConfigurationPageReader;
 import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
@@ -61,7 +64,7 @@ class CheckWikiConfigurationLoaderTest {
   @Test
   void loadConfiguration() {
     // GIVEN
-    givenTranslationPage(Map.of());
+    givenTranslationPage(TRANSLATION, Map.of());
 
     // WHEN
     loader.execute(WIKI, ProgressTracker.NOOP);
@@ -89,7 +92,8 @@ class CheckWikiConfigurationLoaderTest {
   @Test
   void loadConfigurationWithUserOverride() {
     // GIVEN
-    givenTranslationPage(Map.of("error_048_prio_frwiki", "0", "error_048_prio_enwiki", "1"));
+    givenTranslationPage(
+        TRANSLATION, Map.of("error_048_prio_frwiki", "0", "error_048_prio_enwiki", "1"));
 
     // WHEN
     loader.execute(WIKI, ProgressTracker.NOOP);
@@ -138,12 +142,80 @@ class CheckWikiConfigurationLoaderTest {
         .isEqualTo(CheckWikiConfiguration.EMPTY);
   }
 
-  private void givenTranslationPage(final Map<String, String> userProperties) {
+  @DisplayName("should load the whitelists of the algorithms")
+  @Test
+  void loadWhitelists() {
+    // GIVEN
+    final String whitelistPage = "Projet:Correction syntaxique/Erreur syntaxique 048/Liste blanche";
+    final String configuredWhitelistPage = whitelistPage.replace(' ', '_');
+    givenTranslationPage(
+        """
+         error_048_prio_frwiki=3 END
+         error_048_whitelistpage_frwiki=%s END
+         error_002_prio_frwiki=3 END
+         error_002_whitelist_frwiki=
+          Lyon
+          Marseille END
+        """
+            .formatted(configuredWhitelistPage),
+        Map.of());
+    mockApiRevisions
+        .givenRetrieveRevisionsByTitle(
+            WIKI, List.of(configuredWhitelistPage), ConfigurationPageReader.CONTENT_QUERY)
+        .willReturn(
+            List.of(
+                WPCleanerConfigurationExpectations.createPage(
+                    whitelistPage,
+                    "Liste blanche de {{numéro|48}}.\n* [[Paris]] : raison\n* [[:Nice|Nice]]")));
+
+    // WHEN
+    loader.execute(WIKI, ProgressTracker.NOOP);
+
+    // THEN
+    mediaWikiServer.verify();
+    final CheckWikiConfiguration configuration = repository.getConfiguration(WIKI);
+    Assertions.assertThat(configuration.getAlgorithm(48))
+        .map(CheckAlgorithmConfiguration::whitelist)
+        .hasValue(Set.of(new PageTitle(0, "Paris"), new PageTitle(0, "Nice")));
+    Assertions.assertThat(configuration.getAlgorithm(2))
+        .map(CheckAlgorithmConfiguration::whitelist)
+        .hasValue(Set.of(new PageTitle(0, "Lyon"), new PageTitle(0, "Marseille")));
+  }
+
+  @DisplayName("should retrieve the whitelists only for active algorithms available")
+  @Test
+  void loadWhitelistsOfInactiveOrUnavailableAlgorithms() {
+    // GIVEN
+    givenTranslationPage(
+        """
+         error_048_prio_frwiki=0 END
+         error_048_whitelistpage_frwiki=Liste blanche 048 END
+         error_001_prio_frwiki=3 END
+         error_001_whitelistpage_frwiki=Liste blanche 001 END
+        """,
+        Map.of());
+
+    // WHEN
+    loader.execute(WIKI, ProgressTracker.NOOP);
+
+    // THEN
+    mediaWikiServer.verify();
+    final CheckWikiConfiguration configuration = repository.getConfiguration(WIKI);
+    Assertions.assertThat(configuration.getAlgorithm(48))
+        .map(CheckAlgorithmConfiguration::whitelist)
+        .hasValue(Set.of());
+    Assertions.assertThat(configuration.getAlgorithm(1))
+        .map(CheckAlgorithmConfiguration::whitelist)
+        .hasValue(Set.of());
+  }
+
+  private void givenTranslationPage(
+      final String translation, final Map<String, String> userProperties) {
     wpcleanerRepository.setConfiguration(
         WIKI,
         new WPCleanerConfiguration(
             Map.of("check_wiki_translation_page", TRANSLATION_PAGE), userProperties));
     WPCleanerConfigurationExpectations.givenPage(
-        mockApiRevisions, WIKI, TRANSLATION_PAGE, TRANSLATION);
+        mockApiRevisions, WIKI, TRANSLATION_PAGE, translation);
   }
 }
