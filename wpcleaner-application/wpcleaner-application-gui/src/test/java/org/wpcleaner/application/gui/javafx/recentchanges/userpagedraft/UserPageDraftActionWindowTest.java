@@ -284,7 +284,7 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
                     .summary(withPrefix("userPageSummary"))
                     .token(CSRF_TOKEN)
                     .build()))
-        .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, "User:Jane Doe", null));
+        .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, "User:Jane Doe", null, null));
     mockApiEdit
         .givenEdit(
             WIKI,
@@ -295,7 +295,7 @@ class UserPageDraftActionWindowTest extends JavaFxTest {
                     .summary(withPrefix("userTalkPageSummary"))
                     .token(CSRF_TOKEN)
                     .build()))
-        .willReturn(new Edit(Edit.RESULT_SUCCESS, 2, "User talk:Jane Doe", null));
+        .willReturn(new Edit(Edit.RESULT_SUCCESS, 2, "User talk:Jane Doe", null, null));
 
     runOnJavaFx(() -> lookup(window, UserPageDraftActionWindow.OK_ID, Button.class).fire());
 

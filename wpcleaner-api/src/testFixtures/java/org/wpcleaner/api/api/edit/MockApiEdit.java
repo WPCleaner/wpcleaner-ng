@@ -5,8 +5,11 @@ package org.wpcleaner.api.api.edit;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import org.jspecify.annotations.Nullable;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.wpcleaner.api.api.ApiAnswer;
 import org.wpcleaner.api.api.ApiError;
@@ -59,7 +62,13 @@ public final class MockApiEdit {
   public record EditAnswer(ApiAnswer answer) {
 
     public void willReturn(final Edit edit) {
-      answer.willReturn(Map.of("edit", edit));
+      final Map<String, @Nullable Object> result = new LinkedHashMap<>();
+      result.put("result", edit.result());
+      result.put("pageid", edit.pageId());
+      result.put("title", edit.title());
+      result.put("nochange", edit.noChange());
+      result.put("newtimestamp", Objects.toString(edit.newTimestamp(), null));
+      answer.willReturn(Map.of("edit", result));
     }
 
     public void willReturnErrors(final List<ApiError> errors) {

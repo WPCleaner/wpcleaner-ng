@@ -199,7 +199,7 @@ class UserPageDraftActionTest extends JavaFxTest {
                     .summary(withPrefix("Summary"))
                     .token(CSRF_TOKEN)
                     .build()))
-        .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, "User:NicoV", null));
+        .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, "User:NicoV", null, null));
     mockApiEdit
         .givenEdit(
             WIKI,
@@ -210,7 +210,7 @@ class UserPageDraftActionTest extends JavaFxTest {
                     .summary(withPrefix("Talk summary"))
                     .token(CSRF_TOKEN)
                     .build()))
-        .willReturn(new Edit(Edit.RESULT_SUCCESS, 2, "User talk:NicoV", null));
+        .willReturn(new Edit(Edit.RESULT_SUCCESS, 2, "User talk:NicoV", null, null));
     final UserPageDraftAction action = createAction();
 
     runOnJavaFx(

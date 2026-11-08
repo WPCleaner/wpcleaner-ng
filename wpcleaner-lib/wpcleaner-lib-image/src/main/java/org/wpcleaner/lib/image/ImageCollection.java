@@ -19,6 +19,7 @@ public enum ImageCollection {
   AUTOMATIC_FIXES("commons/nuvola-apps-kcmsystem.png"),
   DIFF("commons/gnome-edit-copy.png"),
   DOCUMENT_SAVE("commons/gnome-document-save.png"),
+  DOCUMENT_SEND("commons/gnome-document-send.png"),
   EDIT("commons/gnome-document-properties.png"),
   ERROR("commons/codex-icon-error.png"),
   ERROR_ERROR("commons/codex-icon-error-color-error.png"),

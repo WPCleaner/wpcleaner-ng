@@ -31,7 +31,7 @@ class ApiEditWrapperCustomizerTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
   private static final String CSRF_TOKEN = "csrf-token";
-  private static final Edit EDIT = new Edit(Edit.RESULT_SUCCESS, 1, "Test", null);
+  private static final Edit EDIT = new Edit(Edit.RESULT_SUCCESS, 1, "Test", null, null);
 
   @Autowired private ApiEditWrapper apiEditWrapper;
   @Autowired private CurrentUserService currentUserService;

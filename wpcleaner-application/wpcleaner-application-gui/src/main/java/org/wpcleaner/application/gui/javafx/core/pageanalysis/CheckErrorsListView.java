@@ -25,8 +25,7 @@ public final class CheckErrorsListView extends ListView<CheckAlgorithmErrors> {
       Map.of("amp", "&", "lt", "<", "gt", ">", "quot", "\"", "#39", "'", "nbsp", " ");
   private static final Pattern HTML_ENTITY =
       Pattern.compile("&(" + String.join("|", HTML_ENTITIES.keySet()) + ");");
-  private static final String FIXED_STYLE =
-      "-fx-control-inner-background: #CCFFCC; -fx-control-inner-background-alt: #CCFFCC;";
+  private static final String FIXED_STYLE = "-fx-text-fill: #008000;";
 
   public CheckErrorsListView(final Consumer<CheckAlgorithmErrors> doubleClickAction) {
     super();

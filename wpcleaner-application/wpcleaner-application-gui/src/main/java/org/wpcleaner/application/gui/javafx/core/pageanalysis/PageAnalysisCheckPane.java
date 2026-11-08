@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
+import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -30,6 +31,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
   private final CheckErrorsPane errorsPane;
   private final PageAnalysisScrollPane scrollPane;
   @Nullable private PageAnalysis analysis;
+  private Runnable analysisListener = () -> {};
 
   public PageAnalysisCheckPane(
       final PageSyntaxColorizer colorizer,
@@ -73,6 +75,19 @@ public final class PageAnalysisCheckPane extends SplitPane {
             .map(algorithm -> CheckAlgorithmErrors.of(algorithmRegistry, algorithm, newAnalysis))
             .toList());
     highlightErrors(errorsPane.getSelectedErrors());
+    analysisListener.run();
+  }
+
+  public void setAnalysisListener(final Runnable listener) {
+    analysisListener = listener;
+  }
+
+  public void resetInitialErrors() {
+    errorsPane.resetInitialErrors();
+  }
+
+  public List<CheckAlgorithm> getFixedAlgorithms() {
+    return errorsPane.getFixedAlgorithms();
   }
 
   CheckErrorsContextMenu createContextMenu(final int position) {

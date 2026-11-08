@@ -151,6 +151,6 @@ class ContentAppendActionTest extends JavaFxTest {
                     .summary("WPCleanerNG v%s - %s".formatted(versionPrefix, summary))
                     .token(CSRF_TOKEN)
                     .build()))
-        .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, title, null));
+        .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, title, null, null));
   }
 }

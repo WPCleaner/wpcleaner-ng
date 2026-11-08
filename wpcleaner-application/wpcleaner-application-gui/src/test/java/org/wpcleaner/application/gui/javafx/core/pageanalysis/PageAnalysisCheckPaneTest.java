@@ -43,6 +43,7 @@ import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
+import org.wpcleaner.lib.check.CheckAlgorithm;
 
 @GuiSpringBootTest
 @Import(PageAnalysisCheckPaneFactory.class)
@@ -57,7 +58,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
   private static final String AUTOMATIC_TEXT =
       "== Histoire ==\n" + FIRST_LINK + " et " + FIRST_LINK + ".";
   private static final String INTRODUCTION = "Intro ";
-  private static final Paint FIXED_BACKGROUND = Color.web("#CCFFCC");
+  private static final Paint FIXED_TEXT_FILL = Color.web("#008000");
 
   @Autowired private PageAnalysisCheckPaneFactory paneFactory;
   @Autowired private JavaFxStylePropertiesRegistry styleRegistry;
@@ -479,7 +480,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(button.isDisable()).isTrue();
   }
 
-  @DisplayName("should display the fixed algorithms on a light green background")
+  @DisplayName("should display the fixed algorithms in green")
   @Test
   void displayFixedAlgorithm() throws ExecutionException, InterruptedException, TimeoutException {
     // GIVEN
@@ -493,37 +494,50 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
               PageAnalysisCheckPaneFactory.show(pane);
               return lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class);
             });
-    Assertions.assertThat(callOnJavaFx(() -> displayedBackgrounds(pane)))
-        .doesNotContain(FIXED_BACKGROUND);
+    Assertions.assertThat(callOnJavaFx(() -> displayedTextFills(pane)))
+        .doesNotContain(FIXED_TEXT_FILL);
 
     // WHEN
     runOnJavaFx(button::fire);
 
     // THEN
     Assertions.assertThat(callOnJavaFx(() -> displayedTexts(pane))).containsExactly("Error No. 48");
-    Assertions.assertThat(callOnJavaFx(() -> displayedBackgrounds(pane)))
-        .containsExactly(FIXED_BACKGROUND);
+    Assertions.assertThat(callOnJavaFx(() -> displayedTextFills(pane)))
+        .containsExactly(FIXED_TEXT_FILL);
   }
 
-  @DisplayName("should display the selection rather than the fixed background")
+  @DisplayName("should keep the fixed algorithms in green when selected")
   @Test
   void selectFixedAlgorithm() throws ExecutionException, InterruptedException, TimeoutException {
     // GIVEN
     final PageAnalysisCheckPane pane = createPane();
-    runOnJavaFx(
-        () -> {
-          pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, AUTOMATIC_TEXT));
-          PageAnalysisCheckPaneFactory.show(pane);
-          lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class).fire();
-        });
+    final Stage stage =
+        callOnJavaFx(
+            () -> {
+              final Stage created = new Stage();
+              created.setScene(new Scene(pane, 800, 600));
+              created.show();
+              pane.updateAnalysis(
+                  PageAnalysisTestFactory.createPageAnalysis(TITLE, AUTOMATIC_TEXT));
+              PageAnalysisCheckPaneFactory.show(pane);
+              lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class).fire();
+              return created;
+            });
+    try {
+      // WHEN
+      runOnJavaFx(
+          () -> {
+            pane.getErrorsListView().requestFocus();
+            pane.getErrorsListView().getSelectionModel().selectFirst();
+          });
 
-    // WHEN
-    runOnJavaFx(() -> pane.getErrorsListView().getSelectionModel().selectFirst());
-
-    // THEN
-    Assertions.assertThat(callOnJavaFx(() -> displayedBackgrounds(pane)))
-        .singleElement()
-        .isNotEqualTo(FIXED_BACKGROUND);
+      // THEN
+      Assertions.assertThat(callOnJavaFx(() -> pane.getErrorsListView().isFocused())).isTrue();
+      Assertions.assertThat(callOnJavaFx(() -> displayedTextFills(pane)))
+          .containsExactly(FIXED_TEXT_FILL);
+    } finally {
+      runOnJavaFx(stage::close);
+    }
   }
 
   @DisplayName("should display an icon with a tooltip for the automatic fixes")
@@ -545,6 +559,34 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(button.getText()).isEmpty();
     Assertions.assertThat(button.getGraphic()).isInstanceOf(ImageView.class);
     Assertions.assertThat(button.getTooltip().getText()).isEqualTo("Automatic fixes");
+  }
+
+  @DisplayName("should give the algorithms with fewer errors than initially as fixed")
+  @Test
+  void getFixedAlgorithms() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final PageAnalysisCheckPane pane = createPane();
+    runOnJavaFx(
+        () -> {
+          pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, TEXT));
+          pane.resetInitialErrors();
+        });
+    Assertions.assertThat(callOnJavaFx(pane::getFixedAlgorithms)).isEmpty();
+
+    // WHEN
+    runOnJavaFx(
+        () -> {
+          PageAnalysisCheckPaneFactory.show(pane);
+          lookup(pane, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class).fire();
+        });
+
+    // THEN
+    Assertions.assertThat(pane.getErrorsListView().getItems())
+        .singleElement()
+        .satisfies(errors -> Assertions.assertThat(errors.errors()).hasSize(1));
+    Assertions.assertThat(callOnJavaFx(pane::getFixedAlgorithms))
+        .extracting(CheckAlgorithm::number)
+        .containsExactly(48);
   }
 
   @DisplayName("should not apply the replacements that are not automatic")
@@ -642,9 +684,9 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
         .toList();
   }
 
-  private static List<Paint> displayedBackgrounds(final PageAnalysisCheckPane pane) {
+  private static List<Paint> displayedTextFills(final PageAnalysisCheckPane pane) {
     return PageAnalysisCheckPaneFactory.displayedCells(pane).stream()
-        .map(cell -> cell.getBackground().getFills().getLast().getFill())
+        .map(Labeled::getTextFill)
         .toList();
   }
 

@@ -7,6 +7,7 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -37,6 +38,7 @@ public final class CheckErrorsPane extends TitledPane {
   private final Button linkButton;
   private final CheckErrorsListView errorsListView;
   private final ChangeListener<CheckAlgorithmErrors> selectionListener;
+  private Map<CheckAlgorithm, Integer> initialErrorCounts = Map.of();
 
   public CheckErrorsPane(
       final JavaFxImageLoader imageLoader,
@@ -129,6 +131,27 @@ public final class CheckErrorsPane extends TitledPane {
       selectionModel.selectedItemProperty().addListener(selectionListener);
     }
     automaticFixesButton.setDisable(findAutomaticFixes().isEmpty());
+  }
+
+  public void resetInitialErrors() {
+    initialErrorCounts = getErrorCounts();
+  }
+
+  public List<CheckAlgorithm> getFixedAlgorithms() {
+    final Map<CheckAlgorithm, Integer> errorCounts = getErrorCounts();
+    return initialErrorCounts.entrySet().stream()
+        .filter(entry -> errorCounts.getOrDefault(entry.getKey(), 0) < entry.getValue())
+        .map(Map.Entry::getKey)
+        .sorted(Comparator.comparingInt(CheckAlgorithm::number))
+        .toList();
+  }
+
+  private Map<CheckAlgorithm, Integer> getErrorCounts() {
+    return errorsListView.getItems().stream()
+        .collect(
+            Collectors.toMap(
+                CheckAlgorithmErrors::algorithm,
+                algorithmErrors -> algorithmErrors.errors().size()));
   }
 
   public List<AutomaticFix> findAutomaticFixes() {
