@@ -8,10 +8,13 @@ package org.wpcleaner.lib.check.configuration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 
 public record CheckWikiConfiguration(Map<Integer, CheckAlgorithmConfiguration> algorithms) {
 
@@ -46,6 +49,16 @@ public record CheckWikiConfiguration(Map<Integer, CheckAlgorithmConfiguration> a
                 Collectors.toMap(
                     Map.Entry::getKey,
                     entry -> new CheckAlgorithmConfiguration(entry.getKey(), entry.getValue()))));
+  }
+
+  public CheckWikiConfiguration withWhitelists(
+      final Function<CheckAlgorithmConfiguration, Set<PageTitle>> whitelists) {
+    return new CheckWikiConfiguration(
+        algorithms.values().stream()
+            .collect(
+                Collectors.toMap(
+                    CheckAlgorithmConfiguration::number,
+                    algorithm -> algorithm.withWhitelist(whitelists.apply(algorithm)))));
   }
 
   public Optional<CheckAlgorithmConfiguration> getAlgorithm(final int number) {

@@ -30,6 +30,14 @@ public final class MockApiRevisions {
       final WikiDefinition wiki,
       final List<String> titles,
       @Nullable final RevisionsQuery options) {
+    return givenRetrieveRevisionsByTitle(wiki, titles, options, Map.of());
+  }
+
+  public RevisionsAnswer givenRetrieveRevisionsByTitle(
+      final WikiDefinition wiki,
+      final List<String> titles,
+      @Nullable final RevisionsQuery options,
+      final Map<String, String> continuation) {
     final ApiRequestExpectation request =
         ApiRequestExpectation.of(mediaWikiServer, wiki, ApiParameters.Action.QUERY);
     request.queryParam(
@@ -38,6 +46,7 @@ public final class MockApiRevisions {
     if (options != null) {
       expectOptions(request, options);
     }
+    continuation.forEach(request::queryParam);
     return new RevisionsAnswer(request.answer());
   }
 
@@ -65,7 +74,16 @@ public final class MockApiRevisions {
   public record RevisionsAnswer(ApiAnswer answer) {
 
     public void willReturn(final List<Page> pages) {
-      answer.willReturnQuery("pages", pages.stream().map(RevisionsAnswer::createPage).toList());
+      answer.willReturnQuery("pages", createPages(pages));
+    }
+
+    public void willReturn(final List<Page> pages, final Map<String, String> continuation) {
+      answer.willReturn(
+          Map.of("continue", continuation, "query", Map.of("pages", createPages(pages))));
+    }
+
+    private static List<Map<String, @Nullable Object>> createPages(final List<Page> pages) {
+      return pages.stream().map(RevisionsAnswer::createPage).toList();
     }
 
     public void willFail() {
