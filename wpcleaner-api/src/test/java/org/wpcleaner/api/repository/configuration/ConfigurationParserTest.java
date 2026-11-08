@@ -5,6 +5,7 @@ package org.wpcleaner.api.repository.configuration;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -115,5 +116,18 @@ class ConfigurationParserTest {
 
     // THEN
     Assertions.assertThat(properties).containsExactly(Map.entry("project", "frwiki"));
+  }
+
+  @DisplayName("should split a line on separators that are not escaped")
+  @Test
+  void splitLine() {
+    // GIVEN
+    final String line = "Liens|Lien web|Lien \\| web||";
+
+    // WHEN
+    final List<String> elements = ConfigurationParser.splitLine(line);
+
+    // THEN
+    Assertions.assertThat(elements).containsExactly("Liens", "Lien web", "Lien | web", "", "");
   }
 }

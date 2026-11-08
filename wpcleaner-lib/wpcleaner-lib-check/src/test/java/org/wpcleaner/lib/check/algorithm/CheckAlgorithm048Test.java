@@ -6,15 +6,21 @@ package org.wpcleaner.lib.check.algorithm;
  */
 
 import java.util.List;
+import java.util.Map;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
+import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
+import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
+import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 
 @ApiSpringBootTest
 class CheckAlgorithm048Test {
@@ -22,6 +28,13 @@ class CheckAlgorithm048Test {
   private static final int ALGORITHM = 48;
 
   @Autowired private CheckAlgorithm048 algorithm;
+  @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
+  @Autowired private WPCleanerConfigurationRepository wpcleanerRepository;
+
+  @BeforeEach
+  void setUp() {
+    givenConfiguration(Map.of(), Map.of());
+  }
 
   @DisplayName("should report links to the page itself, whatever their writing")
   @Test
@@ -154,6 +167,108 @@ class CheckAlgorithm048Test {
 
     // THEN
     Assertions.assertThat(errors).containsOnly(List.of());
+  }
+
+  @DisplayName("should ignore links in tags without wiki content, but not in undeclared tags")
+  @Test
+  void ignoreLinksInNonWikiTags() {
+    // GIVEN
+    final String text =
+        "<nowiki>[[Paris]]</nowiki> <mapframe width=200>[[Paris]]</mapframe>"
+            + " <timeline>[[Paris]]</timeline> <undeclared>[[Paris]]</undeclared> [[Paris]]";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    Assertions.assertThat(errors)
+        .extracting(CheckError::begin)
+        .containsExactly(
+            text.indexOf("<undeclared>") + "<undeclared>".length(), text.lastIndexOf("[[Paris]]"));
+  }
+
+  @DisplayName("should ignore links in the templates to ignore, given by name or by group")
+  @Test
+  void ignoreLinksInIgnoredTemplates() {
+    // GIVEN
+    givenConfiguration(
+        Map.of(
+            "error_048_ignore_templates_frwiki",
+            "+Liens, +Article\nouvrage",
+            "error_048_template_groups_frwiki",
+            "Liens|lien web|Lien"),
+        Map.of("general_template_groups", "Article|Article|Cite journal"));
+    final String text =
+        "{{Lien web|titre=[[Paris]]}} {{Cite journal|[[Paris]]}} {{Ouvrage|[[Paris]]}}"
+            + " {{Autre|[[Paris]]}} {{lien|1={{Autre|[[Paris]]}}}}";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    final int otherLink = text.indexOf("{{Autre|[[Paris]]}}") + "{{Autre|".length();
+    final int nestedLink = text.lastIndexOf("[[Paris]]");
+    Assertions.assertThat(errors)
+        .extracting(CheckError::begin)
+        .containsExactly(otherLink, nestedLink);
+  }
+
+  @DisplayName("should report the lines of links in image maps when configured")
+  @Test
+  void reportLinksInImagemap() {
+    // GIVEN
+    givenConfiguration(Map.of("error_048_imagemap_frwiki", "true"), Map.of());
+    final String line = "rect 0 0 10 10 [[Paris]]";
+    final String text = "<imagemap>\nImage:Carte.png|vignette\n" + line + "\n</imagemap>";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    final int lineBegin = text.indexOf(line);
+    Assertions.assertThat(errors)
+        .containsExactly(
+            new CheckError(
+                ALGORITHM,
+                lineBegin,
+                lineBegin + line.length(),
+                List.of(new Replacement("", false))));
+  }
+
+  @DisplayName("should suggest the apostrophe template for a link after a single apostrophe")
+  @Test
+  void suggestApostropheTemplate() {
+    // GIVEN
+    givenConfiguration(Map.of(), Map.of("general_apostrophe_template", "'"));
+    final String text = "l'[[Paris]]";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            new CheckError(
+                ALGORITHM,
+                1,
+                text.length(),
+                List.of(
+                    new Replacement("'Paris", false),
+                    new Replacement("{{'}}'''Paris'''", false),
+                    new Replacement("''''Paris'''", false))));
+  }
+
+  private void givenConfiguration(
+      final Map<String, String> checkWikiProperties, final Map<String, String> generalProperties) {
+    checkWikiRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI,
+        CheckWikiConfiguration.of(checkWikiProperties, Map.of(), "frwiki"));
+    wpcleanerRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI, new WPCleanerConfiguration(generalProperties, Map.of()));
   }
 
   private static List<Replacement> textOrBold(final String text, final boolean automatic) {

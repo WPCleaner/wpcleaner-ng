@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 
 public record CheckAlgorithmConfiguration(
     int number, Map<String, String> properties, Set<PageTitle> whitelist) {
@@ -61,16 +62,18 @@ public record CheckAlgorithmConfiguration(
   }
 
   public List<String> inlineWhitelist() {
-    return getProperty(WHITELIST)
-        .map(value -> value.lines().map(String::trim).filter(line -> !line.isEmpty()).toList())
-        .orElse(List.of());
+    return getLines(WHITELIST);
   }
 
   public boolean isWhitelisted(final PageTitle title) {
     return whitelist.contains(title);
   }
 
-  private Optional<String> getProperty(final String name) {
+  public List<String> getLines(final String name) {
+    return getProperty(name).map(ConfigurationParser::toLines).orElse(List.of());
+  }
+
+  public Optional<String> getProperty(final String name) {
     return Optional.ofNullable(properties.get(name)).filter(value -> !value.isEmpty());
   }
 }

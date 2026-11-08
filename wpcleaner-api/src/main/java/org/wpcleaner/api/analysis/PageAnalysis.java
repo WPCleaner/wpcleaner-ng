@@ -52,6 +52,7 @@ public final class PageAnalysis {
   private final WikiDefinition wiki;
   private final String title;
   private final PageTitle pageTitle;
+  private final PageTitleNormalizer titleNormalizer;
   private final String text;
   private final PreprocessorContainer preprocessor;
   private final TagContainer tags;
@@ -69,8 +70,9 @@ public final class PageAnalysis {
       final ProtocolRepository protocolRepository) {
     this.wiki = wiki;
     this.title = title;
+    this.titleNormalizer = new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki));
     this.pageTitle =
-        new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki))
+        titleNormalizer
             .normalize(title, CommonNamespaces.MAIN.id)
             .orElseGet(() -> new PageTitle(CommonNamespaces.MAIN.id, title));
     this.text = text.replace(WINDOWS_LINE_END, LINE_END);
@@ -101,6 +103,10 @@ public final class PageAnalysis {
 
   public PageTitle getPageTitle() {
     return pageTitle;
+  }
+
+  public Optional<PageTitle> normalizeTitle(final String name, final int defaultNamespace) {
+    return titleNormalizer.normalize(name, defaultNamespace);
   }
 
   public String getText() {
