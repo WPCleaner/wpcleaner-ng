@@ -6,7 +6,7 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
  */
 
 import java.util.List;
-import java.util.OptionalInt;
+import java.util.function.Consumer;
 import javafx.animation.PauseTransition;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ContextMenuEvent;
@@ -35,12 +35,14 @@ public final class PageAnalysisCheckPane extends SplitPane {
       final PageSyntaxColorizer colorizer,
       final JavaFxImageLoader imageLoader,
       final CheckAlgorithmRegistry algorithmRegistry,
-      final PageAnalysisFactory analysisFactory) {
+      final PageAnalysisFactory analysisFactory,
+      final Consumer<String> browseAction) {
     super();
     this.algorithmRegistry = algorithmRegistry;
     this.analysisFactory = analysisFactory;
     this.analysisDelay = new PauseTransition(ANALYSIS_DELAY);
-    this.errorsPane = new CheckErrorsPane(imageLoader, this::showErrors, this::applyAutomaticFixes);
+    this.errorsPane =
+        new CheckErrorsPane(imageLoader, this::showErrors, this::applyAutomaticFixes, browseAction);
     this.scrollPane = new PageAnalysisScrollPane(colorizer);
     initialize();
   }
@@ -68,31 +70,19 @@ public final class PageAnalysisCheckPane extends SplitPane {
     getArea().updateAnalysis(newAnalysis);
     errorsPane.updateErrors(
         algorithmRegistry.getActiveAlgorithms(newAnalysis).stream()
-            .map(
-                algorithm ->
-                    new CheckAlgorithmErrors(
-                        algorithm,
-                        algorithmRegistry.getName(newAnalysis.getWiki(), algorithm),
-                        algorithm.analyze(newAnalysis)))
+            .map(algorithm -> CheckAlgorithmErrors.of(algorithmRegistry, algorithm, newAnalysis))
             .toList());
     highlightErrors(errorsPane.getSelectedErrors());
   }
 
   CheckErrorsContextMenu createContextMenu(final int position) {
     refreshAnalysis();
-    final List<CheckAlgorithmErrors> errorsAtPosition =
+    return new CheckErrorsContextMenu(
         errorsPane.getErrors().stream()
-            .map(
-                algorithmErrors ->
-                    new CheckAlgorithmErrors(
-                        algorithmErrors.algorithm(),
-                        algorithmErrors.name(),
-                        algorithmErrors.errors().stream()
-                            .filter(error -> error.begin() <= position && position < error.end())
-                            .toList()))
+            .map(algorithmErrors -> algorithmErrors.atPosition(position))
             .filter(algorithmErrors -> !algorithmErrors.errors().isEmpty())
-            .toList();
-    return new CheckErrorsContextMenu(errorsAtPosition, this::applyReplacement);
+            .toList(),
+        this::applyReplacement);
   }
 
   private void showErrors(@Nullable final CheckAlgorithmErrors selectedErrors) {
@@ -123,9 +113,8 @@ public final class PageAnalysisCheckPane extends SplitPane {
 
   private void prepareContextMenu(final ContextMenuEvent event) {
     final PageAnalysisArea area = getArea();
-    final OptionalInt position = area.hit(event.getX(), event.getY()).getCharacterIndex();
     area.setContextMenu(
-        position.stream()
+        area.hit(event.getX(), event.getY()).getCharacterIndex().stream()
             .mapToObj(this::createContextMenu)
             .filter(contextMenu -> !contextMenu.getItems().isEmpty())
             .findFirst()

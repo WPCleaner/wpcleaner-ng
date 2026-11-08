@@ -31,24 +31,30 @@ import org.wpcleaner.lib.image.ImageSize;
 public final class CheckErrorsPane extends TitledPane {
 
   public static final String AUTOMATIC_FIXES_ID = "automatic-fixes";
+  public static final String LINK_ID = "link";
 
   private final Button automaticFixesButton;
+  private final Button linkButton;
   private final CheckErrorsListView errorsListView;
   private final ChangeListener<CheckAlgorithmErrors> selectionListener;
 
   public CheckErrorsPane(
       final JavaFxImageLoader imageLoader,
       final Consumer<@Nullable CheckAlgorithmErrors> showAction,
-      final Runnable automaticFixesAction) {
+      final Runnable automaticFixesAction,
+      final Consumer<String> browseAction) {
     super();
     this.automaticFixesButton = new Button();
+    this.linkButton = new Button();
     this.errorsListView = new CheckErrorsListView(showAction);
     this.selectionListener = (_, _, selectedErrors) -> showAction.accept(selectedErrors);
-    initialize(imageLoader, automaticFixesAction);
+    initialize(imageLoader, automaticFixesAction, browseAction);
   }
 
   private void initialize(
-      final JavaFxImageLoader imageLoader, final Runnable automaticFixesAction) {
+      final JavaFxImageLoader imageLoader,
+      final Runnable automaticFixesAction,
+      final Consumer<String> browseAction) {
     setText(GT._T("Check Wiki errors"));
     setCollapsible(false);
     setMaxHeight(Double.MAX_VALUE);
@@ -60,9 +66,21 @@ public final class CheckErrorsPane extends TitledPane {
     automaticFixesButton.setTooltip(new Tooltip(GT._T("Automatic fixes")));
     automaticFixesButton.setDisable(true);
     automaticFixesButton.setOnAction(_ -> automaticFixesAction.run());
+    linkButton.setId(LINK_ID);
+    linkButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
+    imageLoader
+        .getImageView(ImageCollection.HELP, ImageSize.BUTTON)
+        .ifPresent(linkButton::setGraphic);
+    linkButton.setTooltip(new Tooltip(GT._T("Open the page describing the error")));
+    linkButton.setDisable(true);
+    linkButton.setOnAction(_ -> getSelectedLinkUrl().ifPresent(browseAction));
     VBox.setVgrow(errorsListView, Priority.ALWAYS);
-    setContent(new VBox(new ToolBar(automaticFixesButton), errorsListView));
+    setContent(new VBox(new ToolBar(automaticFixesButton, linkButton), errorsListView));
     errorsListView.getSelectionModel().selectedItemProperty().addListener(selectionListener);
+    errorsListView
+        .getSelectionModel()
+        .selectedItemProperty()
+        .addListener((_, _, _) -> linkButton.setDisable(getSelectedLinkUrl().isEmpty()));
   }
 
   public CheckErrorsListView getErrorsListView() {
@@ -75,6 +93,10 @@ public final class CheckErrorsPane extends TitledPane {
 
   public @Nullable CheckAlgorithmErrors getSelectedErrors() {
     return errorsListView.getSelectionModel().getSelectedItem();
+  }
+
+  private Optional<String> getSelectedLinkUrl() {
+    return Optional.ofNullable(getSelectedErrors()).map(CheckAlgorithmErrors::linkUrl);
   }
 
   public void updateErrors(final List<CheckAlgorithmErrors> algorithmsErrors) {

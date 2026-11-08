@@ -5,9 +5,13 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.jspecify.annotations.Nullable;
@@ -15,6 +19,12 @@ import org.jspecify.annotations.Nullable;
 public final class CheckErrorsListView extends ListView<CheckAlgorithmErrors> {
 
   private static final int DOUBLE_CLICK_COUNT = 2;
+  private static final double TOOLTIP_MAX_WIDTH = 400;
+  private static final Pattern HTML_TAG = Pattern.compile("<[^>]*>");
+  private static final Map<String, String> HTML_ENTITIES =
+      Map.of("amp", "&", "lt", "<", "gt", ">", "quot", "\"", "#39", "'", "nbsp", " ");
+  private static final Pattern HTML_ENTITY =
+      Pattern.compile("&(" + String.join("|", HTML_ENTITIES.keySet()) + ");");
   private static final String FIXED_STYLE =
       "-fx-control-inner-background: #CCFFCC; -fx-control-inner-background-alt: #CCFFCC;";
 
@@ -49,6 +59,21 @@ public final class CheckErrorsListView extends ListView<CheckAlgorithmErrors> {
       super.updateItem(item, empty);
       setText(empty || item == null ? null : createText(item));
       setStyle(!empty && item != null && item.errors().isEmpty() ? FIXED_STYLE : "");
+      final String description = empty || item == null ? null : item.description();
+      setTooltip(description == null ? null : createTooltip(description));
+    }
+
+    private static Tooltip createTooltip(final String description) {
+      final Tooltip tooltip = new Tooltip(toPlainText(description));
+      tooltip.setWrapText(true);
+      tooltip.setMaxWidth(TOOLTIP_MAX_WIDTH);
+      return tooltip;
+    }
+
+    private static String toPlainText(final String html) {
+      return HTML_ENTITY
+          .matcher(HTML_TAG.matcher(html).replaceAll(""))
+          .replaceAll(entity -> Matcher.quoteReplacement(HTML_ENTITIES.get(entity.group(1))));
     }
 
     private static String createText(final CheckAlgorithmErrors item) {
