@@ -87,6 +87,11 @@ public class JavaFxTest {
         .orElseThrow(() -> new AssertionError("No node with id " + id));
   }
 
+  protected static <T extends Node> Optional<T> find(
+      final JavaFxWindow<?> window, final String id, final Class<T> type) {
+    return findById(window.getStage().getScene().getRoot(), id).map(type::cast);
+  }
+
   private static Optional<Node> findById(final Node node, final String id) {
     if (id.equals(node.getId())) {
       return Optional.of(node);

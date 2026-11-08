@@ -230,7 +230,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
     window = analysisWindow;
     waitForJavaFx(
         () ->
-            Optional.of(getAutomaticFixesButton(analysisWindow))
+            find(analysisWindow, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class)
                 .filter(button -> !button.isDisable()));
     return analysisWindow;
   }
