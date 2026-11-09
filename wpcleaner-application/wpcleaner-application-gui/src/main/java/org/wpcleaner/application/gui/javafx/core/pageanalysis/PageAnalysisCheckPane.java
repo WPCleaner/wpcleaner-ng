@@ -94,6 +94,15 @@ public final class PageAnalysisCheckPane extends SplitPane {
     return errorsPane.getFixedAlgorithms();
   }
 
+  public List<CheckAlgorithm> getFullyFixedAlgorithms() {
+    return errorsPane.getFullyFixedAlgorithms();
+  }
+
+  @Nullable
+  public PageAnalysis getAnalysis() {
+    return analysis;
+  }
+
   CheckErrorsContextMenu createContextMenu(final int position) {
     refreshAnalysis();
     return new CheckErrorsContextMenu(
@@ -120,7 +129,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
     return errors;
   }
 
-  private void refreshAnalysis() {
+  public void refreshAnalysis() {
     analysisDelay.stop();
     final PageAnalysis currentAnalysis = analysis;
     final String text = getArea().getText();

@@ -582,7 +582,8 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(button.getTooltip().getText()).isEqualTo("Automatic fixes");
   }
 
-  @DisplayName("should give the algorithms with fewer errors than initially as fixed")
+  @DisplayName(
+      "should give the algorithms with fewer errors than initially as fixed, but not fully fixed")
   @Test
   void getFixedAlgorithms() throws ExecutionException, InterruptedException, TimeoutException {
     // GIVEN
@@ -608,6 +609,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(callOnJavaFx(pane::getFixedAlgorithms))
         .extracting(CheckAlgorithm::number)
         .containsExactly(48);
+    Assertions.assertThat(callOnJavaFx(pane::getFullyFixedAlgorithms)).isEmpty();
   }
 
   @DisplayName("should not apply the replacements that are not automatic")

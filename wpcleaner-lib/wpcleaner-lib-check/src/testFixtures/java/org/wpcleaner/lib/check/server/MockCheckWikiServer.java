@@ -11,8 +11,10 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.ResponseActions;
 import org.springframework.test.web.client.match.MockRestRequestMatchers;
 import org.springframework.test.web.client.response.MockRestResponseCreators;
+import org.springframework.util.MultiValueMap;
 import org.wpcleaner.api.api.ApiRequestExpectation;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
@@ -29,16 +31,24 @@ public final class MockCheckWikiServer {
       final int errorNumber,
       final int limit,
       final List<String> titles) {
-    server
-        .expect(MockRestRequestMatchers.requestTo(CheckWikiServer.LIST_URL))
-        .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
-        .andExpect(ApiRequestExpectation.userAgent())
-        .andExpect(
-            MockRestRequestMatchers.content()
-                .formData(CheckWikiServer.createListParameters(wiki, errorNumber, limit)))
+    expect(CheckWikiServer.createListParameters(wiki, errorNumber, limit))
         .andRespond(
             MockRestResponseCreators.withSuccess(
                 titles.stream().map("title=%s"::formatted).collect(Collectors.joining("\n")),
                 new MediaType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8)));
+  }
+
+  public void givenMarkAsFixed(
+      final WikiDefinition wiki, final int errorNumber, final String title) {
+    expect(CheckWikiServer.createMarkParameters(wiki, errorNumber, title))
+        .andRespond(MockRestResponseCreators.withSuccess());
+  }
+
+  private ResponseActions expect(final MultiValueMap<String, String> parameters) {
+    return server
+        .expect(MockRestRequestMatchers.requestTo(CheckWikiServer.BOTS_URL))
+        .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+        .andExpect(ApiRequestExpectation.userAgent())
+        .andExpect(MockRestRequestMatchers.content().formData(parameters));
   }
 }

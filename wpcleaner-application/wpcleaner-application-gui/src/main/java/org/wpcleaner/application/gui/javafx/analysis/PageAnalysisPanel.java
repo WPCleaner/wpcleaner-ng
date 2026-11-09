@@ -12,6 +12,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.api.ApiException;
 import org.wpcleaner.api.api.edit.Edit;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
@@ -30,6 +31,7 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisCheckPane;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
+import org.wpcleaner.lib.check.CheckAlgorithm;
 
 public final class PageAnalysisPanel extends StackPane {
 
@@ -144,9 +146,12 @@ public final class PageAnalysisPanel extends StackPane {
   }
 
   private void savePage() {
+    checkPane.refreshAnalysis();
+    final PageAnalysis analysis = checkPane.getAnalysis();
+    final List<CheckAlgorithm> fixedAlgorithms = checkPane.getFullyFixedAlgorithms();
     owner.executeAsync(
         new SavePageTask(checkPane.getArea().getText(), savePane.getSummary()),
-        this::pageSaved,
+        edit -> pageSaved(edit, analysis, fixedAlgorithms),
         this::pageSavedWithError);
   }
 
@@ -179,7 +184,10 @@ public final class PageAnalysisPanel extends StackPane {
     }
   }
 
-  private void pageSaved(final Edit edit) {
+  private void pageSaved(
+      final Edit edit,
+      @Nullable final PageAnalysis analysis,
+      final List<CheckAlgorithm> fixedAlgorithms) {
     if (!Edit.RESULT_SUCCESS.equals(edit.result())) {
       owner.showWarning(
           GT._T("Error saving the page"), GT._T("Result of the edit: %s", edit.result()));
@@ -189,6 +197,34 @@ public final class PageAnalysisPanel extends StackPane {
       baseTimestamp = edit.newTimestamp();
     }
     resetInitialErrors();
+    if (analysis != null && !fixedAlgorithms.isEmpty()) {
+      owner.executeAsync(
+          new MarkAsFixedTask(analysis, fixedAlgorithms), _ -> {}, this::markedAsFixedWithError);
+    }
+  }
+
+  private final class MarkAsFixedTask implements LongRunningTask<List<CheckAlgorithm>> {
+
+    private final PageAnalysis analysis;
+    private final List<CheckAlgorithm> algorithms;
+
+    private MarkAsFixedTask(final PageAnalysis analysis, final List<CheckAlgorithm> algorithms) {
+      this.analysis = analysis;
+      this.algorithms = List.copyOf(algorithms);
+    }
+
+    @Override
+    public List<CheckAlgorithm> call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Marking errors as fixed"))) {
+        return services.checkWikiServer().markAsFixed(analysis, algorithms);
+      }
+    }
+  }
+
+  private void markedAsFixedWithError(final Exception e) {
+    owner.showWarning(
+        GT._T("Error marking errors as fixed"),
+        GT._T("Error marking errors as fixed: %s", String.valueOf(e.getMessage())));
   }
 
   private void pageSavedWithError(final Exception e) {
