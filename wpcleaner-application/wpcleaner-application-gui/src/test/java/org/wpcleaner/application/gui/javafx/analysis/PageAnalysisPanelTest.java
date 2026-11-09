@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.javafx.analysis;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,7 @@ import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsPane;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
+import org.wpcleaner.lib.check.server.MockCheckWikiServer;
 
 @GuiSpringBootTest
 class PageAnalysisPanelTest extends JavaFxTest {
@@ -62,6 +64,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
   private static final String CSRF_TOKEN = "csrf-token+\\";
   private static final String COMMENT = "[[P:CS|Correction syntaxique]]";
   private static final String SUMMARY = COMMENT + " (Lien vers l’article)";
+  private static final Duration MARK_TIMEOUT = Duration.ofSeconds(5);
   private static final RevisionsQuery CONTENT_QUERY =
       RevisionsQuery.emptyBuilder()
           .properties(
@@ -102,7 +105,8 @@ class PageAnalysisPanelTest extends JavaFxTest {
     mediaWikiServer.reset();
   }
 
-  @DisplayName("should save the fixed page with a summary listing the fixed algorithms")
+  @DisplayName(
+      "should save the fixed page with a summary listing the fixed algorithms, and mark them as fixed")
   @Test
   void saveFixedPage() throws InterruptedException, ExecutionException, TimeoutException {
     // GIVEN
@@ -111,6 +115,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
     mockApiEdit
         .givenEdit(WIKI, createEdit(SUMMARY))
         .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, TITLE, null, TIMESTAMP.plusSeconds(60)));
+    new MockCheckWikiServer(mediaWikiServer).givenMarkAsFixed(WIKI, 48, TITLE);
     final JavaFxAnalysisWindow analysisWindow = openAndFixPage();
     Assertions.assertThat(callOnJavaFx(() -> getSummaryField(analysisWindow).getText()))
         .isEqualTo(SUMMARY);
@@ -121,7 +126,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
     // THEN
     waitForJavaFx(
         () -> Optional.of(getSummaryField(analysisWindow).getText()).filter(String::isEmpty));
-    mediaWikiServer.verify();
+    mediaWikiServer.verify(MARK_TIMEOUT);
   }
 
   @DisplayName("should display an icon with a tooltip for saving the page")

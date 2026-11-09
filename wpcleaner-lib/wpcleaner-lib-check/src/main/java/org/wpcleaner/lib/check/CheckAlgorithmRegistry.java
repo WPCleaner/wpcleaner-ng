@@ -69,6 +69,12 @@ public class CheckAlgorithmRegistry {
     return getConfiguration(wiki, algorithm).flatMap(CheckAlgorithmConfiguration::link);
   }
 
+  public boolean isBotOnly(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
+    return getConfiguration(wiki, algorithm)
+        .filter(CheckAlgorithmConfiguration::isBotOnly)
+        .isPresent();
+  }
+
   private Optional<CheckAlgorithmConfiguration> getConfiguration(
       final WikiDefinition wiki, final CheckAlgorithm algorithm) {
     return configurationRepository.getConfiguration(wiki).getAlgorithm(algorithm.number());

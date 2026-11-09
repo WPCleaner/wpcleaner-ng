@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javafx.beans.value.ChangeListener;
@@ -147,9 +148,19 @@ public final class CheckErrorsPane extends TitledPane {
   }
 
   public List<CheckAlgorithm> getFixedAlgorithms() {
+    return getAlgorithms((initialCount, count) -> count < initialCount);
+  }
+
+  public List<CheckAlgorithm> getFullyFixedAlgorithms() {
+    return getAlgorithms((initialCount, count) -> initialCount > 0 && count == 0);
+  }
+
+  private List<CheckAlgorithm> getAlgorithms(final BiPredicate<Integer, Integer> countsFilter) {
     final Map<CheckAlgorithm, Integer> errorCounts = getErrorCounts();
     return initialErrorCounts.entrySet().stream()
-        .filter(entry -> errorCounts.getOrDefault(entry.getKey(), 0) < entry.getValue())
+        .filter(
+            entry ->
+                countsFilter.test(entry.getValue(), errorCounts.getOrDefault(entry.getKey(), 0)))
         .map(Map.Entry::getKey)
         .sorted(Comparator.comparingInt(CheckAlgorithm::number))
         .toList();

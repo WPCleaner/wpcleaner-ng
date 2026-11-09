@@ -23,6 +23,7 @@ public record CheckAlgorithmConfiguration(
   private static final String WHITELIST_PAGE = "whitelistpage";
   private static final int FIRST_ACTIVE_PRIORITY = 1;
   private static final int LAST_ACTIVE_PRIORITY = 4;
+  private static final int BOT_ONLY_PRIORITY = 4;
 
   public CheckAlgorithmConfiguration {
     properties = Map.copyOf(properties);
@@ -38,11 +39,19 @@ public record CheckAlgorithmConfiguration(
   }
 
   public boolean isActive() {
-    return getProperty(PRIORITY)
-        .filter(priority -> priority.chars().allMatch(Character::isDigit))
-        .map(Integer::parseInt)
+    return getPriority()
         .filter(priority -> FIRST_ACTIVE_PRIORITY <= priority && priority <= LAST_ACTIVE_PRIORITY)
         .isPresent();
+  }
+
+  public boolean isBotOnly() {
+    return getPriority().filter(priority -> priority == BOT_ONLY_PRIORITY).isPresent();
+  }
+
+  private Optional<Integer> getPriority() {
+    return getProperty(PRIORITY)
+        .filter(priority -> priority.chars().allMatch(Character::isDigit))
+        .map(Integer::parseInt);
   }
 
   public Optional<String> shortDescription() {
