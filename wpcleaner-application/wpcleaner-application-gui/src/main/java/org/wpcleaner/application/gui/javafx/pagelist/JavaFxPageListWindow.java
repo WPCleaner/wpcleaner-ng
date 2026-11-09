@@ -50,6 +50,11 @@ public final class JavaFxPageListWindow extends JavaFxWindow<JavaFxPageListWindo
   }
 
   @Override
+  public String getHelpPage() {
+    return "Page list";
+  }
+
+  @Override
   public String getName() {
     return "pageList";
   }

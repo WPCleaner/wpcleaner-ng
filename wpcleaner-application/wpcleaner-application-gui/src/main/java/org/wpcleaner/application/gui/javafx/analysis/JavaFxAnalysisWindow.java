@@ -26,6 +26,11 @@ public final class JavaFxAnalysisWindow extends JavaFxWindow<JavaFxAnalysisWindo
   }
 
   @Override
+  public String getHelpPage() {
+    return "Analysis";
+  }
+
+  @Override
   public String getName() {
     return "analysis";
   }
