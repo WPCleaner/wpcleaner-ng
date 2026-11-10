@@ -51,6 +51,10 @@ public record CheckAlgorithmParameters(Map<String, Object> values) {
     if (!(document instanceof Map<?, ?> mapping)) {
       throw new IllegalArgumentException(GT._T("The YAML configuration must be a mapping"));
     }
+    return of(mapping);
+  }
+
+  private static CheckAlgorithmParameters of(final Map<?, ?> mapping) {
     final Map<String, Object> values = new LinkedHashMap<>();
     mapping.forEach(
         (name, value) -> {
@@ -64,7 +68,14 @@ public record CheckAlgorithmParameters(Map<String, Object> values) {
 
   private static void checkNames(final String path, final Object value) {
     if (value instanceof List<?> list) {
-      list.forEach(element -> checkName(path, element));
+      list.forEach(
+          element -> {
+            if (element instanceof Map<?, ?>) {
+              checkNames(path, element);
+            } else {
+              checkName(path, element);
+            }
+          });
     } else if (value instanceof Map<?, ?> mapping) {
       mapping.forEach(
           (key, element) -> {
@@ -108,6 +119,16 @@ public record CheckAlgorithmParameters(Map<String, Object> values) {
           }
         });
     return Map.copyOf(stringLists);
+  }
+
+  public List<CheckAlgorithmParameters> getObjects(final String name) {
+    if (!(values.get(name) instanceof List<?> list)) {
+      return List.of();
+    }
+    return list.stream()
+        .filter(element -> element instanceof Map<?, ?>)
+        .map(element -> of((Map<?, ?>) element))
+        .toList();
   }
 
   private static List<String> toStrings(@Nullable final Object value) {

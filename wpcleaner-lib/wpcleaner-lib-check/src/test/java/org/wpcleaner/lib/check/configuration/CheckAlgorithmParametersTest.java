@@ -113,6 +113,43 @@ class CheckAlgorithmParametersTest {
     Assertions.assertThat(parameters.getStrings("names")).containsExactly("true", "False");
   }
 
+  @DisplayName("should read lists of objects")
+  @Test
+  void parseObjects() {
+    // GIVEN
+    final String yaml =
+        """
+        objects:
+          - template: Suivi
+            parameters: [catégorie, 2]
+          - not an object
+        """;
+
+    // WHEN
+    final CheckAlgorithmParameters parameters = CheckAlgorithmParameters.parse(yaml);
+
+    // THEN
+    Assertions.assertThat(parameters.getObjects("objects"))
+        .singleElement()
+        .satisfies(
+            object -> {
+              Assertions.assertThat(object.getStrings("template")).containsExactly("Suivi");
+              Assertions.assertThat(object.getStrings("parameters"))
+                  .containsExactly("catégorie", "2");
+            });
+    Assertions.assertThat(parameters.getObjects("missing")).isEmpty();
+  }
+
+  @DisplayName("should reject a boolean in a list of names inside an object")
+  @Test
+  void parseBooleanNameInObject() {
+    // WHEN / THEN
+    Assertions.assertThatThrownBy(
+            () -> CheckAlgorithmParameters.parse("objects:\n  - parameters: [a, false]\n"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Value \"false\" in objects/parameters is not a name, write it between quotes");
+  }
+
   @DisplayName("should read an empty YAML document as empty parameters")
   @Test
   void parseEmpty() {
