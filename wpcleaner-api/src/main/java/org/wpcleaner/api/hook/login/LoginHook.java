@@ -51,7 +51,7 @@ public class LoginHook {
     this.loginSteps = loginSteps;
   }
 
-  public void executeHook(
+  public List<LoginWarning> executeHook(
       final WikiDefinition wiki, final String username, final ProgressTracker tracker) {
     if (!siteInfoProperties.isEmpty()) {
       try (ProgressStep _ = tracker.start(GT._T("Retrieving site information"))) {
@@ -68,7 +68,10 @@ public class LoginHook {
     try (ProgressStep _ = tracker.start(GT._T("Retrieving WPCleaner configuration"))) {
       configurationLoader.load(wiki, username);
     }
-    loginSteps.orderedStream().forEach(loginStep -> loginStep.execute(wiki, tracker));
+    return loginSteps
+        .orderedStream()
+        .flatMap(loginStep -> loginStep.execute(wiki, tracker).stream())
+        .toList();
   }
 
   public void addSiteInfoProperties(final Set<SiteInfoParameters.Properties> properties) {

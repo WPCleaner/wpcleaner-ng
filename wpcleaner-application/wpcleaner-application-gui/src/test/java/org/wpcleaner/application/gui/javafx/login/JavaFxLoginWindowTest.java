@@ -5,6 +5,8 @@ package org.wpcleaner.application.gui.javafx.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -33,6 +35,7 @@ import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.main.JavaFxMainWindow;
+import org.wpcleaner.lib.check.configuration.CheckAlgorithmParametersReader;
 
 @GuiSpringBootTest
 class JavaFxLoginWindowTest extends JavaFxTest {
@@ -101,6 +104,32 @@ class JavaFxLoginWindowTest extends JavaFxTest {
     Assertions.assertThat(user.demo()).isFalse();
     Assertions.assertThat(user.wiki()).isEqualTo(WIKI);
     Assertions.assertThat(user.username()).isEqualTo(USERNAME);
+  }
+
+  @DisplayName("Login warns about invalid configuration pages, then opens the main window")
+  @Test
+  void loginWarnsAboutConfiguration()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    guiLogin.givenLogin(
+        WIKI,
+        USERNAME,
+        GuiLogin.LoginData.of(GuiLogin.USER_NAMESPACES)
+            .withCheckWikiConfiguration(" error_048_prio_enwiki=3 END")
+            .withParametersPages(Map.of(48, "No YAML here")));
+    final JavaFxLoginWindow window = createWindow();
+
+    runOnJavaFx(
+        () -> {
+          fillForm(window, GuiLogin.PASSWORD);
+          lookup(window, JavaFxLoginWindow.LOGIN_ID, Button.class).fire();
+        });
+
+    Assertions.assertThat(closeAlert(window))
+        .isEqualTo(
+            "These configuration pages are ignored:\n"
+                + CheckAlgorithmParametersReader.getParametersPage(List.of(), 48)
+                + ": No YAML configuration found");
+    Assertions.assertThat(waitForWindow(windowsRegistry, JavaFxMainWindow.class)).isNotNull();
   }
 
   @DisplayName("Login shows an error and keeps the login window open when login fails")

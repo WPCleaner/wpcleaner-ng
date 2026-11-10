@@ -31,14 +31,11 @@ import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
-import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
-import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
-import org.wpcleaner.lib.check.configuration.CheckAlgorithmParametersReader;
-import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
+import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationExpectations;
 
 @ConditionalOnProperty(MediaWikiServerConfiguration.ENABLED_PROPERTY)
 @TestComponent
@@ -162,33 +159,16 @@ public final class GuiLogin {
     if (checkWikiConfiguration != null) {
       WPCleanerConfigurationExpectations.givenPage(
           mockApiRevisions, wiki, CHECK_WIKI_TRANSLATION_PAGE, checkWikiConfiguration);
-      givenMissingParametersPages(wiki, checkWikiConfiguration);
+      CheckWikiConfigurationExpectations.givenParametersPages(
+          mockApiRevisions,
+          algorithmRegistry,
+          wiki,
+          checkWikiConfiguration,
+          data.parametersPages());
     }
     mockApiUsers
         .givenRetrieveUser(wiki, compactUsername)
         .willReturn(createUser(compactUsername, data.groups(), data.rights()));
-  }
-
-  private void givenMissingParametersPages(
-      final WikiDefinition wiki, final String checkWikiConfiguration) {
-    final List<String> parametersPages =
-        CheckWikiConfiguration.of(
-                ConfigurationParser.parse(checkWikiConfiguration),
-                Map.of(),
-                String.valueOf(wiki.checkWikiCode()))
-            .algorithms()
-            .values()
-            .stream()
-            .filter(CheckAlgorithmConfiguration::isActive)
-            .map(CheckAlgorithmConfiguration::number)
-            .filter(number -> algorithmRegistry.findAlgorithm(number).isPresent())
-            .sorted()
-            .map(number -> CheckAlgorithmParametersReader.getParametersPage(List.of(), number))
-            .toList();
-    if (!parametersPages.isEmpty()) {
-      WPCleanerConfigurationExpectations.givenPages(
-          mockApiRevisions, wiki, parametersPages, Map.of());
-    }
   }
 
   private static String compactUsername(final String username) {
@@ -242,14 +222,19 @@ public final class GuiLogin {
       List<String> groups,
       List<String> rights,
       @Nullable String userConfiguration,
-      @Nullable String checkWikiConfiguration) {
+      @Nullable String checkWikiConfiguration,
+      Map<Integer, String> parametersPages) {
+
+    public LoginData {
+      parametersPages = Map.copyOf(parametersPages);
+    }
 
     public LoginData(
         final List<Namespace> namespaces,
         final List<Tag> tags,
         final List<String> groups,
         final List<String> rights) {
-      this(namespaces, tags, groups, rights, null, null);
+      this(namespaces, tags, groups, rights, null, null, Map.of());
     }
 
     public static LoginData of(final List<Namespace> namespaces) {
@@ -257,11 +242,18 @@ public final class GuiLogin {
     }
 
     public LoginData withUserConfiguration(final String configuration) {
-      return new LoginData(namespaces, tags, groups, rights, configuration, checkWikiConfiguration);
+      return new LoginData(
+          namespaces, tags, groups, rights, configuration, checkWikiConfiguration, parametersPages);
     }
 
     public LoginData withCheckWikiConfiguration(final String configuration) {
-      return new LoginData(namespaces, tags, groups, rights, userConfiguration, configuration);
+      return new LoginData(
+          namespaces, tags, groups, rights, userConfiguration, configuration, parametersPages);
+    }
+
+    public LoginData withParametersPages(final Map<Integer, String> pages) {
+      return new LoginData(
+          namespaces, tags, groups, rights, userConfiguration, checkWikiConfiguration, pages);
     }
   }
 }

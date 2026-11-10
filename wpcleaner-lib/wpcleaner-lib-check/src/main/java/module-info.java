@@ -8,7 +8,6 @@ module org.wpcleaner.lib.check {
   requires transitive org.jspecify;
   requires transitive org.wpcleaner.api;
   requires transitive spring.context;
-  requires org.slf4j;
   requires org.yaml.snakeyaml;
   exports org.wpcleaner.lib.check.algorithm;
   exports org.wpcleaner.lib.check.configuration;

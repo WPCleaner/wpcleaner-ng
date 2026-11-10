@@ -5,29 +5,27 @@ package org.wpcleaner.lib.check.configuration;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.hook.login.ConfigurationPageReader;
+import org.wpcleaner.api.hook.login.LoginWarning;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 @Service
 public class CheckAlgorithmParametersReader {
 
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String DEFAULT_PROJECT_NAMESPACE = "Project";
   private static final String YAML_TAG = "syntaxhighlight";
   private static final String YAML_LANGUAGE_ATTRIBUTE = "lang";
@@ -57,7 +55,9 @@ public class CheckAlgorithmParametersReader {
   }
 
   public Map<Integer, CheckAlgorithmParameters> retrieveParameters(
-      final WikiDefinition wiki, final List<Integer> numbers) {
+      final WikiDefinition wiki,
+      final List<Integer> numbers,
+      final Consumer<LoginWarning> warnings) {
     final List<Namespace> namespaces = namespaceRepository.getNamespaces(wiki);
     final List<String> parametersPages =
         numbers.stream().map(number -> getParametersPage(namespaces, number)).toList();
@@ -68,7 +68,7 @@ public class CheckAlgorithmParametersReader {
             (title, content) -> {
               final Matcher matcher = PARAMETERS_PAGE_NUMBER.matcher(title);
               if (matcher.find()) {
-                parseParameters(wiki, title, content)
+                parseParameters(wiki, title, content, warnings)
                     .ifPresent(
                         parameters ->
                             parametersByNumber.put(Integer.parseInt(matcher.group(1)), parameters));
@@ -78,16 +78,24 @@ public class CheckAlgorithmParametersReader {
   }
 
   private Optional<CheckAlgorithmParameters> parseParameters(
-      final WikiDefinition wiki, final String title, final String content) {
+      final WikiDefinition wiki,
+      final String title,
+      final String content,
+      final Consumer<LoginWarning> warnings) {
+    final Optional<String> yaml =
+        analysisFactory.analysis(wiki, title, content).getCompleteTags().stream()
+            .filter(tag -> YAML_TAG.equals(tag.startTag().normalizedName()))
+            .filter(CheckAlgorithmParametersReader::isYaml)
+            .findFirst()
+            .map(tag -> content.substring(tag.startTag().end(), tag.endTag().begin()));
+    if (yaml.isEmpty()) {
+      warnings.accept(new LoginWarning(title, GT._T("No YAML configuration found")));
+      return Optional.empty();
+    }
     try {
-      return analysisFactory.analysis(wiki, title, content).getCompleteTags().stream()
-          .filter(tag -> YAML_TAG.equals(tag.startTag().normalizedName()))
-          .filter(CheckAlgorithmParametersReader::isYaml)
-          .findFirst()
-          .map(tag -> content.substring(tag.startTag().end(), tag.endTag().begin()))
-          .map(CheckAlgorithmParameters::parse);
+      return Optional.of(CheckAlgorithmParameters.parse(yaml.get()));
     } catch (final IllegalArgumentException e) {
-      LOGGER.warn("Invalid configuration in {}: {}", title, e.getMessage());
+      warnings.accept(new LoginWarning(title, String.valueOf(e.getMessage())));
       return Optional.empty();
     }
   }

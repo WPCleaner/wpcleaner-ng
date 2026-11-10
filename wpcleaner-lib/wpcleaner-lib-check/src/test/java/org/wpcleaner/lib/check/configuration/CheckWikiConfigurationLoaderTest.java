@@ -20,6 +20,7 @@ import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.hook.login.ConfigurationPageReader;
+import org.wpcleaner.api.hook.login.LoginWarning;
 import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
@@ -251,10 +252,11 @@ class CheckWikiConfigurationLoaderTest {
         """);
 
     // WHEN
-    loader.execute(WIKI, ProgressTracker.NOOP);
+    final List<LoginWarning> warnings = loader.execute(WIKI, ProgressTracker.NOOP);
 
     // THEN
     mediaWikiServer.verify();
+    Assertions.assertThat(warnings).isEmpty();
     Assertions.assertThat(repository.getConfiguration(WIKI).getAlgorithm(48))
         .hasValueSatisfying(
             algorithm -> {
@@ -269,7 +271,7 @@ class CheckWikiConfigurationLoaderTest {
             });
   }
 
-  @DisplayName("should keep the legacy parameters when the YAML configuration is invalid")
+  @DisplayName("should keep the legacy parameters and warn when the YAML configuration is invalid")
   @Test
   void loadInvalidParameters() {
     // GIVEN
@@ -287,10 +289,17 @@ class CheckWikiConfigurationLoaderTest {
         """);
 
     // WHEN
-    loader.execute(WIKI, ProgressTracker.NOOP);
+    final List<LoginWarning> warnings = loader.execute(WIKI, ProgressTracker.NOOP);
 
     // THEN
     mediaWikiServer.verify();
+    Assertions.assertThat(warnings)
+        .singleElement()
+        .satisfies(
+            warning -> {
+              Assertions.assertThat(warning.page()).isEqualTo(getParametersPage());
+              Assertions.assertThat(warning.message()).startsWith("Invalid YAML: ");
+            });
     Assertions.assertThat(repository.getConfiguration(WIKI).getAlgorithm(48))
         .hasValueSatisfying(
             algorithm -> {
@@ -299,7 +308,7 @@ class CheckWikiConfigurationLoaderTest {
             });
   }
 
-  @DisplayName("should ignore a configuration page without a YAML block")
+  @DisplayName("should ignore and warn about a configuration page without a YAML block")
   @Test
   void loadParametersWithoutYaml() {
     // GIVEN
@@ -307,20 +316,23 @@ class CheckWikiConfigurationLoaderTest {
     givenParametersPage("<syntaxhighlight lang=\"properties\">imagemap=true</syntaxhighlight>");
 
     // WHEN
-    loader.execute(WIKI, ProgressTracker.NOOP);
+    final List<LoginWarning> warnings = loader.execute(WIKI, ProgressTracker.NOOP);
 
     // THEN
     mediaWikiServer.verify();
+    Assertions.assertThat(warnings)
+        .containsExactly(new LoginWarning(getParametersPage(), "No YAML configuration found"));
     Assertions.assertThat(repository.getConfiguration(WIKI).getAlgorithm(48))
         .hasValueSatisfying(algorithm -> Assertions.assertThat(algorithm.parameters()).isNull());
   }
 
   private void givenParametersPage(@Nullable final String content) {
     WPCleanerConfigurationExpectations.givenPage(
-        mockApiRevisions,
-        WIKI,
-        CheckAlgorithmParametersReader.getParametersPage(
-            namespaceRepository.getNamespaces(WIKI), 48),
-        content);
+        mockApiRevisions, WIKI, getParametersPage(), content);
+  }
+
+  private String getParametersPage() {
+    return CheckAlgorithmParametersReader.getParametersPage(
+        namespaceRepository.getNamespaces(WIKI), 48);
   }
 }

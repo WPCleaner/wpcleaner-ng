@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-10 14:10+0100\n"
+"POT-Creation-Date: 2026-11-10 15:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,20 +65,20 @@ msgstr ""
 msgid "Please check your connection and login status."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:53
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:54
 msgid "Retrieving login token"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:56
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:57
 #, java-printf-format
 msgid "Login for user %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:61
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:62
 msgid "Login token is null"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:68
+#: wpcleaner-application/wpcleaner-application-base/src/main/java/org/wpcleaner/application/base/processor/LoginProcessor.java:69
 #, java-printf-format
 msgid "Retrieving information about user %s"
 msgstr ""
@@ -192,58 +192,71 @@ msgstr ""
 msgid "Forget user"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:156
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:157
 msgid "Login"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:162
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:163
 msgid "Demo"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:183
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:235
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:184
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:236
 msgid "Missing wiki"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:183
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:184
 msgid "You must select a wiki before login!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:188
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:241
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:189
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:242
 msgid "Missing username"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:188
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:189
 msgid "You must input your username before login!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:194
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:195
 msgid "Missing password"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:195
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:196
 msgid "You must input your password before login!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:197
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:198
 msgid "If you prefer to test WPCleaner first, you can use the Demo mode."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:206
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:207
 msgid "An error occurred during login"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:235
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:236
 msgid "You must select a wiki before starting demo mode!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:242
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:243
 msgid "You must input your username before starting demo mode!"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:251
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:252
 msgid "An error occurred during demo startup"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:276
+msgid "Configuration problems"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:278
+#, java-printf-format
+msgid "%s: %s"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/JavaFxLoginWindow.java:281
+msgid "These configuration pages are ignored:"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/login/LanguageInput.java:45
@@ -1016,8 +1029,12 @@ msgstr ""
 msgid "Configure User Page Hosting Prevention"
 msgstr ""
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:73
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:75
 msgid "Retrieving Check Wiki configuration"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParametersReader.java:92
+msgid "No YAML configuration found"
 msgstr ""
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:35

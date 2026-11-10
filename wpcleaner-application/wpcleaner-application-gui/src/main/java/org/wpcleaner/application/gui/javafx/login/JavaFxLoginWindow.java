@@ -7,6 +7,7 @@ package org.wpcleaner.application.gui.javafx.login;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -200,7 +201,7 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
 
     executeAsync(
         new LoginTask(selectedWiki, userVal, passwordVal),
-        _ -> displayMainWindow(),
+        this::loggedIn,
         e ->
             showError(
                 GT._T("An error occurred during login"),
@@ -245,7 +246,7 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
 
     executeAsync(
         new DemoTask(selectedWiki, userVal),
-        _ -> displayMainWindow(),
+        this::loggedIn,
         e ->
             showError(
                 GT._T("An error occurred during demo startup"),
@@ -267,6 +268,19 @@ public final class JavaFxLoginWindow extends JavaFxWindow<JavaFxLoginWindowServi
       final LoginProcessor.Input input = LoginProcessor.Input.forDemo(selectedWiki, userVal);
       return services.loginProcessor().execute(input, tracker);
     }
+  }
+
+  private void loggedIn(final LoginResult result) {
+    if (!result.warnings().isEmpty()) {
+      showWarning(
+          GT._T("Configuration problems"),
+          result.warnings().stream()
+              .map(warning -> GT._T("%s: %s", warning.page(), warning.message()))
+              .collect(
+                  Collectors.joining(
+                      "\n", GT._T("These configuration pages are ignored:") + "\n", "")));
+    }
+    displayMainWindow();
   }
 
   private void displayMainWindow() {
