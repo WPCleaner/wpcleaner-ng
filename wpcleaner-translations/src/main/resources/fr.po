@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-10 15:14+0100\n"
+"POT-Creation-Date: 2026-11-10 16:20+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1029,7 +1029,7 @@ msgstr "La page utilisateur a été remplacée et la page de discussion mise à 
 msgid "Configure User Page Hosting Prevention"
 msgstr "Configurer la protection contre l'utilisation de la page utilisateur comme hébergement"
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:75
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:61
 msgid "Retrieving Check Wiki configuration"
 msgstr "Récupération de la configuration de Check Wiki"
 
@@ -1037,14 +1037,24 @@ msgstr "Récupération de la configuration de Check Wiki"
 msgid "No YAML configuration found"
 msgstr "Aucune configuration YAML trouvée"
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:35
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:46
 #, java-printf-format
 msgid "Invalid YAML: %s"
 msgstr "YAML invalide : %s"
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:41
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:52
 msgid "The YAML configuration must be a mapping"
 msgstr "La configuration YAML doit être un dictionnaire"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:81
+#, java-printf-format
+msgid "Empty value in %s"
+msgstr "Valeur vide dans %s"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:85
+#, java-printf-format
+msgid "Value \"%s\" in %s is not a name, write it between quotes"
+msgstr "La valeur « %s » dans %s n'est pas un nom, écrivez-la entre guillemets"
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/CheckAlgorithm.java:17
 #, java-printf-format
