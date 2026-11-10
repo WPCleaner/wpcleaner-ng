@@ -30,6 +30,8 @@ public record CheckAlgorithmConfiguration(
   private static final int FIRST_ACTIVE_PRIORITY = 1;
   private static final int LAST_ACTIVE_PRIORITY = 4;
   private static final int BOT_ONLY_PRIORITY = 4;
+  private static final String TEMPLATE_FIELD = "template";
+  private static final String PARAMETERS_FIELD = "parameters";
 
   public CheckAlgorithmConfiguration {
     properties = Map.copyOf(properties);
@@ -118,6 +120,31 @@ public record CheckAlgorithmConfiguration(
     return getStrings(templatesName).stream()
         .flatMap(names -> groups.getTemplateNames(names).stream())
         .collect(Collectors.toSet());
+  }
+
+  public TemplateParameters getTemplateParameters(
+      final String templatesName, final String parametersName) {
+    if (parameters != null) {
+      return TemplateParameters.of(
+          parameters.getObjects(templatesName).stream()
+              .flatMap(object -> object.getStrings(TEMPLATE_FIELD).stream())
+              .toList(),
+          parameters.getObjects(parametersName).stream()
+              .flatMap(
+                  object ->
+                      object.getStrings(TEMPLATE_FIELD).stream()
+                          .map(
+                              template -> Map.entry(template, object.getStrings(PARAMETERS_FIELD))))
+              .toList());
+    }
+    final List<List<String>> lines =
+        getLines(templatesName).stream().map(ConfigurationParser::splitLine).toList();
+    return TemplateParameters.of(
+        lines.stream().filter(line -> line.size() == 1).map(List::getFirst).toList(),
+        lines.stream()
+            .filter(line -> line.size() > 1)
+            .map(line -> Map.entry(line.getFirst(), line.subList(1, line.size())))
+            .toList());
   }
 
   public TemplateGroups getTemplateGroups(final String name) {
