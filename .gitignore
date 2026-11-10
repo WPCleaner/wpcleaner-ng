@@ -34,7 +34,7 @@ gradle-app.setting
 **/*.po~
 
 # Python
-scripts/__pycache__/
+__pycache__/
 
 # Claude Code
 .claude/settings.local.json

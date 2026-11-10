@@ -71,6 +71,7 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 
 ## Project skills
 
+- `check-wiki-algorithm` – implement a Check Wiki algorithm (error NNN) in `wpcleaner-lib-check`
 - `mediawiki-action-query-api` – implement a MediaWiki `action=query` module in `wpcleaner-api`
 - `phabricator` – fetch and summarize a Phabricator task (`T123456`)
 - `manage-images` – fetch SVGs from Wikimedia Commons, render PNGs, update `ImageCollection`
