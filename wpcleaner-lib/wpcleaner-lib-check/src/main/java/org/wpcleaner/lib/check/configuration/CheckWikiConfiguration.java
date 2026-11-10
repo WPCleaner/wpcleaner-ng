@@ -61,6 +61,17 @@ public record CheckWikiConfiguration(Map<Integer, CheckAlgorithmConfiguration> a
                     algorithm -> algorithm.withWhitelist(whitelists.apply(algorithm)))));
   }
 
+  public CheckWikiConfiguration withParameters(
+      final Map<Integer, CheckAlgorithmParameters> parametersByNumber) {
+    return new CheckWikiConfiguration(
+        algorithms.values().stream()
+            .collect(
+                Collectors.toMap(
+                    CheckAlgorithmConfiguration::number,
+                    algorithm ->
+                        algorithm.withParameters(parametersByNumber.get(algorithm.number())))));
+  }
+
   public Optional<CheckAlgorithmConfiguration> getAlgorithm(final int number) {
     return Optional.ofNullable(algorithms.get(number));
   }

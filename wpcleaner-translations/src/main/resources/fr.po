@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-09 18:53+0100\n"
+"POT-Creation-Date: 2026-11-10 14:10+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1016,9 +1016,18 @@ msgstr "La page utilisateur a été remplacée et la page de discussion mise à 
 msgid "Configure User Page Hosting Prevention"
 msgstr "Configurer la protection contre l'utilisation de la page utilisateur comme hébergement"
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:70
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:73
 msgid "Retrieving Check Wiki configuration"
 msgstr "Récupération de la configuration de Check Wiki"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:35
+#, java-printf-format
+msgid "Invalid YAML: %s"
+msgstr "YAML invalide : %s"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:41
+msgid "The YAML configuration must be a mapping"
+msgstr "La configuration YAML doit être un dictionnaire"
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/CheckAlgorithm.java:17
 #, java-printf-format

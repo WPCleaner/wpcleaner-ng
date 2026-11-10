@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
+import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.wiki.builder.WikiBuilder;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
@@ -51,6 +53,7 @@ class CheckWikiConfigurationLoaderTest {
   @Autowired private WPCleanerConfigurationRepository wpcleanerRepository;
   @Autowired private MockApiRevisions mockApiRevisions;
   @Autowired private MockRestServiceServer mediaWikiServer;
+  @Autowired private NamespaceRepository namespaceRepository;
 
   @BeforeEach
   void setUp() {
@@ -65,6 +68,7 @@ class CheckWikiConfigurationLoaderTest {
   void loadConfiguration() {
     // GIVEN
     givenTranslationPage(TRANSLATION, Map.of());
+    givenParametersPage(null);
 
     // WHEN
     loader.execute(WIKI, ProgressTracker.NOOP);
@@ -82,6 +86,7 @@ class CheckWikiConfigurationLoaderTest {
                       Map.entry("link", "P:CS/048"));
               Assertions.assertThat(algorithm.isActive()).isTrue();
               Assertions.assertThat(algorithm.shortDescription()).contains(HEAD);
+              Assertions.assertThat(algorithm.parameters()).isNull();
             });
     Assertions.assertThat(configuration.getAlgorithm(1))
         .hasValueSatisfying(algorithm -> Assertions.assertThat(algorithm.isActive()).isFalse());
@@ -167,6 +172,7 @@ class CheckWikiConfigurationLoaderTest {
                 WPCleanerConfigurationExpectations.createPage(
                     whitelistPage,
                     "Liste blanche de {{numéro|48}}.\n* [[Paris]] : raison\n* [[:Nice|Nice]]")));
+    givenParametersPage(null);
 
     // WHEN
     loader.execute(WIKI, ProgressTracker.NOOP);
@@ -217,5 +223,104 @@ class CheckWikiConfigurationLoaderTest {
             Map.of("check_wiki_translation_page", TRANSLATION_PAGE), userProperties));
     WPCleanerConfigurationExpectations.givenPage(
         mockApiRevisions, WIKI, TRANSLATION_PAGE, translation);
+  }
+
+  @DisplayName("should load the parameters of the algorithms from their YAML configuration page")
+  @Test
+  void loadParameters() {
+    // GIVEN
+    givenTranslationPage(
+        """
+         error_048_prio_frwiki=3 END
+         error_048_imagemap_frwiki=false END
+        """,
+        Map.of());
+    givenParametersPage(
+        """
+        Configuration of error 48.
+        <syntaxhighlight lang="yaml">
+        # Links in these templates are ignored
+        ignore_templates:
+          - Lien web
+        ignore_groups:
+          - citations
+        imagemap: true
+        template_groups:
+          citations: [Ouvrage, Article]
+        </syntaxhighlight>
+        """);
+
+    // WHEN
+    loader.execute(WIKI, ProgressTracker.NOOP);
+
+    // THEN
+    mediaWikiServer.verify();
+    Assertions.assertThat(repository.getConfiguration(WIKI).getAlgorithm(48))
+        .hasValueSatisfying(
+            algorithm -> {
+              Assertions.assertThat(algorithm.getBoolean("imagemap")).isTrue();
+              Assertions.assertThat(algorithm.getStrings("ignore_templates"))
+                  .containsExactly("Lien web");
+              Assertions.assertThat(algorithm.getStrings("ignore_groups"))
+                  .containsExactly("citations");
+              Assertions.assertThat(
+                      algorithm.getTemplateGroups("template_groups").getTemplateNames("+citations"))
+                  .containsExactlyInAnyOrder("Ouvrage", "Article");
+            });
+  }
+
+  @DisplayName("should keep the legacy parameters when the YAML configuration is invalid")
+  @Test
+  void loadInvalidParameters() {
+    // GIVEN
+    givenTranslationPage(
+        """
+         error_048_prio_frwiki=3 END
+         error_048_imagemap_frwiki=true END
+        """,
+        Map.of());
+    givenParametersPage(
+        """
+        <syntaxhighlight lang="yaml">
+        imagemap: [false
+        </syntaxhighlight>
+        """);
+
+    // WHEN
+    loader.execute(WIKI, ProgressTracker.NOOP);
+
+    // THEN
+    mediaWikiServer.verify();
+    Assertions.assertThat(repository.getConfiguration(WIKI).getAlgorithm(48))
+        .hasValueSatisfying(
+            algorithm -> {
+              Assertions.assertThat(algorithm.parameters()).isNull();
+              Assertions.assertThat(algorithm.getBoolean("imagemap")).isTrue();
+            });
+  }
+
+  @DisplayName("should ignore a configuration page without a YAML block")
+  @Test
+  void loadParametersWithoutYaml() {
+    // GIVEN
+    givenTranslationPage(" error_048_prio_frwiki=3 END", Map.of());
+    givenParametersPage("<syntaxhighlight lang=\"properties\">imagemap=true</syntaxhighlight>");
+
+    // WHEN
+    loader.execute(WIKI, ProgressTracker.NOOP);
+
+    // THEN
+    mediaWikiServer.verify();
+    Assertions.assertThat(repository.getConfiguration(WIKI).getAlgorithm(48))
+        .hasValueSatisfying(algorithm -> Assertions.assertThat(algorithm.parameters()).isNull());
+  }
+
+  private void givenParametersPage(@Nullable final String content) {
+    WPCleanerConfigurationExpectations.givenPage(
+        mockApiRevisions,
+        WIKI,
+        CheckAlgorithmParametersReader.getParametersPage(
+            namespaceRepository.getNamespaces(WIKI), 48),
+        content);
   }
 }
