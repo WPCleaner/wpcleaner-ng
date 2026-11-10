@@ -17,6 +17,7 @@ import org.wpcleaner.api.api.query.meta.tokens.ApiTokens;
 import org.wpcleaner.api.api.query.meta.tokens.Tokens;
 import org.wpcleaner.api.api.query.meta.tokens.TokensParameters;
 import org.wpcleaner.api.hook.login.LoginHook;
+import org.wpcleaner.api.hook.login.LoginWarning;
 import org.wpcleaner.api.progress.ProgressStep;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
@@ -62,7 +63,7 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
       }
     }
     final String compactUsername = compactUsername(input.username);
-    loginHook.executeHook(input.wiki, compactUsername, tracker);
+    final List<LoginWarning> warnings = loginHook.executeHook(input.wiki, compactUsername, tracker);
     currentUserService.login(input.wiki(), compactUsername, input.demo());
     try (ProgressStep _ =
         tracker.start(GT._T("Retrieving information about user %s", input.username))) {
@@ -70,7 +71,7 @@ public class LoginProcessor implements Processor<LoginProcessor.Input, LoginResu
       currentUserService.withGroups(user.groups());
       currentUserService.withRights(user.rights());
     }
-    return new LoginResult(input.wiki, compactUsername);
+    return new LoginResult(input.wiki, compactUsername, warnings);
   }
 
   private String compactUsername(final String username) {

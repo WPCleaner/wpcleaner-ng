@@ -5,10 +5,11 @@ package org.wpcleaner.api.hook.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 public interface LoginStep {
 
-  void execute(WikiDefinition wiki, ProgressTracker tracker);
+  List<LoginWarning> execute(WikiDefinition wiki, ProgressTracker tracker);
 }
