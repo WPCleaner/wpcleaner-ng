@@ -23,7 +23,6 @@ import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.title.TitleElement;
-import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.repository.configuration.WPCleanerParameter;
@@ -39,6 +38,7 @@ import org.wpcleaner.lib.check.configuration.TemplateGroups;
 public class CheckAlgorithm048 implements CheckAlgorithm {
 
   private static final int ALGORITHM_NUMBER = 48;
+  private static final String PARAMETER_IGNORE_GROUPS = "ignore_groups";
   private static final String PARAMETER_IGNORE_TEMPLATES = "ignore_templates";
   private static final String PARAMETER_IMAGEMAP = "imagemap";
   private static final String PARAMETER_TEMPLATE_GROUPS = "template_groups";
@@ -76,8 +76,7 @@ public class CheckAlgorithm048 implements CheckAlgorithm {
             .orElseGet(() -> new CheckAlgorithmConfiguration(ALGORITHM_NUMBER, Map.of()));
     final WPCleanerConfiguration wpcleanerConfiguration =
         wpcleanerRepository.getConfiguration(analysis.getWiki());
-    final boolean imagemapReported =
-        configuration.getProperty(PARAMETER_IMAGEMAP).map(Boolean::parseBoolean).orElse(false);
+    final boolean imagemapReported = configuration.getBoolean(PARAMETER_IMAGEMAP);
     final List<CompleteTagElement> imagemaps = findImagemaps(analysis);
     final List<Element> ignoredAreas = findIgnoredAreas(analysis, imagemapReported, imagemaps);
     final Set<PageTitle> ignoredTemplates =
@@ -218,14 +217,14 @@ public class CheckAlgorithm048 implements CheckAlgorithm {
       final CheckAlgorithmConfiguration configuration,
       final WPCleanerConfiguration wpcleanerConfiguration) {
     final TemplateGroups groups =
-        TemplateGroups.of(
-            Stream.concat(
-                    configuration.getLines(PARAMETER_TEMPLATE_GROUPS).stream(),
-                    wpcleanerConfiguration.getLines(WPCleanerParameter.TEMPLATE_GROUPS).stream())
-                .toList());
-    return configuration.getLines(PARAMETER_IGNORE_TEMPLATES).stream()
-        .map(line -> ConfigurationParser.splitLine(line).getFirst())
-        .flatMap(names -> groups.getTemplateNames(names).stream())
+        configuration
+            .getTemplateGroups(PARAMETER_TEMPLATE_GROUPS)
+            .merge(
+                TemplateGroups.of(
+                    wpcleanerConfiguration.getLines(WPCleanerParameter.TEMPLATE_GROUPS)));
+    return configuration
+        .getTemplateNames(PARAMETER_IGNORE_TEMPLATES, PARAMETER_IGNORE_GROUPS, groups)
+        .stream()
         .flatMap(name -> analysis.normalizeTitle(name, CommonNamespaces.TEMPLATE.id).stream())
         .collect(Collectors.toSet());
   }

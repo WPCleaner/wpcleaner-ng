@@ -19,6 +19,7 @@ import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.configuration.CheckAlgorithmParameters;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 
@@ -215,6 +216,69 @@ class CheckAlgorithm048Test {
         .containsExactly(otherLink, nestedLink);
   }
 
+  @DisplayName(
+      "should ignore links in the templates and groups to ignore from the YAML configuration, without + prefix")
+  @Test
+  void ignoreLinksInIgnoredTemplatesFromYaml() {
+    // GIVEN
+    givenYamlConfiguration(
+        """
+        ignore_templates:
+          - ouvrage
+          - +Article
+        ignore_groups:
+          - Liens
+        template_groups:
+          Liens: [lien web, Lien]
+        """,
+        Map.of("general_template_groups", "Article|Article|Cite journal"));
+    final String text =
+        "{{Lien web|titre=[[Paris]]}} {{Cite journal|[[Paris]]}} {{Ouvrage|[[Paris]]}}"
+            + " {{Autre|[[Paris]]}} {{lien|1={{Autre|[[Paris]]}}}}";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    final int citeJournalLink =
+        text.indexOf("{{Cite journal|[[Paris]]}}") + "{{Cite journal|".length();
+    final int otherLink = text.indexOf("{{Autre|[[Paris]]}}") + "{{Autre|".length();
+    final int nestedLink = text.lastIndexOf("[[Paris]]");
+    Assertions.assertThat(errors)
+        .extracting(CheckError::begin)
+        .containsExactly(citeJournalLink, otherLink, nestedLink);
+  }
+
+  @DisplayName("should use only the YAML configuration when it exists")
+  @Test
+  void ignoreLegacyParametersWithYaml() {
+    // GIVEN
+    checkWikiRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI,
+        CheckWikiConfiguration.of(
+                Map.of(
+                    "error_048_prio_frwiki", "3",
+                    "error_048_imagemap_frwiki", "true",
+                    "error_048_ignore_templates_frwiki", "Lien web"),
+                Map.of(),
+                "frwiki")
+            .withParameters(Map.of(ALGORITHM, CheckAlgorithmParameters.parse("imagemap: false"))));
+    wpcleanerRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI, WPCleanerConfiguration.EMPTY);
+    final String text =
+        "<imagemap>\nImage:Carte.png|vignette\nrect 0 0 10 10 [[Paris]]\n</imagemap> {{Lien web|[[Paris]]}}";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis("Paris", text));
+
+    // THEN
+    Assertions.assertThat(errors)
+        .extracting(CheckError::begin)
+        .containsExactly(text.lastIndexOf("[[Paris]]"));
+  }
+
   @DisplayName("should report the lines of links in image maps when configured")
   @Test
   void reportLinksInImagemap() {
@@ -267,6 +331,16 @@ class CheckAlgorithm048Test {
     checkWikiRepository.setConfiguration(
         PageAnalysisTestFactory.WIKI,
         CheckWikiConfiguration.of(checkWikiProperties, Map.of(), "frwiki"));
+    wpcleanerRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI, new WPCleanerConfiguration(generalProperties, Map.of()));
+  }
+
+  private void givenYamlConfiguration(
+      final String yaml, final Map<String, String> generalProperties) {
+    checkWikiRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI,
+        CheckWikiConfiguration.of(Map.of("error_048_prio_frwiki", "3"), Map.of(), "frwiki")
+            .withParameters(Map.of(ALGORITHM, CheckAlgorithmParameters.parse(yaml))));
     wpcleanerRepository.setConfiguration(
         PageAnalysisTestFactory.WIKI, new WPCleanerConfiguration(generalProperties, Map.of()));
   }

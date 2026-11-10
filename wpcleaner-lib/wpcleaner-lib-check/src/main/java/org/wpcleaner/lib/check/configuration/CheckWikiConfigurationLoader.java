@@ -38,6 +38,7 @@ public class CheckWikiConfigurationLoader implements LoginStep {
   private final PageAnalysisFactory analysisFactory;
   private final NamespaceRepository namespaceRepository;
   private final ConfigurationPageReader pageReader;
+  private final CheckAlgorithmParametersReader parametersReader;
   private final CheckWikiConfigurationRepository repository;
   private final WPCleanerConfigurationRepository wpcleanerRepository;
 
@@ -46,12 +47,14 @@ public class CheckWikiConfigurationLoader implements LoginStep {
       final PageAnalysisFactory analysisFactory,
       final NamespaceRepository namespaceRepository,
       final ConfigurationPageReader pageReader,
+      final CheckAlgorithmParametersReader parametersReader,
       final CheckWikiConfigurationRepository repository,
       final WPCleanerConfigurationRepository wpcleanerRepository) {
     this.algorithmRegistry = algorithmRegistry;
     this.analysisFactory = analysisFactory;
     this.namespaceRepository = namespaceRepository;
     this.pageReader = pageReader;
+    this.parametersReader = parametersReader;
     this.repository = repository;
     this.wpcleanerRepository = wpcleanerRepository;
   }
@@ -74,8 +77,25 @@ public class CheckWikiConfigurationLoader implements LoginStep {
               wpcleanerConfiguration.userProperties(),
               code);
       repository.setConfiguration(
-          wiki, configuration.withWhitelists(retrieveWhitelists(wiki, configuration)));
+          wiki,
+          configuration
+              .withWhitelists(retrieveWhitelists(wiki, configuration))
+              .withParameters(
+                  parametersReader.retrieveParameters(
+                      wiki,
+                      getLoadedAlgorithms(configuration).stream()
+                          .map(CheckAlgorithmConfiguration::number)
+                          .toList())));
     }
+  }
+
+  private List<CheckAlgorithmConfiguration> getLoadedAlgorithms(
+      final CheckWikiConfiguration configuration) {
+    return configuration.algorithms().values().stream()
+        .filter(CheckAlgorithmConfiguration::isActive)
+        .filter(algorithm -> algorithmRegistry.findAlgorithm(algorithm.number()).isPresent())
+        .sorted(Comparator.comparingInt(CheckAlgorithmConfiguration::number))
+        .toList();
   }
 
   private Function<CheckAlgorithmConfiguration, Set<PageTitle>> retrieveWhitelists(
@@ -83,10 +103,7 @@ public class CheckWikiConfigurationLoader implements LoginStep {
     final PageTitleNormalizer normalizer =
         new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki));
     final List<String> whitelistPages =
-        configuration.algorithms().values().stream()
-            .filter(CheckAlgorithmConfiguration::isActive)
-            .filter(algorithm -> algorithmRegistry.findAlgorithm(algorithm.number()).isPresent())
-            .sorted(Comparator.comparingInt(CheckAlgorithmConfiguration::number))
+        getLoadedAlgorithms(configuration).stream()
             .map(CheckAlgorithmConfiguration::whitelistPage)
             .flatMap(Optional::stream)
             .distinct()

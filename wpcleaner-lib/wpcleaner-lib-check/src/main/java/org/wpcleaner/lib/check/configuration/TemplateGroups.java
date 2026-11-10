@@ -5,6 +5,8 @@ package org.wpcleaner.lib.check.configuration;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 
 public record TemplateGroups(Map<String, Set<String>> groups) {
@@ -20,25 +23,51 @@ public record TemplateGroups(Map<String, Set<String>> groups) {
   private static final Pattern NAMES_SEPARATOR = Pattern.compile(",");
 
   public TemplateGroups {
-    groups = Map.copyOf(groups);
+    groups =
+        groups.entrySet().stream()
+            .collect(
+                Collectors.toUnmodifiableMap(
+                    Map.Entry::getKey, entry -> Set.copyOf(entry.getValue())));
   }
 
   public static TemplateGroups of(final List<String> lines) {
-    final Map<String, Set<String>> groups = new HashMap<>();
+    final Map<String, List<String>> namesByGroup = new HashMap<>();
     for (final String line : lines) {
       final List<String> elements = ConfigurationParser.splitLine(line);
-      final String groupName = elements.getFirst().trim();
-      if (elements.size() > 1 && !groupName.isEmpty()) {
-        elements.stream()
-            .skip(1)
-            .map(String::trim)
-            .filter(name -> !name.isEmpty())
-            .forEach(name -> groups.computeIfAbsent(groupName, _ -> new HashSet<>()).add(name));
-      }
+      namesByGroup
+          .computeIfAbsent(elements.getFirst(), _ -> new ArrayList<>())
+          .addAll(elements.subList(1, elements.size()));
     }
-    return new TemplateGroups(
-        groups.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> Set.copyOf(entry.getValue()))));
+    return of(namesByGroup);
+  }
+
+  public static TemplateGroups of(final Map<String, List<String>> namesByGroup) {
+    final Map<String, Set<String>> groups = new HashMap<>();
+    namesByGroup.forEach((groupName, names) -> addNames(groups, groupName.trim(), names));
+    return new TemplateGroups(groups);
+  }
+
+  public TemplateGroups merge(final TemplateGroups other) {
+    final Map<String, Set<String>> mergedGroups = new HashMap<>();
+    Stream.of(groups, other.groups)
+        .forEach(
+            groupsToMerge ->
+                groupsToMerge.forEach(
+                    (groupName, names) -> addNames(mergedGroups, groupName, names)));
+    return new TemplateGroups(mergedGroups);
+  }
+
+  private static void addNames(
+      final Map<String, Set<String>> groups,
+      final String groupName,
+      final Collection<String> names) {
+    if (groupName.isEmpty()) {
+      return;
+    }
+    names.stream()
+        .map(String::trim)
+        .filter(name -> !name.isEmpty())
+        .forEach(name -> groups.computeIfAbsent(groupName, _ -> new HashSet<>()).add(name));
   }
 
   public Set<String> getTemplateNames(final String names) {
@@ -59,7 +88,17 @@ public record TemplateGroups(Map<String, Set<String>> groups) {
       templateNames.add(name);
       return;
     }
-    final String groupName = name.substring(GROUP_PREFIX.length()).trim();
+    addGroupTemplateNames(templateNames, name.substring(GROUP_PREFIX.length()).trim(), addedGroups);
+  }
+
+  public Set<String> getGroupTemplateNames(final String groupName) {
+    final Set<String> templateNames = new HashSet<>();
+    addGroupTemplateNames(templateNames, groupName.trim(), new HashSet<>());
+    return Set.copyOf(templateNames);
+  }
+
+  private void addGroupTemplateNames(
+      final Set<String> templateNames, final String groupName, final Set<String> addedGroups) {
     if (addedGroups.add(groupName)) {
       groups
           .getOrDefault(groupName, Set.of())

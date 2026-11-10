@@ -31,9 +31,14 @@ import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
+import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
+import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
+import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
+import org.wpcleaner.lib.check.configuration.CheckAlgorithmParametersReader;
+import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 
 @ConditionalOnProperty(MediaWikiServerConfiguration.ENABLED_PROPERTY)
 @TestComponent
@@ -75,6 +80,7 @@ public final class GuiLogin {
           TagsParameters.Properties.DESCRIPTION,
           TagsParameters.Properties.DISPLAY_NAME);
 
+  private final CheckAlgorithmRegistry algorithmRegistry;
   private final LoginProcessor loginProcessor;
   private final MockRestServiceServer mediaWikiServer;
   private final MockApiLogin mockApiLogin;
@@ -85,6 +91,7 @@ public final class GuiLogin {
   private final MockApiUsers mockApiUsers;
 
   public GuiLogin(
+      final CheckAlgorithmRegistry algorithmRegistry,
       final LoginProcessor loginProcessor,
       final MockRestServiceServer mediaWikiServer,
       final MockApiLogin mockApiLogin,
@@ -93,6 +100,7 @@ public final class GuiLogin {
       final MockApiTags mockApiTags,
       final MockApiTokens mockApiTokens,
       final MockApiUsers mockApiUsers) {
+    this.algorithmRegistry = algorithmRegistry;
     this.loginProcessor = loginProcessor;
     this.mediaWikiServer = mediaWikiServer;
     this.mockApiLogin = mockApiLogin;
@@ -154,10 +162,33 @@ public final class GuiLogin {
     if (checkWikiConfiguration != null) {
       WPCleanerConfigurationExpectations.givenPage(
           mockApiRevisions, wiki, CHECK_WIKI_TRANSLATION_PAGE, checkWikiConfiguration);
+      givenMissingParametersPages(wiki, checkWikiConfiguration);
     }
     mockApiUsers
         .givenRetrieveUser(wiki, compactUsername)
         .willReturn(createUser(compactUsername, data.groups(), data.rights()));
+  }
+
+  private void givenMissingParametersPages(
+      final WikiDefinition wiki, final String checkWikiConfiguration) {
+    final List<String> parametersPages =
+        CheckWikiConfiguration.of(
+                ConfigurationParser.parse(checkWikiConfiguration),
+                Map.of(),
+                String.valueOf(wiki.checkWikiCode()))
+            .algorithms()
+            .values()
+            .stream()
+            .filter(CheckAlgorithmConfiguration::isActive)
+            .map(CheckAlgorithmConfiguration::number)
+            .filter(number -> algorithmRegistry.findAlgorithm(number).isPresent())
+            .sorted()
+            .map(number -> CheckAlgorithmParametersReader.getParametersPage(List.of(), number))
+            .toList();
+    if (!parametersPages.isEmpty()) {
+      WPCleanerConfigurationExpectations.givenPages(
+          mockApiRevisions, wiki, parametersPages, Map.of());
+    }
   }
 
   private static String compactUsername(final String username) {
