@@ -13,10 +13,12 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.YAMLException;
+import org.yaml.snakeyaml.representer.Representer;
 
 public record CheckAlgorithmParameters(Map<String, Object> values) {
 
@@ -29,7 +31,16 @@ public record CheckAlgorithmParameters(Map<String, Object> values) {
   public static CheckAlgorithmParameters parse(final String yaml) {
     final Object document;
     try {
-      document = new Yaml(new SafeConstructor(new LoaderOptions())).load(yaml);
+      final LoaderOptions loaderOptions = new LoaderOptions();
+      final DumperOptions dumperOptions = new DumperOptions();
+      document =
+          new Yaml(
+                  new SafeConstructor(loaderOptions),
+                  new Representer(dumperOptions),
+                  dumperOptions,
+                  loaderOptions,
+                  new ConfigurationYamlResolver())
+              .load(yaml);
     } catch (final YAMLException e) {
       throw new IllegalArgumentException(
           GT._T("Invalid YAML: %s", String.valueOf(e.getMessage())), e);
@@ -44,10 +55,35 @@ public record CheckAlgorithmParameters(Map<String, Object> values) {
     mapping.forEach(
         (name, value) -> {
           if (name != null && value != null) {
+            checkNames(name.toString(), value);
             values.put(name.toString(), value);
           }
         });
     return new CheckAlgorithmParameters(values);
+  }
+
+  private static void checkNames(final String path, final Object value) {
+    if (value instanceof List<?> list) {
+      list.forEach(element -> checkName(path, element));
+    } else if (value instanceof Map<?, ?> mapping) {
+      mapping.forEach(
+          (key, element) -> {
+            checkName(path, key);
+            if (element != null) {
+              checkNames("%s/%s".formatted(path, key), element);
+            }
+          });
+    }
+  }
+
+  private static void checkName(final String path, @Nullable final Object name) {
+    if (name == null) {
+      throw new IllegalArgumentException(GT._T("Empty value in %s", path));
+    }
+    if (name instanceof Boolean) {
+      throw new IllegalArgumentException(
+          GT._T("Value \"%s\" in %s is not a name, write it between quotes", name, path));
+    }
   }
 
   public Optional<Boolean> getBoolean(final String name) {

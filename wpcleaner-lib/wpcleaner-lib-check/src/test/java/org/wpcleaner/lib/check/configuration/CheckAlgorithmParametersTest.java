@@ -47,6 +47,72 @@ class CheckAlgorithmParametersTest {
     Assertions.assertThat(parameters.getStringLists("names")).isEmpty();
   }
 
+  @DisplayName("should read unquoted names as written, and only true or false as booleans")
+  @Test
+  void parseNamesAsWritten() {
+    // GIVEN
+    final String yaml =
+        """
+        flag: TRUE
+        other: False
+        legacy: yes
+        names: [No, yes, on, off, 010, 1_000, 2026-11-10, 1.5]
+        groups:
+          No: [Off]
+        """;
+
+    // WHEN
+    final CheckAlgorithmParameters parameters = CheckAlgorithmParameters.parse(yaml);
+
+    // THEN
+    Assertions.assertThat(parameters.getBoolean("flag")).contains(true);
+    Assertions.assertThat(parameters.getBoolean("other")).contains(false);
+    Assertions.assertThat(parameters.getBoolean("legacy")).isEmpty();
+    Assertions.assertThat(parameters.getStrings("names"))
+        .containsExactly("No", "yes", "on", "off", "010", "1_000", "2026-11-10", "1.5");
+    Assertions.assertThat(parameters.getStringLists("groups"))
+        .isEqualTo(Map.of("No", List.of("Off")));
+  }
+
+  @DisplayName("should reject a boolean in a list of names")
+  @Test
+  void parseBooleanName() {
+    // WHEN / THEN
+    Assertions.assertThatThrownBy(() -> CheckAlgorithmParameters.parse("names: [Lien, true]\n"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Value \"true\" in names is not a name, write it between quotes");
+  }
+
+  @DisplayName("should reject a boolean as the name of a group")
+  @Test
+  void parseBooleanGroupName() {
+    // WHEN / THEN
+    Assertions.assertThatThrownBy(() -> CheckAlgorithmParameters.parse("groups:\n  true: [Lien]\n"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Value \"true\" in groups is not a name, write it between quotes");
+  }
+
+  @DisplayName("should reject an empty value in a list of names")
+  @Test
+  void parseEmptyName() {
+    // WHEN / THEN
+    Assertions.assertThatThrownBy(
+            () -> CheckAlgorithmParameters.parse("groups:\n  Quotes:\n    - Quote\n    -\n"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Empty value in groups/Quotes");
+  }
+
+  @DisplayName("should accept quoted booleans in a list of names")
+  @Test
+  void parseQuotedBooleanName() {
+    // WHEN
+    final CheckAlgorithmParameters parameters =
+        CheckAlgorithmParameters.parse("names: [\"true\", 'False']\n");
+
+    // THEN
+    Assertions.assertThat(parameters.getStrings("names")).containsExactly("true", "False");
+  }
+
   @DisplayName("should read an empty YAML document as empty parameters")
   @Test
   void parseEmpty() {
