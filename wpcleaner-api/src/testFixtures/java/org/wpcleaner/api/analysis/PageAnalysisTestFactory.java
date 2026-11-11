@@ -113,6 +113,7 @@ public final class PageAnalysisTestFactory {
     final ProtocolRepository protocolRepository = new ProtocolRepository();
     protocolRepository.addProtocol(WIKI, new Protocol("https://"));
     protocolRepository.addProtocol(WIKI, new Protocol("http://"));
+    protocolRepository.addProtocol(WIKI, new Protocol("//"));
     return protocolRepository;
   }
 

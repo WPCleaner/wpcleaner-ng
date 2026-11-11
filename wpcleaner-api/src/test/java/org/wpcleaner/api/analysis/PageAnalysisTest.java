@@ -467,4 +467,39 @@ class PageAnalysisTest {
     Assertions.assertThat(analysis.getExternalLinks())
         .containsExactly(new ExternalLinkElement(3, 23, "https://example.com/", null, false));
   }
+
+  @DisplayName("should analyze protocol-relative URLs only between brackets")
+  @Test
+  void analyzeProtocolRelativeExternalLink() {
+    // GIVEN
+    final String text = "[//example.com/ b] //example.com/ x//example.com/ [[//example.com/ c]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    final int inner = text.indexOf("[//", 1);
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+    Assertions.assertThat(analysis.getExternalLinks())
+        .containsExactly(
+            new ExternalLinkElement(0, 18, "//example.com/", "b", true),
+            new ExternalLinkElement(inner, text.length() - 1, "//example.com/", "c", true));
+  }
+
+  @DisplayName("should analyze external link whatever the case of its protocol")
+  @Test
+  void analyzeExternalLinkWithUpperCaseProtocol() {
+    // GIVEN
+    final String text = "[HTTPS://example.com/ b] [[Https://example.com/ c]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+    Assertions.assertThat(analysis.getExternalLinks())
+        .containsExactly(
+            new ExternalLinkElement(0, 24, "HTTPS://example.com/", "b", true),
+            new ExternalLinkElement(26, text.length() - 1, "Https://example.com/", "c", true));
+  }
 }
