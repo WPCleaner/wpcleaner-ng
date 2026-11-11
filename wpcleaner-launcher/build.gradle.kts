@@ -47,8 +47,10 @@ val launcherRuntimeModules =
     "java.se",
     "jdk.charsets",
     "jdk.crypto.cryptoki",
+    "jdk.jfr",
     "jdk.localedata",
     "jdk.management",
+    "jdk.net",
     "jdk.unsupported",
     "jdk.zipfs",
   )
