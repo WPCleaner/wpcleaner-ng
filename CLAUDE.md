@@ -20,6 +20,7 @@ folder name only**, even when nested:
 - `:wpcleaner-lib-check` (under `wpcleaner-lib/`) – Check Wiki algorithms on a `PageAnalysis` (`org.wpcleaner.lib.check.*`)
 - `:wpcleaner-lib-image` (under `wpcleaner-lib/`)
 - `:wpcleaner-dependencies` – enforced platform (dependency versions)
+- `:wpcleaner-launcher` – standalone launcher installing, updating and starting the application (no Spring, packaged with `jpackage`)
 - `:wpcleaner-translations`
 
 Use `:wpcleaner-lib-image:test`, not `:wpcleaner-lib:wpcleaner-lib-image:test`.

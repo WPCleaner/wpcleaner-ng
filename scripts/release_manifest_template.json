@@ -1,0 +1,8 @@
+{
+  "javaVersion": 25,
+  "launcherGeneration": 1,
+  "jvmArguments": [
+    "--enable-native-access=ALL-UNNAMED",
+    "--sun-misc-unsafe-memory-access=allow"
+  ]
+}

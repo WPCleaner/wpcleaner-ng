@@ -51,13 +51,6 @@ jobs:
       with:
         run: ./gradlew build
 
-    - name: Upload Linux artifact
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
-      uses: actions/upload-artifact@v7
-      with:
-        name: wpcleaner-linux
-        path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
-
   build-windows:
 
     runs-on: windows-latest
@@ -91,13 +84,6 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
-
-    - name: Upload Windows artifact
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
-      uses: actions/upload-artifact@v7
-      with:
-        name: wpcleaner-windows
-        path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
 
   build-macos:
 
@@ -134,15 +120,63 @@ jobs:
     - name: Build with Gradle Wrapper
       run: ./gradlew build
 
-    - name: Upload macOS artifact
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
+  package:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux-x64
+          - runner: ubuntu-24.04-arm
+            platform: linux-aarch64
+          - runner: windows-latest
+            platform: windows-x64
+          - runner: macos-latest
+            platform: macos-aarch64
+          - runner: macos-15-intel
+            platform: macos-x64
+
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v7
+
+    - name: Set up JDK 25 (for compilation toolchain and jpackage)
+      uses: actions/setup-java@v6.2.0
+      with:
+        distribution: 'temurin'
+        java-version: 25
+
+    - name: Set up JDK 21 (for executing Gradle daemon)
+      uses: actions/setup-java@v6.2.0
+      with:
+        distribution: 'temurin'
+        java-version: 21
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v6
+
+    - name: Build application and launcher for ${{ matrix.platform }}
+      run: ./gradlew :wpcleaner-application-gui:bootJar :wpcleaner-launcher:packageLauncher
+
+    - name: Prepare assets for release
+      shell: bash
+      run: |
+        mkdir -p release-assets
+        cp $(ls wpcleaner-application/wpcleaner-application-gui/build/libs/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") release-assets/wpcleaner-ng-${{ matrix.platform }}.jar
+        cp wpcleaner-launcher/build/distributions/wpcleaner-ng-launcher-${{ matrix.platform }}.* release-assets/
+
+    - name: Upload ${{ matrix.platform }} artifact
       uses: actions/upload-artifact@v7
       with:
-        name: wpcleaner-macos
-        path: wpcleaner-application/wpcleaner-application-gui/build/libs/wpcleaner-application-gui-*.jar
+        name: wpcleaner-${{ matrix.platform }}
+        path: release-assets/*
 
   create-release:
-    needs: [build-ubuntu, build-windows, build-macos]
+    needs: [build-ubuntu, build-windows, build-macos, package]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
     runs-on: ubuntu-latest
     permissions:
@@ -162,14 +196,15 @@ jobs:
     - name: Download all artifacts
       uses: actions/download-artifact@v8
       with:
-        path: release-assets
+        path: upload-assets
+        merge-multiple: true
 
-    - name: Prepare assets for release
-      run: |
-        mkdir -p upload-assets
-        cp $(ls release-assets/wpcleaner-linux/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") upload-assets/wpcleaner-ng-linux.jar
-        cp $(ls release-assets/wpcleaner-windows/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") upload-assets/wpcleaner-ng-windows.jar
-        cp $(ls release-assets/wpcleaner-macos/*.jar | grep -E "wpcleaner-application-gui-[0-9.]+(-SNAPSHOT)?\.jar$") upload-assets/wpcleaner-ng-macos.jar
+    - name: Generate the manifest read by the launcher
+      run: >
+        python3 scripts/release_manifest.py
+        --version ${{ steps.extract_version.outputs.version }}
+        --assets upload-assets
+        --output upload-assets/wpcleaner-ng.json
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v3
@@ -179,10 +214,7 @@ jobs:
         body_path: releases/v${{ steps.extract_version.outputs.version }}.md
         draft: false
         prerelease: false
-        files: |
-          upload-assets/wpcleaner-ng-linux.jar
-          upload-assets/wpcleaner-ng-windows.jar
-          upload-assets/wpcleaner-ng-macos.jar
+        files: upload-assets/*
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

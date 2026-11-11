@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-10 16:20+0100\n"
+"POT-Creation-Date: 2026-11-11 11:47+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1029,6 +1029,86 @@ msgstr ""
 msgid "Configure User Page Hosting Prevention"
 msgstr ""
 
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:55
+#, java-printf-format
+msgid ""
+"WPCleaner NG could not be installed.\n"
+"%s\n"
+"\n"
+"Do you want to try again?"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:71
+#, java-printf-format
+msgid "The shortcut could not be created: %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:81
+msgid "Do you want to add a shortcut to WPCleaner NG on your desktop?"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/Launcher.java:73
+#, java-printf-format
+msgid "The launcher failed: %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/Launcher.java:81
+msgid "Shortcuts can only be created by the installed launcher."
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:67
+#, java-printf-format
+msgid "The latest release could not be checked: %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:95
+#, java-printf-format
+msgid ""
+"WPCleaner NG %s requires a more recent launcher.\n"
+"You can download it from %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:101
+#, java-printf-format
+msgid ""
+"WPCleaner NG %s requires Java %d or later.\n"
+"You can install it, or download the latest launcher from %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:108
+#, java-printf-format
+msgid "WPCleaner NG %s is not available for your system (%s)."
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:133
+#, java-printf-format
+msgid "Downloading WPCleaner NG %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:145
+#, java-printf-format
+msgid "The download failed: %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/start/ReleaseStarter.java:65
+#, java-printf-format
+msgid ""
+"WPCleaner NG %s stopped unexpectedly.\n"
+"Do you want to start the previous version (%s)?"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/start/ReleaseStarter.java:74
+#, java-printf-format
+msgid ""
+"WPCleaner NG stopped unexpectedly (exit code %d).\n"
+"Details are available in %s"
+msgstr ""
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/start/ReleaseStarter.java:84
+#, java-printf-format
+msgid "WPCleaner NG %s requires Java %d or later."
+msgstr ""
+
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:61
 msgid "Retrieving Check Wiki configuration"
 msgstr ""
@@ -1046,12 +1126,12 @@ msgstr ""
 msgid "The YAML configuration must be a mapping"
 msgstr ""
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:81
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:92
 #, java-printf-format
 msgid "Empty value in %s"
 msgstr ""
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:85
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckAlgorithmParameters.java:96
 #, java-printf-format
 msgid "Value \"%s\" in %s is not a name, write it between quotes"
 msgstr ""
