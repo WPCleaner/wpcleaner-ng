@@ -82,11 +82,18 @@ final class SquareBracketAnalyzer {
       openingBracketsCount++;
       temporaryCursor.movePrevious();
     }
-    if (openingBracketsCount == TWO) {
-      analyze2SquareBrackets(firstOpeningBracket, lastOpeningBracket, reverseCursor);
-    } else if (openingBracketsCount == 1) {
-      analyze1SquareBracket(firstOpeningBracket, reverseCursor);
+    if (openingBracketsCount == 1 || isProtocolAfter(reverseCursor)) {
+      analyze1SquareBracket(lastOpeningBracket, reverseCursor);
+    } else if (openingBracketsCount == TWO) {
+      analyze2SquareBrackets(firstOpeningBracket, reverseCursor);
     }
+  }
+
+  private boolean isProtocolAfter(final TextBrowser.ReverseCursor reverseCursor) {
+    final TextBrowser.Cursor cursor = reverseCursor.toCursor();
+    cursor.moveNext();
+    return isKnownProtocol(
+        text, commentedText.skipWhitespaceAndComments(cursor.getIndex(), text.length()));
   }
 
   private void analyze1SquareBracket(
@@ -111,17 +118,11 @@ final class SquareBracketAnalyzer {
   }
 
   private void analyze2SquareBrackets(
-      final int firstOpeningBracket,
-      final int lastOpeningBracket,
-      final TextBrowser.ReverseCursor reverseCursor) {
+      final int firstOpeningBracket, final TextBrowser.ReverseCursor reverseCursor) {
     final TextBrowser.Cursor cursor = reverseCursor.toCursor();
     cursor.moveNext();
     final String target = extractTarget(cursor, UNAUTHORIZED_AFTER_2_OPEN, AUTHORIZED_AFTER_2_OPEN);
     if (target == null) {
-      return;
-    }
-    if (isKnownProtocol(target.stripLeading())) {
-      analyze1SquareBracket(lastOpeningBracket, reverseCursor);
       return;
     }
     if (imageAnalyzer.analyze(firstOpeningBracket, target, cursor.getIndex())) {
@@ -173,16 +174,16 @@ final class SquareBracketAnalyzer {
 
   private void persist1SquareBracketResult(
       final int begin, final int end, final String target, @Nullable final String value) {
-    if (isKnownProtocol(target)) {
+    if (isKnownProtocol(target, 0)) {
       externalLinks.add(new ExternalLinkElement(begin, end, target, value, true));
     }
   }
 
-  private boolean isKnownProtocol(final String target) {
+  private boolean isKnownProtocol(final String value, final int index) {
     return protocols.stream()
         .anyMatch(
             protocol ->
-                target.regionMatches(true, 0, protocol.value(), 0, protocol.value().length()));
+                value.regionMatches(true, index, protocol.value(), 0, protocol.value().length()));
   }
 
   @Nullable
