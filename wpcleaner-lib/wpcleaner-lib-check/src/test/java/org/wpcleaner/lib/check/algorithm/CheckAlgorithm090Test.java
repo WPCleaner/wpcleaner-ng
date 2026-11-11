@@ -108,7 +108,7 @@ class CheckAlgorithm090Test {
             + WIKI_URL
             + "/Paris H] ["
             + INDEX_URL
-            + "Paris&title=Lyon I] ["
+            + "Paris&title=Lyon I] [//fr.wikipedia.org/wiki/Nantes J] ["
             + WIKI_URL
             + "Paris Paris-Nord] ["
             + WIKI_URL
@@ -134,6 +134,7 @@ class CheckAlgorithm090Test {
             "[[:Fichier:A.jpg|A2]]",
             "[[:/Paris|H]]",
             "[[Lyon|I]]",
+            "[[Nantes|J]]",
             "[[Paris|Paris-Nord]]",
             "[[Paris#Histoire|Paris]]",
             "[[paris]]",

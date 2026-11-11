@@ -173,7 +173,10 @@ final class SquareBracketAnalyzer {
   }
 
   private boolean isKnownProtocol(final String target) {
-    return protocols.stream().anyMatch(protocol -> target.startsWith(protocol.value()));
+    return protocols.stream()
+        .anyMatch(
+            protocol ->
+                target.regionMatches(true, 0, protocol.value(), 0, protocol.value().length()));
   }
 
   @Nullable
