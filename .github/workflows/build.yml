@@ -37,9 +37,19 @@ jobs:
         java-version: 21
 
     - name: Set up build environment
-      run: >
-        sudo apt-get update &&
-        sudo apt-get install -y gettext
+      run: |
+        if command -v xgettext && command -v msgmerge; then
+          echo "gettext is already installed"
+          exit 0
+        fi
+        for attempt in 1 2 3 4 5; do
+          if sudo apt-get update && sudo apt-get install -y gettext; then
+            exit 0
+          fi
+          echo "Attempt $attempt failed, waiting before the next one"
+          sleep 30
+        done
+        exit 1
 
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
