@@ -7,4 +7,4 @@ package org.wpcleaner.api.analysis.tag;
 
 import org.jspecify.annotations.Nullable;
 
-public record TagAttribute(String name, @Nullable String value) {}
+public record TagAttribute(String name, @Nullable String value, int valueBegin) {}

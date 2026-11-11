@@ -41,13 +41,22 @@ public final class TagAttributeAnalyzer {
     cursor.moveAfterWhitespace();
     if (cursor.getIndex() >= text.length()
         || TagElement.TOKEN_ATTRIBUTE_VALUE != text.charAt(cursor.getIndex())) {
-      return Optional.of(new TagAttribute(name, null));
+      return Optional.of(new TagAttribute(name, null, beginName + name.length()));
     }
     cursor.moveNext();
     cursor.moveAfterWhitespace();
+    final int valueBegin = valueBegin(cursor.getIndex());
     final String value = extractAttributeValue(cursor);
     cursor.moveAfterWhitespace();
-    return Optional.of(new TagAttribute(name, value));
+    return Optional.of(new TagAttribute(name, value, valueBegin));
+  }
+
+  private int valueBegin(final int index) {
+    return index < text.length() && isQuote(text.charAt(index)) ? index + 1 : index;
+  }
+
+  private static boolean isQuote(final char character) {
+    return character == '"' || character == '\'';
   }
 
   private String extractAttributeValue(final TextBrowser.Cursor cursor) {
@@ -56,7 +65,7 @@ public final class TagAttributeAnalyzer {
       return "";
     }
     final char quote = text.charAt(beginValue);
-    if (quote == '"' || quote == '\'') {
+    if (isQuote(quote)) {
       cursor.moveNext();
       final int beginQuotedValue = cursor.getIndex();
       cursor.moveAfterUntil("<>" + quote);
