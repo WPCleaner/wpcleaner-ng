@@ -71,6 +71,9 @@ To uninstall, delete this folder, the extracted launcher and the shortcut.
 - System properties: `wpcleaner.launcher.home` replaces the folder above,
   `wpcleaner.launcher.releases` replaces `https://github.com/WPCleaner/wpcleaner-ng/releases`
 
+The launcher has its own version, independent of the version of WPCleaner NG:
+it is set by `version` in `build.gradle.kts`.
+
 The release workflow builds one jar and one launcher per system, then
 `scripts/release_manifest.py` generates `wpcleaner-ng.json` from
 `scripts/release_manifest_template.json` (required Java version, Java options, launcher

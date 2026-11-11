@@ -1,5 +1,7 @@
 plugins { id("wpcleaner.module.java-library") }
 
+version = "1.0.0"
+
 dependencies {
   api(enforcedPlatform(project(":wpcleaner-dependencies")))
   implementation("com.fasterxml.jackson.core:jackson-annotations")
@@ -32,11 +34,6 @@ val launcherArchitecture =
   if (hostArchitecture.contains("aarch64") || hostArchitecture.contains("arm64")) "aarch64"
   else "x64"
 val launcherArchiveName = "wpcleaner-ng-launcher-$launcherOperatingSystem-$launcherArchitecture"
-val launcherVersion =
-  providers.gradleProperty("version.prefix").map {
-    if (launcherOperatingSystem == "macos" && it.startsWith("0.")) "1.${it.substringAfter('.')}"
-    else it
-  }
 val launcherIcon =
   when (launcherOperatingSystem) {
     "macos" -> file("src/main/packaging/$launcherName.icns")
@@ -97,7 +94,7 @@ val jpackageImage =
       "--name",
       launcherName,
       "--app-version",
-      launcherVersion.get(),
+      version.toString(),
       "--vendor",
       "WPCleaner",
       "--input",
