@@ -71,15 +71,19 @@ final class SquareBracketAnalyzer {
     final int lastOpeningBracket = reverseCursor.getIndex();
     final TextBrowser.ReverseCursor temporaryCursor = reverseCursor.copy();
     int firstOpeningBracket = lastOpeningBracket;
+    int openingBracketsCount = 1;
+    temporaryCursor.movePrevious();
     while (temporaryCursor.getIndex() >= 0
         && text.charAt(temporaryCursor.getIndex()) == OPEN
-        && temporaryCursor.samePart()) {
+        && commentedText
+            .withoutComments(temporaryCursor.getIndex() + 1, firstOpeningBracket)
+            .isEmpty()) {
       firstOpeningBracket = temporaryCursor.getIndex();
+      openingBracketsCount++;
       temporaryCursor.movePrevious();
     }
-    final int openingBracketsCount = lastOpeningBracket - firstOpeningBracket + 1;
     if (openingBracketsCount == TWO) {
-      analyze2SquareBrackets(firstOpeningBracket, reverseCursor);
+      analyze2SquareBrackets(firstOpeningBracket, lastOpeningBracket, reverseCursor);
     } else if (openingBracketsCount == 1) {
       analyze1SquareBracket(firstOpeningBracket, reverseCursor);
     }
@@ -107,7 +111,9 @@ final class SquareBracketAnalyzer {
   }
 
   private void analyze2SquareBrackets(
-      final int firstOpeningBracket, final TextBrowser.ReverseCursor reverseCursor) {
+      final int firstOpeningBracket,
+      final int lastOpeningBracket,
+      final TextBrowser.ReverseCursor reverseCursor) {
     final TextBrowser.Cursor cursor = reverseCursor.toCursor();
     cursor.moveNext();
     final String target = extractTarget(cursor, UNAUTHORIZED_AFTER_2_OPEN, AUTHORIZED_AFTER_2_OPEN);
@@ -115,7 +121,7 @@ final class SquareBracketAnalyzer {
       return;
     }
     if (isKnownProtocol(target.stripLeading())) {
-      analyze1SquareBracket(firstOpeningBracket + 1, reverseCursor);
+      analyze1SquareBracket(lastOpeningBracket, reverseCursor);
       return;
     }
     if (imageAnalyzer.analyze(firstOpeningBracket, target, cursor.getIndex())) {

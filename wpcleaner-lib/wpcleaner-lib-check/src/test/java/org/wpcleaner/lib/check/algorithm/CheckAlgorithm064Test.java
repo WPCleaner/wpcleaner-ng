@@ -92,6 +92,26 @@ class CheckAlgorithm064Test {
                 new Replacement("[[Tour Eiffel]]", false)));
   }
 
+  @DisplayName("should ignore comments in links but fix them manually")
+  @Test
+  void fixLinksWithComments() {
+    // GIVEN
+    final String first = "[[<!-- a --> espagnol|Espagnol]]";
+    final String second = "[[Thales|Thales<!-- b -->]]";
+    final String third = "[[Nantes|Nantes]]";
+    final String text = first + " " + second + " " + third + "<!-- c -->";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(0, first, new Replacement("[[Espagnol]]", false)),
+            error(first.length() + 1, second, new Replacement("[[Thales]]", false)),
+            error(text.indexOf(third), third, new Replacement("[[Nantes]]", true)));
+  }
+
   @DisplayName("should fix manually links whose text ends with a line break")
   @Test
   void fixLinksWithLineBreak() {

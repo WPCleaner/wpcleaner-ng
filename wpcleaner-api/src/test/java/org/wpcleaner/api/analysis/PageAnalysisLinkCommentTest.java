@@ -66,4 +66,29 @@ class PageAnalysisLinkCommentTest {
         .extracting(ExternalLinkElement::target, ExternalLinkElement::text)
         .containsExactly(Assertions.tuple("http://a.org/b", "texte"));
   }
+
+  @DisplayName("should analyze links with comments between or after the opening brackets")
+  @Test
+  void analyzeLinksWithCommentsAfterOpeningBrackets() {
+    // GIVEN
+    final String text =
+        "[[<!-- x --> espagnol|Espagnol]] [<!-- y -->[https://a.org/ texte]"
+            + " [<b>[https://b.org/] [<!-- z -->[Paris]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .extracting(InternalLinkElement::begin, InternalLinkElement::title)
+        .containsExactly(
+            Assertions.tuple(0, new PageTitle(0, "Espagnol")),
+            Assertions.tuple(text.indexOf("[<!-- z"), new PageTitle(0, "Paris")));
+    Assertions.assertThat(analysis.getExternalLinks())
+        .extracting(
+            ExternalLinkElement::begin, ExternalLinkElement::target, ExternalLinkElement::bracketed)
+        .containsExactly(
+            Assertions.tuple(text.indexOf("[https://a"), "https://a.org/", true),
+            Assertions.tuple(text.indexOf("[https://b"), "https://b.org/", true));
+  }
 }
