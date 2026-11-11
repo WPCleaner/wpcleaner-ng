@@ -49,10 +49,7 @@ jobs:
           echo "Attempt $attempt with apt failed"
           sleep 15
         done
-        echo "Falling back to Homebrew"
-        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-        brew install gettext
-        echo "$(brew --prefix gettext)/bin" >> $GITHUB_PATH
+        exit 1
 
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
