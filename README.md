@@ -8,6 +8,12 @@ and uses the [Spring framework](https://spring.io/),
 [JavaFX](https://openjfx.io/)
 and [Spring Boot](https://spring.io/projects/spring-boot/).
 
+## Installation
+
+Download the launcher for your system from the [latest release](https://github.com/WPCleaner/wpcleaner-ng/releases/latest):
+it installs WPCleaner NG, keeps it up to date and doesn't require Java to be installed.
+See the [launcher documentation](wpcleaner-launcher/README.md) for details.
+
 ## License
 
 [![SPDX Logo](https://user-images.githubusercontent.com/15098724/57586996-dc44ae00-74b2-11e9-92a4-8ad1b6d81d0a.png)](https://spdx.org/) SPDX information
