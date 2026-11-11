@@ -147,6 +147,37 @@ public record CheckAlgorithmConfiguration(
             .toList());
   }
 
+  public List<TemplateDefinition> getTemplateDefinitions(
+      final String name, final List<String> fields) {
+    if (parameters != null) {
+      return parameters.getObjects(name).stream()
+          .flatMap(
+              object ->
+                  object.getStrings(TEMPLATE_FIELD).stream()
+                      .flatMap(
+                          template ->
+                              TemplateDefinition.of(
+                                  template,
+                                  fields,
+                                  fields.stream()
+                                      .map(
+                                          field ->
+                                              object.getStrings(field).stream()
+                                                  .findFirst()
+                                                  .orElse(""))
+                                      .toList())
+                                  .stream()))
+          .toList();
+    }
+    return getLines(name).stream()
+        .map(ConfigurationParser::splitLine)
+        .flatMap(
+            line ->
+                TemplateDefinition.of(line.getFirst(), fields, line.subList(1, line.size()))
+                    .stream())
+        .toList();
+  }
+
   public TemplateGroups getTemplateGroups(final String name) {
     if (parameters != null) {
       return TemplateGroups.of(parameters.getStringLists(name));

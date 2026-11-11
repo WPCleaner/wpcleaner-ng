@@ -101,6 +101,10 @@ public final class PageAnalysisTestFactory {
     namespaceRepository.addNamespace(
         WIKI,
         new Namespace(
+            CommonNamespaces.SPECIAL.id, "Special", "Spécial", List.of(), CaseType.FIRST_LETTER));
+    namespaceRepository.addNamespace(
+        WIKI,
+        new Namespace(
             CommonNamespaces.TEMPLATE.id, "Template", "Modèle", List.of(), CaseType.FIRST_LETTER));
     return namespaceRepository;
   }
