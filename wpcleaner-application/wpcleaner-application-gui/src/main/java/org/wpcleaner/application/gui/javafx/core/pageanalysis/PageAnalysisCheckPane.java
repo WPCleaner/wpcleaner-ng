@@ -29,7 +29,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
   private final PageAnalysisFactory analysisFactory;
   private final PauseTransition analysisDelay;
   private final CheckErrorsPane errorsPane;
-  private final PageAnalysisScrollPane scrollPane;
+  private final PageAnalysisAreaPane areaPane;
   @Nullable private PageAnalysis analysis;
   private Runnable analysisListener = () -> {};
 
@@ -45,12 +45,12 @@ public final class PageAnalysisCheckPane extends SplitPane {
     this.analysisDelay = new PauseTransition(ANALYSIS_DELAY);
     this.errorsPane =
         new CheckErrorsPane(imageLoader, this::showErrors, this::applyAutomaticFixes, browseAction);
-    this.scrollPane = new PageAnalysisScrollPane(colorizer);
+    this.areaPane = new PageAnalysisAreaPane(colorizer, imageLoader);
     initialize();
   }
 
   private void initialize() {
-    getItems().addAll(errorsPane, scrollPane);
+    getItems().addAll(errorsPane, areaPane);
     setDividerPositions(0.2);
     setResizableWithParent(errorsPane, false);
     final PageAnalysisArea area = getArea();
@@ -63,8 +63,12 @@ public final class PageAnalysisCheckPane extends SplitPane {
     return errorsPane.getErrorsListView();
   }
 
+  public PageAnalysisAreaPane getAreaPane() {
+    return areaPane;
+  }
+
   public PageAnalysisArea getArea() {
-    return scrollPane.getArea();
+    return areaPane.getArea();
   }
 
   public void updateAnalysis(final PageAnalysis newAnalysis) {
@@ -125,7 +129,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
 
   private List<CheckError> highlightErrors(@Nullable final CheckAlgorithmErrors selectedErrors) {
     final List<CheckError> errors = selectedErrors == null ? List.of() : selectedErrors.errors();
-    getArea().highlight(errors);
+    areaPane.highlight(errors);
     return errors;
   }
 

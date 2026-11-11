@@ -8,6 +8,7 @@ package org.wpcleaner.application.gui.javafx.analysis;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -40,7 +41,7 @@ public final class PageAnalysisPanel extends StackPane {
   private final String pageName;
   @Nullable private final Integer algorithmNumber;
   private final PageAnalysisCheckPane checkPane;
-  private final PageSavePane savePane;
+  private final PageSummaryPane summaryPane;
   @Nullable private Instant baseTimestamp;
 
   public PageAnalysisPanel(
@@ -60,8 +61,15 @@ public final class PageAnalysisPanel extends StackPane {
             services.checkAlgorithmRegistry(),
             services.pageAnalysisFactory(),
             services.actionServices()::browse);
-    this.savePane =
-        new PageSavePane(imageLoader, services.user().getCurrentUser().demo(), this::savePage);
+    this.summaryPane = new PageSummaryPane();
+    checkPane
+        .getAreaPane()
+        .getToolBar()
+        .getItems()
+        .addAll(
+            new Separator(),
+            new PageSaveButton(
+                imageLoader, services.user().getCurrentUser().demo(), this::savePage));
     initialize();
   }
 
@@ -70,7 +78,7 @@ public final class PageAnalysisPanel extends StackPane {
     checkPane.setAnalysisListener(this::updateSummary);
     final VBox mainContainer = new VBox();
     VBox.setVgrow(checkPane, Priority.ALWAYS);
-    mainContainer.getChildren().addAll(savePane, checkPane);
+    mainContainer.getChildren().addAll(summaryPane, checkPane);
     getChildren().add(mainContainer);
 
     loadPageContent();
@@ -136,12 +144,12 @@ public final class PageAnalysisPanel extends StackPane {
 
   private void resetInitialErrors() {
     checkPane.resetInitialErrors();
-    savePane.resetSummary();
+    summaryPane.resetSummary();
     updateSummary();
   }
 
   private void updateSummary() {
-    savePane.updateAutomaticSummary(
+    summaryPane.updateAutomaticSummary(
         services.checkWikiSummary().create(getWiki(), checkPane.getFixedAlgorithms()));
   }
 
@@ -150,7 +158,7 @@ public final class PageAnalysisPanel extends StackPane {
     final PageAnalysis analysis = checkPane.getAnalysis();
     final List<CheckAlgorithm> fixedAlgorithms = checkPane.getFullyFixedAlgorithms();
     owner.executeAsync(
-        new SavePageTask(checkPane.getArea().getText(), savePane.getSummary()),
+        new SavePageTask(checkPane.getArea().getText(), summaryPane.getSummary()),
         edit -> pageSaved(edit, analysis, fixedAlgorithms),
         this::pageSavedWithError);
   }

@@ -217,6 +217,75 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
         .isEqualTo(styleRegistry.getStyle(PageAnalysisStylePropertiesInitializer.INTERNAL_LINK));
   }
 
+  @DisplayName("should navigate through the errors of the selected algorithm")
+  @Test
+  void navigateErrors() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final PageAnalysisCheckPane pane = createPane();
+    runOnJavaFx(
+        () -> {
+          pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, TEXT));
+          pane.getErrorsListView().getSelectionModel().selectFirst();
+          PageAnalysisCheckPaneFactory.show(pane);
+        });
+    final IndexRange first = new IndexRange(0, FIRST_LINK.length());
+    final IndexRange second =
+        new IndexRange(SECOND_LINK_BEGIN, SECOND_LINK_BEGIN + FIRST_LINK.length());
+
+    // WHEN
+    final List<IndexRange> selections =
+        callOnJavaFx(
+            () ->
+                List.of(
+                        CheckErrorsToolBar.GO_NEXT_ID,
+                        CheckErrorsToolBar.GO_NEXT_ID,
+                        CheckErrorsToolBar.GO_PREVIOUS_ID,
+                        CheckErrorsToolBar.GO_PREVIOUS_ID,
+                        CheckErrorsToolBar.GO_LAST_ID,
+                        CheckErrorsToolBar.GO_FIRST_ID)
+                    .stream()
+                    .map(
+                        id -> {
+                          lookup(pane, id, Button.class).fire();
+                          return pane.getArea().getSelection();
+                        })
+                    .toList());
+
+    // THEN
+    Assertions.assertThat(selections).containsExactly(second, second, first, first, second, first);
+  }
+
+  @DisplayName("should disable the navigation without selected errors")
+  @Test
+  void disableNavigation() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final PageAnalysisCheckPane pane = createPane();
+    runOnJavaFx(
+        () -> {
+          pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, TEXT));
+          PageAnalysisCheckPaneFactory.show(pane);
+        });
+    final List<String> ids =
+        List.of(
+            CheckErrorsToolBar.GO_FIRST_ID,
+            CheckErrorsToolBar.GO_PREVIOUS_ID,
+            CheckErrorsToolBar.GO_NEXT_ID,
+            CheckErrorsToolBar.GO_LAST_ID);
+
+    // WHEN
+    final List<Boolean> disabledBefore =
+        callOnJavaFx(
+            () -> ids.stream().map(id -> lookup(pane, id, Button.class).isDisable()).toList());
+    runOnJavaFx(() -> pane.getErrorsListView().getSelectionModel().selectFirst());
+    final List<Boolean> disabledAfter =
+        callOnJavaFx(
+            () -> ids.stream().map(id -> lookup(pane, id, Button.class).isDisable()).toList());
+
+    // THEN
+    Assertions.assertThat(disabledBefore).containsOnly(true);
+    Assertions.assertThat(disabledAfter).containsOnly(false);
+  }
+
   @DisplayName("should select the first error again when double-clicking on the algorithm")
   @Test
   void doubleClickAlgorithm() throws ExecutionException, InterruptedException, TimeoutException {

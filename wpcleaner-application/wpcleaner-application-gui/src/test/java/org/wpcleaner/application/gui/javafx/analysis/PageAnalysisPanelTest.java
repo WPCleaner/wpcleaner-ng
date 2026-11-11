@@ -48,6 +48,7 @@ import org.wpcleaner.application.gui.GuiLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsPane;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsToolBar;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 import org.wpcleaner.lib.check.server.MockCheckWikiServer;
@@ -143,7 +144,11 @@ class PageAnalysisPanelTest extends JavaFxTest {
     Assertions.assertThat(button.getText()).isEmpty();
     Assertions.assertThat(button.getGraphic()).isInstanceOf(ImageView.class);
     Assertions.assertThat(button.getTooltip().getText()).isEqualTo("Save the page");
-    Assertions.assertThat(button.getParent().getParent()).isInstanceOf(ToolBar.class);
+    final ToolBar toolBar = (ToolBar) button.getParent().getParent();
+    Assertions.assertThat(toolBar).isInstanceOf(CheckErrorsToolBar.class);
+    Assertions.assertThat(toolBar.getItems())
+        .extracting(node -> node.getClass().getSimpleName())
+        .containsExactly("Button", "Button", "Button", "Button", "Separator", "PageSaveButton");
   }
 
   @DisplayName("should keep the summary written by the user")
@@ -275,10 +280,10 @@ class PageAnalysisPanelTest extends JavaFxTest {
   }
 
   private static Button getSaveButton(final JavaFxAnalysisWindow analysisWindow) {
-    return lookup(analysisWindow, PageSavePane.SAVE_ID, Button.class);
+    return lookup(analysisWindow, PageSaveButton.SAVE_ID, Button.class);
   }
 
   private static TextField getSummaryField(final JavaFxAnalysisWindow analysisWindow) {
-    return lookup(analysisWindow, PageSavePane.SUMMARY_ID, TextField.class);
+    return lookup(analysisWindow, PageSummaryPane.SUMMARY_ID, TextField.class);
   }
 }
