@@ -71,7 +71,7 @@ final class ProjectsPanel extends VBox {
 
   private MenuItem createCheckWikiItem(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
     final String name = services.checkAlgorithmRegistry().getName(wiki, algorithm);
-    final MenuItem item = new MenuItem(name);
+    final MenuItem item = new MenuItem("%03d - %s".formatted(algorithm.number(), name));
     item.setOnAction(
         _ ->
             services

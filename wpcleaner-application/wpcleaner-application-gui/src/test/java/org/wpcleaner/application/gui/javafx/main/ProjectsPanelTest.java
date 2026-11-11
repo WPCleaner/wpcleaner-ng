@@ -76,7 +76,9 @@ class ProjectsPanelTest extends JavaFxTest {
 
     // THEN
     Assertions.assertThat(button.isDisable()).isFalse();
-    Assertions.assertThat(button.getItems()).extracting(MenuItem::getText).containsExactly(NAME);
+    Assertions.assertThat(button.getItems())
+        .extracting(MenuItem::getText)
+        .containsExactly("048 - " + NAME);
   }
 
   @DisplayName("should disable the Check Wiki button without active algorithm")
