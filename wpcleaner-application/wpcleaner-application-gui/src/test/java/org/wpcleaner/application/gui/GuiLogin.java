@@ -69,6 +69,7 @@ public final class GuiLogin {
           SiteInfoParameters.Properties.NAMESPACES,
           SiteInfoParameters.Properties.NAMESPACE_ALIASES,
           SiteInfoParameters.Properties.PROTOCOLS,
+          SiteInfoParameters.Properties.SPECIAL_PAGE_ALIASES,
           SiteInfoParameters.Properties.VARIABLES);
   private static final Set<TagsParameters.Properties> TAGS_PROPERTIES =
       Set.of(
