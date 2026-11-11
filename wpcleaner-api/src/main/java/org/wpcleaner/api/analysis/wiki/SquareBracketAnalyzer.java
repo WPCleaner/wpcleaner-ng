@@ -28,7 +28,7 @@ final class SquareBracketAnalyzer {
   private static final String AUTHORIZED_AFTER_1_OPEN = new String(new char[] {' ', CLOSE});
   private static final String AUTHORIZED_AFTER_2_OPEN = new String(new char[] {PIPE, CLOSE});
   private static final String UNAUTHORIZED_AFTER_1_OPEN =
-      new String(new char[] {OPEN, PIPE, ' ', CLOSE, '\n'});
+      new String(new char[] {OPEN, ' ', CLOSE, '\n'});
   private static final String UNAUTHORIZED_AFTER_2_OPEN =
       new String(new char[] {OPEN, PIPE, CLOSE, '\n'});
   private static final char NEW_LINE = '\n';
@@ -41,6 +41,7 @@ final class SquareBracketAnalyzer {
   private final CommentedText commentedText;
   private final List<Protocol> protocols;
   private final ImageAnalyzer imageAnalyzer;
+  private final TextContainers containers;
   private final SquareBracketElementFactory elementFactory;
   private final List<ExternalLinkElement> externalLinks;
 
@@ -50,11 +51,13 @@ final class SquareBracketAnalyzer {
       final List<Interwiki> interwikis,
       final List<Namespace> namespaces,
       final List<Protocol> protocols,
-      final ImageAnalyzer imageAnalyzer) {
+      final ImageAnalyzer imageAnalyzer,
+      final TextContainers containers) {
     this.text = text;
     this.commentedText = commentedText;
     this.protocols = protocols;
     this.imageAnalyzer = imageAnalyzer;
+    this.containers = containers;
     this.elementFactory = new SquareBracketElementFactory(interwikis, namespaces);
     this.externalLinks = new ArrayList<>();
   }
@@ -91,7 +94,9 @@ final class SquareBracketAnalyzer {
       return;
     }
     final String value = extractExternalLinkText(cursor);
-    if (cursor.getIndex() >= text.length() || text.charAt(cursor.getIndex()) != CLOSE) {
+    if (cursor.getIndex() >= text.length()
+        || text.charAt(cursor.getIndex()) != CLOSE
+        || cursor.getIndex() >= containers.findContainer(firstOpeningBracket).end()) {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
@@ -109,7 +114,7 @@ final class SquareBracketAnalyzer {
     if (target == null) {
       return;
     }
-    if (isKnownProtocol(target)) {
+    if (isKnownProtocol(target.stripLeading())) {
       analyze1SquareBracket(firstOpeningBracket + 1, reverseCursor);
       return;
     }

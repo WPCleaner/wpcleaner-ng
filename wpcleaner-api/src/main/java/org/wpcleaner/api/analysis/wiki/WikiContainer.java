@@ -204,7 +204,8 @@ public class WikiContainer {
                 interwikiRepository.getInterwikis(wiki),
                 namespaceRepository.getNamespaces(wiki),
                 protocolRepository.getProtocols(wiki),
-                imageAnalyzer);
+                imageAnalyzer,
+                containers);
         redirect =
             redirectArea
                 .map(

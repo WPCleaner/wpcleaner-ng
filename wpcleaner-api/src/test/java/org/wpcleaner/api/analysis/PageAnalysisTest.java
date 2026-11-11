@@ -431,4 +431,40 @@ class PageAnalysisTest {
             new ExternalLinkElement(1, 25, "https://example.com/", "b", true),
             new ExternalLinkElement(28, 50, "https://example.com/", null, true));
   }
+
+  @DisplayName("should analyze external link with a pipe in its URL")
+  @Test
+  void analyzeExternalLinkWithPipe() {
+    // GIVEN
+    final String text =
+        "[https://example.com/|b] [[https://example.com/|b]] {{a|[https://example.com/|b]}}";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+    Assertions.assertThat(analysis.getExternalLinks())
+        .extracting(
+            ExternalLinkElement::begin, ExternalLinkElement::target, ExternalLinkElement::bracketed)
+        .containsExactly(
+            Assertions.tuple(0, "https://example.com/|b", true),
+            Assertions.tuple(26, "https://example.com/|b", true),
+            Assertions.tuple(57, "https://example.com/", false));
+  }
+
+  @DisplayName("should not analyze internal link with spaces before a URL")
+  @Test
+  void analyzeSpacesBeforeUrlInsideDoubleBrackets() {
+    // GIVEN
+    final String text = "[[ https://example.com/ b]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+    Assertions.assertThat(analysis.getExternalLinks())
+        .containsExactly(new ExternalLinkElement(3, 23, "https://example.com/", null, false));
+  }
 }
