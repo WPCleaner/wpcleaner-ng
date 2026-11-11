@@ -42,14 +42,17 @@ jobs:
           echo "gettext is already installed"
           exit 0
         fi
-        for attempt in 1 2 3 4 5; do
+        for attempt in 1 2; do
           if sudo apt-get update && sudo apt-get install -y gettext; then
             exit 0
           fi
-          echo "Attempt $attempt failed, waiting before the next one"
-          sleep 30
+          echo "Attempt $attempt with apt failed"
+          sleep 15
         done
-        exit 1
+        echo "Falling back to Homebrew"
+        eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+        brew install gettext
+        echo "$(brew --prefix gettext)/bin" >> $GITHUB_PATH
 
     # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
     # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
