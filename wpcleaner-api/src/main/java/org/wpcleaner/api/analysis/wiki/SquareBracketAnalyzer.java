@@ -109,6 +109,10 @@ final class SquareBracketAnalyzer {
     if (target == null) {
       return;
     }
+    if (isKnownProtocol(target)) {
+      analyze1SquareBracket(firstOpeningBracket + 1, reverseCursor);
+      return;
+    }
     if (imageAnalyzer.analyze(firstOpeningBracket, target, cursor.getIndex())) {
       while (reverseCursor.getIndex() >= firstOpeningBracket) {
         reverseCursor.movePrevious();
@@ -158,11 +162,13 @@ final class SquareBracketAnalyzer {
 
   private void persist1SquareBracketResult(
       final int begin, final int end, final String target, @Nullable final String value) {
-    final boolean knownProtocol =
-        protocols.stream().anyMatch(protocol -> target.startsWith(protocol.value()));
-    if (knownProtocol) {
+    if (isKnownProtocol(target)) {
       externalLinks.add(new ExternalLinkElement(begin, end, target, value, true));
     }
+  }
+
+  private boolean isKnownProtocol(final String target) {
+    return protocols.stream().anyMatch(protocol -> target.startsWith(protocol.value()));
   }
 
   @Nullable

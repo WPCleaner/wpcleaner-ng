@@ -414,4 +414,21 @@ class PageAnalysisTest {
     Assertions.assertThat(analysis.getExternalLinks())
         .containsExactly(new ExternalLinkElement(0, 24, "https://example.com/", "b", true));
   }
+
+  @DisplayName("should analyze external link inside double brackets")
+  @Test
+  void analyzeExternalLinkInsideDoubleBrackets() {
+    // GIVEN
+    final String text = "[[https://example.com/ b]] [[https://example.com/]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+    Assertions.assertThat(analysis.getExternalLinks())
+        .containsExactly(
+            new ExternalLinkElement(1, 25, "https://example.com/", "b", true),
+            new ExternalLinkElement(28, 50, "https://example.com/", null, true));
+  }
 }
