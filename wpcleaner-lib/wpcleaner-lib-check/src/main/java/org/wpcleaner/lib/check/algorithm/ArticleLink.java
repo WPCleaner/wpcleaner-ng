@@ -15,6 +15,7 @@ import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
+import org.wpcleaner.api.analysis.timeline.TimelineLinkElement;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.lib.check.configuration.TemplateDefinition;
 
@@ -45,10 +46,7 @@ record ArticleLink(
       final List<TemplateDefinition> linkTemplates) {
     final PageTitle title =
         analysis.normalizeTitle(url.title(), CommonNamespaces.MAIN.id).orElse(null);
-    final boolean colon =
-        title != null
-            && (title.namespace() == CommonNamespaces.FILE.id
-                || title.namespace() == CommonNamespaces.CATEGORY.id);
+    final boolean colon = isColonNeeded(title);
     final boolean automatic = isAutomatic(analysis, link, url, title);
     return findLinkTemplate(analysis, link, linkTemplates)
         .map(
@@ -162,13 +160,34 @@ record ArticleLink(
     return Optional.empty();
   }
 
+  static ArticleLink of(
+      final PageAnalysis analysis, final TimelineLinkElement link, final ArticleUrl url) {
+    final PageTitle title =
+        analysis.normalizeTitle(url.title(), CommonNamespaces.MAIN.id).orElse(null);
+    return new ArticleLink(
+        url, title, link.begin(), link.end(), link.text(), isColonNeeded(title), false);
+  }
+
+  private static boolean isColonNeeded(@Nullable final PageTitle title) {
+    return title != null
+        && (title.namespace() == CommonNamespaces.FILE.id
+            || title.namespace() == CommonNamespaces.CATEGORY.id);
+  }
+
   ArticleLink withoutAutomatic() {
     return new ArticleLink(url, title, begin, end, text, colon, false);
   }
 
+  String timelineLink() {
+    return text == null ? "[[" + target() + "]]" : "[[" + target() + PIPE + text + "]]";
+  }
+
+  private String target() {
+    return (colon || url.title().charAt(0) == '/' ? ":" : "") + url.titleAndFragment();
+  }
+
   String internalLink(@Nullable final String displayedText) {
-    final String target =
-        (colon || url.title().charAt(0) == '/' ? ":" : "") + url.titleAndFragment();
+    final String target = target();
     if (displayedText == null) {
       return "[[" + target + "]]";
     }
