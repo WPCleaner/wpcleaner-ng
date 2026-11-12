@@ -92,10 +92,14 @@ public record CheckAlgorithmConfiguration(
   }
 
   public boolean getBoolean(final String name) {
+    return getBoolean(name, false);
+  }
+
+  public boolean getBoolean(final String name, final boolean defaultValue) {
     if (parameters != null) {
-      return parameters.getBoolean(name).orElse(false);
+      return parameters.getBoolean(name).orElse(defaultValue);
     }
-    return getProperty(name).map(Boolean::parseBoolean).orElse(false);
+    return getProperty(name).map(Boolean::parseBoolean).orElse(defaultValue);
   }
 
   public List<String> getStrings(final String name) {

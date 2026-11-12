@@ -37,6 +37,7 @@ import org.wpcleaner.api.analysis.timeline.TimelineLinkElement;
 import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
+import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
@@ -60,6 +61,7 @@ public final class PageAnalysis {
   private final TagContainer tags;
   private final WikiContainer wikiElements;
   private final TimelineContainer timelines;
+  private final List<Interwiki> interwikis;
 
   public PageAnalysis(
       final WikiDefinition wiki,
@@ -95,6 +97,11 @@ public final class PageAnalysis {
             namespaceRepository,
             protocolRepository);
     this.timelines = new TimelineContainer(this.text, preprocessor);
+    this.interwikis = interwikiRepository.getInterwikis(wiki);
+  }
+
+  public List<Interwiki> getInterwikis() {
+    return interwikis;
   }
 
   public WikiDefinition getWiki() {

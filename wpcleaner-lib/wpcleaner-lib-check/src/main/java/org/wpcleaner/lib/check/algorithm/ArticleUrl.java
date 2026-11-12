@@ -13,8 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
 record ArticleUrl(String title, Map<String, String> attributes, @Nullable String fragment) {
@@ -22,6 +24,10 @@ record ArticleUrl(String title, Map<String, String> attributes, @Nullable String
   private static final List<String> PROTOCOLS = List.of("http://", "https://", "//");
   private static final String TITLE_ATTRIBUTE = "title";
   private static final char SLASH = '/';
+  private static final String TITLE_PARAMETER = "$1";
+  private static final char ATTRIBUTE_VALUE = '=';
+  private static final char HOST_SEPARATOR = '.';
+  private static final String MOBILE_HOST = ".m";
 
   ArticleUrl {
     attributes = Map.copyOf(attributes);
@@ -29,6 +35,70 @@ record ArticleUrl(String title, Map<String, String> attributes, @Nullable String
 
   static Optional<ArticleUrl> of(final WikiDefinition wiki, final String url) {
     return cleanUrl(url).flatMap(ArticleUrl::toUri).flatMap(uri -> of(wiki, uri));
+  }
+
+  static Optional<ArticleUrl> of(final Interwiki interwiki, final String url) {
+    final int parameter = interwiki.url().indexOf(TITLE_PARAMETER);
+    if (parameter < 0) {
+      return Optional.empty();
+    }
+    final String suffix = interwiki.url().substring(parameter + TITLE_PARAMETER.length());
+    return cleanUrl(interwiki.url().substring(0, parameter))
+        .flatMap(ArticleUrl::toUri)
+        .flatMap(
+            base -> cleanUrl(url).flatMap(ArticleUrl::toUri).flatMap(uri -> of(base, suffix, uri)));
+  }
+
+  static Optional<String> findHost(final Interwiki interwiki) {
+    return cleanUrl(interwiki.url()).flatMap(ArticleUrl::toUri).map(URI::getHost);
+  }
+
+  private static Optional<ArticleUrl> of(final URI base, final String suffix, final URI uri) {
+    final String host = uri.getHost();
+    if (host == null || !isSameHost(host, base.getHost())) {
+      return Optional.empty();
+    }
+    final Map<String, String> attributes = parseQuery(uri);
+    final String path = Objects.requireNonNullElse(uri.getPath(), "");
+    final String basePath = Objects.requireNonNullElse(base.getPath(), "");
+    final Optional<String> title =
+        base.getRawQuery() == null
+            ? findTitleInPath(path, basePath, suffix)
+            : findTitleInQuery(path, basePath, base.getRawQuery() + suffix, attributes);
+    return create(title.orElse(null), attributes, uri);
+  }
+
+  private static boolean isSameHost(final String host, @Nullable final String baseHost) {
+    if (baseHost == null) {
+      return false;
+    }
+    final int firstDot = baseHost.indexOf(HOST_SEPARATOR);
+    return host.equalsIgnoreCase(baseHost)
+        || (firstDot > 0
+            && baseHost.indexOf(HOST_SEPARATOR, firstDot + 1) > 0
+            && host.equalsIgnoreCase(
+                baseHost.substring(0, firstDot) + MOBILE_HOST + baseHost.substring(firstDot)));
+  }
+
+  private static Optional<String> findTitleInPath(
+      final String path, final String basePath, final String suffix) {
+    if (path.length() < basePath.length() + suffix.length()
+        || !path.startsWith(basePath)
+        || !path.endsWith(suffix)) {
+      return Optional.empty();
+    }
+    return Optional.of(path.substring(basePath.length(), path.length() - suffix.length()));
+  }
+
+  private static Optional<String> findTitleInQuery(
+      final String path,
+      final String basePath,
+      final String baseQuery,
+      final Map<String, String> attributes) {
+    if (!path.equals(basePath) || baseQuery.indexOf(ATTRIBUTE_VALUE) != baseQuery.length() - 1) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(attributes.remove(baseQuery.substring(0, baseQuery.length() - 1)));
   }
 
   private static Optional<String> cleanUrl(final String url) {
@@ -60,10 +130,7 @@ record ArticleUrl(String title, Map<String, String> attributes, @Nullable String
         || wiki.hosts().stream().noneMatch(wikiHost -> wikiHost.equalsIgnoreCase(host))) {
       return Optional.empty();
     }
-    final Map<String, String> attributes = new LinkedHashMap<>();
-    if (uri.getRawQuery() != null) {
-      parseQuery(uri.getRawQuery(), attributes);
-    }
+    final Map<String, String> attributes = parseQuery(uri);
     final String path = uri.getPath() == null ? "" : uri.getPath();
     final String articlePrefix = wiki.wikiPath() + SLASH;
     final String title;
@@ -74,17 +141,26 @@ record ArticleUrl(String title, Map<String, String> attributes, @Nullable String
     } else {
       return Optional.empty();
     }
+    return create(title, attributes, uri);
+  }
+
+  private static Optional<ArticleUrl> create(
+      @Nullable final String title, final Map<String, String> attributes, final URI uri) {
     return Optional.ofNullable(title)
         .map(ArticleUrl::normalizeTitle)
         .filter(normalizedTitle -> !normalizedTitle.isEmpty())
         .map(normalizedTitle -> new ArticleUrl(normalizedTitle, attributes, uri.getFragment()));
   }
 
-  private static void parseQuery(final String query, final Map<String, String> attributes) {
-    for (final String parameter : query.split("&", -1)) {
-      final String[] parts = parameter.split("=", 2);
-      attributes.put(decode(parts[0]), parts.length > 1 ? decode(parts[1]) : "");
+  private static Map<String, String> parseQuery(final URI uri) {
+    final Map<String, String> attributes = new LinkedHashMap<>();
+    if (uri.getRawQuery() != null) {
+      for (final String parameter : uri.getRawQuery().split("&", -1)) {
+        final String[] parts = parameter.split("=", 2);
+        attributes.put(decode(parts[0]), parts.length > 1 ? decode(parts[1]) : "");
+      }
     }
+    return attributes;
   }
 
   private static String decode(final String value) {
