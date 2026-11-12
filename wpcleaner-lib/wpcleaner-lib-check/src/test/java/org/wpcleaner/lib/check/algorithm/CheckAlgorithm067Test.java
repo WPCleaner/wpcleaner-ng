@@ -30,6 +30,8 @@ class CheckAlgorithm067Test {
   private static final int ALGORITHM = 67;
   private static final String REF_A = "<ref>A</ref>";
   private static final String REF_B = "<ref name=\"b\" />";
+  private static final String COMMENT = "<!-- c -->";
+  private static final String SHORT_REFERENCE = "<ref>...</ref>";
 
   @Autowired private CheckAlgorithm067 algorithm;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
@@ -262,6 +264,7 @@ class CheckAlgorithm067Test {
                 etc.|et cetera|{{abréviation discrète|etc.|et cetera|la}}
                 etc.|et cætera|{{abréviation discrète|etc.|et cætera|la}}
                 C.I.A. | Central Intelligence Agency | [[Central Intelligence Agency|C.I.A.]]
+                J.-C.||{{J.-C.}}
                 invalid.|no replacement
                 |empty|{{empty}}
                 """),
@@ -273,6 +276,7 @@ class CheckAlgorithm067Test {
             "Agency C.I.A." + REF_A + ". Suite",
             "Comment etc. <!-- c -->" + REF_A + " suite",
             "Authors al." + REF_A + " suite",
+            "Christ J.-C." + REF_A + " suite",
             "Word tetc." + REF_A + " suite",
             "Text invalid." + REF_A + " suite");
 
@@ -286,28 +290,38 @@ class CheckAlgorithm067Test {
                 text,
                 "etc." + REF_A,
                 "",
-                replacement("{{abréviation discrète|etc.|et cetera|la}}" + REF_A, false),
-                replacement("{{abréviation discrète|etc.|et cætera|la}}" + REF_A, false),
+                abbreviation("{{abréviation discrète|etc.|et cetera|la}}" + REF_A, "et cetera"),
+                abbreviation("{{abréviation discrète|etc.|et cætera|la}}" + REF_A, "et cætera"),
                 replacement("etc" + REF_A + ".", false)),
             error(
                 text,
                 "C.I.A." + REF_A + ".",
                 "Agency ",
-                replacement("[[Central Intelligence Agency|C.I.A.]]" + REF_A + ".", false),
+                abbreviation(
+                    "[[Central Intelligence Agency|C.I.A.]]" + REF_A + ".",
+                    "Central Intelligence Agency"),
                 replacement("C.I.A" + REF_A + ".", true)),
             error(
                 text,
                 "etc. <!-- c -->" + REF_A,
                 "Comment ",
-                replacement("{{abréviation discrète|etc.|et cetera|la}}<!-- c -->" + REF_A, false),
-                replacement("{{abréviation discrète|etc.|et cætera|la}}<!-- c -->" + REF_A, false),
+                abbreviation(
+                    "{{abréviation discrète|etc.|et cetera|la}}<!-- c -->" + REF_A, "et cetera"),
+                abbreviation(
+                    "{{abréviation discrète|etc.|et cætera|la}}<!-- c -->" + REF_A, "et cætera"),
                 replacement("etc<!-- c -->" + REF_A + ".", false)),
             error(
                 text,
                 "al." + REF_A,
                 "Authors ",
-                replacement("{{et al.}}" + REF_A, false),
+                abbreviation("{{et al.}}" + REF_A, "alii"),
                 replacement("al" + REF_A + ".", false)),
+            error(
+                text,
+                "J.-C." + REF_A,
+                "Christ ",
+                replacement("{{J.-C.}}" + REF_A, false),
+                replacement("J.-C" + REF_A + ".", false)),
             error(text, "." + REF_A, "Word tetc", replacement(REF_A + ".", false)),
             error(text, "." + REF_A, "Text invalid", replacement(REF_A + ".", false)));
   }
@@ -339,7 +353,17 @@ class CheckAlgorithm067Test {
   }
 
   private static Replacement replacement(final String text, final boolean automatic) {
-    return new Replacement(text, automatic);
+    return new Replacement(text, label(text), automatic);
+  }
+
+  private static Replacement abbreviation(final String text, final String meaning) {
+    return new Replacement(text, label(text) + " (" + meaning + ")", false);
+  }
+
+  private static String label(final String text) {
+    return text.replace(REF_A, SHORT_REFERENCE)
+        .replace(REF_B, SHORT_REFERENCE)
+        .replace(COMMENT, "");
   }
 
   private static CheckError error(

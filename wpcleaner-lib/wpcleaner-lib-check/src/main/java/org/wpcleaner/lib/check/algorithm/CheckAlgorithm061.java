@@ -122,15 +122,22 @@ public class CheckAlgorithm061 implements CheckAlgorithm {
             && isAutomatic(
                 punctuationBefore, punctuationAfter, allPunctuation, isFollowedBySpace(text, end));
     final String references = joinReferences(text, group, context.separator());
-    final Set<String> replacements = new LinkedHashSet<>();
-    replacements.add(allPunctuation + references);
-    replacements.add(punctuationAfter + references);
+    final String shortReferences =
+        ReferenceGrouper.shortenReferences(group.size(), context.separator());
+    final Set<String> punctuations = new LinkedHashSet<>();
+    punctuations.add(allPunctuation);
+    punctuations.add(punctuationAfter);
     if (!punctuationBefore.isEmpty()) {
-      replacements.add(punctuationBefore + references);
+      punctuations.add(punctuationBefore);
     }
     final List<Replacement> result = new ArrayList<>();
-    replacements.forEach(
-        replacement -> result.add(new Replacement(replacement, automatic && result.isEmpty())));
+    punctuations.forEach(
+        punctuation ->
+            result.add(
+                new Replacement(
+                    punctuation + references,
+                    punctuation + shortReferences,
+                    automatic && result.isEmpty())));
     return new CheckError(ALGORITHM_NUMBER, begin, end, result);
   }
 

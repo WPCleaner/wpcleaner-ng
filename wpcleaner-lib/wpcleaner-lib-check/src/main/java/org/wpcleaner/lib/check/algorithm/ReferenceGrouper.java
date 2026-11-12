@@ -22,6 +22,16 @@ record ReferenceGrouper(
     String punctuation, String separator, boolean singleSeparator, Set<TagType> tags) {
 
   private static final String NON_BREAKING_SPACE = "&nbsp;";
+  private static final String SHORT_REFERENCE = "<ref>...</ref>";
+  private static final String ELLIPSIS = "...";
+
+  static String shortenReferences(final int count, final String separator) {
+    return switch (count) {
+      case 1 -> SHORT_REFERENCE;
+      case 2 -> SHORT_REFERENCE + separator + SHORT_REFERENCE;
+      default -> SHORT_REFERENCE + separator + ELLIPSIS + separator + SHORT_REFERENCE;
+    };
+  }
 
   static List<Element> findReferences(
       final PageAnalysis analysis, final Set<PageTitle> referenceTemplates) {

@@ -28,6 +28,8 @@ class CheckAlgorithm061Test {
   private static final int ALGORITHM = 61;
   private static final String REF_A = "<ref>A</ref>";
   private static final String REF_B = "<ref name=\"b\" />";
+  private static final String TEMPLATE = "{{sfn|A}}";
+  private static final String SHORT_REFERENCE = "<ref>...</ref>";
 
   @Autowired private CheckAlgorithm061 algorithm;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
@@ -199,6 +201,7 @@ class CheckAlgorithm061Test {
             "\n",
             "Before." + REF_A + ", " + REF_B + " next",
             "Separator." + REF_A + "{{,}}" + REF_B + " next",
+            "Single" + REF_A + ". Next",
             "Group" + REF_A + " " + REF_B + "{{sfn|A}}. Next");
 
     // WHEN
@@ -208,11 +211,15 @@ class CheckAlgorithm061Test {
     Assertions.assertThat(errors)
         .containsExactly(
             error(text, ", ", "Before." + REF_A, replacement("{{,}}", false)),
+            error(text, REF_A + ".", "Single", replacement("." + REF_A, true)),
             error(
                 text,
                 REF_A + " " + REF_B + "{{sfn|A}}.",
                 "Group",
-                replacement("." + REF_A + "{{,}}" + REF_B + "{{,}}{{sfn|A}}", true)));
+                replacement(
+                    "." + REF_A + "{{,}}" + REF_B + "{{,}}{{sfn|A}}",
+                    "." + SHORT_REFERENCE + "{{,}}...{{,}}" + SHORT_REFERENCE,
+                    true)));
   }
 
   @DisplayName("should group references separated by a short separator")
@@ -259,7 +266,18 @@ class CheckAlgorithm061Test {
   }
 
   private static Replacement replacement(final String text, final boolean automatic) {
-    return new Replacement(text, automatic);
+    return replacement(
+        text,
+        text.replace("<ref>" + TEMPLATE + "</ref>", SHORT_REFERENCE)
+            .replace(TEMPLATE, SHORT_REFERENCE)
+            .replace(REF_A, SHORT_REFERENCE)
+            .replace(REF_B, SHORT_REFERENCE),
+        automatic);
+  }
+
+  private static Replacement replacement(
+      final String text, final String label, final boolean automatic) {
+    return new Replacement(text, label, automatic);
   }
 
   private static CheckError error(

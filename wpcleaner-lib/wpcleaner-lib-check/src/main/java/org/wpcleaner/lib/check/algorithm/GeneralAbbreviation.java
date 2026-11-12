@@ -8,7 +8,7 @@ package org.wpcleaner.lib.check.algorithm;
 import java.util.List;
 import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 
-record GeneralAbbreviation(String text, String replacement) {
+record GeneralAbbreviation(String text, String meaning, String replacement) {
 
   private static final int ELEMENT_COUNT = 3;
 
@@ -18,7 +18,8 @@ record GeneralAbbreviation(String text, String replacement) {
         .filter(elements -> elements.size() == ELEMENT_COUNT)
         .map(
             elements ->
-                new GeneralAbbreviation(elements.getFirst().trim(), elements.getLast().trim()))
+                new GeneralAbbreviation(
+                    elements.getFirst().trim(), elements.get(1).trim(), elements.getLast().trim()))
         .filter(abbreviation -> !abbreviation.text().isEmpty())
         .toList();
   }

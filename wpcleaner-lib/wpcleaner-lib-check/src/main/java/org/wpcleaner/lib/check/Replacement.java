@@ -5,4 +5,9 @@ package org.wpcleaner.lib.check;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public record Replacement(String text, boolean automatic) {}
+public record Replacement(String text, String label, boolean automatic) {
+
+  public Replacement(final String text, final boolean automatic) {
+    this(text, text, automatic);
+  }
+}
