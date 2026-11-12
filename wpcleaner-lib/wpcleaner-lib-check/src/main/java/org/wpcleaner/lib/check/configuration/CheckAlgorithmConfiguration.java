@@ -111,6 +111,13 @@ public record CheckAlgorithmConfiguration(
         .toList();
   }
 
+  public Optional<String> getString(final String name) {
+    if (parameters != null) {
+      return parameters.getStrings(name).stream().findFirst().filter(value -> !value.isEmpty());
+    }
+    return getProperty(name);
+  }
+
   public Set<String> getTemplateNames(
       final String templatesName, final String groupsName, final TemplateGroups groups) {
     if (parameters != null) {
