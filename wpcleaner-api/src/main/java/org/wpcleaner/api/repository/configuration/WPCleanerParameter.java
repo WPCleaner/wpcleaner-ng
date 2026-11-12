@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public enum WPCleanerParameter {
+  ABBREVIATIONS("general_abbreviations", true, true, true),
   APOSTROPHE_TEMPLATE("general_apostrophe_template", true, true, false),
   CHECK_WIKI_COMMENT("check_wiki_comment", true, false, false),
   CHECK_WIKI_PROJECT_PAGE("check_wiki_project_page", true, false, false),

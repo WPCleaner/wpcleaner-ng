@@ -15,6 +15,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
+import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
+import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
 import org.wpcleaner.lib.check.Replacement;
@@ -31,10 +33,13 @@ class CheckAlgorithm067Test {
 
   @Autowired private CheckAlgorithm067 algorithm;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
+  @Autowired private WPCleanerConfigurationRepository wpcleanerRepository;
 
   @BeforeEach
   void setUp() {
     givenLegacyConfiguration(Map.of());
+    wpcleanerRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI, WPCleanerConfiguration.EMPTY);
   }
 
   @DisplayName("should move the punctuation before references after them")
@@ -242,6 +247,69 @@ class CheckAlgorithm067Test {
                 "." + REF_A + ", " + REF_B,
                 "Separator",
                 replacement(REF_A + "{{,}}" + REF_B + ".", true)));
+  }
+
+  @DisplayName("should suggest the replacements of the general abbreviations")
+  @Test
+  void suggestGeneralAbbreviations() {
+    // GIVEN
+    wpcleanerRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI,
+        new WPCleanerConfiguration(
+            Map.of(
+                "general_abbreviations",
+                """
+                etc.|et cetera|{{abréviation discrète|etc.|et cetera|la}}
+                etc.|et cætera|{{abréviation discrète|etc.|et cætera|la}}
+                C.I.A. | Central Intelligence Agency | [[Central Intelligence Agency|C.I.A.]]
+                invalid.|no replacement
+                |empty|{{empty}}
+                """),
+            Map.of("general_abbreviations", "al.|alii|{{et al.}}")));
+    final String text =
+        String.join(
+            "\n",
+            "etc." + REF_A + " suite",
+            "Agency C.I.A." + REF_A + ". Suite",
+            "Comment etc. <!-- c -->" + REF_A + " suite",
+            "Authors al." + REF_A + " suite",
+            "Word tetc." + REF_A + " suite",
+            "Text invalid." + REF_A + " suite");
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(
+                text,
+                "etc." + REF_A,
+                "",
+                replacement("{{abréviation discrète|etc.|et cetera|la}}" + REF_A, false),
+                replacement("{{abréviation discrète|etc.|et cætera|la}}" + REF_A, false),
+                replacement("etc" + REF_A + ".", false)),
+            error(
+                text,
+                "C.I.A." + REF_A + ".",
+                "Agency ",
+                replacement("[[Central Intelligence Agency|C.I.A.]]" + REF_A + ".", false),
+                replacement("C.I.A" + REF_A + ".", true)),
+            error(
+                text,
+                "etc. <!-- c -->" + REF_A,
+                "Comment ",
+                replacement("{{abréviation discrète|etc.|et cetera|la}}<!-- c -->" + REF_A, false),
+                replacement("{{abréviation discrète|etc.|et cætera|la}}<!-- c -->" + REF_A, false),
+                replacement("etc<!-- c -->" + REF_A + ".", false)),
+            error(
+                text,
+                "al." + REF_A,
+                "Authors ",
+                replacement("{{et al.}}" + REF_A, false),
+                replacement("al" + REF_A + ".", false)),
+            error(text, "." + REF_A, "Word tetc", replacement(REF_A + ".", false)),
+            error(text, "." + REF_A, "Text invalid", replacement(REF_A + ".", false)));
   }
 
   @DisplayName("should use only the YAML configuration when it exists")

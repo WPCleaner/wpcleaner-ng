@@ -56,7 +56,11 @@ public final class ConfigurationParser {
   }
 
   public static List<String> splitLine(final String line) {
-    return Arrays.stream(LINE_SEPARATOR.split(line, -1))
+    return splitLine(line, -1);
+  }
+
+  public static List<String> splitLine(final String line, final int limit) {
+    return Arrays.stream(LINE_SEPARATOR.split(line, limit))
         .map(element -> element.replace(ESCAPED_SEPARATOR, SEPARATOR))
         .toList();
   }

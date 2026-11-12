@@ -130,4 +130,18 @@ class ConfigurationParserTest {
     // THEN
     Assertions.assertThat(elements).containsExactly("Liens", "Lien web", "Lien | web", "", "");
   }
+
+  @DisplayName("should split a line in a limited number of elements")
+  @Test
+  void splitLineWithLimit() {
+    // GIVEN
+    final String line = "etc.|et cetera|{{abréviation|etc.\\|x|et cetera}}";
+
+    // WHEN
+    final List<String> elements = ConfigurationParser.splitLine(line, 3);
+
+    // THEN
+    Assertions.assertThat(elements)
+        .containsExactly("etc.", "et cetera", "{{abréviation|etc.|x|et cetera}}");
+  }
 }
