@@ -41,6 +41,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.analysis.table;
   exports org.wpcleaner.api.analysis.tag;
   exports org.wpcleaner.api.analysis.template;
+  exports org.wpcleaner.api.analysis.timeline;
   exports org.wpcleaner.api.analysis.title;
   exports org.wpcleaner.api.analysis;
   exports org.wpcleaner.api.api.edit;
@@ -97,6 +98,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.analysis.table;
   opens org.wpcleaner.api.analysis.tag;
   opens org.wpcleaner.api.analysis.template;
+  opens org.wpcleaner.api.analysis.timeline;
   opens org.wpcleaner.api.analysis.title;
   opens org.wpcleaner.api.analysis;
   opens org.wpcleaner.api.api.edit;

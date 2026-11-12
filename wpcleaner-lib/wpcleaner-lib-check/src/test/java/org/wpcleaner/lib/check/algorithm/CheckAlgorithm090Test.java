@@ -95,6 +95,43 @@ class CheckAlgorithm090Test {
                     new Replacement("Lyon", false))));
   }
 
+  @DisplayName("should fix manually links to articles in timelines")
+  @Test
+  void fixTimelineLinks() {
+    // GIVEN
+    final String embedded = "[" + WIKI_URL + "Tour_Eiffel|Tour]";
+    final String withoutText = "[" + WIKI_URL + "Paris]";
+    final String attribute = "link:" + WIKI_URL + "Nantes";
+    final String withAttributes = "[" + WIKI_URL + "Lyon?action=edit|Lyon]";
+    final String text =
+        "<timeline>\n  bar:A text:\""
+            + embedded
+            + " "
+            + withoutText
+            + "\"\n  bar:B text:Nantes "
+            + attribute
+            + "\n  bar:C text:\""
+            + withAttributes
+            + " [[Rennes]] [https://example.org/|Ex]\"\n</timeline>";
+
+    // WHEN
+    final List<CheckError> errors = analyze(text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(text, embedded, new Replacement("[[Tour Eiffel|Tour]]", false)),
+            error(text, withoutText, new Replacement("[[Paris]]", false)),
+            error(text, attribute),
+            error(text, withAttributes));
+  }
+
+  private static CheckError error(
+      final String text, final String link, final Replacement... replacements) {
+    return new CheckError(
+        ALGORITHM, text.indexOf(link), text.indexOf(link) + link.length(), List.of(replacements));
+  }
+
   @DisplayName("should recognize the URLs of the articles of the wiki")
   @Test
   void recognizeArticleUrls() {

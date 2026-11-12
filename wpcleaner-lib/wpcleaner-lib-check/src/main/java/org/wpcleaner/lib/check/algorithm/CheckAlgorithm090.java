@@ -22,6 +22,7 @@ import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.HtmlTagType;
 import org.wpcleaner.api.analysis.tag.TagType;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
+import org.wpcleaner.api.analysis.timeline.TimelineLinkType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.specialpage.SpecialPage;
 import org.wpcleaner.api.repository.specialpage.SpecialPageRepository;
@@ -98,6 +99,25 @@ public class CheckAlgorithm090 implements CheckAlgorithm {
                     .ifPresent(
                         articleLink ->
                             errors.add(analyzeLink(analysis, link, articleLink, templates))));
+    analysis
+        .getTimelineLinks()
+        .forEach(
+            link ->
+                ArticleUrl.of(analysis.getWiki(), link.target())
+                    .map(
+                        url ->
+                            new CheckError(
+                                ALGORITHM_NUMBER,
+                                link.begin(),
+                                link.end(),
+                                link.type() == TimelineLinkType.LINK_ATTRIBUTE
+                                        || !url.attributes().isEmpty()
+                                    ? List.of()
+                                    : List.of(
+                                        new Replacement(
+                                            ArticleLink.of(analysis, link, url).timelineLink(),
+                                            false))))
+                    .ifPresent(errors::add));
     return errors.stream().sorted(Comparator.comparingInt(CheckError::begin)).toList();
   }
 

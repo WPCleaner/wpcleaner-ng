@@ -32,6 +32,8 @@ import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.TagContainer;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.template.TemplateElement;
+import org.wpcleaner.api.analysis.timeline.TimelineContainer;
+import org.wpcleaner.api.analysis.timeline.TimelineLinkElement;
 import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.api.analysis.wiki.WikiContainer;
 import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
@@ -57,6 +59,7 @@ public final class PageAnalysis {
   private final PreprocessorContainer preprocessor;
   private final TagContainer tags;
   private final WikiContainer wikiElements;
+  private final TimelineContainer timelines;
 
   public PageAnalysis(
       final WikiDefinition wiki,
@@ -91,6 +94,7 @@ public final class PageAnalysis {
             magicWordRepository,
             namespaceRepository,
             protocolRepository);
+    this.timelines = new TimelineContainer(this.text, preprocessor);
   }
 
   public WikiDefinition getWiki() {
@@ -135,6 +139,10 @@ public final class PageAnalysis {
 
   public List<GalleryElement> getGalleries() {
     return wikiElements.getGalleries();
+  }
+
+  public List<TimelineLinkElement> getTimelineLinks() {
+    return timelines.getLinks();
   }
 
   public List<ImageElement> getImages() {
