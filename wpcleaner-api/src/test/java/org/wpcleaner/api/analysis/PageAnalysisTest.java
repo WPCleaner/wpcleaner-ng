@@ -432,6 +432,28 @@ class PageAnalysisTest {
             new ExternalLinkElement(28, 50, "https://example.com/", null, true));
   }
 
+  @DisplayName("should analyze external link after several brackets, even with brackets in text")
+  @Test
+  void analyzeExternalLinkAfterSeveralBrackets() {
+    // GIVEN
+    final String text =
+        "[[http://a.org/&#x5B;A http://a.org/[A]] [[[https://b.org/|B](x)] [[[[ HTTPS://c.org/]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+    Assertions.assertThat(analysis.getExternalLinks())
+        .containsExactly(
+            new ExternalLinkElement(
+                1, text.indexOf("]]") + 1, "http://a.org/&#x5B;A", "http://a.org/[A", true),
+            new ExternalLinkElement(
+                text.indexOf("[https://b"), text.indexOf("(x)"), "https://b.org/|B", null, true),
+            new ExternalLinkElement(
+                text.indexOf("HTTPS"), text.length() - 1, "HTTPS://c.org/", null, false));
+  }
+
   @DisplayName("should analyze external link with a pipe in its URL")
   @Test
   void analyzeExternalLinkWithPipe() {
