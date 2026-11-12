@@ -54,8 +54,9 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 
 ## Testing
 
-- Favor integration tests in the Spring context over unit tests: use `@ApiSpringBootTest` (API) or
-  `@GuiSpringBootTest` (GUI) and real beans.
+- Favor integration tests in the Spring context over unit tests: use `@ApiSpringBootTest` (API),
+  `@CheckSpringBootTest` (`wpcleaner-lib-check`) or `@GuiSpringBootTest` (GUI) and real beans.
+  Each module has its own annotation, so that IntelliJ finds the beans of the module.
 - Mock only what is outside the application:
   - MediaWiki: `MockApi*` helpers in `wpcleaner-api/src/testFixtures` (one per endpoint, built on
     `ApiRequestExpectation` and `ApiAnswer`); add one for a new endpoint. Unexpected requests fail the test.

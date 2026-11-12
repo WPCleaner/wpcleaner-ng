@@ -60,7 +60,7 @@ around it: fixing the analysis is usually a separate step.
 ## 5. Test
 
 `wpcleaner-lib-check/src/test/java/org/wpcleaner/lib/check/algorithm/CheckAlgorithmNNNTest.java`,
-`@ApiSpringBootTest`, analyses built with `PageAnalysisTestFactory.createPageAnalysis(title, text)`
+`@CheckSpringBootTest`, analyses built with `PageAnalysisTestFactory.createPageAnalysis(title, text)`
 (declare missing extension tags in `PageAnalysisTestFactory`). Cover:
 - detection, and what must not be detected (ignored areas, namespaces, edge cases from the legacy code),
 - each replacement and its automatic flag,

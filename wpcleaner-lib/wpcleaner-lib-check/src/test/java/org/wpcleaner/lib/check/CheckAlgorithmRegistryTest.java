@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.api.ConnectedUser;
@@ -23,7 +22,7 @@ import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 
-@ApiSpringBootTest
+@CheckSpringBootTest
 class CheckAlgorithmRegistryTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.FR;

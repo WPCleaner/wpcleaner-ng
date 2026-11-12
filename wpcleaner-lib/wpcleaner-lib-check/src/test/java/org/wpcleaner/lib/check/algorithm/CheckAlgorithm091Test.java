@@ -13,15 +13,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.CheckSpringBootTest;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmParameters;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 
-@ApiSpringBootTest
+@CheckSpringBootTest
 class CheckAlgorithm091Test {
 
   private static final int ALGORITHM = 91;

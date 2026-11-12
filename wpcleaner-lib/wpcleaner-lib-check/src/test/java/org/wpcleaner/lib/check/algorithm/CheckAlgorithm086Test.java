@@ -10,12 +10,12 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.CheckSpringBootTest;
 import org.wpcleaner.lib.check.Replacement;
 
-@ApiSpringBootTest
+@CheckSpringBootTest
 class CheckAlgorithm086Test {
 
   private static final int ALGORITHM = 86;
