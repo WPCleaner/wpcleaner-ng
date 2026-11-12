@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.wpcleaner.api.analysis.PageAnalysis;
+import org.wpcleaner.api.analysis.comment.CommentedText;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 
@@ -24,13 +25,34 @@ record LinkTextMatch(String before, String text, String after, boolean automatic
   private static final char UNDERSCORE = '_';
   private static final String ONLY_BEFORE_IGNORED = ".";
   private static final String ONLY_AFTER_IGNORED = "'";
+  private static final String LINK_END = "]]";
 
   static Optional<LinkTextMatch> find(final PageAnalysis analysis, final InternalLinkElement link) {
-    final String text = link.text();
+    final String linkText = link.text();
     final String anchor = link.anchor();
-    if (text == null || link.title() == null || (anchor != null && !anchor.isBlank())) {
+    if (linkText == null || link.title() == null || (anchor != null && !anchor.isBlank())) {
       return Optional.empty();
     }
+    final boolean commented =
+        analysis.getComments().stream()
+            .anyMatch(comment -> comment.begin() >= link.begin() && comment.end() <= link.end());
+    return find(analysis, link, withoutComments(analysis, link, linkText))
+        .map(match -> commented ? match.withoutAutomatic() : match);
+  }
+
+  private static String withoutComments(
+      final PageAnalysis analysis, final InternalLinkElement link, final String linkText) {
+    final int textEnd = link.end() - LINK_END.length();
+    return new CommentedText(analysis.getText(), analysis.getComments())
+        .withoutComments(textEnd - linkText.length(), textEnd);
+  }
+
+  private LinkTextMatch withoutAutomatic() {
+    return new LinkTextMatch(before, text, after, false, risk);
+  }
+
+  private static Optional<LinkTextMatch> find(
+      final PageAnalysis analysis, final InternalLinkElement link, final String text) {
     if (isSameTitle(analysis, link, text)) {
       return Optional.of(new LinkTextMatch("", text, "", text.indexOf(UNDERSCORE) < 0, false));
     }
