@@ -61,10 +61,17 @@ public final class PageAnalysisTestFactory {
 
   private static @NonNull InterwikiRepository createInterwikiRepository() {
     final InterwikiRepository interwikiRepository = new InterwikiRepository();
-    interwikiRepository.addInterwiki(
-        WIKI, new Interwiki("en", false, "https://en.wikipedia.org/wiki/$1", "English", null));
-    interwikiRepository.addInterwiki(
-        WIKI, new Interwiki("wikt", false, "https://fr.wiktionary.org/wiki/$1", null, null));
+    List.of(
+            new Interwiki("aen", true, "https://en.wikipedia.org/wiki/$1", null, null),
+            new Interwiki("de", true, "https://de.wikipedia.org/wiki/$1", "Deutsch", null),
+            new Interwiki("den", true, "https://en.wikipedia.org/wiki/$1", "English", "en"),
+            new Interwiki("en", true, "https://en.wikipedia.org/wiki/$1", "English", null),
+            new Interwiki("ex", true, "https://example.org/wiki/$1", null, null),
+            new Interwiki("fr", true, "https://fr.wikipedia.org/wiki/$1", "Français", null),
+            new Interwiki("google", false, "https://www.google.com/search?q=$1", null, null),
+            new Interwiki("home", true, "https://example.org/", null, null),
+            new Interwiki("wikt", true, "https://fr.wiktionary.org/wiki/$1", null, null))
+        .forEach(interwiki -> interwikiRepository.addInterwiki(WIKI, interwiki));
     return interwikiRepository;
   }
 
