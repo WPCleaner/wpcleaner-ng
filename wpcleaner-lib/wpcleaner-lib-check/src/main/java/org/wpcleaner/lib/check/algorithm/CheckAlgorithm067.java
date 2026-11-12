@@ -18,6 +18,8 @@ import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.comment.CommentElement;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
+import org.wpcleaner.api.repository.configuration.WPCleanerParameter;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
@@ -45,9 +47,13 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
       Pattern.compile("&(?:[A-Za-z][A-Za-z0-9]*|#[0-9]+|#[xX][0-9A-Fa-f]+)$");
 
   private final CheckWikiConfigurationRepository checkWikiRepository;
+  private final WPCleanerConfigurationRepository wpcleanerRepository;
 
-  public CheckAlgorithm067(final CheckWikiConfigurationRepository checkWikiRepository) {
+  public CheckAlgorithm067(
+      final CheckWikiConfigurationRepository checkWikiRepository,
+      final WPCleanerConfigurationRepository wpcleanerRepository) {
     this.checkWikiRepository = checkWikiRepository;
+    this.wpcleanerRepository = wpcleanerRepository;
   }
 
   @Override
@@ -81,6 +87,10 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
                 .map(String::trim)
                 .filter(abbreviation -> !abbreviation.isEmpty())
                 .toList(),
+            GeneralAbbreviation.of(
+                wpcleanerRepository
+                    .getConfiguration(analysis.getWiki())
+                    .getLines(WPCleanerParameter.ABBREVIATIONS)),
             Map.copyOf(safeTemplates),
             namespace % 2 == 0 && namespace != CommonNamespaces.USER.id);
     final ReferenceGrouper grouper =
@@ -144,13 +154,26 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
                 allPunctuation,
                 punctuationAfter,
                 FollowingText.at(context.analysis(), end, context.safeTemplates()));
+    final List<GeneralAbbreviation> generalAbbreviations =
+        context.generalAbbreviations().stream()
+            .filter(abbreviation -> endsWithWord(text, punctuationEnd, abbreviation.text()))
+            .toList();
+    final int errorBegin =
+        generalAbbreviations.stream()
+            .mapToInt(abbreviation -> punctuationEnd - abbreviation.text().length())
+            .reduce(begin, Math::min);
+    final String kept = text.substring(errorBegin, begin) + comments + references;
     final List<Replacement> replacements = new ArrayList<>();
-    replacements.add(
-        new Replacement(comments + references + movedSpaces + allPunctuation, automatic));
+    generalAbbreviations.forEach(
+        abbreviation ->
+            replacements.add(
+                new Replacement(
+                    abbreviation.replacement() + comments + references + punctuationAfter, false)));
+    replacements.add(new Replacement(kept + movedSpaces + allPunctuation, automatic));
     if (!punctuationAfter.isEmpty() && !punctuationAfter.equals(allPunctuation)) {
-      replacements.add(new Replacement(comments + references + spaces + punctuationAfter, false));
+      replacements.add(new Replacement(kept + spaces + punctuationAfter, false));
     }
-    return new CheckError(ALGORITHM_NUMBER, begin, end, replacements);
+    return new CheckError(ALGORITHM_NUMBER, errorBegin, end, replacements);
   }
 
   private static String joinComments(final PageAnalysis analysis, final int from, final int to) {
@@ -211,13 +234,14 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
   private static boolean isAbbreviation(final Context context, final int index) {
     final String text = context.analysis().getText();
     return context.abbreviations().stream()
-        .anyMatch(
-            abbreviation -> {
-              final int begin = index - abbreviation.length();
-              return begin >= 0
-                  && text.startsWith(abbreviation, begin)
-                  && (begin == 0 || !Character.isLetterOrDigit(text.charAt(begin - 1)));
-            });
+        .anyMatch(abbreviation -> endsWithWord(text, index, abbreviation));
+  }
+
+  private static boolean endsWithWord(final String text, final int index, final String word) {
+    final int begin = index - word.length();
+    return begin >= 0
+        && text.startsWith(word, begin)
+        && (begin == 0 || !Character.isLetterOrDigit(text.charAt(begin - 1)));
   }
 
   private static int skipWhitespaceAndCommentsBefore(final PageAnalysis analysis, final int index) {
@@ -254,6 +278,7 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
       PageAnalysis analysis,
       String separator,
       List<String> abbreviations,
+      List<GeneralAbbreviation> generalAbbreviations,
       Map<PageTitle, Set<String>> safeTemplates,
       boolean automaticAllowed) {}
 }
