@@ -5,15 +5,19 @@ package org.wpcleaner.lib.check.algorithm;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
+import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.repository.configuration.WPCleanerParameter;
+import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -25,6 +29,7 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
   private static final char APOSTROPHE = '\'';
   private static final char UNDERSCORE = '_';
   private static final char SPACE = ' ';
+  private static final char PIPE = '|';
 
   private final WPCleanerConfigurationRepository wpcleanerRepository;
 
@@ -44,12 +49,39 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
             .getConfiguration(analysis.getWiki())
             .getString(WPCleanerParameter.APOSTROPHE_TEMPLATE)
             .orElse(null);
-    return analysis.getInternalLinks().stream()
-        .flatMap(
-            link ->
-                LinkTextMatch.find(analysis, link).stream()
-                    .map(match -> createError(analysis.getText(), link, match, apostropheTemplate)))
+    return Stream.concat(
+            analysis.getInternalLinks().stream()
+                .flatMap(
+                    link ->
+                        LinkTextMatch.find(analysis, link).stream()
+                            .map(
+                                match ->
+                                    createError(
+                                        analysis.getText(), link, match, apostropheTemplate))),
+            analysis.getCategories().stream()
+                .filter(category -> isSortKeySameAsCategory(analysis, category))
+                .map(category -> createError(analysis.getText(), category)))
+        .sorted(Comparator.comparingInt(CheckError::begin))
         .toList();
+  }
+
+  private static boolean isSortKeySameAsCategory(
+      final PageAnalysis analysis, final CategoryElement category) {
+    final String sortKey = category.sortKey();
+    return sortKey != null
+        && analysis
+            .normalizeTitle(sortKey, CommonNamespaces.MAIN.id)
+            .filter(title -> title.equals(category.title()))
+            .isPresent();
+  }
+
+  private static CheckError createError(final String text, final CategoryElement category) {
+    final int pipe = text.lastIndexOf(PIPE, category.end());
+    return new CheckError(
+        ALGORITHM_NUMBER,
+        category.begin(),
+        category.end(),
+        List.of(new Replacement(text.substring(category.begin(), pipe) + "]]", false)));
   }
 
   private static CheckError createError(

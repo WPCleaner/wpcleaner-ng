@@ -112,6 +112,49 @@ class CheckAlgorithm064Test {
             error(text.indexOf(third), third, new Replacement("[[Nantes]]", true)));
   }
 
+  @DisplayName("should fix links to an anchor whose text is the anchor")
+  @Test
+  void fixAnchorLinks() {
+    // GIVEN
+    final String first = "[[#Histoire|''#Histoire'']]";
+    final String third = "[[#Histoire|#Histoire]]";
+    final String text = first + " [[#Histoire|#histoire]] " + third;
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(
+                0,
+                first,
+                new Replacement("''[[#Histoire]]''", true),
+                new Replacement("''[[#Histoire]]", false),
+                new Replacement("[[#Histoire]]''", false),
+                new Replacement("[[#Histoire]]", false)),
+            error(text.indexOf(third), third, new Replacement("[[#Histoire]]", true)));
+  }
+
+  @DisplayName("should fix manually categories whose sort key is the category")
+  @Test
+  void fixCategoriesWithCategoryAsSortKey() {
+    // GIVEN
+    final String first = "[[Catégorie:Duc de Mazovie|Catégorie:Duc de Mazovie]]";
+    final String second = "[[Category:Villes|catégorie:villes]]";
+    final String text = first + " " + second + " [[Catégorie:A|A]] [[Catégorie:B]] [[C|C]]";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(0, first, new Replacement("[[Catégorie:Duc de Mazovie]]", false)),
+            error(first.length() + 1, second, new Replacement("[[Category:Villes]]", false)),
+            error(text.indexOf("[[C|"), "[[C|C]]", new Replacement("[[C]]", true)));
+  }
+
   @DisplayName("should fix manually links whose text ends with a line break")
   @Test
   void fixLinksWithLineBreak() {

@@ -6,6 +6,7 @@ package org.wpcleaner.lib.check.algorithm;
  */
 
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.wpcleaner.api.analysis.PageAnalysis;
@@ -26,18 +27,35 @@ record LinkTextMatch(String before, String text, String after, boolean automatic
   private static final String ONLY_BEFORE_IGNORED = ".";
   private static final String ONLY_AFTER_IGNORED = "'";
   private static final String LINK_END = "]]";
+  private static final char ANCHOR = '#';
 
   static Optional<LinkTextMatch> find(final PageAnalysis analysis, final InternalLinkElement link) {
     final String linkText = link.text();
     final String anchor = link.anchor();
-    if (linkText == null || link.title() == null || (anchor != null && !anchor.isBlank())) {
+    final boolean hasAnchor = anchor != null && !anchor.isBlank();
+    if (linkText == null) {
       return Optional.empty();
     }
     final boolean commented =
         analysis.getComments().stream()
             .anyMatch(comment -> comment.begin() >= link.begin() && comment.end() <= link.end());
-    return find(analysis, link, withoutComments(analysis, link, linkText))
-        .map(match -> commented ? match.withoutAutomatic() : match);
+    final String text = withoutComments(analysis, link, linkText);
+    final Optional<LinkTextMatch> match;
+    if (hasAnchor && link.target().isBlank()) {
+      final String anchorTarget = ANCHOR + anchor;
+      match = find(analysis, link, text, anchorTarget, anchorTarget::equals);
+    } else if (hasAnchor || link.title() == null) {
+      match = Optional.empty();
+    } else {
+      match =
+          find(
+              analysis,
+              link,
+              text,
+              link.target().strip(),
+              candidate -> isSameTitle(analysis, link, candidate));
+    }
+    return match.map(found -> commented ? found.withoutAutomatic() : found);
   }
 
   private static String withoutComments(
@@ -52,24 +70,28 @@ record LinkTextMatch(String before, String text, String after, boolean automatic
   }
 
   private static Optional<LinkTextMatch> find(
-      final PageAnalysis analysis, final InternalLinkElement link, final String text) {
-    if (isSameTitle(analysis, link, text)) {
+      final PageAnalysis analysis,
+      final InternalLinkElement link,
+      final String text,
+      final String target,
+      final Predicate<String> sameTarget) {
+    if (sameTarget.test(text)) {
       return Optional.of(new LinkTextMatch("", text, "", text.indexOf(UNDERSCORE) < 0, false));
     }
     final Matcher lineBreak = LINE_BREAK_AT_END.matcher(text);
-    if (lineBreak.matches() && isSameTitle(analysis, link, lineBreak.group(1))) {
+    if (lineBreak.matches() && sameTarget.test(lineBreak.group(1))) {
       return Optional.of(
           new LinkTextMatch("", lineBreak.group(1), lineBreak.group(2), false, false));
     }
-    return findPaddedMatch(analysis, link, text);
+    return findPaddedMatch(analysis, link, text, target, sameTarget);
   }
 
   private static Optional<LinkTextMatch> findPaddedMatch(
-      final PageAnalysis analysis, final InternalLinkElement link, final String text) {
-    final String target = link.target().strip();
-    if (target.isEmpty()) {
-      return Optional.empty();
-    }
+      final PageAnalysis analysis,
+      final InternalLinkElement link,
+      final String text,
+      final String target,
+      final Predicate<String> sameTarget) {
     final int before = countPaddingBefore(text, target);
     final int after = countPaddingAfter(text, target, before);
     if (before + after == 0 || text.length() <= before + after) {
@@ -78,7 +100,7 @@ record LinkTextMatch(String before, String text, String after, boolean automatic
     final String paddingBefore = text.substring(0, before);
     final String paddingAfter = text.substring(text.length() - after);
     final String linkText = text.substring(before, text.length() - after);
-    if (isIgnoredPadding(paddingBefore, paddingAfter) || !isSameTitle(analysis, link, linkText)) {
+    if (isIgnoredPadding(paddingBefore, paddingAfter) || !sameTarget.test(linkText)) {
       return Optional.empty();
     }
     final boolean risk = isApostropheRisk(analysis.getText(), link, paddingBefore, paddingAfter);
