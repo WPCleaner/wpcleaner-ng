@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.api.api.ConnectedUser;
@@ -23,10 +22,11 @@ import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.CheckSpringBootTest;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 
-@ApiSpringBootTest
+@CheckSpringBootTest
 class CheckWikiServerTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.FR;

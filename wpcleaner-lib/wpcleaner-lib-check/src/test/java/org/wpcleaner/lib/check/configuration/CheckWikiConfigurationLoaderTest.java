@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.wpcleaner.api.ApiSpringBootTest;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.api.ConnectedUser;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
@@ -29,8 +28,9 @@ import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.wiki.builder.WikiBuilder;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.lib.check.CheckSpringBootTest;
 
-@ApiSpringBootTest
+@CheckSpringBootTest
 class CheckWikiConfigurationLoaderTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.FR;
