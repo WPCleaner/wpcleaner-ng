@@ -71,6 +71,7 @@ final class SquareBracketAnalyzer {
     final int lastOpeningBracket = reverseCursor.getIndex();
     final TextBrowser.ReverseCursor temporaryCursor = reverseCursor.copy();
     int firstOpeningBracket = lastOpeningBracket;
+    int linkOpeningBracket = lastOpeningBracket;
     int openingBracketsCount = 1;
     temporaryCursor.movePrevious();
     while (temporaryCursor.getIndex() >= 0
@@ -80,12 +81,15 @@ final class SquareBracketAnalyzer {
             .isEmpty()) {
       firstOpeningBracket = temporaryCursor.getIndex();
       openingBracketsCount++;
+      if (openingBracketsCount == TWO) {
+        linkOpeningBracket = firstOpeningBracket;
+      }
       temporaryCursor.movePrevious();
     }
     if (openingBracketsCount == 1 || isProtocolAfter(reverseCursor)) {
       analyze1SquareBracket(lastOpeningBracket, reverseCursor);
-    } else if (openingBracketsCount == TWO) {
-      analyze2SquareBrackets(firstOpeningBracket, reverseCursor);
+    } else if (openingBracketsCount % TWO == 0) {
+      analyze2SquareBrackets(linkOpeningBracket, reverseCursor);
     }
   }
 

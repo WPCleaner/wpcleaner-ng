@@ -454,6 +454,27 @@ class PageAnalysisTest {
                 text.indexOf("HTTPS"), text.length() - 1, "HTTPS://c.org/", null, false));
   }
 
+  @DisplayName("should analyze internal link after an even number of opening brackets")
+  @Test
+  void analyzeInternalLinkAfterManyBrackets() {
+    // GIVEN
+    final String text =
+        "[[[Lyon]]] [[[[Paris]]]] [[[[[Nantes]]]]] [[[[[[Rennes]]]]]] [[[<!-- c -->[Lille|L]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .extracting(InternalLinkElement::begin, InternalLinkElement::end, InternalLinkElement::text)
+        .containsExactly(
+            Assertions.tuple(
+                text.indexOf("[[Paris"), text.indexOf("[[Paris") + "[[Paris]]".length(), null),
+            Assertions.tuple(
+                text.indexOf("[[Rennes"), text.indexOf("[[Rennes") + "[[Rennes]]".length(), null),
+            Assertions.tuple(text.indexOf("[<!-- c"), text.length(), "L"));
+  }
+
   @DisplayName("should analyze external link with a pipe in its URL")
   @Test
   void analyzeExternalLinkWithPipe() {
