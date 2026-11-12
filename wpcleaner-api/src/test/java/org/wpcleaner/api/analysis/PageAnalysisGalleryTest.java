@@ -9,6 +9,7 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.gallery.GalleryElement;
 import org.wpcleaner.api.analysis.gallery.GalleryImage;
 import org.wpcleaner.api.analysis.image.ImageParameter;
@@ -40,7 +41,7 @@ class PageAnalysisGalleryTest {
     Assertions.assertThat(gallery.begin()).isZero();
     Assertions.assertThat(gallery.end()).isEqualTo(text.length());
     Assertions.assertThat(gallery.tag().startTag().attributes())
-        .containsExactly(new TagAttribute("mode", "packed"));
+        .containsExactly(new TagAttribute("mode", "packed", 14));
     Assertions.assertThat(gallery.images())
         .containsExactly(
             new GalleryImage(
@@ -96,5 +97,51 @@ class PageAnalysisGalleryTest {
                     new ImageParameter(37, 46, "a{{T|b}}c", null, null))),
             new GalleryImage(
                 78, 100, "File:%C3%89t%C3%A9.jpg", new PageTitle(6, "Été.jpg"), List.of()));
+  }
+
+  @DisplayName("should analyze links in the gallery caption only")
+  @Test
+  void analyzeLinksInGalleryCaption() {
+    // GIVEN
+    final String text =
+        """
+        <gallery class="[[Nantes]]" Caption="Vu par [[Camille Pissarro|Pissarro]] à [[Paris]]">
+        A.jpg
+        </gallery>
+        <gallery caption='[[Lyon [https://example.org Ex' >
+        B.jpg|]]
+        </gallery>
+        <gallery caption>
+        C.jpg
+        </gallery>
+        <div caption="[[Rennes]]"></div>""";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    final int pissarro = text.indexOf("[[Camille");
+    final int paris = text.indexOf("[[Paris");
+    Assertions.assertThat(analysis.getInternalLinks())
+        .containsExactly(
+            new InternalLinkElement(
+                pissarro,
+                text.indexOf("]]", pissarro) + 2,
+                "Camille Pissarro",
+                new PageTitle(0, "Camille Pissarro"),
+                null,
+                "Pissarro",
+                false),
+            new InternalLinkElement(
+                paris,
+                paris + "[[Paris]]".length(),
+                "Paris",
+                new PageTitle(0, "Paris"),
+                null,
+                null,
+                false));
+    Assertions.assertThat(analysis.getExternalLinks())
+        .map(ExternalLinkElement::bracketed)
+        .containsExactly(false);
   }
 }

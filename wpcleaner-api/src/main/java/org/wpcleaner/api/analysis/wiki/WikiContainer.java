@@ -186,7 +186,9 @@ public class WikiContainer {
         final int contentBegin =
             redirectArea.map(RedirectAnalyzer.Redirect::contentBegin).orElse(0);
         final TextBrowser textBrowser = new TextBrowser(text);
-        textBrowser.addExclusions(tags.getExclusions());
+        textBrowser.addExclusions(
+            GalleryCaptions.excludeOutside(
+                tags.getExclusions(), GalleryCaptions.find(preprocessor.getCompleteTags())));
         redirectArea.ifPresent(
             area -> textBrowser.addExclusions(List.of(new Area(0, area.contentBegin()))));
         final ImageAnalyzer imageAnalyzer =

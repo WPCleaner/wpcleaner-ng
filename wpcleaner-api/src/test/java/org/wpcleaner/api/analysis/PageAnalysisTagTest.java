@@ -74,10 +74,10 @@ class PageAnalysisTagTest {
                 "span",
                 TagKind.START,
                 List.of(
-                    new TagAttribute("class", "a b"),
-                    new TagAttribute("title", "c"),
-                    new TagAttribute("data-x", "y"),
-                    new TagAttribute("hidden", null))));
+                    new TagAttribute("class", "a b", 13),
+                    new TagAttribute("title", "c", 27),
+                    new TagAttribute("data-x", "y", 37),
+                    new TagAttribute("hidden", null, 45))));
   }
 
   @DisplayName("should analyze tag with a slash in an attribute value")
@@ -98,8 +98,8 @@ class PageAnalysisTagTest {
                 "a",
                 TagKind.SELF_CLOSING,
                 List.of(
-                    new TagAttribute("href", "https://example.com/"),
-                    new TagAttribute("rel", "nofollow"))));
+                    new TagAttribute("href", "https://example.com/", 9),
+                    new TagAttribute("rel", "nofollow", 35))));
   }
 
   @DisplayName("should analyze tag kinds")
@@ -375,7 +375,7 @@ class PageAnalysisTagTest {
     Assertions.assertThat(analysis.getTags())
         .containsExactly(
             new TagElement(
-                0, 16, "ref", TagKind.SELF_CLOSING, List.of(new TagAttribute("name", "a"))));
+                0, 16, "ref", TagKind.SELF_CLOSING, List.of(new TagAttribute("name", "a", 11))));
     Assertions.assertThat(analysis.getInternalLinks())
         .containsExactly(
             new InternalLinkElement(
