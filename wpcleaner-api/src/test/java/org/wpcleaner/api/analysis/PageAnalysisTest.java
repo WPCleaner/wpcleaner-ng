@@ -6,8 +6,11 @@ package org.wpcleaner.api.analysis;
  */
 
 import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
@@ -473,6 +476,50 @@ class PageAnalysisTest {
             Assertions.tuple(
                 text.indexOf("[[Rennes"), text.indexOf("[[Rennes") + "[[Rennes]]".length(), null),
             Assertions.tuple(text.indexOf("[<!-- c"), text.length(), "L"));
+  }
+
+  @DisplayName("should end external link URL like MediaWiki")
+  @ParameterizedTest
+  @CsvSource(
+      delimiter = ';',
+      quoteCharacter = '`',
+      value = {
+        "[https://a.org/[x A];https://a.org/;[x A",
+        "[https://a.org/\"x\" A];https://a.org/;\"x\" A",
+        "[https://a.org/<b>x</b> A];https://a.org/;<b>x</b> A",
+        "[https://a.org/<x A];https://a.org/;<x A",
+        "[https://a.org/>x A];https://a.org/;>x A",
+        "[https://a.org/\u00A0A];https://a.org/;A",
+        "[https://a.org/\u2003\u2003A];https://a.org/;A",
+        "`[https://a.org/\tA]`;https://a.org/;`\tA`",
+        "[https://a.org/<!-- c -->x A];https://a.org/x;A",
+        "[https://a.org/ <!-- c --> A];https://a.org/;A",
+        "[https://a.org/<nowiki/>x A];https://a.org/;<nowiki/>x A",
+        "[https://a.org/<nowiki/>];https://a.org/;<nowiki/>",
+        "[https://a.org/\"];https://a.org/;\"",
+        "[https://a.org/ ];https://a.org/;``",
+        "[https://a.org/\u00A0];https://a.org/;``",
+        "[https://a.org/<ref>r</ref> A];https://a.org/;<ref>r</ref> A",
+        "[https://a.org/];https://a.org/;",
+        "[https://a.org/x'y A];https://a.org/x'y;A",
+        "[https://a.org/x''A''];https://a.org/x;''A''",
+        "[https://a.org/x'''A'''];https://a.org/x;'''A'''",
+        "[https://a.org/x''''A''''];https://a.org/x';'''A''''",
+        "[https://a.org/x'''''A'''''];https://a.org/x;'''''A'''''",
+        "[https://a.org/x''''''A''''''];https://a.org/x';'''''A''''''",
+        "[https://a.org/x'''''''A];https://a.org/x'';'''''A"
+      })
+  void analyzeExternalLinkUrlEnd(
+      final String text, final String target, @Nullable final String linkText) {
+    // WHEN
+    final PageAnalysis analysis =
+        PageAnalysisTestFactory.createPageAnalysis(text.translateEscapes());
+
+    // THEN
+    Assertions.assertThat(analysis.getExternalLinks())
+        .extracting(ExternalLinkElement::target, ExternalLinkElement::text)
+        .containsExactly(
+            Assertions.tuple(target, linkText == null ? null : linkText.translateEscapes()));
   }
 
   @DisplayName("should analyze external link with a pipe in its URL")

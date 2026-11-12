@@ -25,14 +25,17 @@ final class SquareBracketAnalyzer {
   static final char CLOSE = ']';
   static final char OPEN = '[';
   static final char PIPE = '|';
-  private static final String AUTHORIZED_AFTER_1_OPEN = new String(new char[] {' ', CLOSE});
   private static final String AUTHORIZED_AFTER_2_OPEN = new String(new char[] {PIPE, CLOSE});
-  private static final String UNAUTHORIZED_AFTER_1_OPEN =
-      new String(new char[] {OPEN, ' ', CLOSE, '\n'});
   private static final String UNAUTHORIZED_AFTER_2_OPEN =
       new String(new char[] {OPEN, PIPE, CLOSE, '\n'});
   private static final char NEW_LINE = '\n';
-  private static final char SPACE = ' ';
+  private static final String URL_END = "[]<>\"";
+  private static final char LAST_CONTROL = ' ';
+  private static final char DELETE = '\u007F';
+  private static final char REPLACEMENT = '\uFFFD';
+  private static final char APOSTROPHE = '\'';
+  private static final int LITERAL_APOSTROPHE_RUN = 4;
+  private static final int MAX_FORMATTING_APOSTROPHES = 5;
   private static final int TWO = 2;
   private static final int THREE = 3;
   private static final String DOUBLE_CLOSE = new String(new char[] {CLOSE, CLOSE});
@@ -104,18 +107,25 @@ final class SquareBracketAnalyzer {
       final int firstOpeningBracket, final TextBrowser.ReverseCursor reverseCursor) {
     final TextBrowser.Cursor cursor = reverseCursor.toCursor();
     cursor.moveNext();
-    final String target = extractTarget(cursor, UNAUTHORIZED_AFTER_1_OPEN, AUTHORIZED_AFTER_1_OPEN);
-    if (target == null) {
+    final int targetBegin = cursor.getIndex();
+    final int targetEnd = moveAfterUrl(cursor);
+    final String target = commentedText.withoutComments(targetBegin, targetEnd);
+    if (!isKnownProtocol(target, 0)) {
       return;
     }
-    final String value = extractExternalLinkText(cursor);
+    final int textBegin = moveAfterSpaceSeparators(cursor, targetEnd);
+    final String value =
+        textBegin == targetEnd && textBegin == cursor.getIndex() && isAt(cursor, CLOSE)
+            ? null
+            : extractExternalLinkText(cursor, textBegin);
     if (cursor.getIndex() >= text.length()
         || text.charAt(cursor.getIndex()) != CLOSE
         || cursor.getIndex() >= containers.findContainer(firstOpeningBracket).end()) {
       return;
     }
     final int firstClosingBracket = cursor.getIndex();
-    persist1SquareBracketResult(firstOpeningBracket, firstClosingBracket + 1, target, value);
+    externalLinks.add(
+        new ExternalLinkElement(firstOpeningBracket, firstClosingBracket + 1, target, value, true));
     while (reverseCursor.getIndex() >= firstOpeningBracket) {
       reverseCursor.movePrevious();
     }
@@ -176,13 +186,6 @@ final class SquareBracketAnalyzer {
     return closingBracketsCount;
   }
 
-  private void persist1SquareBracketResult(
-      final int begin, final int end, final String target, @Nullable final String value) {
-    if (isKnownProtocol(target, 0)) {
-      externalLinks.add(new ExternalLinkElement(begin, end, target, value, true));
-    }
-  }
-
   private boolean isKnownProtocol(final String value, final int index) {
     return protocols.stream()
         .anyMatch(
@@ -227,12 +230,7 @@ final class SquareBracketAnalyzer {
   }
 
   @Nullable
-  private String extractExternalLinkText(final TextBrowser.Cursor cursor) {
-    if (!isAt(cursor, SPACE)) {
-      return null;
-    }
-    cursor.moveNext();
-    final int beginValue = cursor.getIndex();
+  private String extractExternalLinkText(final TextBrowser.Cursor cursor, final int beginValue) {
     while (cursor.getIndex() < text.length()) {
       final int index = cursor.getIndex();
       final char currentChar = text.charAt(index);
@@ -262,6 +260,67 @@ final class SquareBracketAnalyzer {
       cursor.moveNext();
     }
     return true;
+  }
+
+  private int moveAfterUrl(final TextBrowser.Cursor cursor) {
+    int index = cursor.getIndex();
+    while (index < text.length() && !isUrlEnd(text.charAt(index))) {
+      final int apostrophes = countApostrophes(index);
+      if (apostrophes >= TWO) {
+        return moveNextOutsideComments(cursor, index, countLiteralApostrophes(apostrophes));
+      }
+      index = moveNextOutsideComments(cursor);
+    }
+    return index;
+  }
+
+  private int moveAfterSpaceSeparators(final TextBrowser.Cursor cursor, final int begin) {
+    int index = begin;
+    while (index < text.length()
+        && Character.getType(text.charAt(index)) == Character.SPACE_SEPARATOR) {
+      index = moveNextOutsideComments(cursor);
+    }
+    return index;
+  }
+
+  private int countApostrophes(final int begin) {
+    int index = begin;
+    while (index < text.length() && text.charAt(index) == APOSTROPHE) {
+      index++;
+    }
+    return index - begin;
+  }
+
+  private static int countLiteralApostrophes(final int apostrophes) {
+    if (apostrophes == LITERAL_APOSTROPHE_RUN) {
+      return 1;
+    }
+    return Math.max(0, apostrophes - MAX_FORMATTING_APOSTROPHES);
+  }
+
+  private int moveNextOutsideComments(
+      final TextBrowser.Cursor cursor, final int begin, final int count) {
+    int index = begin;
+    for (int moved = 0; moved < count; moved++) {
+      index = moveNextOutsideComments(cursor);
+    }
+    return index;
+  }
+
+  private static boolean isUrlEnd(final char character) {
+    return character <= LAST_CONTROL
+        || character == DELETE
+        || character == REPLACEMENT
+        || URL_END.indexOf(character) >= 0
+        || Character.getType(character) == Character.SPACE_SEPARATOR;
+  }
+
+  private int moveNextOutsideComments(final TextBrowser.Cursor cursor) {
+    final int next = cursor.getIndex() + 1;
+    cursor.moveNext();
+    return commentedText.withoutComments(next, cursor.getIndex()).isEmpty()
+        ? cursor.getIndex()
+        : next;
   }
 
   private boolean isAt(final TextBrowser.Cursor cursor, final char expected) {
