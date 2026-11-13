@@ -5,12 +5,14 @@ package org.wpcleaner.lib.check.algorithm;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.analysis.template.TemplateBuilder;
 import org.wpcleaner.lib.check.configuration.TemplateDefinition;
 
 record ArticleLinkTemplates(
@@ -31,7 +33,6 @@ record ArticleLinkTemplates(
   private static final String NAMESPACE_ATTRIBUTE = "namespace";
   private static final Set<String> PREFIX_INDEX_ATTRIBUTES =
       Set.of(PREFIX_ATTRIBUTE, NAMESPACE_ATTRIBUTE);
-  private static final char EQUAL = '=';
 
   ArticleLinkTemplates {
     historyTemplates = List.copyOf(historyTemplates);
@@ -72,30 +73,18 @@ record ArticleLinkTemplates(
     return templates.stream()
         .map(
             template -> {
-              final StringBuilder builder = new StringBuilder("{{").append(template.template());
+              final List<TemplateBuilder.Parameter> parameters = new ArrayList<>();
               for (int index = 0; index < fields.size(); index++) {
                 final String value = values[index];
                 if (value != null) {
-                  builder
-                      .append('|')
-                      .append(createParameter(template, fields.get(index), index + 1, value));
+                  parameters.add(
+                      new TemplateBuilder.Parameter(
+                          template.parameter(fields.get(index)).orElse(Integer.toString(index + 1)),
+                          value));
                 }
               }
-              return builder.append("}}").toString();
+              return new TemplateBuilder(template.template(), parameters).build();
             })
         .collect(Collectors.toList());
-  }
-
-  private static String createParameter(
-      final TemplateDefinition template,
-      final String field,
-      final int position,
-      final String value) {
-    final String positionName = Integer.toString(position);
-    final String name = template.parameter(field).orElse(positionName);
-    if (!name.equals(positionName)) {
-      return name + EQUAL + value;
-    }
-    return value.indexOf(EQUAL) >= 0 ? positionName + EQUAL + value : value;
   }
 }

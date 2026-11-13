@@ -22,6 +22,7 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
+import org.wpcleaner.api.analysis.template.TemplateBuilder;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
@@ -129,7 +130,9 @@ public class CheckAlgorithm048 implements CheckAlgorithm {
       final String apostropheTemplate = context.apostropheTemplate();
       if (apostropheBefore && apostropheTemplate != null) {
         replacements.add(
-            new Replacement("{{" + apostropheTemplate + "}}" + BOLD + displayedText + BOLD, false));
+            new Replacement(
+                TemplateBuilder.from(apostropheTemplate).build() + BOLD + displayedText + BOLD,
+                false));
       }
       replacements.add(new Replacement(prefix + BOLD + displayedText + BOLD, false));
     }

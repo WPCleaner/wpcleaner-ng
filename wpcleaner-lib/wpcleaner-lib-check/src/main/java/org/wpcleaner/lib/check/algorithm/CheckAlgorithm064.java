@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
+import org.wpcleaner.api.analysis.template.TemplateBuilder;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.repository.configuration.WPCleanerParameter;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -162,7 +163,7 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
       @Nullable final String apostropheTemplate) {
     replacements.add(prefix + replacement + suffix);
     if (apostropheTemplate != null && !(prefix + suffix).isEmpty()) {
-      final String apostrophe = "{{" + apostropheTemplate + "}}";
+      final String apostrophe = TemplateBuilder.from(apostropheTemplate).build();
       replacements.add(
           prefix.replace(String.valueOf(APOSTROPHE), apostrophe)
               + replacement

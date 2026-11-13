@@ -559,7 +559,7 @@ class CheckAlgorithm090Test {
                 new Replacement("{{Historique|Paris}}", false),
                 new Replacement("[[Paris]]", false)),
             List.of(
-                new Replacement("{{Historique|1=A=b|c}}", false),
+                new Replacement("{{Historique|1=A=b|2=c}}", false),
                 new Replacement("[[A=b|c]]", false),
                 new Replacement("c", false)),
             List.of(
