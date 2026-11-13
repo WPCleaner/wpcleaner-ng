@@ -107,10 +107,12 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
         group.stream()
             .map(reference -> text.substring(reference.begin(), reference.end()))
             .collect(Collectors.joining(context.separator()));
+    final String shortReferences =
+        ReferenceGrouper.shortenReferences(group.size(), context.separator());
     final int punctuationEnd =
         skipWhitespaceAndCommentsBefore(context.analysis(), group.getFirst().begin());
     if (isPunctuationBefore(text, punctuationEnd) && !isAbbreviation(context, punctuationEnd)) {
-      return Optional.of(createError(context, group, punctuationEnd, references));
+      return Optional.of(createError(context, group, punctuationEnd, references, shortReferences));
     }
     final boolean punctuationBetween =
         group.stream()
@@ -126,7 +128,7 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
                 ALGORITHM_NUMBER,
                 group.getFirst().begin(),
                 group.getLast().end(),
-                List.of(new Replacement(references, false))))
+                List.of(new Replacement(references, shortReferences, false))))
         : Optional.empty();
   }
 
@@ -134,7 +136,8 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
       final Context context,
       final List<Element> group,
       final int punctuationEnd,
-      final String references) {
+      final String references,
+      final String shortReferences) {
     final String text = context.analysis().getText();
     final int punctuationBegin =
         skipBefore(text, punctuationEnd - 1, text.charAt(punctuationEnd - 1));
@@ -162,18 +165,37 @@ public class CheckAlgorithm067 implements CheckAlgorithm {
         generalAbbreviations.stream()
             .mapToInt(abbreviation -> punctuationEnd - abbreviation.text().length())
             .reduce(begin, Math::min);
-    final String kept = text.substring(errorBegin, begin) + comments + references;
+    final String prefix = text.substring(errorBegin, begin);
+    final String kept = prefix + comments + references;
+    final String keptLabel = prefix + shortReferences;
     final List<Replacement> replacements = new ArrayList<>();
     generalAbbreviations.forEach(
         abbreviation ->
             replacements.add(
-                new Replacement(
-                    abbreviation.replacement() + comments + references + punctuationAfter, false)));
-    replacements.add(new Replacement(kept + movedSpaces + allPunctuation, automatic));
+                createReplacement(
+                    abbreviation,
+                    comments + references + punctuationAfter,
+                    shortReferences + punctuationAfter)));
+    replacements.add(
+        new Replacement(
+            kept + movedSpaces + allPunctuation,
+            keptLabel + movedSpaces + allPunctuation,
+            automatic));
     if (!punctuationAfter.isEmpty() && !punctuationAfter.equals(allPunctuation)) {
-      replacements.add(new Replacement(kept + spaces + punctuationAfter, false));
+      replacements.add(
+          new Replacement(
+              kept + spaces + punctuationAfter, keptLabel + spaces + punctuationAfter, false));
     }
     return new CheckError(ALGORITHM_NUMBER, errorBegin, end, replacements);
+  }
+
+  private static Replacement createReplacement(
+      final GeneralAbbreviation abbreviation, final String following, final String followingLabel) {
+    final String label = abbreviation.replacement() + followingLabel;
+    return new Replacement(
+        abbreviation.replacement() + following,
+        abbreviation.meaning().isEmpty() ? label : label + " (" + abbreviation.meaning() + ")",
+        false);
   }
 
   private static String joinComments(final PageAnalysis analysis, final int from, final int to) {

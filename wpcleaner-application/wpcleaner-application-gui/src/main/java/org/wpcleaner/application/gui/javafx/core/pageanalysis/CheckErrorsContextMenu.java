@@ -41,12 +41,18 @@ public final class CheckErrorsContextMenu extends ContextMenu {
       final CheckError error,
       final Replacement replacement,
       final BiConsumer<CheckError, Replacement> replacementAction) {
-    final MenuItem item =
-        new MenuItem(replacement.text().isEmpty() ? GT._T("Delete") : replacement.text());
+    final MenuItem item = new MenuItem(getDisplayedLabel(replacement));
     if (replacement.automatic()) {
       item.setStyle(AUTOMATIC_STYLE);
     }
     item.setOnAction(_ -> replacementAction.accept(error, replacement));
     return item;
+  }
+
+  private static String getDisplayedLabel(final Replacement replacement) {
+    if (!replacement.label().isEmpty()) {
+      return replacement.label();
+    }
+    return replacement.text().isEmpty() ? GT._T("Delete") : replacement.text();
   }
 }

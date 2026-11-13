@@ -66,6 +66,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
   @BeforeEach
   void setUp() {
     paneFactory.givenCheckWikiConfiguration(Map.of("error_048_prio_frwiki", "3"));
+    paneFactory.givenWPCleanerConfiguration(Map.of());
   }
 
   @DisplayName("should list only the algorithms detected in the page")
@@ -540,6 +541,31 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(pane.getErrorsListView().getItems())
         .singleElement()
         .satisfies(errors -> Assertions.assertThat(errors.errors()).hasSize(1));
+  }
+
+  @DisplayName("should display the label of a replacement and apply its text")
+  @Test
+  void applyLabeledReplacement() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    paneFactory.givenCheckWikiConfiguration(Map.of("error_067_prio_frwiki", "2"));
+    paneFactory.givenWPCleanerConfiguration(
+        Map.of("general_abbreviations", "etc.|et cetera|{{etc.}}"));
+    final PageAnalysisCheckPane pane = createPane();
+    final String text = "Villes etc.<ref>A</ref> suite";
+    runOnJavaFx(() -> pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, text)));
+    final List<MenuItem> items =
+        callOnJavaFx(() -> pane.createContextMenu(text.indexOf("etc")).getItems());
+
+    // WHEN
+    runOnJavaFx(items.get(1)::fire);
+
+    // THEN
+    Assertions.assertThat(items)
+        .extracting(MenuItem::getText)
+        .containsExactly(
+            "Error No. 67", "{{etc.}}<ref>...</ref> (et cetera)", "etc<ref>...</ref>.");
+    Assertions.assertThat(callOnJavaFx(() -> pane.getArea().getText()))
+        .isEqualTo("Villes {{etc.}}<ref>A</ref> suite");
   }
 
   @DisplayName("should apply all the automatic replacements")

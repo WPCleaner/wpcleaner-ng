@@ -14,6 +14,8 @@ import javafx.scene.control.Labeled;
 import org.springframework.boot.test.context.TestComponent;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
+import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
@@ -29,6 +31,7 @@ public final class PageAnalysisCheckPaneFactory {
   private final ImageLoader imageLoader;
   private final CheckAlgorithmRegistry algorithmRegistry;
   private final CheckWikiConfigurationRepository checkWikiConfigurationRepository;
+  private final WPCleanerConfigurationRepository wpcleanerConfigurationRepository;
   private final JavaFxActionServices actionServices;
 
   public PageAnalysisCheckPaneFactory(
@@ -36,11 +39,13 @@ public final class PageAnalysisCheckPaneFactory {
       final ImageLoader imageLoader,
       final CheckAlgorithmRegistry algorithmRegistry,
       final CheckWikiConfigurationRepository checkWikiConfigurationRepository,
+      final WPCleanerConfigurationRepository wpcleanerConfigurationRepository,
       final JavaFxActionServices actionServices) {
     this.colorizer = colorizer;
     this.imageLoader = imageLoader;
     this.algorithmRegistry = algorithmRegistry;
     this.checkWikiConfigurationRepository = checkWikiConfigurationRepository;
+    this.wpcleanerConfigurationRepository = wpcleanerConfigurationRepository;
     this.actionServices = actionServices;
   }
 
@@ -67,6 +72,11 @@ public final class PageAnalysisCheckPaneFactory {
         algorithmRegistry,
         PageAnalysisTestFactory.createPageAnalysisFactory(),
         actionServices::browse);
+  }
+
+  public void givenWPCleanerConfiguration(final Map<String, String> generalProperties) {
+    wpcleanerConfigurationRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI, new WPCleanerConfiguration(generalProperties, Map.of()));
   }
 
   public void givenCheckWikiConfiguration(final Map<String, String> properties) {
