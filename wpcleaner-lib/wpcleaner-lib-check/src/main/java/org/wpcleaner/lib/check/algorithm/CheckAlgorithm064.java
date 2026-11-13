@@ -14,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.repository.configuration.WPCleanerParameter;
@@ -133,13 +134,15 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
       final String prefix,
       final String suffix,
       @Nullable final String apostropheTemplate) {
-    final String linkStart = link.leadingColon() ? "[[:" : "[[";
     final List<String> linkTexts = List.of(match.text(), match.text().replace(UNDERSCORE, SPACE));
     final Set<String> replacements = new LinkedHashSet<>();
     for (final String before : withoutApostrophes(match.before())) {
       for (final String after : withoutApostrophes(match.after())) {
         for (final String linkText : linkTexts) {
-          final String replacement = before + linkStart + linkText + "]]" + after;
+          final String replacement =
+              before
+                  + InternalLinkBuilder.to(linkText).withColon(link.leadingColon()).build()
+                  + after;
           addReplacements(replacements, prefix, replacement, suffix, apostropheTemplate);
         }
       }

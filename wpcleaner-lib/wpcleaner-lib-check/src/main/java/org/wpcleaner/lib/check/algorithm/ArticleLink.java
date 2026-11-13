@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
@@ -37,6 +38,7 @@ record ArticleLink(
   private static final char OPEN = '[';
   private static final char CLOSE = ']';
   private static final char PIPE = '|';
+  private static final char SLASH = '/';
   private static final char SPACE = ' ';
 
   static ArticleLink of(
@@ -179,26 +181,17 @@ record ArticleLink(
   }
 
   String timelineLink() {
-    return text == null ? "[[" + target() + "]]" : "[[" + target() + PIPE + text + "]]";
-  }
-
-  private String target() {
-    return (colon || url.title().charAt(0) == '/' ? ":" : "") + url.titleAndFragment();
+    return createBuilder().withText(text).withoutLinkTrail().build();
   }
 
   String internalLink(@Nullable final String displayedText) {
-    final String target = target();
-    if (displayedText == null) {
-      return "[[" + target + "]]";
-    }
-    if (url.fragment() == null && displayedText.length() >= url.title().length()) {
-      final String prefix = displayedText.substring(0, url.title().length());
-      final String trail = displayedText.substring(url.title().length());
-      if (!colon && isSameTitle(prefix) && trail.chars().allMatch(Character::isLetter)) {
-        return "[[" + prefix + "]]" + trail;
-      }
-    }
-    return "[[" + target + PIPE + displayedText + "]]";
+    return createBuilder().withText(displayedText).build();
+  }
+
+  private InternalLinkBuilder createBuilder() {
+    return InternalLinkBuilder.to(url.title())
+        .withAnchor(url.fragment())
+        .withColon(colon || url.title().charAt(0) == SLASH);
   }
 
   boolean isSameTitle(final String otherTitle) {

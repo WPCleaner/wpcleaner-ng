@@ -148,6 +148,7 @@ class CheckAlgorithm090Test {
     // GIVEN
     final String embedded = "[" + WIKI_URL + "Tour_Eiffel|Tour]";
     final String withoutText = "[" + WIKI_URL + "Paris]";
+    final String trail = "[" + WIKI_URL + "Paris|Parisiens]";
     final String attribute = "link:" + WIKI_URL + "Nantes";
     final String withAttributes = "[" + WIKI_URL + "Lyon?action=edit|Lyon]";
     final String text =
@@ -155,6 +156,8 @@ class CheckAlgorithm090Test {
             + embedded
             + " "
             + withoutText
+            + " "
+            + trail
             + "\"\n  bar:B text:Nantes "
             + attribute
             + "\n  bar:C text:\""
@@ -169,6 +172,7 @@ class CheckAlgorithm090Test {
         .containsExactly(
             error(text, embedded, new Replacement("[[Tour Eiffel|Tour]]", false)),
             error(text, withoutText, new Replacement("[[Paris]]", false)),
+            error(text, trail, new Replacement("[[Paris|Parisiens]]", false)),
             error(text, attribute),
             error(text, withAttributes));
   }
