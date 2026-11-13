@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 
 record BracketedArticleLink(ArticleUrl url, @Nullable String displayedText) {
 
@@ -31,11 +32,10 @@ record BracketedArticleLink(ArticleUrl url, @Nullable String displayedText) {
   }
 
   String internalLink() {
-    final String target = (url.title().charAt(0) == SLASH ? ":" : "") + url.titleAndFragment();
-    return displayedText == null
-            || displayedText.isEmpty()
-            || displayedText.equals(url.titleAndFragment())
-        ? "[[" + target + "]]"
-        : "[[" + target + PIPE + displayedText + "]]";
+    return InternalLinkBuilder.to(url.title())
+        .withAnchor(url.fragment())
+        .withColon(url.title().charAt(0) == SLASH)
+        .withText(displayedText == null || displayedText.isEmpty() ? null : displayedText)
+        .build();
   }
 }

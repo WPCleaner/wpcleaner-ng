@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.include.IncludeAreaType;
+import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
@@ -172,7 +173,7 @@ public class CheckAlgorithm048 implements CheckAlgorithm {
   }
 
   private static String createAnchorLink(final String anchor, final String linkText) {
-    return "[[#" + anchor + "|" + linkText + "]]";
+    return InternalLinkBuilder.to("").withAnchor(anchor).withText(linkText).build();
   }
 
   private static boolean isInBold(final String text, final InternalLinkElement link) {

@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.lib.check.CheckAlgorithm;
@@ -105,13 +106,11 @@ public class CheckAlgorithm091 implements CheckAlgorithm {
             && text != null
             && found.url().attributes().isEmpty();
     final String replacement =
-        "[[:"
-            + found.interwiki().prefix()
-            + ":"
-            + found.url().titleAndFragment()
-            + "|"
-            + (text == null ? found.url().title() : text)
-            + "]]";
+        InternalLinkBuilder.to(found.interwiki().prefix() + ":" + found.url().title())
+            .withAnchor(found.url().fragment())
+            .withColon(true)
+            .withText(text == null ? found.url().title() : text)
+            .build();
     return new CheckError(
         ALGORITHM_NUMBER,
         articleLink.begin(),
