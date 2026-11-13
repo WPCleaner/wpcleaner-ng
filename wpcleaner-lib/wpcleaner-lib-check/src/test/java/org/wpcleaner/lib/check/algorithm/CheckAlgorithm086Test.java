@@ -5,6 +5,7 @@ package org.wpcleaner.lib.check.algorithm;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.Arrays;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -75,6 +76,47 @@ class CheckAlgorithm086Test {
                     new Replacement("[https://example.org|Ex|Ex2]", false))));
   }
 
+  @DisplayName("should suggest an internal link for a URL of the wiki")
+  @Test
+  void fixArticleUrls() {
+    // GIVEN
+    final String image =
+        "[[//fr.wikipedia.org/wiki/Fichier:Flag_of_Spain.svg|20x20px|Drapeau de l'Espagne]]";
+    final String withComment =
+        "[<!-- c -->[https://fr.wikipedia.org/wiki/Tour_Eiffel Tour Eiffel]]";
+    final String withAttributes = "[[https://fr.wikipedia.org/wiki/Lyon?action=edit|Lyon]]";
+    final String withText = "[[https://fr.wikipedia.org/wiki/Paris la capitale]]";
+    final String text = String.join(" ", image, withComment, withAttributes, withText);
+
+    // WHEN
+    final List<CheckError> errors = analyze(text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(
+                text,
+                image,
+                "[[Fichier:Flag of Spain.svg|20x20px|Drapeau de l'Espagne]]",
+                "[//fr.wikipedia.org/wiki/Fichier:Flag_of_Spain.svg 20x20px|Drapeau de l'Espagne]",
+                "[//fr.wikipedia.org/wiki/Fichier:Flag_of_Spain.svg|20x20px|Drapeau de l'Espagne]"),
+            error(
+                text,
+                withComment,
+                "<!-- c -->[[Tour Eiffel]]",
+                "<!-- c -->[https://fr.wikipedia.org/wiki/Tour_Eiffel Tour Eiffel]"),
+            error(
+                text,
+                withAttributes,
+                "[https://fr.wikipedia.org/wiki/Lyon?action=edit Lyon]",
+                "[https://fr.wikipedia.org/wiki/Lyon?action=edit|Lyon]"),
+            error(
+                text,
+                withText,
+                "[[Paris|la capitale]]",
+                "[https://fr.wikipedia.org/wiki/Paris la capitale]"));
+  }
+
   @DisplayName("should not report external links with one bracket or none")
   @Test
   void ignoreOtherLinks() {
@@ -120,6 +162,17 @@ class CheckAlgorithm086Test {
                 List.of(
                     new Replacement("<!-- b --><!-- c -->[https://example.org Ex]", false),
                     new Replacement("<!-- b --><!-- c -->[https://example.org|Ex]", false))));
+  }
+
+  private static CheckError error(
+      final String text, final String link, final String... replacements) {
+    return new CheckError(
+        ALGORITHM,
+        text.indexOf(link),
+        text.indexOf(link) + link.length(),
+        Arrays.stream(replacements)
+            .map(replacement -> new Replacement(replacement, false))
+            .toList());
   }
 
   private List<CheckError> analyze(final String text) {
