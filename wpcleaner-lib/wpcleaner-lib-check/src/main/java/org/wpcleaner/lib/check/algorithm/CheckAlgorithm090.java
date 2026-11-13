@@ -44,6 +44,9 @@ public class CheckAlgorithm090 implements CheckAlgorithm {
   private static final String IMAGE_LINK = "img_link";
   private static final String PREFIX_INDEX = "Prefixindex";
   private static final char SPACE = ' ';
+  private static final char OPEN = '[';
+  private static final char CLOSE = ']';
+  private static final char PIPE = '|';
 
   private final CheckWikiConfigurationRepository checkWikiRepository;
   private final SpecialPageRepository specialPageRepository;
@@ -96,9 +99,9 @@ public class CheckAlgorithm090 implements CheckAlgorithm {
             link ->
                 ArticleUrl.of(analysis.getWiki(), link.target())
                     .map(url -> ArticleLink.of(analysis, link, url, linkTemplates))
-                    .ifPresent(
-                        articleLink ->
-                            errors.add(analyzeLink(analysis, link, articleLink, templates))));
+                    .map(articleLink -> analyzeLink(analysis, link, articleLink, templates))
+                    .or(() -> analyzePipe(analysis, link))
+                    .ifPresent(errors::add));
     analysis
         .getTimelineLinks()
         .forEach(
@@ -152,6 +155,28 @@ public class CheckAlgorithm090 implements CheckAlgorithm {
                               parameter.end(),
                               List.of(new Replacement("", automatic)));
                         }));
+  }
+
+  private static Optional<CheckError> analyzePipe(
+      final PageAnalysis analysis, final ExternalLinkElement link) {
+    if (!link.bracketed() || link.target().indexOf(PIPE) < 0) {
+      return Optional.empty();
+    }
+    final String text = analysis.getText();
+    final int begin =
+        link.begin() > 0 && text.charAt(link.begin() - 1) == OPEN ? link.begin() - 1 : link.begin();
+    final int end =
+        link.end() < text.length() && text.charAt(link.end()) == CLOSE
+            ? link.end() + 1
+            : link.end();
+    return BracketedArticleLink.of(analysis, link)
+        .map(
+            articleLink ->
+                new CheckError(
+                    ALGORITHM_NUMBER,
+                    begin,
+                    end,
+                    List.of(new Replacement(articleLink.internalLink(), false))));
   }
 
   private static boolean isLinkToHost(final PageAnalysis analysis, final InternalLinkElement link) {

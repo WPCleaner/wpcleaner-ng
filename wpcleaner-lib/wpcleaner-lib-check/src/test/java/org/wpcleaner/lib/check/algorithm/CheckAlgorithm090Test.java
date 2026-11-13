@@ -95,6 +95,53 @@ class CheckAlgorithm090Test {
                     new Replacement("Lyon", false))));
   }
 
+  @DisplayName("should suggest an internal link for a URL followed by a pipe")
+  @Test
+  void fixLinksWithPipe() {
+    // GIVEN
+    final String image =
+        "[[//fr.wikipedia.org/wiki/Fichier:Flag_of_Spain.svg"
+            + "|lien=https://commons.wikimedia.org/wiki/File:Flag.svg?uselang=fr"
+            + "|20x20px|Drapeau de l'Espagne]]";
+    final String fragment = "[" + WIKI_URL + "Paris#Histoire|Paris]";
+    final String sameText = "[" + WIKI_URL + "Tour_Eiffel|Tour Eiffel]";
+    final String subpage = "[" + WIKI_URL + "/Sous-page|Sous-page]";
+    final String unclosed = "[[" + WIKI_URL + "Nantes|Nantes]";
+    final String extraClose = "[" + WIKI_URL + "Rennes|Rennes]]";
+    final String text =
+        String.join(
+            " ",
+            image,
+            fragment,
+            sameText,
+            subpage,
+            unclosed,
+            extraClose,
+            "[" + WIKI_URL + "Lyon?action=edit|Lyon]",
+            "[https://example.org/a|Ex]",
+            WIKI_URL + "Brest|Brest");
+
+    // WHEN
+    final List<CheckError> errors = analyze(text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(
+                text,
+                image,
+                new Replacement(
+                    "[[Fichier:Flag of Spain.svg"
+                        + "|lien=https://commons.wikimedia.org/wiki/File:Flag.svg?uselang=fr"
+                        + "|20x20px|Drapeau de l'Espagne]]",
+                    false)),
+            error(text, fragment, new Replacement("[[Paris#Histoire|Paris]]", false)),
+            error(text, sameText, new Replacement("[[Tour Eiffel]]", false)),
+            error(text, subpage, new Replacement("[[:/Sous-page|Sous-page]]", false)),
+            error(text, unclosed, new Replacement("[[Nantes]]", false)),
+            error(text, extraClose, new Replacement("[[Rennes]]", false)));
+  }
+
   @DisplayName("should fix manually links to articles in timelines")
   @Test
   void fixTimelineLinks() {
