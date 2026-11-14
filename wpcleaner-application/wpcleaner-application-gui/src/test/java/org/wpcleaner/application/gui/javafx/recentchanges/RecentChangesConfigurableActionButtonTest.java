@@ -26,7 +26,7 @@ import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.settings.SettingsPersistence;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
-import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
@@ -43,12 +43,12 @@ class RecentChangesConfigurableActionButtonTest extends JavaFxTest {
 
   @Autowired private JavaFxRecentChangesWindowServices services;
   @Autowired private CurrentUserService currentUserService;
-  @Autowired private GuiLogin guiLogin;
+  @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
 
   @BeforeEach
   void setUp() throws IOException {
-    guiLogin.login(WIKI, "Bot", GuiLogin.USER_NAMESPACES);
+    guiLogin.login(WIKI, "Bot", ApplicationLogin.USER_NAMESPACES);
     Files.deleteIfExists(
         SettingsPersistence.getFolder().resolve(WIKI.code()).resolve("rc-userpage-hosting.json"));
   }

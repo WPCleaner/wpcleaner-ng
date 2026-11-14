@@ -32,4 +32,5 @@ dependencies {
   compileOnly("org.jetbrains:annotations:26.1.0")
   testImplementation(testFixtures(project(":wpcleaner-api")))
   testImplementation(testFixtures(project(":wpcleaner-lib-check")))
+  testImplementation(testFixtures(project(":wpcleaner-application-base")))
 }

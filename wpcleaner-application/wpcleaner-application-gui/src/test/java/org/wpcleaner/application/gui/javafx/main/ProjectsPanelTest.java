@@ -33,7 +33,7 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
-import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
@@ -53,7 +53,7 @@ class ProjectsPanelTest extends JavaFxTest {
 
   @Autowired private JavaFxMainWindowFactory mainWindowFactory;
   @Autowired private CurrentUserService currentUserService;
-  @Autowired private GuiLogin guiLogin;
+  @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
   @Autowired private MockApiRevisions mockApiRevisions;
   @Autowired private MockRestServiceServer mediaWikiServer;
@@ -143,7 +143,7 @@ class ProjectsPanelTest extends JavaFxTest {
     guiLogin.login(
         WIKI,
         "Jane Doe",
-        GuiLogin.LoginData.of(GuiLogin.USER_NAMESPACES)
+        ApplicationLogin.LoginData.of(ApplicationLogin.USER_NAMESPACES)
             .withCheckWikiConfiguration(checkWikiConfiguration));
   }
 

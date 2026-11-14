@@ -18,4 +18,8 @@ public interface CheckAlgorithm {
   }
 
   List<CheckError> analyze(PageAnalysis analysis);
+
+  default String reportedText(final PageAnalysis analysis, final CheckError error) {
+    return analysis.getText().substring(error.begin(), error.end());
+  }
 }

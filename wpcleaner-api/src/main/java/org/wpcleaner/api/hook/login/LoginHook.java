@@ -5,6 +5,7 @@ package org.wpcleaner.api.hook.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -80,5 +81,13 @@ public class LoginHook {
 
   public void addTagsProperties(final Set<TagsParameters.Properties> properties) {
     tagsProperties.addAll(properties);
+  }
+
+  public Set<SiteInfoParameters.Properties> getSiteInfoProperties() {
+    return Collections.unmodifiableSet(EnumSet.copyOf(siteInfoProperties));
+  }
+
+  public Set<TagsParameters.Properties> getTagsProperties() {
+    return Collections.unmodifiableSet(EnumSet.copyOf(tagsProperties));
   }
 }

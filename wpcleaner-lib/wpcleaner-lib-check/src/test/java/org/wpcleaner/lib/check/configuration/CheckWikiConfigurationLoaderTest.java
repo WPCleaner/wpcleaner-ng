@@ -216,6 +216,34 @@ class CheckWikiConfigurationLoaderTest {
         .hasValue(Set.of());
   }
 
+  @DisplayName("should retrieve the whitelists of inactive algorithms when they are requested")
+  @Test
+  void loadWhitelistsOfRequestedInactiveAlgorithms() {
+    // GIVEN
+    givenTranslationPage(
+        """
+         error_048_prio_frwiki=0 END
+         error_048_whitelist_frwiki=
+          Lyon END
+        """,
+        Map.of());
+    givenParametersPage(null);
+    loader.addAlgorithms(Set.of(48));
+
+    // WHEN
+    try {
+      loader.execute(WIKI, ProgressTracker.NOOP);
+    } finally {
+      loader.removeAlgorithms(Set.of(48));
+    }
+
+    // THEN
+    mediaWikiServer.verify();
+    Assertions.assertThat(repository.getConfiguration(WIKI).getAlgorithm(48))
+        .map(CheckAlgorithmConfiguration::whitelist)
+        .hasValue(Set.of(new PageTitle(0, "Lyon")));
+  }
+
   private void givenTranslationPage(
       final String translation, final Map<String, String> userProperties) {
     wpcleanerRepository.setConfiguration(

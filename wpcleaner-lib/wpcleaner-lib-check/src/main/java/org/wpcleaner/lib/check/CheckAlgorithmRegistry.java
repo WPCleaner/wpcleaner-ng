@@ -54,6 +54,12 @@ public class CheckAlgorithmRegistry {
         .toList();
   }
 
+  public boolean isWhitelisted(final PageAnalysis analysis, final CheckAlgorithm algorithm) {
+    return getConfiguration(analysis.getWiki(), algorithm)
+        .filter(configuration -> configuration.isWhitelisted(analysis.getPageTitle()))
+        .isPresent();
+  }
+
   public String getName(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
     return getConfiguration(wiki, algorithm)
         .flatMap(CheckAlgorithmConfiguration::shortDescription)
