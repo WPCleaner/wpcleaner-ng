@@ -24,14 +24,14 @@ import org.wpcleaner.launcher.utils.GT;
 
 public final class ReleaseUpdater {
 
-  public static final int LAUNCHER_GENERATION = 1;
+  public static final int LAUNCHER_GENERATION = ReleaseRequirements.LAUNCHER_GENERATION;
 
   private static final Logger LOGGER = Logger.getLogger(ReleaseUpdater.class.getName());
 
   private final LauncherDirectories directories;
   private final Platform platform;
   private final ReleaseRepository repository;
-  private final JavaRuntimeFinder javaRuntimeFinder;
+  private final ReleaseRequirements requirements;
   private final LauncherDisplay display;
   private final StateStore stateStore;
   private final ReleaseStore releaseStore;
@@ -45,7 +45,7 @@ public final class ReleaseUpdater {
     this.directories = directories;
     this.platform = platform;
     this.repository = repository;
-    this.javaRuntimeFinder = javaRuntimeFinder;
+    this.requirements = new ReleaseRequirements(repository, javaRuntimeFinder);
     this.display = display;
     this.stateStore = new StateStore(directories);
     this.releaseStore = new ReleaseStore(directories);
@@ -89,26 +89,14 @@ public final class ReleaseUpdater {
   }
 
   private Optional<String> obstacle(final ReleaseManifest manifest, final boolean assetAvailable) {
-    if (manifest.launcherGeneration() > LAUNCHER_GENERATION) {
-      return Optional.of(
-          GT._T(
-              "WPCleaner NG %s requires a more recent launcher.\nYou can download it from %s",
-              manifest.version(), repository.releasesUrl()));
+    final Optional<String> obstacle = requirements.obstacle(manifest);
+    if (obstacle.isPresent() || assetAvailable) {
+      return obstacle;
     }
-    if (javaRuntimeFinder.find(manifest.javaVersion()).isEmpty()) {
-      return Optional.of(
-          GT._T(
-              "WPCleaner NG %s requires Java %d or later.\n"
-                  + "You can install it, or download the latest launcher from %s",
-              manifest.version(), manifest.javaVersion(), repository.releasesUrl()));
-    }
-    if (!assetAvailable) {
-      return Optional.of(
-          GT._T(
-              "WPCleaner NG %s is not available for your system (%s).",
-              manifest.version(), platform.key()));
-    }
-    return Optional.empty();
+    return Optional.of(
+        GT._T(
+            "WPCleaner NG %s is not available for your system (%s).",
+            manifest.version(), platform.key()));
   }
 
   private void notifyObstacle(

@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 final class ReleaseServer implements AutoCloseable {
 
   static final String ASSET_NAME = "wpcleaner-ng-linux-x64.jar";
+  static final String BOT_ASSET_NAME = "wpcleaner-ng-bot.jar";
 
   private final HttpServer server;
   private final Map<String, byte[]> contents = new ConcurrentHashMap<>();
@@ -46,6 +47,31 @@ final class ReleaseServer implements AutoCloseable {
       final int javaVersion,
       final int launcherGeneration,
       final String checksum) {
+    publish(version, jarContent, javaVersion, launcherGeneration, checksum, "");
+  }
+
+  void publishWithBot(final String version, final String jarContent, final String botContent) {
+    publish(
+        version,
+        jarContent,
+        25,
+        1,
+        checksum(jarContent),
+        """
+          "bot": {"name": "%s", "sha256": "%s"},"""
+            .formatted(BOT_ASSET_NAME, checksum(botContent)));
+    contents.put(
+        "/releases/download/v%s/%s".formatted(version, BOT_ASSET_NAME),
+        botContent.getBytes(StandardCharsets.UTF_8));
+  }
+
+  private void publish(
+      final String version,
+      final String jarContent,
+      final int javaVersion,
+      final int launcherGeneration,
+      final String checksum,
+      final String botAsset) {
     final String manifest =
         """
         {
@@ -53,11 +79,11 @@ final class ReleaseServer implements AutoCloseable {
           "javaVersion": %d,
           "launcherGeneration": %d,
           "jvmArguments": ["--enable-native-access=ALL-UNNAMED"],
-          "assets": {"linux-x64": {"name": "%s", "sha256": "%s"}},
+          "assets": {"linux-x64": {"name": "%s", "sha256": "%s"}},%s
           "futureField": true
         }
         """
-            .formatted(version, javaVersion, launcherGeneration, ASSET_NAME, checksum);
+            .formatted(version, javaVersion, launcherGeneration, ASSET_NAME, checksum, botAsset);
     contents.put(
         "/releases/latest/download/wpcleaner-ng.json", manifest.getBytes(StandardCharsets.UTF_8));
     contents.put(

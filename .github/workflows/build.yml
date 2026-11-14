@@ -185,8 +185,47 @@ jobs:
         name: wpcleaner-${{ matrix.platform }}
         path: release-assets/*
 
+  package-bot:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout sources
+      uses: actions/checkout@v7
+
+    - name: Set up JDK 25 (for compilation toolchain)
+      uses: actions/setup-java@v6.2.0
+      with:
+        distribution: 'temurin'
+        java-version: 25
+
+    - name: Set up JDK 21 (for executing Gradle daemon)
+      uses: actions/setup-java@v6.2.0
+      with:
+        distribution: 'temurin'
+        java-version: 21
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v6
+
+    - name: Build bot application for all platforms
+      run: ./gradlew :wpcleaner-application-bot:bootJar
+
+    - name: Prepare asset for release
+      run: |
+        mkdir -p release-assets
+        cp $(ls wpcleaner-application/wpcleaner-application-bot/build/libs/*.jar | grep -E "wpcleaner-application-bot-[0-9.]+(-SNAPSHOT)?\.jar$") release-assets/wpcleaner-ng-bot.jar
+
+    - name: Upload bot artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: wpcleaner-bot
+        path: release-assets/*
+
   create-release:
-    needs: [build-ubuntu, build-windows, build-macos, package]
+    needs: [build-ubuntu, build-windows, build-macos, package, package-bot]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.head_commit.message, 'Preparing release v')
     runs-on: ubuntu-24.04
     permissions:
