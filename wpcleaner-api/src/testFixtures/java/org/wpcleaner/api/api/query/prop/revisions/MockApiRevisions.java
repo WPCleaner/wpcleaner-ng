@@ -38,11 +38,28 @@ public final class MockApiRevisions {
       final List<String> titles,
       @Nullable final RevisionsQuery options,
       final Map<String, String> continuation) {
+    return givenRetrieveRevisions(
+        wiki, QueryParameters.TITLES.value, titles, options, continuation);
+  }
+
+  public RevisionsAnswer givenRetrieveRevisionsByPageId(
+      final WikiDefinition wiki,
+      final List<Integer> pageIds,
+      @Nullable final RevisionsQuery options) {
+    return givenRetrieveRevisions(wiki, QueryParameters.PAGE_IDS.value, pageIds, options, Map.of());
+  }
+
+  private <T> RevisionsAnswer givenRetrieveRevisions(
+      final WikiDefinition wiki,
+      final String key,
+      final List<T> values,
+      @Nullable final RevisionsQuery options,
+      final Map<String, String> continuation) {
     final ApiRequestExpectation request =
         ApiRequestExpectation.of(mediaWikiServer, wiki, ApiParameters.Action.QUERY);
     request.queryParam(
         QueryParameters.PROPERTIES.value, QueryParameters.Properties.REVISIONS.value);
-    request.queryParamCollection(QueryParameters.TITLES.value, titles);
+    request.queryParamCollection(key, values);
     if (options != null) {
       expectOptions(request, options);
     }

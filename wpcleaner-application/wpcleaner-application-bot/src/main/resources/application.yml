@@ -1,0 +1,13 @@
+spring:
+  main:
+    banner-mode: "off"
+    web-application-type: none
+logging:
+  level:
+    root: WARN
+    org.wpcleaner: INFO
+wpcleaner:
+  bot:
+    requests-per-minute:
+      user: 3
+      bot: 10
