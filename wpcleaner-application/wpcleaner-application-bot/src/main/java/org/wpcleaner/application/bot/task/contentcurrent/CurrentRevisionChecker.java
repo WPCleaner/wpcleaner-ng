@@ -57,6 +57,7 @@ public final class CurrentRevisionChecker implements Callable<Void> {
   private final int maxPageIds;
   private final RequestThrottle throttle;
   private final BlockingQueue<Integer> pageIds = new LinkedBlockingQueue<>();
+  private final AtomicLong pending = new AtomicLong();
   private final AtomicLong checked = new AtomicLong();
   private final AtomicLong withErrors = new AtomicLong();
   private final AtomicBoolean finished = new AtomicBoolean();
@@ -76,6 +77,7 @@ public final class CurrentRevisionChecker implements Callable<Void> {
   }
 
   public void add(final int pageId) {
+    pending.incrementAndGet();
     pageIds.add(pageId);
   }
 
@@ -83,8 +85,8 @@ public final class CurrentRevisionChecker implements Callable<Void> {
     finished.set(true);
   }
 
-  public int getPendingPages() {
-    return pageIds.size();
+  public long getPendingPages() {
+    return pending.get();
   }
 
   public long getCheckedPages() {
@@ -125,13 +127,20 @@ public final class CurrentRevisionChecker implements Callable<Void> {
   }
 
   private void check(final List<Integer> batch) throws IOException, InterruptedException {
-    for (final Page page : retrieveCurrentPages(batch)) {
+    final List<Page> pages = retrieveCurrentPages(batch);
+    for (final Page page : pages) {
       final Optional<ContentPage> current = toContentPage(page);
       if (current.isPresent()) {
         checkPage(current.get());
       }
+      markChecked(1);
     }
-    checked.addAndGet(batch.size());
+    markChecked(Math.max(0, batch.size() - pages.size()));
+  }
+
+  private void markChecked(final int count) {
+    checked.addAndGet(count);
+    pending.addAndGet(-count);
   }
 
   private List<Page> retrieveCurrentPages(final List<Integer> batch) throws InterruptedException {
