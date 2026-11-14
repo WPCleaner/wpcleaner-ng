@@ -49,6 +49,7 @@ final class MagicLinkAnalyzer {
       Pattern.compile("&(lt|gt|nbsp|#x0*(3[CcEe]|[Aa]0)|#0*(60|62|160));");
   private static final Pattern TRAILING_ENTITY =
       Pattern.compile("&([a-z]+|#x[\\da-f]+|#\\d+)$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern FORMATTING_APOSTROPHES = Pattern.compile("''+");
   private static final String TRAILING_SEPARATORS = ",;.:!?";
   private static final char TRAILING_PARENTHESIS = ')';
   private static final char OPENING_PARENTHESIS = '(';
@@ -143,6 +144,15 @@ final class MagicLinkAnalyzer {
       urlEnd = Math.min(urlEnd, curlyBracketElementBegin);
     }
     String url = text.substring(begin, urlEnd);
+    final Matcher apostropheMatcher = FORMATTING_APOSTROPHES.matcher(url);
+    if (apostropheMatcher.find()) {
+      url =
+          url.substring(
+              0,
+              apostropheMatcher.start()
+                  + SquareBracketAnalyzer.countLiteralApostrophes(
+                      apostropheMatcher.end() - apostropheMatcher.start()));
+    }
     final Matcher entityMatcher = URL_END_ENTITY.matcher(url);
     if (entityMatcher.find()) {
       url = url.substring(0, entityMatcher.start());

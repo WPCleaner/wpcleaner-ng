@@ -64,7 +64,8 @@ class CheckAlgorithm064Test {
     // GIVEN
     final String text =
         "[[Paris]] [[Paris|Lyon]] [[Paris#Histoire|Paris]] [[Paris|.Paris]] [[Paris|Paris']]"
-            + " [[Paris|Paris|Lyon]] [[Paris|{{Paris}}]] [[Paris|]] [[Paris|:Paris]] [[/Sub|/Sub]]";
+            + " [[Paris|Paris|Lyon]] [[Paris|{{Paris}}]] [[Paris|]] [[Paris|:Paris]] [[/Sub|/Sub]]"
+            + " [[Paris|<nowiki>#</nowiki>Paris]] ''[[Paris|<nowiki/>'Paris]]''";
 
     // WHEN
     final List<CheckError> errors = analyze("Lyon", text);

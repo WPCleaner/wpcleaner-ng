@@ -95,4 +95,23 @@ class PageAnalysisLinkTextTest {
         .map(InternalLinkElement::displayedText)
         .containsExactly(" la ville ", "Paris", "Paris#Histoire");
   }
+
+  @DisplayName("should keep tags excluded from analysis at the beginning of link text")
+  @Test
+  void analyzeLinkTextBeginningWithNowiki() {
+    // GIVEN
+    final String text =
+        "[[a|<nowiki>#</nowiki>a]] [[b|<nowiki/>'b]] [http://x.org <nowiki>c</nowiki>d]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .extracting(InternalLinkElement::text)
+        .containsExactly("<nowiki>#</nowiki>a", "<nowiki/>'b");
+    Assertions.assertThat(analysis.getExternalLinks())
+        .extracting(ExternalLinkElement::text)
+        .containsExactly("<nowiki>c</nowiki>d");
+  }
 }

@@ -45,6 +45,7 @@ final class SquareBracketAnalyzer {
   private final List<Protocol> protocols;
   private final ImageAnalyzer imageAnalyzer;
   private final TextContainers containers;
+  private final CurlyBracketEnds curlyBracketEnds;
   private final SquareBracketElementFactory elementFactory;
   private final List<ExternalLinkElement> externalLinks;
 
@@ -55,12 +56,14 @@ final class SquareBracketAnalyzer {
       final List<Namespace> namespaces,
       final List<Protocol> protocols,
       final ImageAnalyzer imageAnalyzer,
-      final TextContainers containers) {
+      final TextContainers containers,
+      final List<? extends Element> curlyBracketElements) {
     this.text = text;
     this.commentedText = commentedText;
     this.protocols = protocols;
     this.imageAnalyzer = imageAnalyzer;
     this.containers = containers;
+    this.curlyBracketEnds = new CurlyBracketEnds(curlyBracketElements);
     this.elementFactory = new SquareBracketElementFactory(interwikis, namespaces);
     this.externalLinks = new ArrayList<>();
   }
@@ -197,7 +200,7 @@ final class SquareBracketAnalyzer {
   private String extractTarget(
       final TextBrowser.Cursor cursor, final String unauthorized, final String authorized) {
     final int beginTarget = cursor.getIndex();
-    cursor.moveAfterUntil(unauthorized);
+    curlyBracketEnds.moveAfterUntil(cursor, unauthorized);
     final int cursorIndex = cursor.getIndex();
     if (cursorIndex >= text.length()) {
       return null;
@@ -214,8 +217,8 @@ final class SquareBracketAnalyzer {
     if (!isAt(cursor, PIPE)) {
       return null;
     }
+    final int beginValue = cursor.getIndex() + 1;
     cursor.moveNext();
-    final int beginValue = cursor.getIndex();
     while (cursor.getIndex() < text.length()) {
       final int index = cursor.getIndex();
       if (isDoubled(index, OPEN)) {
@@ -291,7 +294,7 @@ final class SquareBracketAnalyzer {
     return index - begin;
   }
 
-  private static int countLiteralApostrophes(final int apostrophes) {
+  static int countLiteralApostrophes(final int apostrophes) {
     if (apostrophes == LITERAL_APOSTROPHE_RUN) {
       return 1;
     }

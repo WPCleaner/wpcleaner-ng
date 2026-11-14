@@ -207,7 +207,8 @@ public class WikiContainer {
                 namespaceRepository.getNamespaces(wiki),
                 protocolRepository.getProtocols(wiki),
                 imageAnalyzer,
-                containers);
+                containers,
+                preprocessor.getCurlyBracketElements());
         redirect =
             redirectArea
                 .map(

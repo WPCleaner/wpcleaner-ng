@@ -106,4 +106,23 @@ class PageAnalysisFreeExternalLinkTest {
         .containsExactly(new ExternalLinkElement(0, 18, "http://a.org/-ISBN", null, false));
     Assertions.assertThat(analysis.getMagicLinks()).isEmpty();
   }
+
+  @DisplayName("should end free external link at apostrophes used for formatting")
+  @Test
+  void analyzeFreeExternalLinksWithApostrophes() {
+    // GIVEN
+    final String text =
+        "http://a.org/x''A'' http://a.org/y'''' z http://a.org/z'b http://a.org/w''''''v";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getExternalLinks())
+        .containsExactly(
+            new ExternalLinkElement(0, 14, "http://a.org/x", null, false),
+            new ExternalLinkElement(20, 35, "http://a.org/y'", null, false),
+            new ExternalLinkElement(41, 57, "http://a.org/z'b", null, false),
+            new ExternalLinkElement(58, 73, "http://a.org/w'", null, false));
+  }
 }
