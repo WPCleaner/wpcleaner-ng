@@ -38,3 +38,6 @@ __pycache__/
 
 # Claude Code
 .claude/settings.local.json
+
+# Bot output (default output folder)
+/wpcleaner-bot-output/
