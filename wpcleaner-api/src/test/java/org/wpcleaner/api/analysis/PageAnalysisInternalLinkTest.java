@@ -142,4 +142,19 @@ class PageAnalysisInternalLinkTest {
     Assertions.assertThat(analysis.getExternalLinks())
         .containsExactly(new ExternalLinkElement(3, 23, "https://example.com/", null, false));
   }
+
+  @DisplayName("should analyze internal link whose target starts with a template with parameters")
+  @Test
+  void analyzeInternalLinkWithTemplateInTarget() {
+    // GIVEN
+    final String text = "[[{{a|b}} c|d]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks())
+        .extracting(InternalLinkElement::target, InternalLinkElement::text)
+        .containsExactly(Assertions.tuple("{{a|b}} c", "d"));
+  }
 }

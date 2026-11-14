@@ -71,7 +71,10 @@ class CheckAlgorithm017Test {
   @Test
   void ignoreSingleCategories() {
     // GIVEN
-    final String text = PARIS + " [[Catégorie:Lyon]] [[Paris]]";
+    final String text =
+        PARIS
+            + " [[Catégorie:Lyon]] [[Paris]]"
+            + " [[Catégorie:{{s-|XVII}} en musique]] [[Catégorie:{{s-|XVIII}} en musique]]";
 
     // WHEN
     final List<CheckError> errors = analyze(text);

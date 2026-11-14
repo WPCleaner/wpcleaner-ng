@@ -87,4 +87,22 @@ class PageAnalysisCategoryTest {
                 new PageTitle(14, "My category"),
                 null));
   }
+
+  @DisplayName("should analyze category whose name contains templates with parameters")
+  @Test
+  void analyzeCategoryWithTemplatesInName() {
+    // GIVEN
+    final String text =
+        "[[Catégorie:{{s-|XVII}} en {{a|{{b|c}}|d}}|Sort key]] [[Catégorie:{{s-|XVIII}}]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getCategories())
+        .extracting(CategoryElement::begin, CategoryElement::name, CategoryElement::sortKey)
+        .containsExactly(
+            Assertions.tuple(0, "{{s-|XVII}} en {{a|{{b|c}}|d}}", "Sort key"),
+            Assertions.tuple(54, "{{s-|XVIII}}", null));
+  }
 }
