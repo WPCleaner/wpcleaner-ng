@@ -23,6 +23,7 @@ public final class BotStartScript {
   public static final String SCRIPT_NAME = "wpcleaner-ng-bot";
 
   private static final String WINDOWS_JAVA = "java.exe";
+  private static final String POSIX_ATTRIBUTES = "posix";
 
   private final LauncherDirectories directories;
   private final OperatingSystem operatingSystem;
@@ -59,7 +60,9 @@ public final class BotStartScript {
                       .map(BotStartScript::quoteForShell)
                       .collect(Collectors.joining(" "))),
           StandardCharsets.UTF_8);
-      Files.setPosixFilePermissions(script, PosixFilePermissions.fromString("rwxr-xr-x"));
+      if (script.getFileSystem().supportedFileAttributeViews().contains(POSIX_ATTRIBUTES)) {
+        Files.setPosixFilePermissions(script, PosixFilePermissions.fromString("rwxr-xr-x"));
+      }
     }
     return script;
   }
