@@ -12,12 +12,13 @@ import java.lang.annotation.Target;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.wpcleaner.api.api.MediaWikiServerConfiguration;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @SpringBootTest(
-    classes = {WPCleaner.class, MediaWikiServerConfiguration.class, GuiLogin.class},
+    classes = {WPCleaner.class, MediaWikiServerConfiguration.class, ApplicationLogin.class},
     properties = {
       MediaWikiServerConfiguration.ENABLED_PROPERTY + "=true",
       "wpcleaner.api.edit-wrapper.throttle-period-seconds=0"

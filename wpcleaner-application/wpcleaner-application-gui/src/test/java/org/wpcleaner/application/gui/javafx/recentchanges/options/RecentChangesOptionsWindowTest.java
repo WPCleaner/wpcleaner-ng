@@ -26,7 +26,7 @@ import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
-import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
@@ -36,8 +36,8 @@ import org.wpcleaner.application.gui.javafx.recentchanges.JavaFxRecentChangesWin
 class RecentChangesOptionsWindowTest extends JavaFxTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.EN;
-  private static final GuiLogin.LoginData LOGIN_DATA =
-      new GuiLogin.LoginData(
+  private static final ApplicationLogin.LoginData LOGIN_DATA =
+      new ApplicationLogin.LoginData(
           List.of(
               new Namespace(null, "first-letter", true, 0, "", "", false),
               new Namespace("Talk", "first-letter", false, 1, "Talk", "Talk", true)),
@@ -47,7 +47,7 @@ class RecentChangesOptionsWindowTest extends JavaFxTest {
 
   @Autowired private JavaFxRecentChangesWindowServices services;
   @Autowired private CurrentUserService currentUserService;
-  @Autowired private GuiLogin guiLogin;
+  @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
 
   @BeforeEach

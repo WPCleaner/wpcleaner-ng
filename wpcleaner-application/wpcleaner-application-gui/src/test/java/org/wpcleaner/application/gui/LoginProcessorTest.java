@@ -16,6 +16,7 @@ import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 
@@ -26,7 +27,7 @@ class LoginProcessorTest {
   private static final String USERNAME = "Jane Doe";
 
   @Autowired private CurrentUserService currentUserService;
-  @Autowired private GuiLogin guiLogin;
+  @Autowired private ApplicationLogin guiLogin;
   @Autowired private WPCleanerConfigurationRepository configurationRepository;
   @Autowired private CheckAlgorithmRegistry algorithmRegistry;
 
@@ -44,8 +45,8 @@ class LoginProcessorTest {
   @Test
   void loginWithBotPassword() {
     // GIVEN
-    final GuiLogin.LoginData data =
-        GuiLogin.LoginData.of(GuiLogin.USER_NAMESPACES)
+    final ApplicationLogin.LoginData data =
+        ApplicationLogin.LoginData.of(ApplicationLogin.USER_NAMESPACES)
             .withUserConfiguration("error_048_prio_frwiki=0 END");
 
     // WHEN
@@ -61,8 +62,8 @@ class LoginProcessorTest {
   @Test
   void loginWithCheckWikiConfiguration() {
     // GIVEN
-    final GuiLogin.LoginData data =
-        GuiLogin.LoginData.of(GuiLogin.USER_NAMESPACES)
+    final ApplicationLogin.LoginData data =
+        ApplicationLogin.LoginData.of(ApplicationLogin.USER_NAMESPACES)
             .withCheckWikiConfiguration(
                 " error_048_prio_frwiki=3 END\n error_048_head_frwiki=Lien vers l’article END");
 

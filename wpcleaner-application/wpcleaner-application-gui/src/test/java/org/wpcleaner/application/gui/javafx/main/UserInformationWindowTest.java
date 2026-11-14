@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
-import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
@@ -38,7 +38,7 @@ class UserInformationWindowTest extends JavaFxTest {
 
   @Autowired private JavaFxMainWindowServices services;
   @Autowired private CurrentUserService currentUserService;
-  @Autowired private GuiLogin guiLogin;
+  @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
 
   @BeforeEach
@@ -46,8 +46,8 @@ class UserInformationWindowTest extends JavaFxTest {
     guiLogin.login(
         WIKI,
         "TestUser",
-        new GuiLogin.LoginData(
-            GuiLogin.USER_NAMESPACES,
+        new ApplicationLogin.LoginData(
+            ApplicationLogin.USER_NAMESPACES,
             List.of(),
             List.of("sysop", "bureaucrat"),
             List.of("read", "edit", "upload")));

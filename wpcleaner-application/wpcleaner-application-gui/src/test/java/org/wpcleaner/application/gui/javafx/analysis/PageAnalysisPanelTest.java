@@ -44,7 +44,7 @@ import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
-import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsPane;
@@ -75,7 +75,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
           .build();
 
   @Autowired private CurrentUserService currentUserService;
-  @Autowired private GuiLogin guiLogin;
+  @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxAnalysisWindowServices services;
   @Autowired private WPCleanerConfigurationRepository wpcleanerRepository;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
@@ -92,7 +92,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
   @BeforeEach
   void setUp() {
     currentUserService.logout();
-    guiLogin.login(WIKI, USERNAME, GuiLogin.USER_NAMESPACES);
+    guiLogin.login(WIKI, USERNAME, ApplicationLogin.USER_NAMESPACES);
     givenConfiguration();
   }
 

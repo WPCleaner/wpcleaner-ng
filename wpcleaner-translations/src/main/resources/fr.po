@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-11 20:42+0100\n"
+"POT-Creation-Date: 2026-11-14 18:17+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -45,15 +45,15 @@ msgstr ""
 msgid "Result returned was %s"
 msgstr "La réponse était %s"
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:57
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:58
 msgid "Retrieving site information"
 msgstr "Récupération des informations sur le site"
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:63
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:64
 msgid "Retrieving tags"
 msgstr "Récupération des labels"
 
-#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:68
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:69
 msgid "Retrieving WPCleaner configuration"
 msgstr "Récupération de la configuration de WPCleaner"
 
@@ -389,7 +389,7 @@ msgstr "Êtes vous sûr de vouloir supprimer le wiki \"%s\" ?"
 msgid "Warning for %s"
 msgstr "Avertissement pour %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:45
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:56
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -1067,12 +1067,12 @@ msgstr "Le raccourci n'a pas pu être créé : %s"
 msgid "Do you want to add a shortcut to WPCleaner NG on your desktop?"
 msgstr "Voulez-vous ajouter un raccourci vers WPCleaner NG sur votre bureau ?"
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/Launcher.java:73
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/Launcher.java:85
 #, java-printf-format
 msgid "The launcher failed: %s"
 msgstr "Le lanceur a échoué : %s"
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/Launcher.java:81
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/Launcher.java:106
 msgid "Shortcuts can only be created by the installed launcher."
 msgstr "Les raccourcis ne peuvent être créés que par le lanceur installé."
 
@@ -1081,7 +1081,41 @@ msgstr "Les raccourcis ne peuvent être créés que par le lanceur installé."
 msgid "The latest release could not be checked: %s"
 msgstr "La dernière version n'a pas pu être vérifiée : %s"
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:95
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:98
+#, java-printf-format
+msgid "WPCleaner NG %s is not available for your system (%s)."
+msgstr "WPCleaner NG %s n'est pas disponible pour votre système (%s)."
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:121
+#, java-printf-format
+msgid "Downloading WPCleaner NG %s"
+msgstr "Téléchargement de WPCleaner NG %s"
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:133
+#, java-printf-format
+msgid "The download failed: %s"
+msgstr "Le téléchargement a échoué : %s"
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/BotInstaller.java:69
+#, java-printf-format
+msgid "The bot is not available in WPCleaner NG %s."
+msgstr "Le bot n'est pas disponible dans WPCleaner NG %s."
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/BotInstaller.java:78
+#, java-printf-format
+msgid ""
+"WPCleaner NG bot %s is installed.\n"
+"You can start it with %s"
+msgstr ""
+"Le bot de WPCleaner NG %s est installé.\n"
+"Vous pouvez le démarrer avec %s"
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/BotInstaller.java:90
+#, java-printf-format
+msgid "Downloading WPCleaner NG bot %s"
+msgstr "Téléchargement du bot de WPCleaner NG %s"
+
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseRequirements.java:31
 #, java-printf-format
 msgid ""
 "WPCleaner NG %s requires a more recent launcher.\n"
@@ -1090,7 +1124,7 @@ msgstr ""
 "WPCleaner NG %s nécessite un lanceur plus récent.\n"
 "Vous pouvez le télécharger depuis %s"
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:101
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseRequirements.java:37
 #, java-printf-format
 msgid ""
 "WPCleaner NG %s requires Java %d or later.\n"
@@ -1098,21 +1132,6 @@ msgid ""
 msgstr ""
 "WPCleaner NG %s nécessite Java %d ou une version ultérieure.\n"
 "Vous pouvez l'installer, ou télécharger le dernier lanceur depuis %s"
-
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:108
-#, java-printf-format
-msgid "WPCleaner NG %s is not available for your system (%s)."
-msgstr "WPCleaner NG %s n'est pas disponible pour votre système (%s)."
-
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:133
-#, java-printf-format
-msgid "Downloading WPCleaner NG %s"
-msgstr "Téléchargement de WPCleaner NG %s"
-
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:145
-#, java-printf-format
-msgid "The download failed: %s"
-msgstr "Le téléchargement a échoué : %s"
 
 #: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/start/ReleaseStarter.java:65
 #, java-printf-format
@@ -1137,7 +1156,7 @@ msgstr ""
 msgid "WPCleaner NG %s requires Java %d or later."
 msgstr "WPCleaner NG %s nécessite Java %d ou une version ultérieure."
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:61
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/configuration/CheckWikiConfigurationLoader.java:72
 msgid "Retrieving Check Wiki configuration"
 msgstr "Récupération de la configuration de Check Wiki"
 

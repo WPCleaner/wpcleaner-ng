@@ -20,6 +20,11 @@ in your user folders and start `WPCleanerNG`.
 On its first start, the launcher downloads WPCleaner NG and asks if you want a shortcut on your
 desktop. Run it with `--create-shortcut` to create the shortcut later.
 
+Run it with `--install-bot` to install or update the
+[bot](../wpcleaner-application/wpcleaner-application-bot/README.md) instead: the launcher then
+writes a start script for the bot and stops without starting anything.
+Messages are written in the terminal, except on Windows where they are displayed in windows.
+
 ### Security warnings
 
 The launcher is not signed with a paid developer certificate, so your system warns you the first
@@ -55,6 +60,8 @@ Everything is stored in a folder of your user account:
 | macOS   | `~/Library/Application Support/WPCleanerNG`     |
 
 - `versions/<version>/`: installed versions of WPCleaner NG
+- `bot/versions/<version>/`: installed version of the bot
+- `bot/wpcleaner-ng-bot.sh` (`.cmd` on Windows): start script of the bot
 - `logs/launcher-0.log`: what the launcher did
 - `logs/wpcleaner-ng.log`: output of WPCleaner NG
 - `jvm-options.txt`: optional, one Java option per line (for example `-Xmx4g`), lines starting
@@ -74,9 +81,10 @@ To uninstall, delete this folder, the extracted launcher and the shortcut.
 The launcher has its own version, independent of the version of WPCleaner NG:
 it is set by `version` in `build.gradle.kts`.
 
-The release workflow builds one jar and one launcher per system, then
+The release workflow builds one jar and one launcher per system, and one jar of the bot for all
+systems, then
 `scripts/release_manifest.py` generates `wpcleaner-ng.json` from
 `scripts/release_manifest_template.json` (required Java version, Java options, launcher
 generation) and the checksums of the jars.
-Increase `launcherGeneration` in the template and in `ReleaseUpdater` when a release needs a
+Increase `launcherGeneration` in the template and in `ReleaseRequirements` when a release needs a
 newer launcher: older launchers then ask the user to download the new one.

@@ -13,15 +13,19 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import org.wpcleaner.launcher.display.ConsoleDisplay;
 import org.wpcleaner.launcher.display.LauncherDisplay;
 import org.wpcleaner.launcher.display.SwingDisplay;
+import org.wpcleaner.launcher.install.BotInstaller;
 import org.wpcleaner.launcher.install.ReleaseUpdater;
 import org.wpcleaner.launcher.platform.LauncherDirectories;
+import org.wpcleaner.launcher.platform.OperatingSystem;
 import org.wpcleaner.launcher.platform.Platform;
 import org.wpcleaner.launcher.release.ReleaseRepository;
 import org.wpcleaner.launcher.runtime.JavaRuntimeFinder;
 import org.wpcleaner.launcher.shortcut.ShortcutCreator;
 import org.wpcleaner.launcher.shortcut.Shortcuts;
+import org.wpcleaner.launcher.start.BotStartScript;
 import org.wpcleaner.launcher.start.ReleaseStarter;
 import org.wpcleaner.launcher.start.SystemProcessStarter;
 import org.wpcleaner.launcher.utils.GT;
@@ -29,6 +33,7 @@ import org.wpcleaner.launcher.utils.GT;
 public final class Launcher {
 
   public static final String CREATE_SHORTCUT_OPTION = "--create-shortcut";
+  public static final String INSTALL_BOT_OPTION = "--install-bot";
 
   private static final Logger LOGGER = Logger.getLogger(Launcher.class.getName());
   private static final int LOG_SIZE = 1_000_000;
@@ -42,12 +47,19 @@ public final class Launcher {
     final Platform platform = Platform.current();
     final LauncherDirectories directories =
         LauncherDirectories.forOperatingSystem(platform.operatingSystem());
-    final LauncherDisplay display = new SwingDisplay();
+    final boolean installBot = List.of(args).contains(INSTALL_BOT_OPTION);
+    final LauncherDisplay display =
+        installBot && platform.operatingSystem() != OperatingSystem.WINDOWS
+            ? new ConsoleDisplay(System.out, System.err)
+            : new SwingDisplay();
+    int exitCode = 0;
     try {
       configureLogging(directories);
       final Optional<ShortcutCreator> shortcutCreator =
           Shortcuts.forOperatingSystem(platform.operatingSystem());
-      if (List.of(args).contains(CREATE_SHORTCUT_OPTION)) {
+      if (installBot) {
+        exitCode = installBot(platform, directories, display) ? 0 : 1;
+      } else if (List.of(args).contains(CREATE_SHORTCUT_OPTION)) {
         createShortcut(shortcutCreator, display);
       } else {
         final JavaRuntimeFinder javaRuntimeFinder =
@@ -71,8 +83,21 @@ public final class Launcher {
     } catch (final IOException | RuntimeException e) {
       LOGGER.log(Level.SEVERE, "Launcher failure", e);
       display.error(GT._T("The launcher failed: %s", e));
+      exitCode = 1;
     }
-    System.exit(0);
+    System.exit(exitCode);
+  }
+
+  private static boolean installBot(
+      final Platform platform, final LauncherDirectories directories, final LauncherDisplay display)
+      throws IOException {
+    return new BotInstaller(
+            directories,
+            ReleaseRepository.forSystem(),
+            JavaRuntimeFinder.forSystem(platform.operatingSystem()),
+            display,
+            new BotStartScript(directories, platform.operatingSystem()))
+        .install();
   }
 
   private static void createShortcut(

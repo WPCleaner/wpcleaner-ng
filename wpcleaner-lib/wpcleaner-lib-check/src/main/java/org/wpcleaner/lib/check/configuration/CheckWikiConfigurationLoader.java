@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.hook.login.ConfigurationPageReader;
 import org.wpcleaner.api.hook.login.LoginStep;
@@ -31,6 +33,7 @@ public class CheckWikiConfigurationLoader implements LoginStep {
   private final CheckWikiConfigurationRepository repository;
   private final CheckAlgorithmWhitelistReader whitelistReader;
   private final WPCleanerConfigurationRepository wpcleanerRepository;
+  private final Set<Integer> requestedAlgorithms = ConcurrentHashMap.newKeySet();
 
   public CheckWikiConfigurationLoader(
       final CheckAlgorithmRegistry algorithmRegistry,
@@ -45,6 +48,14 @@ public class CheckWikiConfigurationLoader implements LoginStep {
     this.repository = repository;
     this.whitelistReader = whitelistReader;
     this.wpcleanerRepository = wpcleanerRepository;
+  }
+
+  public void addAlgorithms(final Set<Integer> algorithms) {
+    requestedAlgorithms.addAll(algorithms);
+  }
+
+  public void removeAlgorithms(final Set<Integer> algorithms) {
+    requestedAlgorithms.removeAll(algorithms);
   }
 
   @Override
@@ -79,10 +90,11 @@ public class CheckWikiConfigurationLoader implements LoginStep {
     }
   }
 
-  private List<CheckAlgorithmConfiguration> getLoadedAlgorithms(
+  public List<CheckAlgorithmConfiguration> getLoadedAlgorithms(
       final CheckWikiConfiguration configuration) {
     return configuration.algorithms().values().stream()
-        .filter(CheckAlgorithmConfiguration::isActive)
+        .filter(
+            algorithm -> algorithm.isActive() || requestedAlgorithms.contains(algorithm.number()))
         .filter(algorithm -> algorithmRegistry.findAlgorithm(algorithm.number()).isPresent())
         .sorted(Comparator.comparingInt(CheckAlgorithmConfiguration::number))
         .toList();

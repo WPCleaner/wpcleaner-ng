@@ -50,6 +50,14 @@ public record LauncherDirectories(Path root) {
     return root.resolve("versions");
   }
 
+  public Path bot() {
+    return root.resolve("bot");
+  }
+
+  public Path botVersions() {
+    return bot().resolve("versions");
+  }
+
   public Path logs() {
     return root.resolve("logs");
   }

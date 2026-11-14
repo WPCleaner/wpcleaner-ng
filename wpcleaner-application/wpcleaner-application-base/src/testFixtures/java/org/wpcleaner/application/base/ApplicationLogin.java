@@ -1,4 +1,4 @@
-package org.wpcleaner.application.gui;
+package org.wpcleaner.application.base;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -26,20 +26,20 @@ import org.wpcleaner.api.api.query.list.users.User;
 import org.wpcleaner.api.api.query.meta.siteinfo.MockApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
-import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoParameters;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
+import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.base.processor.LoginProcessor;
-import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationExpectations;
+import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationLoader;
 
 @ConditionalOnProperty(MediaWikiServerConfiguration.ENABLED_PROPERTY)
 @TestComponent
-public final class GuiLogin {
+public final class ApplicationLogin {
 
   public static final List<Namespace> USER_NAMESPACES =
       List.of(
@@ -58,27 +58,9 @@ public final class GuiLogin {
 
   private static final String LOGIN_TOKEN = "login-token+\\";
   private static final String CHECK_WIKI_TRANSLATION_PAGE = "Project:Check Wiki/Translation";
-  private static final Set<SiteInfoParameters.Properties> SITE_INFO_PROPERTIES =
-      Set.of(
-          SiteInfoParameters.Properties.DOUBLE_UNDERSCORES,
-          SiteInfoParameters.Properties.EXTENSION_TAGS,
-          SiteInfoParameters.Properties.FUNCTION_HOOKS,
-          SiteInfoParameters.Properties.GENERAL,
-          SiteInfoParameters.Properties.INTERWIKI_MAP,
-          SiteInfoParameters.Properties.MAGIC_WORDS,
-          SiteInfoParameters.Properties.NAMESPACES,
-          SiteInfoParameters.Properties.NAMESPACE_ALIASES,
-          SiteInfoParameters.Properties.PROTOCOLS,
-          SiteInfoParameters.Properties.SPECIAL_PAGE_ALIASES,
-          SiteInfoParameters.Properties.VARIABLES);
-  private static final Set<TagsParameters.Properties> TAGS_PROPERTIES =
-      Set.of(
-          TagsParameters.Properties.ACTIVE,
-          TagsParameters.Properties.DEFINED,
-          TagsParameters.Properties.DESCRIPTION,
-          TagsParameters.Properties.DISPLAY_NAME);
 
-  private final CheckAlgorithmRegistry algorithmRegistry;
+  private final CheckWikiConfigurationLoader checkWikiConfigurationLoader;
+  private final LoginHook loginHook;
   private final LoginProcessor loginProcessor;
   private final MockRestServiceServer mediaWikiServer;
   private final MockApiLogin mockApiLogin;
@@ -88,8 +70,10 @@ public final class GuiLogin {
   private final MockApiTokens mockApiTokens;
   private final MockApiUsers mockApiUsers;
 
-  public GuiLogin(
-      final CheckAlgorithmRegistry algorithmRegistry,
+  @SuppressWarnings("PMD.ExcessiveParameterList")
+  public ApplicationLogin(
+      final CheckWikiConfigurationLoader checkWikiConfigurationLoader,
+      final LoginHook loginHook,
       final LoginProcessor loginProcessor,
       final MockRestServiceServer mediaWikiServer,
       final MockApiLogin mockApiLogin,
@@ -98,7 +82,8 @@ public final class GuiLogin {
       final MockApiTags mockApiTags,
       final MockApiTokens mockApiTokens,
       final MockApiUsers mockApiUsers) {
-    this.algorithmRegistry = algorithmRegistry;
+    this.checkWikiConfigurationLoader = checkWikiConfigurationLoader;
+    this.loginHook = loginHook;
     this.loginProcessor = loginProcessor;
     this.mediaWikiServer = mediaWikiServer;
     this.mockApiLogin = mockApiLogin;
@@ -145,9 +130,14 @@ public final class GuiLogin {
       final WikiDefinition wiki, final String username, final LoginData data) {
     final String compactUsername = compactUsername(username);
     mockApiSiteInfo
-        .givenRequestSiteInfo(wiki, SITE_INFO_PROPERTIES, null, null, null)
+        .givenRequestSiteInfo(wiki, loginHook.getSiteInfoProperties(), null, null, null)
         .willReturn(createSiteInfo(data.namespaces()));
-    mockApiTags.givenRetrieveTags(wiki, Limit.max(), null, TAGS_PROPERTIES).willReturn(data.tags());
+    final Set<TagsParameters.Properties> tagsProperties = loginHook.getTagsProperties();
+    if (!tagsProperties.isEmpty()) {
+      mockApiTags
+          .givenRetrieveTags(wiki, Limit.max(), null, tagsProperties)
+          .willReturn(data.tags());
+    }
     final String checkWikiConfiguration = data.checkWikiConfiguration();
     WPCleanerConfigurationExpectations.givenConfiguration(
         mockApiRevisions,
@@ -162,7 +152,7 @@ public final class GuiLogin {
           mockApiRevisions, wiki, CHECK_WIKI_TRANSLATION_PAGE, checkWikiConfiguration);
       CheckWikiConfigurationExpectations.givenParametersPages(
           mockApiRevisions,
-          algorithmRegistry,
+          checkWikiConfigurationLoader,
           wiki,
           checkWikiConfiguration,
           data.parametersPages());

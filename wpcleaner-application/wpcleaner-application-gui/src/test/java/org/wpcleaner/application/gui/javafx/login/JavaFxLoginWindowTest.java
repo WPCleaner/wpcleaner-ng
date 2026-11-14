@@ -29,7 +29,7 @@ import org.wpcleaner.api.api.login.MockApiLogin;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
-import org.wpcleaner.application.gui.GuiLogin;
+import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
@@ -46,7 +46,7 @@ class JavaFxLoginWindowTest extends JavaFxTest {
   @Autowired private JavaFxLoginWindowServices services;
   @Autowired private CurrentUserService currentUserService;
   @Autowired private DesktopService desktopService;
-  @Autowired private GuiLogin guiLogin;
+  @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
   @Autowired private MockApiLogin mockApiLogin;
   @Autowired private MockApiTokens mockApiTokens;
@@ -88,12 +88,12 @@ class JavaFxLoginWindowTest extends JavaFxTest {
   @DisplayName("Login logs the user in and opens the main window")
   @Test
   void loginOpensMainWindow() throws InterruptedException, ExecutionException, TimeoutException {
-    guiLogin.givenLogin(WIKI, USERNAME, GuiLogin.USER_NAMESPACES);
+    guiLogin.givenLogin(WIKI, USERNAME, ApplicationLogin.USER_NAMESPACES);
     final JavaFxLoginWindow window = createWindow();
 
     runOnJavaFx(
         () -> {
-          fillForm(window, GuiLogin.PASSWORD);
+          fillForm(window, ApplicationLogin.PASSWORD);
           lookup(window, JavaFxLoginWindow.LOGIN_ID, Button.class).fire();
         });
 
@@ -113,14 +113,14 @@ class JavaFxLoginWindowTest extends JavaFxTest {
     guiLogin.givenLogin(
         WIKI,
         USERNAME,
-        GuiLogin.LoginData.of(GuiLogin.USER_NAMESPACES)
+        ApplicationLogin.LoginData.of(ApplicationLogin.USER_NAMESPACES)
             .withCheckWikiConfiguration(" error_048_prio_enwiki=3 END")
             .withParametersPages(Map.of(48, "No YAML here")));
     final JavaFxLoginWindow window = createWindow();
 
     runOnJavaFx(
         () -> {
-          fillForm(window, GuiLogin.PASSWORD);
+          fillForm(window, ApplicationLogin.PASSWORD);
           lookup(window, JavaFxLoginWindow.LOGIN_ID, Button.class).fire();
         });
 
@@ -155,7 +155,7 @@ class JavaFxLoginWindowTest extends JavaFxTest {
   @DisplayName("Demo starts the demo mode without login and opens the main window")
   @Test
   void demoOpensMainWindow() throws InterruptedException, ExecutionException, TimeoutException {
-    guiLogin.givenDemoLogin(WIKI, USERNAME, GuiLogin.USER_NAMESPACES);
+    guiLogin.givenDemoLogin(WIKI, USERNAME, ApplicationLogin.USER_NAMESPACES);
     final JavaFxLoginWindow window = createWindow();
 
     runOnJavaFx(

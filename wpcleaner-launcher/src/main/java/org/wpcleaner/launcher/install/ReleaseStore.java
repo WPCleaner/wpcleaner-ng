@@ -28,11 +28,22 @@ public final class ReleaseStore {
 
   private static final Logger LOGGER = Logger.getLogger(ReleaseStore.class.getName());
   private static final String JAR_NAME = "wpcleaner-ng.jar";
+  private static final String BOT_JAR_NAME = "wpcleaner-ng-bot.jar";
 
-  private final LauncherDirectories directories;
+  private final Path versionsFolder;
+  private final String jarName;
 
   public ReleaseStore(final LauncherDirectories directories) {
-    this.directories = directories;
+    this(directories.versions(), JAR_NAME);
+  }
+
+  private ReleaseStore(final Path versionsFolder, final String jarName) {
+    this.versionsFolder = versionsFolder;
+    this.jarName = jarName;
+  }
+
+  public static ReleaseStore forBot(final LauncherDirectories directories) {
+    return new ReleaseStore(directories.botVersions(), BOT_JAR_NAME);
   }
 
   public Optional<InstalledRelease> find(@Nullable final String version) {
@@ -60,7 +71,7 @@ public final class ReleaseStore {
       final DownloadProgress progress)
       throws IOException {
     final Path jar = jar(manifest.version());
-    final Path download = jar.resolveSibling("%s.part".formatted(JAR_NAME));
+    final Path download = jar.resolveSibling("%s.part".formatted(jarName));
     Files.createDirectories(jar.getParent());
     repository.download(manifest, asset, download, progress);
     Files.move(download, jar, StandardCopyOption.REPLACE_EXISTING);
@@ -77,10 +88,10 @@ public final class ReleaseStore {
   }
 
   private List<Path> versionFolders() {
-    if (!Files.isDirectory(directories.versions())) {
+    if (!Files.isDirectory(versionsFolder)) {
       return List.of();
     }
-    try (Stream<Path> folders = Files.list(directories.versions())) {
+    try (Stream<Path> folders = Files.list(versionsFolder)) {
       return folders.filter(Files::isDirectory).toList();
     } catch (final IOException e) {
       LOGGER.log(Level.WARNING, "Unable to list installed versions", e);
@@ -99,10 +110,10 @@ public final class ReleaseStore {
   }
 
   private Path jar(final String version) {
-    return directories.versions().resolve(version).resolve(JAR_NAME);
+    return versionsFolder.resolve(version).resolve(jarName);
   }
 
   private Path manifest(final String version) {
-    return directories.versions().resolve(version).resolve(ReleaseRepository.MANIFEST_NAME);
+    return versionsFolder.resolve(version).resolve(ReleaseRepository.MANIFEST_NAME);
   }
 }

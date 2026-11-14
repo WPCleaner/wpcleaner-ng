@@ -6,6 +6,7 @@ import re
 import sys
 
 ASSET_PATTERN = re.compile(r"^wpcleaner-ng-(?P<platform>[a-z]+-[a-z0-9]+)\.jar$")
+BOT_ASSET_NAME = "wpcleaner-ng-bot.jar"
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
@@ -23,15 +24,18 @@ def compute_sha256(file_path):
             digest.update(chunk)
     return digest.hexdigest()
 
+def describe_asset(assets_directory, file_name):
+    return {
+        "name": file_name,
+        "sha256": compute_sha256(os.path.join(assets_directory, file_name)),
+    }
+
 def list_assets(assets_directory):
     assets = {}
     for file_name in sorted(os.listdir(assets_directory)):
         match = ASSET_PATTERN.match(file_name)
         if match:
-            assets[match.group("platform")] = {
-                "name": file_name,
-                "sha256": compute_sha256(os.path.join(assets_directory, file_name)),
-            }
+            assets[match.group("platform")] = describe_asset(assets_directory, file_name)
     return assets
 
 def main():
@@ -48,6 +52,10 @@ def main():
         manifest = json.load(template_file)
     manifest["version"] = arguments.version
     manifest["assets"] = assets
+    if os.path.isfile(os.path.join(arguments.assets, BOT_ASSET_NAME)):
+        manifest["bot"] = describe_asset(arguments.assets, BOT_ASSET_NAME)
+    else:
+        print(f"Warning: No {BOT_ASSET_NAME} found in {arguments.assets}", file=sys.stderr)
     with open(arguments.output, "w") as manifest_file:
         json.dump(manifest, manifest_file, indent=2)
         manifest_file.write("\n")

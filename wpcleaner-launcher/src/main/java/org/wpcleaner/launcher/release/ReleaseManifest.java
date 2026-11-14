@@ -19,19 +19,22 @@ public record ReleaseManifest(
     int javaVersion,
     int launcherGeneration,
     List<String> jvmArguments,
-    Map<String, ReleaseAsset> assets) {
+    Map<String, ReleaseAsset> assets,
+    @Nullable ReleaseAsset bot) {
 
   public ReleaseManifest(
       final String version,
       final int javaVersion,
       final int launcherGeneration,
       @Nullable final List<String> jvmArguments,
-      @Nullable final Map<String, ReleaseAsset> assets) {
+      @Nullable final Map<String, ReleaseAsset> assets,
+      @Nullable final ReleaseAsset bot) {
     this.version = ReleaseVersion.parse(version).toString();
     this.javaVersion = javaVersion;
     this.launcherGeneration = launcherGeneration;
     this.jvmArguments = jvmArguments == null ? List.of() : List.copyOf(jvmArguments);
     this.assets = assets == null ? Map.of() : Map.copyOf(assets);
+    this.bot = bot;
   }
 
   @JsonIgnore
@@ -41,5 +44,9 @@ public record ReleaseManifest(
 
   public Optional<ReleaseAsset> asset(final Platform platform) {
     return Optional.ofNullable(assets.get(platform.key()));
+  }
+
+  public Optional<ReleaseAsset> botAsset() {
+    return Optional.ofNullable(bot);
   }
 }

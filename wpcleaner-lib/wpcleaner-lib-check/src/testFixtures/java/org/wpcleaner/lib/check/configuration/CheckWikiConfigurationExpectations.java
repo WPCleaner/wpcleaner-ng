@@ -12,7 +12,6 @@ import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.repository.configuration.ConfigurationParser;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 
 public final class CheckWikiConfigurationExpectations {
 
@@ -20,22 +19,19 @@ public final class CheckWikiConfigurationExpectations {
 
   public static void givenParametersPages(
       final MockApiRevisions mockApiRevisions,
-      final CheckAlgorithmRegistry algorithmRegistry,
+      final CheckWikiConfigurationLoader configurationLoader,
       final WikiDefinition wiki,
       final String translation,
       final Map<Integer, String> contentByNumber) {
     final List<Integer> numbers =
-        CheckWikiConfiguration.of(
-                ConfigurationParser.parse(translation),
-                Map.of(),
-                String.valueOf(wiki.checkWikiCode()))
-            .algorithms()
-            .values()
+        configurationLoader
+            .getLoadedAlgorithms(
+                CheckWikiConfiguration.of(
+                    ConfigurationParser.parse(translation),
+                    Map.of(),
+                    String.valueOf(wiki.checkWikiCode())))
             .stream()
-            .filter(CheckAlgorithmConfiguration::isActive)
             .map(CheckAlgorithmConfiguration::number)
-            .filter(number -> algorithmRegistry.findAlgorithm(number).isPresent())
-            .sorted()
             .toList();
     if (!numbers.isEmpty()) {
       WPCleanerConfigurationExpectations.givenPages(

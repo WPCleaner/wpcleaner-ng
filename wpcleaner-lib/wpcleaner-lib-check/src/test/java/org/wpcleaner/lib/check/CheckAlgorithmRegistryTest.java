@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.api.api.ConnectedUser;
@@ -117,6 +118,42 @@ class CheckAlgorithmRegistryTest {
     // THEN
     Assertions.assertThat(whitelistedAlgorithms).isEmpty();
     Assertions.assertThat(otherAlgorithms).extracting(CheckAlgorithm::number).containsExactly(48);
+  }
+
+  @DisplayName("should tell if the analyzed page is in the whitelist of an algorithm")
+  @Test
+  void isWhitelisted() {
+    // GIVEN
+    configurationRepository.setConfiguration(
+        WIKI,
+        CheckWikiConfiguration.of(Map.of("error_048_prio_frwiki", "0"), Map.of(), "frwiki")
+            .withWhitelists(_ -> Set.of(new PageTitle(0, "Paris"))));
+    final CheckAlgorithm algorithm = registry.findAlgorithm(48).orElseThrow();
+
+    // WHEN
+    final boolean whitelisted =
+        registry.isWhitelisted(PageAnalysisTestFactory.createPageAnalysis("Paris", ""), algorithm);
+    final boolean other =
+        registry.isWhitelisted(PageAnalysisTestFactory.createPageAnalysis("Lyon", ""), algorithm);
+
+    // THEN
+    Assertions.assertThat(whitelisted).isTrue();
+    Assertions.assertThat(other).isFalse();
+  }
+
+  @DisplayName("should report the text of the errors by default")
+  @Test
+  void reportedText() {
+    // GIVEN
+    final CheckAlgorithm algorithm = registry.findAlgorithm(48).orElseThrow();
+    final PageAnalysis analysis =
+        PageAnalysisTestFactory.createPageAnalysis("Paris", "A [[Paris]].");
+
+    // WHEN
+    final String text = algorithm.reportedText(analysis, new CheckError(48, 2, 11, List.of()));
+
+    // THEN
+    Assertions.assertThat(text).isEqualTo("[[Paris]]");
   }
 
   @DisplayName("should name the algorithms with their short description on the wiki")
