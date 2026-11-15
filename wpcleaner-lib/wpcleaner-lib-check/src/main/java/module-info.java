@@ -13,6 +13,16 @@ module org.wpcleaner.lib.check {
   exports org.wpcleaner.lib.check.configuration;
   exports org.wpcleaner.lib.check.server;
   exports org.wpcleaner.lib.check;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a00x.a001;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a00x.a002;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a017;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a04x.a048;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a06x.a061;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a06x.a064;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a06x.a067;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a08x.a086;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a09x.a090;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a09x.a091;
   opens org.wpcleaner.lib.check.algorithm;
   opens org.wpcleaner.lib.check.configuration;
   opens org.wpcleaner.lib.check.server;

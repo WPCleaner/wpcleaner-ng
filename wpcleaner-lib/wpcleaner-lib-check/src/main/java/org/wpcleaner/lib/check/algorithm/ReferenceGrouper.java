@@ -18,14 +18,14 @@ import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.api.analysis.tag.TagType;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
 
-record ReferenceGrouper(
+public record ReferenceGrouper(
     String punctuation, String separator, boolean singleSeparator, Set<TagType> tags) {
 
   private static final String NON_BREAKING_SPACE = "&nbsp;";
   private static final String SHORT_REFERENCE = "<ref>...</ref>";
   private static final String ELLIPSIS = "...";
 
-  static String shortenReferences(final int count, final String separator) {
+  public static String shortenReferences(final int count, final String separator) {
     return switch (count) {
       case 1 -> SHORT_REFERENCE;
       case 2 -> SHORT_REFERENCE + separator + SHORT_REFERENCE;
@@ -33,7 +33,7 @@ record ReferenceGrouper(
     };
   }
 
-  static List<Element> findReferences(
+  public static List<Element> findReferences(
       final PageAnalysis analysis, final Set<PageTitle> referenceTemplates) {
     final String ref = WikiTagType.REF.getNormalizedName();
     final List<Element> references =
@@ -56,7 +56,7 @@ record ReferenceGrouper(
         .toList();
   }
 
-  List<List<Element>> group(final PageAnalysis analysis, final List<Element> references) {
+  public List<List<Element>> group(final PageAnalysis analysis, final List<Element> references) {
     final List<List<Element>> groups = new ArrayList<>();
     List<Element> current = new ArrayList<>();
     for (final Element reference : references) {

@@ -20,7 +20,7 @@ import org.wpcleaner.api.analysis.timeline.TimelineLinkElement;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.lib.check.configuration.TemplateDefinition;
 
-record ArticleLink(
+public record ArticleLink(
     ArticleUrl url,
     @Nullable PageTitle title,
     int begin,
@@ -29,8 +29,8 @@ record ArticleLink(
     boolean colon,
     boolean automatic) {
 
-  static final String URL_FIELD = "url";
-  static final String TEXT_FIELD = "text";
+  public static final String URL_FIELD = "url";
+  public static final String TEXT_FIELD = "text";
   private static final String VISUAL_EDITOR_NOTIFY = "venotify";
   private static final String VISUAL_EDITOR_CREATED = "created";
   private static final String RED_LINK = "redlink";
@@ -41,7 +41,7 @@ record ArticleLink(
   private static final char SLASH = '/';
   private static final char SPACE = ' ';
 
-  static ArticleLink of(
+  public static ArticleLink of(
       final PageAnalysis analysis,
       final ExternalLinkElement link,
       final ArticleUrl url,
@@ -162,7 +162,7 @@ record ArticleLink(
     return Optional.empty();
   }
 
-  static ArticleLink of(
+  public static ArticleLink of(
       final PageAnalysis analysis, final TimelineLinkElement link, final ArticleUrl url) {
     final PageTitle title =
         analysis.normalizeTitle(url.title(), CommonNamespaces.MAIN.id).orElse(null);
@@ -176,15 +176,15 @@ record ArticleLink(
             || title.namespace() == CommonNamespaces.CATEGORY.id);
   }
 
-  ArticleLink withoutAutomatic() {
+  public ArticleLink withoutAutomatic() {
     return new ArticleLink(url, title, begin, end, text, colon, false);
   }
 
-  String timelineLink() {
+  public String timelineLink() {
     return createBuilder().withText(text).withoutLinkTrail().build();
   }
 
-  String internalLink(@Nullable final String displayedText) {
+  public String internalLink(@Nullable final String displayedText) {
     return createBuilder().withText(displayedText).build();
   }
 
@@ -194,7 +194,7 @@ record ArticleLink(
         .withColon(colon || url.title().charAt(0) == SLASH);
   }
 
-  boolean isSameTitle(final String otherTitle) {
+  public boolean isSameTitle(final String otherTitle) {
     return !otherTitle.isEmpty()
         && Character.toUpperCase(otherTitle.charAt(0))
             == Character.toUpperCase(url.title().charAt(0))
