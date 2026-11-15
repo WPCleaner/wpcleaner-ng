@@ -5,7 +5,9 @@ package org.wpcleaner.application.gui.javafx.recentchanges;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.net.URI;
 import java.util.Optional;
+import java.util.function.Function;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.Button;
@@ -21,6 +23,7 @@ import javafx.scene.layout.Priority;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.control.BrowserButton;
 import org.wpcleaner.application.gui.javafx.core.control.DefaultStyles;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.application.gui.javafx.recentchanges.userpagedraft.UserPageDraftAction;
@@ -53,35 +56,23 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
     titleField.setMaxWidth(Double.MAX_VALUE);
     HBox.setHgrow(titleField, Priority.ALWAYS);
 
-    final Button openPageButton = new Button();
-    openPageButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
-    imageLoader
-        .getImageView(ImageCollection.OPEN_URL, ImageSize.BUTTON)
-        .ifPresent(openPageButton::setGraphic);
-    openPageButton.setTooltip(new Tooltip(GT._T("Open page in browser")));
+    final Button openPageButton =
+        new BrowserButton(
+            imageLoader,
+            ImageCollection.OPEN_URL,
+            GT._T("Open page in browser"),
+            () -> getCurrentUri(FilteredRecentChange::pageURI),
+            services.actionServices()::browse);
     openPageButton.setDisable(true);
-    openPageButton.setOnAction(
-        _ -> {
-          final FilteredRecentChange rc = currentRecentChange.get();
-          if (rc != null && rc.pageURI() != null) {
-            services.actionServices().browse(rc.pageURI().toString());
-          }
-        });
 
-    final Button openDiffButton = new Button();
-    openDiffButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
-    imageLoader
-        .getImageView(ImageCollection.DIFF, ImageSize.BUTTON)
-        .ifPresent(openDiffButton::setGraphic);
-    openDiffButton.setTooltip(new Tooltip(GT._T("Open modifications in browser")));
+    final Button openDiffButton =
+        new BrowserButton(
+            imageLoader,
+            ImageCollection.DIFF,
+            GT._T("Open modifications in browser"),
+            () -> getCurrentUri(FilteredRecentChange::diffURI),
+            services.actionServices()::browse);
     openDiffButton.setDisable(true);
-    openDiffButton.setOnAction(
-        _ -> {
-          final FilteredRecentChange rc = currentRecentChange.get();
-          if (rc != null && rc.diffURI() != null) {
-            services.actionServices().browse(rc.diffURI().toString());
-          }
-        });
 
     final Button goFirstButton = new Button();
     goFirstButton.setStyle(DefaultStyles.TOOLBAR_ELEMENT);
@@ -177,6 +168,12 @@ public final class RecentChangesDetailsToolBar extends ToolBar {
           goNextButton.setDisable(!hasRc);
           goLastButton.setDisable(!hasRc);
         });
+  }
+
+  @Nullable
+  private URI getCurrentUri(final Function<FilteredRecentChange, @Nullable URI> uri) {
+    final FilteredRecentChange rc = currentRecentChange.get();
+    return rc == null ? null : uri.apply(rc);
   }
 
   public ObjectProperty<@Nullable FilteredRecentChange> currentRecentChangeProperty() {

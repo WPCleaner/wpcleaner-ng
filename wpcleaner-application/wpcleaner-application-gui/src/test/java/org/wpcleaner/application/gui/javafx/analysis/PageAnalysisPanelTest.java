@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.scene.control.Button;
@@ -32,14 +31,8 @@ import org.wpcleaner.api.api.edit.Edit;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
 import org.wpcleaner.api.api.edit.EditQueryCommon;
 import org.wpcleaner.api.api.edit.MockApiEdit;
-import org.wpcleaner.api.api.query.Slot;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
-import org.wpcleaner.api.api.query.prop.revisions.Page;
-import org.wpcleaner.api.api.query.prop.revisions.Revision;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionSlot;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
-import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
 import org.wpcleaner.api.rest.lint.MockRestLint;
@@ -67,13 +60,6 @@ class PageAnalysisPanelTest extends JavaFxTest {
   private static final String COMMENT = "[[P:CS|Correction syntaxique]]";
   private static final String SUMMARY = COMMENT + " (Lien vers l’article)";
   private static final Duration MARK_TIMEOUT = Duration.ofSeconds(5);
-  private static final RevisionsQuery CONTENT_QUERY =
-      RevisionsQuery.emptyBuilder()
-          .properties(
-              Set.of(
-                  RevisionsParameters.Properties.CONTENT, RevisionsParameters.Properties.TIMESTAMP))
-          .slots(Set.of(Slot.MAIN))
-          .build();
 
   @Autowired private CurrentUserService currentUserService;
   @Autowired private ApplicationLogin guiLogin;
@@ -162,6 +148,9 @@ class PageAnalysisPanelTest extends JavaFxTest {
             "Separator",
             "CheckWikiDetectionsButton",
             "LinterErrorsButton",
+            "BrowserButton",
+            "BrowserButton",
+            "Separator",
             "PageSaveButton");
     Assertions.assertThat(callOnJavaFx(() -> getCheckWikiDetectionsButton(analysisWindow)))
         .satisfies(
@@ -332,9 +321,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
   }
 
   private void givenPageContent() {
-    mockApiRevisions
-        .givenRetrieveRevisionsByTitle(WIKI, List.of(TITLE), CONTENT_QUERY)
-        .willReturn(List.of(createPage()));
+    AnalysisPageExpectations.givenPageContent(mockApiRevisions, WIKI, TITLE, TEXT, TIMESTAMP);
   }
 
   private JavaFxAnalysisWindow openPage()
@@ -352,24 +339,6 @@ class PageAnalysisPanelTest extends JavaFxTest {
             find(analysisWindow, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class)
                 .filter(button -> !button.isDisable()));
     return analysisWindow;
-  }
-
-  private static Page createPage() {
-    final Revision revision =
-        new Revision(
-            null,
-            false,
-            null,
-            null,
-            123,
-            null,
-            null,
-            Map.of(Slot.MAIN.value, new RevisionSlot(TEXT, null, null, null)),
-            List.of(),
-            TIMESTAMP,
-            null,
-            null);
-    return new Page(false, 0, 1234, List.of(revision), TITLE);
   }
 
   private EditQueryByTitle createEdit(final String summary) {

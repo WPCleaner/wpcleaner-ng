@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.awt.ComponentOrientation;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.lib.image.ImageCollection;
@@ -64,6 +66,15 @@ public record WikiDefinition(
     } catch (final URISyntaxException _) {
       return null;
     }
+  }
+
+  public URI historyUri(final String title) {
+    return URI.create(
+        "https://%s%s?title=%s&action=history"
+            .formatted(
+                mainHost,
+                indexPath,
+                URLEncoder.encode(title.replace(' ', '_'), StandardCharsets.UTF_8)));
   }
 
   @Override
