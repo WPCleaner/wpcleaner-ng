@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -310,7 +309,7 @@ class LauncherRunnerTest {
                 display),
             new ReleaseStarter(directories, javaRuntimeFinder, processStarter, display),
             display,
-            Optional.of(createdShortcuts::incrementAndGet))
+            createdShortcuts::incrementAndGet)
         .run(List.of(arguments));
   }
 

@@ -39,7 +39,7 @@ public final class Shortcuts {
               new LinuxShortcutCreator(
                   executable,
                   userHome.resolve(".local").resolve("share").resolve("applications"),
-                  linuxDesktopFolder(userHome)));
+                  linuxDesktopFolder(userHome).orElse(null)));
       case MACOS ->
           macApplicationBundle(executable)
               .map(bundle -> new MacShortcutCreator(bundle, userHome.resolve("Desktop")));

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jspecify.annotations.Nullable;
 
 public final class LinuxShortcutCreator implements ShortcutCreator {
 
@@ -23,10 +24,10 @@ public final class LinuxShortcutCreator implements ShortcutCreator {
 
   private final Path executable;
   private final Path applicationsFolder;
-  private final Optional<Path> desktopFolder;
+  @Nullable private final Path desktopFolder;
 
   public LinuxShortcutCreator(
-      final Path executable, final Path applicationsFolder, final Optional<Path> desktopFolder) {
+      final Path executable, final Path applicationsFolder, @Nullable final Path desktopFolder) {
     this.executable = executable;
     this.applicationsFolder = applicationsFolder;
     this.desktopFolder = desktopFolder;
@@ -36,8 +37,9 @@ public final class LinuxShortcutCreator implements ShortcutCreator {
   public void create() throws IOException {
     Files.createDirectories(applicationsFolder);
     write(applicationsFolder.resolve(FILE_NAME));
-    if (desktopFolder.isPresent()) {
-      final Path desktopFile = desktopFolder.get().resolve(FILE_NAME);
+    final Path desktop = desktopFolder;
+    if (desktop != null) {
+      final Path desktopFile = desktop.resolve(FILE_NAME);
       write(desktopFile);
       trust(desktopFile);
     }

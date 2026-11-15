@@ -8,11 +8,11 @@ package org.wpcleaner.launcher;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.launcher.display.ConsoleDisplay;
 import org.wpcleaner.launcher.display.LauncherDisplay;
 import org.wpcleaner.launcher.display.SwingDisplay;
@@ -55,8 +55,8 @@ public final class Launcher {
     int exitCode = 0;
     try {
       configureLogging(directories);
-      final Optional<ShortcutCreator> shortcutCreator =
-          Shortcuts.forOperatingSystem(platform.operatingSystem());
+      final ShortcutCreator shortcutCreator =
+          Shortcuts.forOperatingSystem(platform.operatingSystem()).orElse(null);
       if (installBot) {
         exitCode = installBot(platform, directories, display) ? 0 : 1;
       } else if (List.of(args).contains(CREATE_SHORTCUT_OPTION)) {
@@ -101,12 +101,12 @@ public final class Launcher {
   }
 
   private static void createShortcut(
-      final Optional<ShortcutCreator> shortcutCreator, final LauncherDisplay display) {
-    if (shortcutCreator.isEmpty()) {
+      @Nullable final ShortcutCreator shortcutCreator, final LauncherDisplay display) {
+    if (shortcutCreator == null) {
       display.error(GT._T("Shortcuts can only be created by the installed launcher."));
       return;
     }
-    LauncherRunner.createShortcut(shortcutCreator.get(), display);
+    LauncherRunner.createShortcut(shortcutCreator, display);
   }
 
   private static void configureLogging(final LauncherDirectories directories) throws IOException {

@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.launcher.display.LauncherDisplay;
 import org.wpcleaner.launcher.platform.LauncherDirectories;
 import org.wpcleaner.launcher.platform.Platform;
@@ -57,7 +58,7 @@ public final class ReleaseUpdater {
                 directories.lockFile(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
         FileLock _ = channel.lock()) {
       final LauncherState state = stateStore.load();
-      final Optional<InstalledRelease> installed = releaseStore.find(state.installedVersion());
+      final InstalledRelease installed = releaseStore.find(state.installedVersion()).orElse(null);
       final ReleaseManifest manifest;
       try {
         manifest = repository.latestManifest();
@@ -72,7 +73,7 @@ public final class ReleaseUpdater {
       final Optional<ReleaseAsset> asset = manifest.asset(platform);
       final Optional<String> obstacle = obstacle(manifest, asset.isPresent());
       if (obstacle.isPresent() || asset.isEmpty()) {
-        notifyObstacle(manifest, state, installed.isPresent(), obstacle.orElseThrow());
+        notifyObstacle(manifest, state, installed != null, obstacle.orElseThrow());
         return new UpdateResult(installed, obstacle.orElseThrow());
       }
       return install(manifest, asset.get(), state, installed);
@@ -82,9 +83,9 @@ public final class ReleaseUpdater {
   private static boolean isUpdate(
       final ReleaseManifest manifest,
       final LauncherState state,
-      final Optional<InstalledRelease> installed) {
-    return installed.isEmpty()
-        || (manifest.releaseVersion().isNewerThan(installed.get().manifest().releaseVersion())
+      @Nullable final InstalledRelease installed) {
+    return installed == null
+        || (manifest.releaseVersion().isNewerThan(installed.manifest().releaseVersion())
             && !manifest.version().equals(state.rejectedVersion()));
   }
 
@@ -116,7 +117,7 @@ public final class ReleaseUpdater {
       final ReleaseManifest manifest,
       final ReleaseAsset asset,
       final LauncherState state,
-      final Optional<InstalledRelease> installed)
+      @Nullable final InstalledRelease installed)
       throws IOException {
     final String status = GT._T("Downloading WPCleaner NG %s", manifest.version());
     display.progress(status, 0, -1);
@@ -141,6 +142,6 @@ public final class ReleaseUpdater {
             .flatMap(Stream::ofNullable)
             .toList());
     LOGGER.info("Installed version %s".formatted(manifest.version()));
-    return new UpdateResult(Optional.of(release), null);
+    return new UpdateResult(release, null);
   }
 }

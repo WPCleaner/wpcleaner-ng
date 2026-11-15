@@ -8,10 +8,11 @@ package org.wpcleaner.launcher;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jspecify.annotations.Nullable;
 import org.wpcleaner.launcher.display.LauncherDisplay;
+import org.wpcleaner.launcher.install.InstalledRelease;
 import org.wpcleaner.launcher.install.LauncherState;
 import org.wpcleaner.launcher.install.ReleaseUpdater;
 import org.wpcleaner.launcher.install.StateStore;
@@ -29,7 +30,7 @@ public final class LauncherRunner {
   private final ReleaseUpdater releaseUpdater;
   private final ReleaseStarter releaseStarter;
   private final LauncherDisplay display;
-  private final Optional<ShortcutCreator> shortcutCreator;
+  @Nullable private final ShortcutCreator shortcutCreator;
   private final StateStore stateStore;
 
   public LauncherRunner(
@@ -37,7 +38,7 @@ public final class LauncherRunner {
       final ReleaseUpdater releaseUpdater,
       final ReleaseStarter releaseStarter,
       final LauncherDisplay display,
-      final Optional<ShortcutCreator> shortcutCreator) {
+      @Nullable final ShortcutCreator shortcutCreator) {
     this.directories = directories;
     this.releaseUpdater = releaseUpdater;
     this.releaseStarter = releaseStarter;
@@ -49,7 +50,8 @@ public final class LauncherRunner {
   public void run(final List<String> arguments) throws IOException, InterruptedException {
     Files.createDirectories(directories.logs());
     UpdateResult result = releaseUpdater.update();
-    while (result.release().isEmpty()) {
+    InstalledRelease release = result.release();
+    while (release == null) {
       if (!display.confirm(
           GT._T(
               "WPCleaner NG could not be installed.\n%s\n\nDo you want to try again?",
@@ -57,9 +59,10 @@ public final class LauncherRunner {
         return;
       }
       result = releaseUpdater.update();
+      release = result.release();
     }
     proposeShortcut();
-    releaseStarter.start(result.release().get(), arguments);
+    releaseStarter.start(release, arguments);
   }
 
   public static void createShortcut(
@@ -74,12 +77,13 @@ public final class LauncherRunner {
 
   private void proposeShortcut() throws IOException {
     final LauncherState state = stateStore.load();
-    if (shortcutCreator.isEmpty() || state.shortcutProposed()) {
+    final ShortcutCreator creator = shortcutCreator;
+    if (creator == null || state.shortcutProposed()) {
       return;
     }
     stateStore.save(state.withShortcutProposed());
     if (display.confirm(GT._T("Do you want to add a shortcut to WPCleaner NG on your desktop?"))) {
-      createShortcut(shortcutCreator.get(), display);
+      createShortcut(creator, display);
     }
   }
 }
