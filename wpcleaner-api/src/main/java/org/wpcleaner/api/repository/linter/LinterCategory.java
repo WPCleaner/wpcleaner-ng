@@ -5,4 +5,11 @@ package org.wpcleaner.api.repository.linter;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public record LinterCategory(String name, LinterPriority priority) {}
+import org.jspecify.annotations.Nullable;
+
+public record LinterCategory(String name, LinterPriority priority, @Nullable String label) {
+
+  public LinterCategory withLabel(@Nullable final String newLabel) {
+    return new LinterCategory(name, priority, newLabel);
+  }
+}

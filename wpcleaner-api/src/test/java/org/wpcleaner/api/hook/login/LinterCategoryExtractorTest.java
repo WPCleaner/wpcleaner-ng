@@ -48,9 +48,9 @@ class LinterCategoryExtractorTest {
                 .map(name -> repository.findCategory(WIKI, name))
                 .toList())
         .containsExactly(
-            Optional.of(new LinterCategory("duplicate-ids", LinterPriority.HIGH)),
-            Optional.of(new LinterCategory("missing-end-tag", LinterPriority.LOW)),
-            Optional.of(new LinterCategory("obsolete-tag", LinterPriority.LOW)),
+            Optional.of(new LinterCategory("duplicate-ids", LinterPriority.HIGH, null)),
+            Optional.of(new LinterCategory("missing-end-tag", LinterPriority.LOW, null)),
+            Optional.of(new LinterCategory("obsolete-tag", LinterPriority.LOW, null)),
             Optional.empty());
     Assertions.assertThat(repository.findCategory(WikipediaDefinitions.EN, "duplicate-ids"))
         .isEmpty();

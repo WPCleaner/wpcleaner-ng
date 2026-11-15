@@ -31,6 +31,29 @@ public class LinterCategoryRepository implements LogoutHook {
     }
   }
 
+  public void setLabels(final WikiDefinition wiki, final Map<String, String> labels) {
+    categoriesLock.lock();
+    try {
+      categories.computeIfPresent(
+          wiki,
+          (_, wikiCategories) ->
+              wikiCategories.stream()
+                  .map(category -> category.withLabel(labels.get(category.name())))
+                  .toList());
+    } finally {
+      categoriesLock.unlock();
+    }
+  }
+
+  public boolean hasCategories(final WikiDefinition wiki) {
+    categoriesLock.lock();
+    try {
+      return !categories.getOrDefault(wiki, List.of()).isEmpty();
+    } finally {
+      categoriesLock.unlock();
+    }
+  }
+
   public Optional<LinterCategory> findCategory(final WikiDefinition wiki, final String name) {
     categoriesLock.lock();
     try {

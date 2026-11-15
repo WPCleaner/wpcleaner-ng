@@ -87,8 +87,9 @@ final class LinterErrorsWindow extends JavaFxWindow<JavaFxAnalysisWindowServices
         .getColumns()
         .addAll(
             List.of(
-                new TextTableColumn<>(GT._T("Type"), error -> error.error().type()),
-                new TextTableColumn<>(GT._T("Priority"), error -> getPriority(error.priority())),
+                new TextTableColumn<>(GT._T("Type"), LinterError::label),
+                new TextTableColumn<>(
+                    GT._T("Priority"), error -> getPriority(error.category().priority())),
                 new TextTableColumn<>(GT._T("Start"), error -> getPosition(error.error().begin())),
                 new TextTableColumn<>(GT._T("End"), error -> getPosition(error.error().end())),
                 new TextTableColumn<>(GT._T("Parameters"), error -> getParameters(error.error())),

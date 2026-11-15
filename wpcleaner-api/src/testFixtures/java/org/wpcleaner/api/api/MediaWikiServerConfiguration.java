@@ -17,6 +17,7 @@ import org.wpcleaner.api.api.parse.MockApiParse;
 import org.wpcleaner.api.api.query.list.random.MockApiRandom;
 import org.wpcleaner.api.api.query.list.tags.MockApiTags;
 import org.wpcleaner.api.api.query.list.users.MockApiUsers;
+import org.wpcleaner.api.api.query.meta.allmessages.MockApiAllMessages;
 import org.wpcleaner.api.api.query.meta.siteinfo.MockApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.langlinks.MockApiLanglinks;
@@ -52,6 +53,11 @@ public class MediaWikiServerConfiguration {
   @Bean
   public MockRestLint mockRestLint(final MockRestServiceServer mediaWikiServer) {
     return new MockRestLint(mediaWikiServer);
+  }
+
+  @Bean
+  public MockApiAllMessages mockApiAllMessages(final MockRestServiceServer mediaWikiServer) {
+    return new MockApiAllMessages(mediaWikiServer);
   }
 
   @Bean

@@ -37,7 +37,7 @@ public class LinterCategoryExtractor {
                         .flatMap(
                             priority ->
                                 entry.getValue().stream()
-                                    .map(name -> new LinterCategory(name, priority))))
+                                    .map(name -> new LinterCategory(name, priority, null))))
             .toList());
   }
 }

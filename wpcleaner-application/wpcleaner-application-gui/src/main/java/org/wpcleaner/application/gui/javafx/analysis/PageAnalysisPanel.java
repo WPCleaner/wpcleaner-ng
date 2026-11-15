@@ -215,7 +215,7 @@ public final class PageAnalysisPanel extends StackPane {
             .flatMap(
                 error ->
                     services.linterCategories().findCategory(wiki, error.type()).stream()
-                        .map(category -> new LinterError(error, category.priority())))
+                        .map(category -> new LinterError(error, category)))
             .toList();
       }
     }

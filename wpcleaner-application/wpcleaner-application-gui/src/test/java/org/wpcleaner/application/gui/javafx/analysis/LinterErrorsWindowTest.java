@@ -13,10 +13,12 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 import javafx.scene.control.TableView;
 import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.wpcleaner.api.repository.linter.LinterCategory;
 import org.wpcleaner.api.repository.linter.LinterPriority;
 import org.wpcleaner.api.rest.lint.LintError;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
@@ -49,7 +51,7 @@ class LinterErrorsWindowTest extends JavaFxTest {
         .isEqualTo("Errors detected by Linter in Paris");
     Assertions.assertThat(callOnJavaFx(() -> getDisplayedErrors(window)))
         .containsExactly(
-            List.of("obsolete-tag", "Low", "0", "22", "name=center", ""),
+            List.of("Balises HTML obsolètes", "Low", "0", "22", "name=center", ""),
             List.of("missing-end-tag", "Medium", "23", "", "inTable=false;name=b", "Modèle:B"),
             List.of("duplicate-ids", "High", "", "", "", "Multiple templates"),
             List.of("stripped-tag", "Low", "27", "27", "", ""),
@@ -119,34 +121,40 @@ class LinterErrorsWindowTest extends JavaFxTest {
     return List.of(
         new LinterError(
             new LintError("obsolete-tag", List.of(0, 22, 8, 9), Map.of("name", "center"), null),
-            LinterPriority.LOW),
+            createCategory(LinterPriority.LOW, "Balises HTML obsolètes")),
         new LinterError(
             new LintError(
                 "missing-end-tag",
                 Arrays.asList(23, null),
                 Map.of("name", "b", "inTable", false),
                 new LintError.TemplateInfo(null, "Modèle:B")),
-            LinterPriority.MEDIUM),
+            createCategory(LinterPriority.MEDIUM, null)),
         new LinterError(
             new LintError(
                 "duplicate-ids", List.of(), Map.of(), new LintError.TemplateInfo(true, null)),
-            LinterPriority.HIGH),
+            createCategory(LinterPriority.HIGH, null)),
         new LinterError(
             new LintError(
                 "stripped-tag",
                 List.of(TEXT.length(), TEXT.length()),
                 Map.of(),
                 new LintError.TemplateInfo(false, null)),
-            LinterPriority.LOW),
+            createCategory(LinterPriority.LOW, null)),
         new LinterError(
             new LintError(
                 "misnested-tag", List.of(0, 1), Map.of(), new LintError.TemplateInfo(null, null)),
-            LinterPriority.MEDIUM));
+            createCategory(LinterPriority.MEDIUM, null)));
+  }
+
+  private static LinterCategory createCategory(
+      final LinterPriority priority, @Nullable final String label) {
+    return new LinterCategory("category", priority, label);
   }
 
   private static LinterError createError(final String type, final int begin, final int end) {
     return new LinterError(
-        new LintError(type, List.of(begin, end), Map.of(), null), LinterPriority.LOW);
+        new LintError(type, List.of(begin, end), Map.of(), null),
+        createCategory(LinterPriority.LOW, null));
   }
 
   private PageAnalysisArea createArea()
