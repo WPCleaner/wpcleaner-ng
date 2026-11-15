@@ -7,6 +7,7 @@ package org.wpcleaner.api.analysis;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import org.wpcleaner.api.analysis.behaviorswitch.BehaviorSwitchElement;
 import org.wpcleaner.api.analysis.category.CategoryElement;
 import org.wpcleaner.api.analysis.comment.CommentElement;
@@ -62,6 +63,7 @@ public final class PageAnalysis {
   private final WikiContainer wikiElements;
   private final TimelineContainer timelines;
   private final List<Interwiki> interwikis;
+  private final Function<String, PageAnalysis> otherTextAnalyzer;
 
   public PageAnalysis(
       final WikiDefinition wiki,
@@ -98,6 +100,22 @@ public final class PageAnalysis {
             protocolRepository);
     this.timelines = new TimelineContainer(this.text, preprocessor);
     this.interwikis = interwikiRepository.getInterwikis(wiki);
+    this.otherTextAnalyzer =
+        otherText ->
+            new PageAnalysis(
+                wiki,
+                title,
+                otherText,
+                extensionTagRepository,
+                interwikiRepository,
+                magicLinkRepository,
+                magicWordRepository,
+                namespaceRepository,
+                protocolRepository);
+  }
+
+  public PageAnalysis withText(final String otherText) {
+    return otherTextAnalyzer.apply(otherText);
   }
 
   public List<Interwiki> getInterwikis() {

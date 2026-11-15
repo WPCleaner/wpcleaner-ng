@@ -197,8 +197,8 @@ class CheckWikiConfigurationLoaderTest {
         """
          error_048_prio_frwiki=0 END
          error_048_whitelistpage_frwiki=Liste blanche 048 END
-         error_001_prio_frwiki=3 END
-         error_001_whitelistpage_frwiki=Liste blanche 001 END
+         error_002_prio_frwiki=3 END
+         error_002_whitelistpage_frwiki=Liste blanche 002 END
         """,
         Map.of());
 
@@ -211,7 +211,7 @@ class CheckWikiConfigurationLoaderTest {
     Assertions.assertThat(configuration.getAlgorithm(48))
         .map(CheckAlgorithmConfiguration::whitelist)
         .hasValue(Set.of());
-    Assertions.assertThat(configuration.getAlgorithm(1))
+    Assertions.assertThat(configuration.getAlgorithm(2))
         .map(CheckAlgorithmConfiguration::whitelist)
         .hasValue(Set.of());
   }
