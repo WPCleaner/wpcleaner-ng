@@ -33,6 +33,7 @@ import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisCheckPane;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.lib.check.CheckAlgorithm;
+import org.wpcleaner.lib.check.server.CheckWikiDetection;
 
 public final class PageAnalysisPanel extends StackPane {
 
@@ -68,6 +69,8 @@ public final class PageAnalysisPanel extends StackPane {
         .getItems()
         .addAll(
             new Separator(),
+            new CheckWikiDetectionsButton(
+                imageLoader, getWiki().checkWikiCode() != null, this::retrieveCheckWikiDetections),
             new PageSaveButton(
                 imageLoader, services.user().getCurrentUser().demo(), this::savePage));
     initialize();
@@ -151,6 +154,41 @@ public final class PageAnalysisPanel extends StackPane {
   private void updateSummary() {
     summaryPane.updateAutomaticSummary(
         services.checkWikiSummary().create(getWiki(), checkPane.getFixedAlgorithms()));
+  }
+
+  private void retrieveCheckWikiDetections() {
+    owner.executeAsync(
+        new RetrieveCheckWikiDetectionsTask(),
+        this::displayCheckWikiDetections,
+        this::checkWikiDetectionsWithError);
+  }
+
+  private final class RetrieveCheckWikiDetectionsTask
+      implements LongRunningTask<List<CheckWikiDetection>> {
+
+    @Override
+    public List<CheckWikiDetection> call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving errors detected by Check Wiki"))) {
+        return services.checkWikiServer().retrieveDetections(getWiki(), pageName);
+      }
+    }
+  }
+
+  private void displayCheckWikiDetections(final List<CheckWikiDetection> detections) {
+    if (detections.isEmpty()) {
+      owner.showInformation(
+          GT._T("Check Wiki"), null, GT._T("No errors are currently detected by Check Wiki."));
+      return;
+    }
+    new CheckWikiDetectionsWindow(
+        services, owner.getStage(), pageName, detections, checkPane.getArea());
+  }
+
+  private void checkWikiDetectionsWithError(final Exception e) {
+    owner.showWarning(
+        GT._T("Check Wiki"),
+        GT._T(
+            "Error retrieving errors detected by Check Wiki: %s", String.valueOf(e.getMessage())));
   }
 
   private void savePage() {

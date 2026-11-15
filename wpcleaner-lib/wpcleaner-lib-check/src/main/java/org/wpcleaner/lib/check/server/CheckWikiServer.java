@@ -28,6 +28,8 @@ public class CheckWikiServer {
 
   public static final String BOTS_URL =
       "https://checkwiki.toolforge.org/cgi-bin/checkwiki_bots.cgi";
+  public static final String ARTICLE_URL =
+      "https://checkwiki.toolforge.org/cgi-bin/checkarticle.cgi";
 
   private static final int MAX_ERROR_NUMBER_WITH_LIST = 500;
   private static final String TITLE_PREFIX = "title=";
@@ -67,17 +69,37 @@ public class CheckWikiServer {
     return parameters;
   }
 
+  public static MultiValueMap<String, String> createArticleParameters(
+      final WikiDefinition wiki, final String title) {
+    final MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+    parameters.add("project", getProject(wiki));
+    parameters.add("article", title);
+    return parameters;
+  }
+
   public List<String> retrievePages(
       final WikiDefinition wiki, final int errorNumber, final int limit) {
     if (wiki.checkWikiCode() == null) {
       return List.of();
     }
-    return Optional.ofNullable(post(createListParameters(wiki, errorNumber, limit))).stream()
+    return Optional.ofNullable(post(BOTS_URL, createListParameters(wiki, errorNumber, limit)))
+        .stream()
         .flatMap(String::lines)
         .flatMap(line -> Arrays.stream(ELEMENT_SEPARATOR.split(line, -1)))
         .filter(element -> element.startsWith(TITLE_PREFIX))
         .map(element -> element.substring(TITLE_PREFIX.length()).trim())
         .filter(title -> !title.isEmpty())
+        .toList();
+  }
+
+  public List<CheckWikiDetection> retrieveDetections(
+      final WikiDefinition wiki, final String title) {
+    if (wiki.checkWikiCode() == null) {
+      return List.of();
+    }
+    return Optional.ofNullable(post(ARTICLE_URL, createArticleParameters(wiki, title))).stream()
+        .flatMap(String::lines)
+        .flatMap(line -> CheckWikiDetection.parse(line).stream())
         .toList();
   }
 
@@ -94,16 +116,17 @@ public class CheckWikiServer {
             .filter(algorithm -> !algorithmRegistry.isBotOnly(wiki, algorithm))
             .toList();
     markedAlgorithms.forEach(
-        algorithm -> post(createMarkParameters(wiki, algorithm.number(), analysis.getTitle())));
+        algorithm ->
+            post(BOTS_URL, createMarkParameters(wiki, algorithm.number(), analysis.getTitle())));
     return markedAlgorithms;
   }
 
   @Nullable
-  private String post(final MultiValueMap<String, String> parameters) {
+  private String post(final String url, final MultiValueMap<String, String> parameters) {
     return clientBuilder
         .build()
         .post()
-        .uri(BOTS_URL)
+        .uri(url)
         .header(HttpHeaders.USER_AGENT, userAgent.getValue())
         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
         .body(parameters)
