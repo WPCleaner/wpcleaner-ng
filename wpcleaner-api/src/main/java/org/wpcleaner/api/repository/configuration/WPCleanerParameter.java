@@ -12,10 +12,12 @@ import java.util.stream.Stream;
 
 public enum WPCleanerParameter {
   ABBREVIATIONS("general_abbreviations", true, true, true),
+  ANCHOR_TEMPLATES("general_anchor_templates", true, true, true),
   APOSTROPHE_TEMPLATE("general_apostrophe_template", true, true, false),
   CHECK_WIKI_COMMENT("check_wiki_comment", true, false, false),
   CHECK_WIKI_PROJECT_PAGE("check_wiki_project_page", true, false, false),
   CHECK_WIKI_TRANSLATION_PAGE("check_wiki_translation_page", true, false, false),
+  CLOSE_SELF_CLOSING_TAGS("close_self_closing_tags", true, false, false),
   TEMPLATE_GROUPS("general_template_groups", true, true, true);
 
   public final String value;

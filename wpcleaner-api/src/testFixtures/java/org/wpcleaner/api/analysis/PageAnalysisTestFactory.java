@@ -137,6 +137,8 @@ public final class PageAnalysisTestFactory {
             "imagemap",
             "section",
             "mapframe",
+            "source",
+            "syntaxhighlight",
             "timeline")
         .forEach(name -> extensionTagRepository.addExtensionTag(WIKI, new ExtensionTag(name)));
     return extensionTagRepository;
