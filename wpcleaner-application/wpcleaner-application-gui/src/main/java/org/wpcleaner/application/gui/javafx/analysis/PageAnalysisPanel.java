@@ -5,9 +5,11 @@ package org.wpcleaner.application.gui.javafx.analysis;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.net.URI;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -30,12 +32,17 @@ import org.wpcleaner.api.progress.ProgressTracker;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
+import org.wpcleaner.application.gui.javafx.core.control.BrowserButton;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisCheckPane;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.server.CheckWikiDetection;
+import org.wpcleaner.lib.image.ImageCollection;
 
 public final class PageAnalysisPanel extends StackPane {
+
+  public static final String OPEN_HISTORY_ID = "open-history";
+  public static final String OPEN_PAGE_ID = "open-page";
 
   private final JavaFxWindow<?> owner;
   private final JavaFxAnalysisWindowServices services;
@@ -72,9 +79,34 @@ public final class PageAnalysisPanel extends StackPane {
             new CheckWikiDetectionsButton(
                 imageLoader, getWiki().checkWikiCode() != null, this::retrieveCheckWikiDetections),
             new LinterErrorsButton(imageLoader, this::retrieveLinterErrors),
+            createBrowserButton(
+                imageLoader,
+                OPEN_PAGE_ID,
+                ImageCollection.OPEN_URL,
+                GT._T("Open page in browser"),
+                () -> getWiki().pageUri(pageName)),
+            createBrowserButton(
+                imageLoader,
+                OPEN_HISTORY_ID,
+                ImageCollection.HISTORY,
+                GT._T("Open page history in browser"),
+                () -> getWiki().historyUri(pageName)),
+            new Separator(),
             new PageSaveButton(
                 imageLoader, services.user().getCurrentUser().demo(), this::savePage));
     initialize();
+  }
+
+  private BrowserButton createBrowserButton(
+      final JavaFxImageLoader imageLoader,
+      final String id,
+      final ImageCollection image,
+      final String tooltip,
+      final Supplier<@Nullable URI> uri) {
+    final BrowserButton button =
+        new BrowserButton(imageLoader, image, tooltip, uri, services.actionServices()::browse);
+    button.setId(id);
+    return button;
   }
 
   private void initialize() {

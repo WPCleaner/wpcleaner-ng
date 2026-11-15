@@ -37,6 +37,14 @@ class WikiDefinitionTest {
     Assertions.assertThat(wiki.restUrl()).isEqualTo("https://wiki.example.org/rest.php");
   }
 
+  @DisplayName("historyUri uses the index entry point with the encoded title")
+  @Test
+  void historyUri() {
+    Assertions.assertThat(WikipediaDefinitions.FR.historyUri("Rock & roll/Café"))
+        .hasToString(
+            "https://fr.wikipedia.org/w/index.php?title=Rock_%26_roll%2FCaf%C3%A9&action=history");
+  }
+
   @DisplayName("Paths without leading separator are completed")
   @Test
   void pathsWithoutLeadingSeparator() {
