@@ -65,6 +65,9 @@ It writes one `.wiki` file per page and prints title, last revision timestamp an
   ```
   If a file is missing, search Commons (`list=search`, `srnamespace=6`) for the right capitalization;
   if it isn't on Commons at all, leave the image out and tell the maintainer.
+- `<code>` doesn't stop MediaWiki from parsing wikitext: `<code>{{X|a}}</code>` calls the template and
+  a `|` breaks a table cell. Wrap literal wiki syntax (`{{`, `}}`, `|`, `[[`, `]]`, `''`, `~~~`) in
+  `<nowiki>`, e.g. `<code><nowiki>{{X|a}}</nowiki></code>`. No escaping is needed inside `<syntaxhighlight>`.
 - List the screenshots the new content needs; they can't be produced from here.
 
 ## Report

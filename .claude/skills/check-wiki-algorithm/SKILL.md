@@ -98,6 +98,10 @@ In the scratchpad only (the maintainer publishes):
   `true`/`false` as booleans (other unquoted values are strings, unlike PyYAML).
 - A row for the error in the parameter table of `Wikipedia:WPCleanerNG/Configuration`.
 
+`<code>` doesn't stop MediaWiki from parsing wikitext: `<code>{{X|a}}</code>` calls the template and a
+`|` breaks a table cell. Wrap literal wiki syntax (`{{`, `}}`, `|`, `[[`, `]]`, `''`, `~~~`) in `<nowiki>`,
+e.g. `<code><nowiki>{{X|a}}</nowiki></code>`. No escaping is needed inside the YAML `<syntaxhighlight>` block.
+
 ## Report
 
 Summarize the behavior implemented, the differences with the legacy algorithm, the tests, the
