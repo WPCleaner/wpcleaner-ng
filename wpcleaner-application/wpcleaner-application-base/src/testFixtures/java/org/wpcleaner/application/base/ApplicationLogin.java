@@ -25,7 +25,7 @@ import org.wpcleaner.api.api.query.list.users.MockApiUsers;
 import org.wpcleaner.api.api.query.list.users.User;
 import org.wpcleaner.api.api.query.meta.siteinfo.MockApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
-import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
+import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoTestFactory;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.hook.login.LoginHook;
@@ -131,7 +131,12 @@ public final class ApplicationLogin {
     final String compactUsername = compactUsername(username);
     mockApiSiteInfo
         .givenRequestSiteInfo(wiki, loginHook.getSiteInfoProperties(), null, null, null)
-        .willReturn(createSiteInfo(data.namespaces()));
+        .willReturn(
+            SiteInfoTestFactory.createSiteInfo(
+                getNamespacesById(data.namespaces()),
+                data.linterCategories().isEmpty()
+                    ? null
+                    : SiteInfoTestFactory.createGeneral(data.linterCategories(), Map.of())));
     final Set<TagsParameters.Properties> tagsProperties = loginHook.getTagsProperties();
     if (!tagsProperties.isEmpty()) {
       mockApiTags
@@ -167,37 +172,10 @@ public final class ApplicationLogin {
     return atSignIndex < 0 ? username : username.substring(0, atSignIndex);
   }
 
-  private static SiteInfo createSiteInfo(final List<Namespace> namespaces) {
-    final Map<String, Namespace> namespacesById =
-        namespaces.stream()
-            .collect(
-                Collectors.toMap(namespace -> String.valueOf(namespace.id()), Function.identity()));
-    return new SiteInfo(
-        List.of(),
-        Map.of(),
-        List.of(),
-        List.of(),
-        List.of(),
-        List.of(),
-        List.of(),
-        null,
-        List.of(),
-        List.of(),
-        Map.of(),
-        List.of(),
-        List.of(),
-        List.of(),
-        namespacesById,
-        List.of(),
-        null,
-        null,
-        List.of(),
-        List.of(),
-        List.of(),
-        null,
-        null,
-        List.of(),
-        List.of());
+  private static Map<String, Namespace> getNamespacesById(final List<Namespace> namespaces) {
+    return namespaces.stream()
+        .collect(
+            Collectors.toMap(namespace -> String.valueOf(namespace.id()), Function.identity()));
   }
 
   private static User createUser(
@@ -214,10 +192,12 @@ public final class ApplicationLogin {
       List<String> rights,
       @Nullable String userConfiguration,
       @Nullable String checkWikiConfiguration,
-      Map<Integer, String> parametersPages) {
+      Map<Integer, String> parametersPages,
+      Map<String, List<String>> linterCategories) {
 
     public LoginData {
       parametersPages = Map.copyOf(parametersPages);
+      linterCategories = Map.copyOf(linterCategories);
     }
 
     public LoginData(
@@ -225,7 +205,7 @@ public final class ApplicationLogin {
         final List<Tag> tags,
         final List<String> groups,
         final List<String> rights) {
-      this(namespaces, tags, groups, rights, null, null, Map.of());
+      this(namespaces, tags, groups, rights, null, null, Map.of(), Map.of());
     }
 
     public static LoginData of(final List<Namespace> namespaces) {
@@ -234,17 +214,50 @@ public final class ApplicationLogin {
 
     public LoginData withUserConfiguration(final String configuration) {
       return new LoginData(
-          namespaces, tags, groups, rights, configuration, checkWikiConfiguration, parametersPages);
+          namespaces,
+          tags,
+          groups,
+          rights,
+          configuration,
+          checkWikiConfiguration,
+          parametersPages,
+          linterCategories);
     }
 
     public LoginData withCheckWikiConfiguration(final String configuration) {
       return new LoginData(
-          namespaces, tags, groups, rights, userConfiguration, configuration, parametersPages);
+          namespaces,
+          tags,
+          groups,
+          rights,
+          userConfiguration,
+          configuration,
+          parametersPages,
+          linterCategories);
     }
 
     public LoginData withParametersPages(final Map<Integer, String> pages) {
       return new LoginData(
-          namespaces, tags, groups, rights, userConfiguration, checkWikiConfiguration, pages);
+          namespaces,
+          tags,
+          groups,
+          rights,
+          userConfiguration,
+          checkWikiConfiguration,
+          pages,
+          linterCategories);
+    }
+
+    public LoginData withLinterCategories(final Map<String, List<String>> categories) {
+      return new LoginData(
+          namespaces,
+          tags,
+          groups,
+          rights,
+          userConfiguration,
+          checkWikiConfiguration,
+          parametersPages,
+          categories);
     }
   }
 }

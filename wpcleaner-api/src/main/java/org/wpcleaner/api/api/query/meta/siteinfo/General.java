@@ -8,6 +8,7 @@ package org.wpcleaner.api.api.query.meta.siteinfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import java.util.List;
 import java.util.Map;
 import org.jspecify.annotations.Nullable;
 
@@ -19,6 +20,7 @@ public record General(
     @JsonProperty("dbversion") @Nullable String dbVersion,
     @JsonProperty("generator") @Nullable String generator,
     @JsonProperty("lang") @Nullable String lang,
+    @JsonProperty("linter") @JsonSetter(nulls = Nulls.AS_EMPTY) Map<String, List<String>> linter,
     @JsonProperty("logo") @Nullable String logo,
     @JsonProperty("magiclinks") @JsonSetter(nulls = Nulls.AS_EMPTY) Map<String, Boolean> magicLinks,
     @JsonProperty("mainpage") @Nullable String mainPage,

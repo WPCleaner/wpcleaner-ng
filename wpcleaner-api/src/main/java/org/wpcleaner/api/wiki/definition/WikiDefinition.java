@@ -32,6 +32,7 @@ public record WikiDefinition(
     @Nullable WikiWarning warning) {
 
   private static final String PATH_SEPARATOR = "/";
+  private static final String REST = "rest.php";
 
   public WikiDefinition {
     apiPath = withLeadingSeparator(apiPath);
@@ -45,6 +46,11 @@ public record WikiDefinition(
 
   public String apiUrl() {
     return "https://%s%s".formatted(mainHost, apiPath);
+  }
+
+  public String restUrl() {
+    return "https://%s%s%s"
+        .formatted(mainHost, apiPath.substring(0, apiPath.lastIndexOf(PATH_SEPARATOR) + 1), REST);
   }
 
   public String pageUrl(final String title) {

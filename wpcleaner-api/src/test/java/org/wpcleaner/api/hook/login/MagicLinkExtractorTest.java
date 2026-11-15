@@ -5,14 +5,12 @@ package org.wpcleaner.api.hook.login;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.List;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.wpcleaner.api.api.query.meta.siteinfo.General;
-import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfo;
+import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoTestFactory;
 import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magiclink.MagicLinkType;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
@@ -29,26 +27,11 @@ class MagicLinkExtractorTest {
     final MagicLinkRepository repository = new MagicLinkRepository();
     final MagicLinkExtractor extractor = new MagicLinkExtractor(repository);
     final General general =
-        new General(
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            Map.of("ISBN", true, "PMID", false, "RFC", true, "OTHER", true),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+        SiteInfoTestFactory.createGeneral(
+            Map.of(), Map.of("ISBN", true, "PMID", false, "RFC", true, "OTHER", true));
 
     // WHEN
-    extractor.extract(WIKI, createSiteInfo(general));
+    extractor.extract(WIKI, SiteInfoTestFactory.createSiteInfo(Map.of(), general));
 
     // THEN
     Assertions.assertThat(repository.getMagicLinks(WIKI))
@@ -63,16 +46,9 @@ class MagicLinkExtractorTest {
     final MagicLinkExtractor extractor = new MagicLinkExtractor(repository);
 
     // WHEN
-    extractor.extract(WIKI, createSiteInfo(null));
+    extractor.extract(WIKI, SiteInfoTestFactory.createSiteInfo(Map.of(), null));
 
     // THEN
     Assertions.assertThat(repository.getMagicLinks(WIKI)).isEmpty();
-  }
-
-  private static SiteInfo createSiteInfo(@Nullable final General general) {
-    return new SiteInfo(
-        List.of(), Map.of(), List.of(), List.of(), List.of(), List.of(), List.of(), general,
-        List.of(), List.of(), Map.of(), List.of(), List.of(), List.of(), Map.of(), List.of(), null,
-        null, List.of(), List.of(), List.of(), null, null, List.of(), List.of());
   }
 }

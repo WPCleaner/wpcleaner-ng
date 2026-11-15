@@ -39,6 +39,7 @@ public enum ImageCollection {
   LANGUAGE_ADD("commons/add-language.png"),
   LANGUAGE_EN("commons/nuvola-english-language-flag.png"),
   LANGUAGE_FR("commons/nuvola-france-flag.png"),
+  LINTER("commons/linter-logo-v2.png"),
   LIST_ADD("commons/list-add.png"),
   LIST_REMOVE("commons/list-remove.png"),
   LOGO_COMMONS("commons/commons-logo.png"),

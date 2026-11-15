@@ -6,14 +6,11 @@ package org.wpcleaner.application.gui.javafx.analysis;
  */
 
 import java.util.List;
-import java.util.function.Function;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -23,6 +20,7 @@ import javafx.stage.Stage;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.application.gui.javafx.core.control.TextTableColumn;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
 import org.wpcleaner.lib.check.server.CheckWikiDetection;
@@ -89,11 +87,11 @@ final class CheckWikiDetectionsWindow extends JavaFxWindow<JavaFxAnalysisWindowS
         .getColumns()
         .addAll(
             List.of(
-                createColumn(
+                new TextTableColumn<>(
                     GT._T("Error"), detection -> Integer.toString(detection.errorNumber())),
-                createColumn(GT._T("Name"), this::getAlgorithmName),
-                createColumn(GT._T("Location"), CheckWikiDetectionsWindow::getLocation),
-                createColumn(GT._T("Notice"), CheckWikiDetectionsWindow::getNotice)));
+                new TextTableColumn<>(GT._T("Name"), this::getAlgorithmName),
+                new TextTableColumn<>(GT._T("Location"), CheckWikiDetectionsWindow::getLocation),
+                new TextTableColumn<>(GT._T("Notice"), CheckWikiDetectionsWindow::getNotice)));
     table.getItems().setAll(detections);
     table
         .getSelectionModel()
@@ -105,14 +103,6 @@ final class CheckWikiDetectionsWindow extends JavaFxWindow<JavaFxAnalysisWindowS
               }
             });
     return table;
-  }
-
-  private static TableColumn<CheckWikiDetection, String> createColumn(
-      final String title, final Function<CheckWikiDetection, String> value) {
-    final TableColumn<CheckWikiDetection, String> column = new TableColumn<>(title);
-    column.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(value.apply(cell.getValue())));
-    column.setSortable(false);
-    return column;
   }
 
   private String getAlgorithmName(final CheckWikiDetection detection) {

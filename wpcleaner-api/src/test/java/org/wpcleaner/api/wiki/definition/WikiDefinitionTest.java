@@ -26,6 +26,17 @@ class WikiDefinitionTest {
         .isEqualTo("https://en.wikipedia.org/wiki/Wikipedia:WPCleanerNG/Login");
   }
 
+  @DisplayName("restUrl is next to the API entry point")
+  @Test
+  void restUrl() {
+    final WikiDefinition wiki =
+        WikiBuilder.ltr("en", "Example", "wiki.example.org").withApiPath("api.php").build();
+
+    Assertions.assertThat(WikipediaDefinitions.EN.restUrl())
+        .isEqualTo("https://en.wikipedia.org/w/rest.php");
+    Assertions.assertThat(wiki.restUrl()).isEqualTo("https://wiki.example.org/rest.php");
+  }
+
   @DisplayName("Paths without leading separator are completed")
   @Test
   void pathsWithoutLeadingSeparator() {
