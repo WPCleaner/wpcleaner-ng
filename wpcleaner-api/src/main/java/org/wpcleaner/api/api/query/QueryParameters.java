@@ -30,6 +30,7 @@ public enum QueryParameters {
   }
 
   public enum List {
+    LINT_ERRORS("linterrors"),
     RANDOM("random"),
     RECENT_CHANGES("recentchanges"),
     TAGS("tags"),
