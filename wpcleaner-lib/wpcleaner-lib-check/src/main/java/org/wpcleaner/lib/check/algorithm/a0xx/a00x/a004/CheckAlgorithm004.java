@@ -21,7 +21,6 @@ import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.protocol.Protocol;
-import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -36,12 +35,6 @@ public class CheckAlgorithm004 implements CheckAlgorithm {
   private static final String TELEPHONE_PROTOCOL = "tel:";
   private static final Set<String> IGNORED_TAG_NAMES =
       Set.of(HtmlTagType.CODE.getNormalizedName(), WikiTagType.IMAGEMAP.getNormalizedName());
-
-  private final ProtocolRepository protocolRepository;
-
-  public CheckAlgorithm004(final ProtocolRepository protocolRepository) {
-    this.protocolRepository = protocolRepository;
-  }
 
   @Override
   public int number() {
@@ -61,12 +54,11 @@ public class CheckAlgorithm004 implements CheckAlgorithm {
         analysis.getCompleteTags().stream()
             .filter(tag -> TAG_NAME.equals(tag.startTag().normalizedName()))
             .toList();
-    final List<Protocol> protocols = protocolRepository.getProtocols(analysis.getWiki());
     return analysis.getTags().stream()
         .filter(tag -> TAG_NAME.equals(tag.normalizedName()))
         .filter(tag -> !tag.isInsideOne(ignoredAreas))
         .filter(tag -> !isCompleteEndTag(tag, completeTags))
-        .map(tag -> createError(analysis, tag, completeTags, protocols))
+        .map(tag -> createError(analysis, tag, completeTags))
         .sorted(Comparator.comparingInt(CheckError::begin))
         .toList();
   }
@@ -80,8 +72,7 @@ public class CheckAlgorithm004 implements CheckAlgorithm {
   private static CheckError createError(
       final PageAnalysis analysis,
       final TagElement tag,
-      final List<CompleteTagElement> completeTags,
-      final List<Protocol> protocols) {
+      final List<CompleteTagElement> completeTags) {
     final Optional<CompleteTagElement> complete =
         completeTags.stream().filter(candidate -> candidate.startTag().equals(tag)).findFirst();
     if (complete.isEmpty()) {
@@ -94,14 +85,11 @@ public class CheckAlgorithm004 implements CheckAlgorithm {
         ALGORITHM_NUMBER,
         complete.get().begin(),
         complete.get().end(),
-        createReplacements(analysis, tag, internalText, protocols));
+        createReplacements(analysis, tag, internalText));
   }
 
   private static List<Replacement> createReplacements(
-      final PageAnalysis analysis,
-      final TagElement tag,
-      final String internalText,
-      final List<Protocol> protocols) {
+      final PageAnalysis analysis, final TagElement tag, final String internalText) {
     final List<Replacement> replacements = new ArrayList<>();
     final Optional<String> href = findHref(tag);
     href.filter(value -> value.startsWith(TELEPHONE_PROTOCOL))
@@ -109,7 +97,7 @@ public class CheckAlgorithm004 implements CheckAlgorithm {
     href.flatMap(value -> ArticleUrl.of(analysis.getWiki(), value))
         .map(url -> createArticleReplacement(url, internalText))
         .ifPresent(replacements::add);
-    href.filter(value -> isProtocol(protocols, value))
+    href.filter(value -> isProtocol(analysis.getProtocols(), value))
         .ifPresent(
             value ->
                 replacements.add(new Replacement("[" + value + " " + internalText + "]", false)));

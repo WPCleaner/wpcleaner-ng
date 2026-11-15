@@ -7,13 +7,10 @@ package org.wpcleaner.lib.check.algorithm.a0xx.a00x.a004;
 
 import java.util.List;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
-import org.wpcleaner.api.repository.protocol.Protocol;
-import org.wpcleaner.api.repository.protocol.ProtocolRepository;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
 import org.wpcleaner.lib.check.Replacement;
@@ -24,13 +21,6 @@ class CheckAlgorithm004Test {
   private static final int ALGORITHM = 4;
 
   @Autowired private CheckAlgorithm004 algorithm;
-  @Autowired private ProtocolRepository protocolRepository;
-
-  @BeforeEach
-  void setUp() {
-    protocolRepository.addProtocol(PageAnalysisTestFactory.WIKI, new Protocol("https://"));
-    protocolRepository.addProtocol(PageAnalysisTestFactory.WIKI, new Protocol("http://"));
-  }
 
   @DisplayName("should offer an external link and the text for a link to an external site")
   @Test
