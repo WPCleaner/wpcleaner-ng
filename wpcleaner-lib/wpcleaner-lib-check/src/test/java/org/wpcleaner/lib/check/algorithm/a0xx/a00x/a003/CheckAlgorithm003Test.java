@@ -96,6 +96,64 @@ class CheckAlgorithm003Test {
     Assertions.assertThat(withReflist).isEmpty();
   }
 
+  @DisplayName("should match references templates as regular expressions, like Check Wiki")
+  @Test
+  void useTemplateRegularExpressions() {
+    // GIVEN
+    givenConfiguration(
+        Map.of(
+            "error_003_templates_frwiki",
+            "reflist\nRE\\s*[|}]\nSchubert's compositions \\(references\\)\nInvalid("));
+    final List<String> ignoredTexts =
+        List.of(
+            "A<ref>a</ref>\n{{Reflist}}",
+            "A<ref>a</ref>\n{{ reflist2}}",
+            "A<ref>a</ref>\n{{Modèle:Reflist}}",
+            "A<ref>a</ref>\n{{RE}}",
+            "A<ref>a</ref>\n{{rE |a}}",
+            "A<ref>a</ref>\n{{Schubert's compositions (references)}}");
+    final List<String> reportedTexts =
+        List.of("A<ref>a</ref>\n{{REF}}", "A<ref>a</ref>\n{{Re}}", "A<ref>a</ref>\n{{Invalid}}");
+
+    // WHEN
+    final List<List<CheckError>> ignoredErrors = ignoredTexts.stream().map(this::analyze).toList();
+    final List<List<CheckError>> reportedErrors =
+        reportedTexts.stream().map(this::analyze).toList();
+
+    // THEN
+    Assertions.assertThat(ignoredErrors)
+        .allSatisfy(pageErrors -> Assertions.assertThat(pageErrors).isEmpty());
+    Assertions.assertThat(reportedErrors)
+        .allSatisfy(
+            pageErrors ->
+                Assertions.assertThat(pageErrors)
+                    .containsExactly(new CheckError(ALGORITHM, 1, 13, List.of())));
+  }
+
+  @DisplayName("should read regular expressions of references templates from YAML")
+  @Test
+  void readYamlTemplateRegularExpressions() {
+    // GIVEN
+    final String yaml =
+        """
+        templates:
+          - RE\\s*[|}]
+        """;
+    checkWikiRepository.setConfiguration(
+        PageAnalysisTestFactory.WIKI,
+        CheckWikiConfiguration.of(
+                Map.of("error_003_templates_frwiki", "Reflist"), Map.of(), "frwiki")
+            .withParameters(Map.of(ALGORITHM, CheckAlgorithmParameters.parse(yaml))));
+
+    // WHEN
+    final List<CheckError> withRe = analyze("A<ref>a</ref>\n{{RE|a}}");
+    final List<CheckError> withReflist = analyze("A<ref>a</ref>\n{{Reflist}}");
+
+    // THEN
+    Assertions.assertThat(withRe).isEmpty();
+    Assertions.assertThat(withReflist).containsExactly(new CheckError(ALGORITHM, 1, 13, List.of()));
+  }
+
   @DisplayName("should use references templates only when templates is missing")
   @Test
   void useReferencesTemplates() {

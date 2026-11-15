@@ -111,6 +111,13 @@ public record CheckAlgorithmConfiguration(
         .toList();
   }
 
+  public List<String> getUnsplitStrings(final String name) {
+    if (parameters != null) {
+      return parameters.getStrings(name);
+    }
+    return getLines(name);
+  }
+
   public Optional<String> getString(final String name) {
     if (parameters != null) {
       return parameters.getStrings(name).stream().findFirst().filter(value -> !value.isEmpty());

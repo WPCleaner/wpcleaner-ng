@@ -155,15 +155,13 @@ public class CheckAlgorithm003 implements CheckAlgorithm {
 
   private static boolean hasReferencesTemplate(
       final PageAnalysis analysis, final CheckAlgorithmConfiguration configuration) {
-    final List<String> templates = configuration.getStrings(PARAMETER_TEMPLATES);
-    final Set<PageTitle> referencesTemplates =
-        findTemplates(
+    final List<String> templates = configuration.getUnsplitStrings(PARAMETER_TEMPLATES);
+    return ReferencesTemplates.of(
             analysis,
             templates.isEmpty()
-                ? configuration.getStrings(PARAMETER_REFERENCES_TEMPLATES)
-                : templates);
-    return analysis.getTemplates().stream()
-        .anyMatch(template -> referencesTemplates.contains(template.title()));
+                ? configuration.getUnsplitStrings(PARAMETER_REFERENCES_TEMPLATES)
+                : templates)
+        .isUsedIn(analysis);
   }
 
   private static Set<PageTitle> findTemplates(
