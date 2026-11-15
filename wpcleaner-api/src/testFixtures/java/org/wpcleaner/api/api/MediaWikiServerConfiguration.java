@@ -21,6 +21,7 @@ import org.wpcleaner.api.api.query.meta.siteinfo.MockApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.langlinks.MockApiLanglinks;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
+import org.wpcleaner.api.rest.lint.MockRestLint;
 
 @ConditionalOnProperty(MediaWikiServerConfiguration.ENABLED_PROPERTY)
 @TestConfiguration
@@ -46,6 +47,11 @@ public class MediaWikiServerConfiguration {
   @Bean
   public MockApiMove mockApiMove(final MockRestServiceServer mediaWikiServer) {
     return new MockApiMove(mediaWikiServer);
+  }
+
+  @Bean
+  public MockRestLint mockRestLint(final MockRestServiceServer mediaWikiServer) {
+    return new MockRestLint(mediaWikiServer);
   }
 
   @Bean

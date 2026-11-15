@@ -10,6 +10,8 @@ import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.edit.ApiEditWrapper;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
+import org.wpcleaner.api.repository.linter.LinterCategoryRepository;
+import org.wpcleaner.api.rest.lint.RestLint;
 import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.core.action.JavaFxActionServices;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
@@ -30,7 +32,9 @@ public record JavaFxAnalysisWindowServices(
     CheckWikiSummary checkWikiSummary,
     PageSyntaxColorizer colorizer,
     ImageLoader imageLoader,
+    LinterCategoryRepository linterCategories,
     PageAnalysisFactory pageAnalysisFactory,
+    RestLint restLint,
     JavaFxStylePropertiesRegistry styleRegistry,
     CurrentUserService user,
     JavaFxWindowsRegistry windowsRegistry)

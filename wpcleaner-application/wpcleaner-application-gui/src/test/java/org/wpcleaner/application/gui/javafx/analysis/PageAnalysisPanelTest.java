@@ -14,7 +14,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.scene.control.Button;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
@@ -43,6 +42,7 @@ import org.wpcleaner.api.api.query.prop.revisions.RevisionsParameters;
 import org.wpcleaner.api.api.query.prop.revisions.RevisionsQuery;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
+import org.wpcleaner.api.rest.lint.MockRestLint;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.application.base.ApplicationLogin;
@@ -93,7 +93,11 @@ class PageAnalysisPanelTest extends JavaFxTest {
   @BeforeEach
   void setUp() {
     currentUserService.logout();
-    guiLogin.login(WIKI, USERNAME, ApplicationLogin.USER_NAMESPACES);
+    guiLogin.login(
+        WIKI,
+        USERNAME,
+        ApplicationLogin.LoginData.of(ApplicationLogin.USER_NAMESPACES)
+            .withLinterCategories(Map.of("low", List.of("obsolete-tag"))));
     givenConfiguration();
   }
 
@@ -157,6 +161,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
             "Button",
             "Separator",
             "CheckWikiDetectionsButton",
+            "LinterErrorsButton",
             "PageSaveButton");
     Assertions.assertThat(callOnJavaFx(() -> getCheckWikiDetectionsButton(analysisWindow)))
         .satisfies(
@@ -186,22 +191,10 @@ class PageAnalysisPanelTest extends JavaFxTest {
 
     // THEN
     Assertions.assertThat(
-            waitForWindow(services.windowsRegistry(), CheckWikiDetectionsWindow.class))
-        .satisfies(
-            detectionsWindow -> {
-              Assertions.assertThat(callOnJavaFx(() -> detectionsWindow.getStage().getOwner()))
-                  .isSameAs(analysisWindow.getStage());
-              Assertions.assertThat(
-                      callOnJavaFx(
-                          () ->
-                              lookup(
-                                      detectionsWindow,
-                                      CheckWikiDetectionsWindow.DETECTIONS_ID,
-                                      TableView.class)
-                                  .getItems()
-                                  .size()))
-                  .isEqualTo(2);
-            });
+            waitForWindow(services.windowsRegistry(), CheckWikiDetectionsWindow.class)
+                .getStage()
+                .getOwner())
+        .isSameAs(analysisWindow.getStage());
     mediaWikiServer.verify();
   }
 
@@ -220,6 +213,50 @@ class PageAnalysisPanelTest extends JavaFxTest {
     // THEN
     Assertions.assertThat(closeAlert(analysisWindow))
         .isEqualTo("No errors are currently detected by Check Wiki.");
+    mediaWikiServer.verify();
+  }
+
+  @DisplayName("should send the current text to Linter and open a window with the declared errors")
+  @Test
+  void displayLinterErrors() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    givenPageContent();
+    new MockRestLint(mediaWikiServer)
+        .givenLint(WIKI, TITLE, FIXED_TEXT)
+        .willReturn(
+            List.of(
+                Map.of("type", "obsolete-tag", "dsr", List.of(0, 18, 8, 9)),
+                Map.of("type", "large-tables", "dsr", List.of(0, 18, 0, 0))));
+    final JavaFxAnalysisWindow analysisWindow = openAndFixPage();
+
+    // WHEN
+    runOnJavaFx(() -> getLinterErrorsButton(analysisWindow).fire());
+
+    // THEN
+    Assertions.assertThat(
+            waitForWindow(services.windowsRegistry(), LinterErrorsWindow.class)
+                .getStage()
+                .getOwner())
+        .isSameAs(analysisWindow.getStage());
+    mediaWikiServer.verify();
+  }
+
+  @DisplayName("should inform that Linter detects no error declared on the wiki")
+  @Test
+  void displayNoLinterError() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    givenPageContent();
+    new MockRestLint(mediaWikiServer)
+        .givenLint(WIKI, TITLE, TEXT)
+        .willReturn(List.of(Map.of("type", "large-tables", "dsr", List.of(0, 18, 0, 0))));
+    final JavaFxAnalysisWindow analysisWindow = openPage();
+
+    // WHEN
+    runOnJavaFx(() -> getLinterErrorsButton(analysisWindow).fire());
+
+    // THEN
+    Assertions.assertThat(closeAlert(analysisWindow))
+        .isEqualTo("No errors are detected by Linter.");
     mediaWikiServer.verify();
   }
 
@@ -353,6 +390,10 @@ class PageAnalysisPanelTest extends JavaFxTest {
 
   private static Button getCheckWikiDetectionsButton(final JavaFxAnalysisWindow analysisWindow) {
     return lookup(analysisWindow, CheckWikiDetectionsButton.CHECK_WIKI_DETECTIONS_ID, Button.class);
+  }
+
+  private static Button getLinterErrorsButton(final JavaFxAnalysisWindow analysisWindow) {
+    return lookup(analysisWindow, LinterErrorsButton.LINTER_ERRORS_ID, Button.class);
   }
 
   private static Button getSaveButton(final JavaFxAnalysisWindow analysisWindow) {

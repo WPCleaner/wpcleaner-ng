@@ -5,6 +5,7 @@ package org.wpcleaner.api.api;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -45,8 +46,20 @@ public final class ApiRequestExpectation {
       final MockRestServiceServer mediaWikiServer,
       final WikiDefinition wiki,
       final ApiParameters.Action action) {
-    final ApiRequestExpectation expectation =
-        expect(mediaWikiServer, wiki, action, HttpMethod.POST);
+    return withFormContent(expect(mediaWikiServer, wiki, action, HttpMethod.POST));
+  }
+
+  public static ApiRequestExpectation ofRestPost(
+      final MockRestServiceServer mediaWikiServer, final URI uri) {
+    return withFormContent(
+        new ApiRequestExpectation(
+            mediaWikiServer
+                .expect(MockRestRequestMatchers.requestTo(uri))
+                .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
+                .andExpect(userAgent())));
+  }
+
+  private static ApiRequestExpectation withFormContent(final ApiRequestExpectation expectation) {
     expectation.request.andExpect(
         MockRestRequestMatchers.content()
             .contentTypeCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED));

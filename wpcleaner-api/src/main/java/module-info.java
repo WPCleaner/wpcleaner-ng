@@ -64,6 +64,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.repository.configuration;
   exports org.wpcleaner.api.repository.extensiontag;
   exports org.wpcleaner.api.repository.interwiki;
+  exports org.wpcleaner.api.repository.linter;
   exports org.wpcleaner.api.repository.magiclink;
   exports org.wpcleaner.api.repository.magicword;
   exports org.wpcleaner.api.repository.namespace;
@@ -72,6 +73,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.repository.tag;
   exports org.wpcleaner.api.repository.token;
   exports org.wpcleaner.api.repository;
+  exports org.wpcleaner.api.rest.lint;
   exports org.wpcleaner.api.settings;
   exports org.wpcleaner.api.utils;
   exports org.wpcleaner.api.wiki.builder;
@@ -121,6 +123,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.repository.configuration;
   opens org.wpcleaner.api.repository.extensiontag;
   opens org.wpcleaner.api.repository.interwiki;
+  opens org.wpcleaner.api.repository.linter;
   opens org.wpcleaner.api.repository.magiclink;
   opens org.wpcleaner.api.repository.magicword;
   opens org.wpcleaner.api.repository.namespace;
@@ -129,6 +132,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.repository.tag;
   opens org.wpcleaner.api.repository.token;
   opens org.wpcleaner.api.repository;
+  opens org.wpcleaner.api.rest.lint;
   opens org.wpcleaner.api.settings;
   opens org.wpcleaner.api.utils;
   opens org.wpcleaner.api.wiki.builder;

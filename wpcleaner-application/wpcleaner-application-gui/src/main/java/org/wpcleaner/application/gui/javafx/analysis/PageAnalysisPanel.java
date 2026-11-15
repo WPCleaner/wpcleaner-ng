@@ -71,6 +71,7 @@ public final class PageAnalysisPanel extends StackPane {
             new Separator(),
             new CheckWikiDetectionsButton(
                 imageLoader, getWiki().checkWikiCode() != null, this::retrieveCheckWikiDetections),
+            new LinterErrorsButton(imageLoader, this::retrieveLinterErrors),
             new PageSaveButton(
                 imageLoader, services.user().getCurrentUser().demo(), this::savePage));
     initialize();
@@ -189,6 +190,49 @@ public final class PageAnalysisPanel extends StackPane {
         GT._T("Check Wiki"),
         GT._T(
             "Error retrieving errors detected by Check Wiki: %s", String.valueOf(e.getMessage())));
+  }
+
+  private void retrieveLinterErrors() {
+    owner.executeAsync(
+        new RetrieveLinterErrorsTask(checkPane.getArea().getText()),
+        this::displayLinterErrors,
+        this::linterErrorsWithError);
+  }
+
+  private final class RetrieveLinterErrorsTask implements LongRunningTask<List<LinterError>> {
+
+    private final String text;
+
+    private RetrieveLinterErrorsTask(final String text) {
+      this.text = text;
+    }
+
+    @Override
+    public List<LinterError> call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Retrieving errors detected by Linter"))) {
+        final WikiDefinition wiki = getWiki();
+        return services.restLint().lint(wiki, pageName, text).stream()
+            .flatMap(
+                error ->
+                    services.linterCategories().findCategory(wiki, error.type()).stream()
+                        .map(category -> new LinterError(error, category.priority())))
+            .toList();
+      }
+    }
+  }
+
+  private void displayLinterErrors(final List<LinterError> errors) {
+    if (errors.isEmpty()) {
+      owner.showInformation(GT._T("Linter"), null, GT._T("No errors are detected by Linter."));
+      return;
+    }
+    new LinterErrorsWindow(services, owner.getStage(), pageName, errors, checkPane.getArea());
+  }
+
+  private void linterErrorsWithError(final Exception e) {
+    owner.showWarning(
+        GT._T("Linter"),
+        GT._T("Error retrieving errors detected by Linter: %s", String.valueOf(e.getMessage())));
   }
 
   private void savePage() {
