@@ -32,7 +32,8 @@ class RestLintTest {
     mediaWikiServer.reset();
   }
 
-  @DisplayName("RestLint sends the text to the REST API and returns the Linter errors")
+  @DisplayName(
+      "RestLint sends the text to the REST API and returns the Linter errors, even with parameters given as an empty array")
   @Test
   void lint() {
     // GIVEN
@@ -57,12 +58,16 @@ class RestLintTest {
                     "templateInfo",
                     Map.of("name", "Modèle:Image")),
                 Map.of(
+                    "type", "stripped-tag", "templateInfo", Map.of("multiPartTemplateBlock", true)),
+                Map.of(
                     "type",
-                    "stripped-tag",
+                    "night-mode-unaware-background-color",
                     "dsr",
+                    List.of(34, 1293),
+                    "params",
                     List.of(),
                     "templateInfo",
-                    Map.of("multiPartTemplateBlock", true))));
+                    Map.of("name", "Modèle:Infobox"))));
 
     // WHEN
     final List<LintError> errors = restLint.lint(WikipediaDefinitions.FR, TITLE, TEXT);
@@ -89,7 +94,13 @@ class RestLintTest {
                 LintError.UNKNOWN_POSITION,
                 LintError.UNKNOWN_POSITION,
                 Map.of(),
-                new LintError.TemplateInfo(true, null)));
+                new LintError.TemplateInfo(true, null)),
+            Assertions.tuple(
+                "night-mode-unaware-background-color",
+                34,
+                1293,
+                Map.of(),
+                new LintError.TemplateInfo(null, "Modèle:Infobox")));
   }
 
   @DisplayName("RestLint returns no error for an empty answer")
