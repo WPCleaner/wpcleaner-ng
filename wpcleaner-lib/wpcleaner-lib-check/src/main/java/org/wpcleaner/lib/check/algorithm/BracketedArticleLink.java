@@ -11,13 +11,13 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 
-record BracketedArticleLink(ArticleUrl url, @Nullable String displayedText) {
+public record BracketedArticleLink(ArticleUrl url, @Nullable String displayedText) {
 
   private static final char PIPE = '|';
   private static final char CLOSE = ']';
   private static final char SLASH = '/';
 
-  static Optional<BracketedArticleLink> of(
+  public static Optional<BracketedArticleLink> of(
       final PageAnalysis analysis, final ExternalLinkElement link) {
     final String text = analysis.getText();
     final int pipe = link.target().indexOf(PIPE);
@@ -31,7 +31,7 @@ record BracketedArticleLink(ArticleUrl url, @Nullable String displayedText) {
         .map(articleUrl -> new BracketedArticleLink(articleUrl, displayedText));
   }
 
-  String internalLink() {
+  public String internalLink() {
     return InternalLinkBuilder.to(url.title())
         .withAnchor(url.fragment())
         .withColon(url.title().charAt(0) == SLASH)

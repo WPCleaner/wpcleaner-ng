@@ -19,7 +19,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 
-record ArticleUrl(String title, Map<String, String> attributes, @Nullable String fragment) {
+public record ArticleUrl(String title, Map<String, String> attributes, @Nullable String fragment) {
 
   private static final List<String> PROTOCOLS = List.of("http://", "https://", "//");
   private static final String TITLE_ATTRIBUTE = "title";
@@ -29,15 +29,15 @@ record ArticleUrl(String title, Map<String, String> attributes, @Nullable String
   private static final char HOST_SEPARATOR = '.';
   private static final String MOBILE_HOST = ".m";
 
-  ArticleUrl {
+  public ArticleUrl {
     attributes = Map.copyOf(attributes);
   }
 
-  static Optional<ArticleUrl> of(final WikiDefinition wiki, final String url) {
+  public static Optional<ArticleUrl> of(final WikiDefinition wiki, final String url) {
     return cleanUrl(url).flatMap(ArticleUrl::toUri).flatMap(uri -> of(wiki, uri));
   }
 
-  static Optional<ArticleUrl> of(final Interwiki interwiki, final String url) {
+  public static Optional<ArticleUrl> of(final Interwiki interwiki, final String url) {
     final int parameter = interwiki.url().indexOf(TITLE_PARAMETER);
     if (parameter < 0) {
       return Optional.empty();
@@ -49,7 +49,7 @@ record ArticleUrl(String title, Map<String, String> attributes, @Nullable String
             base -> cleanUrl(url).flatMap(ArticleUrl::toUri).flatMap(uri -> of(base, suffix, uri)));
   }
 
-  static Optional<String> findHost(final Interwiki interwiki) {
+  public static Optional<String> findHost(final Interwiki interwiki) {
     return cleanUrl(interwiki.url()).flatMap(ArticleUrl::toUri).map(URI::getHost);
   }
 
@@ -174,9 +174,5 @@ record ArticleUrl(String title, Map<String, String> attributes, @Nullable String
       normalizedTitle = normalizedTitle.substring(0, normalizedTitle.length() - 1);
     }
     return normalizedTitle;
-  }
-
-  String titleAndFragment() {
-    return fragment == null ? title : title + "#" + fragment;
   }
 }
