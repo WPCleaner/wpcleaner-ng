@@ -7,8 +7,11 @@ package org.wpcleaner.application.gui.javafx.main;
 
 import org.springframework.stereotype.Service;
 import org.wpcleaner.api.api.CurrentUserService;
+import org.wpcleaner.api.api.query.list.linterrors.ApiLintErrors;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
+import org.wpcleaner.api.repository.linter.LinterCategoryRepository;
+import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.application.base.utils.url.UrlService;
 import org.wpcleaner.application.gui.core.factory.AnalysisWindowFactory;
 import org.wpcleaner.application.gui.core.factory.PageListWindowFactory;
@@ -25,12 +28,15 @@ import org.wpcleaner.lib.image.ImageLoader;
 public record JavaFxMainWindowServices(
     JavaFxActionServices actionServices,
     AnalysisWindowFactory analysisWindowFactory,
+    ApiLintErrors apiLintErrors,
     ApiRandom apiRandom,
     ApiRevisions apiRevisions,
     CheckAlgorithmRegistry checkAlgorithmRegistry,
     CheckWikiServer checkWikiServer,
     ImageLoader imageLoader,
     InterestingSettingsManager interestingSettings,
+    LinterCategoryRepository linterCategories,
+    NamespaceRepository namespaceRepository,
     PageListWindowFactory pageListWindowFactory,
     JavaFxRecentChangesWindowFactory recentChangesWindowFactory,
     UrlService urlService,

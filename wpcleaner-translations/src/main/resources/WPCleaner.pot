@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-15 16:14+0100\n"
+"POT-Creation-Date: 2026-11-15 18:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -91,20 +91,52 @@ msgstr ""
 msgid "Recent changes"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:57
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:58
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:213
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:222
 msgid "Check Wiki"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:80
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:81
 #, java-printf-format
 msgid "Check Wiki: %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:95
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:96
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:119
 #, java-printf-format
 msgid "Retrieving pages for %s"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:43
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:258
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:266
+msgid "Linter"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:70
+msgid "High priority"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:71
+msgid "Medium priority"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:72
+msgid "Low priority"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:95
+#, java-printf-format
+msgid "Linter: %s"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:104
+msgid "All namespaces"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:106
+msgid "Main"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/UserInformationWindow.java:48
@@ -629,11 +661,6 @@ msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:244
 msgid "Retrieving errors detected by Linter"
-msgstr ""
-
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:258
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:266
-msgid "Linter"
 msgstr ""
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:258
@@ -1172,7 +1199,7 @@ msgstr ""
 msgid "Configure User Page Hosting Prevention"
 msgstr ""
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:55
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:57
 #, java-printf-format
 msgid ""
 "WPCleaner NG could not be installed.\n"
@@ -1181,12 +1208,12 @@ msgid ""
 "Do you want to try again?"
 msgstr ""
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:71
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:74
 #, java-printf-format
 msgid "The shortcut could not be created: %s"
 msgstr ""
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:81
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/LauncherRunner.java:85
 msgid "Do you want to add a shortcut to WPCleaner NG on your desktop?"
 msgstr ""
 
@@ -1199,22 +1226,22 @@ msgstr ""
 msgid "Shortcuts can only be created by the installed launcher."
 msgstr ""
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:67
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:68
 #, java-printf-format
 msgid "The latest release could not be checked: %s"
 msgstr ""
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:98
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:99
 #, java-printf-format
 msgid "WPCleaner NG %s is not available for your system (%s)."
 msgstr ""
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:121
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:122
 #, java-printf-format
 msgid "Downloading WPCleaner NG %s"
 msgstr ""
 
-#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:133
+#: wpcleaner-launcher/src/main/java/org/wpcleaner/launcher/install/ReleaseUpdater.java:134
 #, java-printf-format
 msgid "The download failed: %s"
 msgstr ""

@@ -45,6 +45,15 @@ public class LinterCategoryRepository implements LogoutHook {
     }
   }
 
+  public List<LinterCategory> getCategories(final WikiDefinition wiki) {
+    categoriesLock.lock();
+    try {
+      return categories.getOrDefault(wiki, List.of());
+    } finally {
+      categoriesLock.unlock();
+    }
+  }
+
   public boolean hasCategories(final WikiDefinition wiki) {
     categoriesLock.lock();
     try {
