@@ -8,6 +8,7 @@ package org.wpcleaner.lib.check.server;
 import java.util.List;
 import java.util.Map;
 import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.NullMarked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,62 @@ class CheckWikiServerTest {
     // THEN
     mediaWikiServer.verify();
     Assertions.assertThat(pages).isEmpty();
+  }
+
+  @DisplayName("should retrieve the errors detected by the Check Wiki server in a page")
+  @Test
+  void retrieveDetections() {
+    // GIVEN
+    new MockCheckWikiServer(mediaWikiServer)
+        .givenDetections(
+            WIKI,
+            "Paris",
+            List.of(
+                "+ 48   1234   [[Paris]]",
+                "+ 104  -1     <ref name=a>  ",
+                "+ 2    0      ",
+                "Paris is in whitelist with error: 64",
+                "Unexpected line"));
+
+    // WHEN
+    final List<CheckWikiDetection> detections = checkWikiServer.retrieveDetections(WIKI, "Paris");
+
+    // THEN
+    mediaWikiServer.verify();
+    Assertions.assertThat(detections)
+        .containsExactly(
+            new CheckWikiDetection(48, 1234, "[[Paris]]", false),
+            new CheckWikiDetection(104, -1, "<ref name=a>", false),
+            new CheckWikiDetection(2, 0, "", false),
+            new CheckWikiDetection(64, CheckWikiDetection.UNKNOWN_LOCATION, "", true));
+  }
+
+  @DisplayName("should retrieve no detection when the Check Wiki server finds no error")
+  @Test
+  void retrieveNoDetection() {
+    // GIVEN
+    new MockCheckWikiServer(mediaWikiServer).givenDetections(WIKI, "Paris", List.of("None"));
+
+    // WHEN
+    final List<CheckWikiDetection> detections = checkWikiServer.retrieveDetections(WIKI, "Paris");
+
+    // THEN
+    mediaWikiServer.verify();
+    Assertions.assertThat(detections).isEmpty();
+  }
+
+  @DisplayName("should retrieve no detection for a wiki without Check Wiki code")
+  @Test
+  void retrieveDetectionsWithoutCheckWikiCode() {
+    // GIVEN
+    final WikiDefinition wiki = WikiBuilder.ltr("en", "Test", "test.example.org").build();
+
+    // WHEN
+    final List<CheckWikiDetection> detections = checkWikiServer.retrieveDetections(wiki, "Paris");
+
+    // THEN
+    mediaWikiServer.verify();
+    Assertions.assertThat(detections).isEmpty();
   }
 
   @DisplayName("should mark the fixed errors on the Check Wiki server")
@@ -162,6 +219,7 @@ class CheckWikiServerTest {
     return registry.findAlgorithm(48).orElseThrow();
   }
 
+  @NullMarked
   private static final class UnlistedAlgorithm implements CheckAlgorithm {
 
     @Override

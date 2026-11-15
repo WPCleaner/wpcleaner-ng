@@ -31,7 +31,7 @@ public final class MockCheckWikiServer {
       final int errorNumber,
       final int limit,
       final List<String> titles) {
-    expect(CheckWikiServer.createListParameters(wiki, errorNumber, limit))
+    expect(CheckWikiServer.BOTS_URL, CheckWikiServer.createListParameters(wiki, errorNumber, limit))
         .andRespond(
             MockRestResponseCreators.withSuccess(
                 titles.stream().map("title=%s"::formatted).collect(Collectors.joining("\n")),
@@ -40,13 +40,22 @@ public final class MockCheckWikiServer {
 
   public void givenMarkAsFixed(
       final WikiDefinition wiki, final int errorNumber, final String title) {
-    expect(CheckWikiServer.createMarkParameters(wiki, errorNumber, title))
+    expect(CheckWikiServer.BOTS_URL, CheckWikiServer.createMarkParameters(wiki, errorNumber, title))
         .andRespond(MockRestResponseCreators.withSuccess());
   }
 
-  private ResponseActions expect(final MultiValueMap<String, String> parameters) {
+  public void givenDetections(
+      final WikiDefinition wiki, final String title, final List<String> lines) {
+    expect(CheckWikiServer.ARTICLE_URL, CheckWikiServer.createArticleParameters(wiki, title))
+        .andRespond(
+            MockRestResponseCreators.withSuccess(
+                String.join("\n", lines),
+                new MediaType(MediaType.TEXT_PLAIN, StandardCharsets.UTF_8)));
+  }
+
+  private ResponseActions expect(final String url, final MultiValueMap<String, String> parameters) {
     return server
-        .expect(MockRestRequestMatchers.requestTo(CheckWikiServer.BOTS_URL))
+        .expect(MockRestRequestMatchers.requestTo(url))
         .andExpect(MockRestRequestMatchers.method(HttpMethod.POST))
         .andExpect(ApiRequestExpectation.userAgent())
         .andExpect(MockRestRequestMatchers.content().formData(parameters));

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.ImageView;
@@ -98,6 +99,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
 
   @AfterEach
   void tearDown() throws InterruptedException, ExecutionException, TimeoutException {
+    runOnJavaFx(services.windowsRegistry()::closeAllWindows);
     final JavaFxAnalysisWindow windowToClose = window;
     if (windowToClose != null) {
       runOnJavaFx(() -> windowToClose.getStage().close());
@@ -148,7 +150,77 @@ class PageAnalysisPanelTest extends JavaFxTest {
     Assertions.assertThat(toolBar).isInstanceOf(CheckErrorsToolBar.class);
     Assertions.assertThat(toolBar.getItems())
         .extracting(node -> node.getClass().getSimpleName())
-        .containsExactly("Button", "Button", "Button", "Button", "Separator", "PageSaveButton");
+        .containsExactly(
+            "Button",
+            "Button",
+            "Button",
+            "Button",
+            "Separator",
+            "CheckWikiDetectionsButton",
+            "PageSaveButton");
+    Assertions.assertThat(callOnJavaFx(() -> getCheckWikiDetectionsButton(analysisWindow)))
+        .satisfies(
+            checkWikiButton -> {
+              Assertions.assertThat(checkWikiButton.isDisable()).isFalse();
+              Assertions.assertThat(checkWikiButton.getGraphic()).isInstanceOf(ImageView.class);
+              Assertions.assertThat(checkWikiButton.getTooltip().getText())
+                  .isEqualTo("Retrieve the errors still detected by Check Wiki");
+            });
+  }
+
+  @DisplayName("should open a window with the errors detected by Check Wiki")
+  @Test
+  void displayCheckWikiDetections()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    givenPageContent();
+    new MockCheckWikiServer(mediaWikiServer)
+        .givenDetections(
+            WIKI,
+            TITLE,
+            List.of("+ 48   15     [[Paris]]", "Paris is in whitelist with error: 64"));
+    final JavaFxAnalysisWindow analysisWindow = openPage();
+
+    // WHEN
+    runOnJavaFx(() -> getCheckWikiDetectionsButton(analysisWindow).fire());
+
+    // THEN
+    Assertions.assertThat(
+            waitForWindow(services.windowsRegistry(), CheckWikiDetectionsWindow.class))
+        .satisfies(
+            detectionsWindow -> {
+              Assertions.assertThat(callOnJavaFx(() -> detectionsWindow.getStage().getOwner()))
+                  .isSameAs(analysisWindow.getStage());
+              Assertions.assertThat(
+                      callOnJavaFx(
+                          () ->
+                              lookup(
+                                      detectionsWindow,
+                                      CheckWikiDetectionsWindow.DETECTIONS_ID,
+                                      TableView.class)
+                                  .getItems()
+                                  .size()))
+                  .isEqualTo(2);
+            });
+    mediaWikiServer.verify();
+  }
+
+  @DisplayName("should inform that Check Wiki detects no error in the page")
+  @Test
+  void displayNoCheckWikiDetection()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    givenPageContent();
+    new MockCheckWikiServer(mediaWikiServer).givenDetections(WIKI, TITLE, List.of("None"));
+    final JavaFxAnalysisWindow analysisWindow = openPage();
+
+    // WHEN
+    runOnJavaFx(() -> getCheckWikiDetectionsButton(analysisWindow).fire());
+
+    // THEN
+    Assertions.assertThat(closeAlert(analysisWindow))
+        .isEqualTo("No errors are currently detected by Check Wiki.");
+    mediaWikiServer.verify();
   }
 
   @DisplayName("should keep the summary written by the user")
@@ -277,6 +349,10 @@ class PageAnalysisPanelTest extends JavaFxTest {
 
   private static Button getAutomaticFixesButton(final JavaFxAnalysisWindow analysisWindow) {
     return lookup(analysisWindow, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class);
+  }
+
+  private static Button getCheckWikiDetectionsButton(final JavaFxAnalysisWindow analysisWindow) {
+    return lookup(analysisWindow, CheckWikiDetectionsButton.CHECK_WIKI_DETECTIONS_ID, Button.class);
   }
 
   private static Button getSaveButton(final JavaFxAnalysisWindow analysisWindow) {

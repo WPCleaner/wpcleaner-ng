@@ -17,6 +17,8 @@ import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyn
 
 public final class PageAnalysisArea extends InlineCssTextArea {
 
+  public static final String AREA_ID = "page-analysis-area";
+
   private final PageSyntaxColorizer colorizer;
   private StyleSpans<String> syntaxSpans;
 
@@ -24,6 +26,7 @@ public final class PageAnalysisArea extends InlineCssTextArea {
     super();
     this.colorizer = colorizer;
     this.syntaxSpans = getStyleSpans(0, 0);
+    setId(AREA_ID);
     setWrapText(true);
     setEditable(false);
     setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
