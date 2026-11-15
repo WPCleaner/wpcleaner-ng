@@ -158,8 +158,8 @@ class CheckWikiConfigurationLoaderTest {
         """
          error_048_prio_frwiki=3 END
          error_048_whitelistpage_frwiki=%s END
-         error_002_prio_frwiki=3 END
-         error_002_whitelist_frwiki=
+         error_499_prio_frwiki=3 END
+         error_499_whitelist_frwiki=
           Lyon
           Marseille END
         """
@@ -184,7 +184,7 @@ class CheckWikiConfigurationLoaderTest {
     Assertions.assertThat(configuration.getAlgorithm(48))
         .map(CheckAlgorithmConfiguration::whitelist)
         .hasValue(Set.of(new PageTitle(0, "Paris"), new PageTitle(0, "Nice")));
-    Assertions.assertThat(configuration.getAlgorithm(2))
+    Assertions.assertThat(configuration.getAlgorithm(499))
         .map(CheckAlgorithmConfiguration::whitelist)
         .hasValue(Set.of(new PageTitle(0, "Lyon"), new PageTitle(0, "Marseille")));
   }
@@ -197,8 +197,8 @@ class CheckWikiConfigurationLoaderTest {
         """
          error_048_prio_frwiki=0 END
          error_048_whitelistpage_frwiki=Liste blanche 048 END
-         error_002_prio_frwiki=3 END
-         error_002_whitelistpage_frwiki=Liste blanche 002 END
+         error_499_prio_frwiki=3 END
+         error_499_whitelistpage_frwiki=Liste blanche 499 END
         """,
         Map.of());
 
@@ -211,7 +211,7 @@ class CheckWikiConfigurationLoaderTest {
     Assertions.assertThat(configuration.getAlgorithm(48))
         .map(CheckAlgorithmConfiguration::whitelist)
         .hasValue(Set.of());
-    Assertions.assertThat(configuration.getAlgorithm(2))
+    Assertions.assertThat(configuration.getAlgorithm(499))
         .map(CheckAlgorithmConfiguration::whitelist)
         .hasValue(Set.of());
   }

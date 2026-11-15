@@ -72,9 +72,9 @@ class CheckWikiDetectionsWindowTest extends JavaFxTest {
     Assertions.assertThat(callOnJavaFx(() -> getDisplayedDetections(window)))
         .containsExactly(
             List.of("48", "Lien vers l’article", "15", "[[paris]]"),
-            List.of("2", "", "3", "<absent>"),
+            List.of("499", "", "3", "<absent>"),
             List.of("64", "Error No. 64", "", "In the whitelist"),
-            List.of("3", "", "0", ""));
+            List.of("498", "", "0", ""));
   }
 
   @DisplayName("should select the notice in the text, ignoring case, or else the location")
@@ -150,9 +150,9 @@ class CheckWikiDetectionsWindowTest extends JavaFxTest {
         area,
         List.of(
             new CheckWikiDetection(48, 15, "[[paris]]", false),
-            new CheckWikiDetection(2, 3, "<absent>", false),
+            new CheckWikiDetection(499, 3, "<absent>", false),
             new CheckWikiDetection(64, CheckWikiDetection.UNKNOWN_LOCATION, "", true),
-            new CheckWikiDetection(3, 0, "", false)));
+            new CheckWikiDetection(498, 0, "", false)));
   }
 
   private CheckWikiDetectionsWindow openWindow(
