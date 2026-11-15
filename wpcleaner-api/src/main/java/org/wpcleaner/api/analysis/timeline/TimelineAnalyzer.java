@@ -7,7 +7,6 @@ package org.wpcleaner.api.analysis.timeline;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
 
@@ -69,7 +68,7 @@ final class TimelineAnalyzer {
       }
       if (!quoted) {
         if (text.startsWith(BLOCK_COMMENT_BEGIN, index)) {
-          return endOf(BLOCK_COMMENT_END, index + BLOCK_COMMENT_BEGIN.length());
+          return blockCommentEnd(index + BLOCK_COMMENT_BEGIN.length());
         }
         if (current == COMMENT) {
           return lineEnd(index);
@@ -96,7 +95,7 @@ final class TimelineAnalyzer {
       final int pipe = text.indexOf(PIPE, targetBegin);
       final boolean withText = pipe >= 0 && pipe < linkEnd;
       final String target = text.substring(targetBegin, withText ? pipe : linkEnd);
-      @Nullable final String linkText = withText ? text.substring(pipe + 1, linkEnd) : null;
+      final String linkText = withText ? text.substring(pipe + 1, linkEnd) : null;
       links.add(new TimelineLinkElement(index, linkEnd + end.length(), type, target, linkText));
       return linkEnd + end.length();
     }
@@ -131,9 +130,9 @@ final class TimelineAnalyzer {
       return newLine < 0 || newLine >= contentEnd ? contentEnd : newLine;
     }
 
-    private int endOf(final String searched, final int begin) {
-      final int found = text.indexOf(searched, begin);
-      return found < 0 ? contentEnd : found + searched.length();
+    private int blockCommentEnd(final int begin) {
+      final int found = text.indexOf(BLOCK_COMMENT_END, begin);
+      return found < 0 ? contentEnd : found + BLOCK_COMMENT_END.length();
     }
   }
 }

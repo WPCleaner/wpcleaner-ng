@@ -5,7 +5,6 @@ package org.wpcleaner.launcher.install;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.Optional;
 import org.jspecify.annotations.Nullable;
 
-public record UpdateResult(Optional<InstalledRelease> release, @Nullable String problem) {}
+public record UpdateResult(@Nullable InstalledRelease release, @Nullable String problem) {}

@@ -8,7 +8,6 @@ package org.wpcleaner.launcher.shortcut;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,7 @@ class LinuxShortcutCreatorTest {
     final Path desktop = Files.createDirectory(temporaryFolder.resolve("Desktop"));
 
     // WHEN
-    new LinuxShortcutCreator(executable, applications, Optional.of(desktop)).create();
+    new LinuxShortcutCreator(executable, applications, desktop).create();
 
     // THEN
     final Path menuEntry = applications.resolve(LinuxShortcutCreator.FILE_NAME);
