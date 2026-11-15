@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-15 15:07+0100\n"
+"POT-Creation-Date: 2026-11-15 15:46+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,6 +55,10 @@ msgstr ""
 
 #: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LoginHook.java:69
 msgid "Retrieving WPCleaner configuration"
+msgstr ""
+
+#: wpcleaner-api/src/main/java/org/wpcleaner/api/hook/login/LinterCategoryLabelLoader.java:43
+msgid "Retrieving Linter categories"
 msgstr ""
 
 #: wpcleaner-api/src/main/java/org/wpcleaner/api/repository/token/TokenRepository.java:43
@@ -672,16 +676,16 @@ msgstr ""
 msgid "Retrieve the errors still detected by Check Wiki"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/LinterErrorsWindow.java:50
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/LinterErrorsWindow.java:49
 #, java-printf-format
 msgid "Errors detected by Linter in %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/LinterErrorsWindow.java:68
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/LinterErrorsWindow.java:67
 msgid "The following errors are detected by Linter in the analyzed text:"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/LinterErrorsWindow.java:91
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/LinterErrorsWindow.java:90
 msgid "Type"
 msgstr ""
 

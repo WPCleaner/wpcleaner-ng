@@ -23,11 +23,14 @@ import org.wpcleaner.api.api.query.list.tags.Tag;
 import org.wpcleaner.api.api.query.list.tags.TagsParameters;
 import org.wpcleaner.api.api.query.list.users.MockApiUsers;
 import org.wpcleaner.api.api.query.list.users.User;
+import org.wpcleaner.api.api.query.meta.allmessages.AllMessagesQuery;
+import org.wpcleaner.api.api.query.meta.allmessages.MockApiAllMessages;
 import org.wpcleaner.api.api.query.meta.siteinfo.MockApiSiteInfo;
 import org.wpcleaner.api.api.query.meta.siteinfo.Namespace;
 import org.wpcleaner.api.api.query.meta.siteinfo.SiteInfoTestFactory;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
+import org.wpcleaner.api.hook.login.LinterCategoryLabelLoader;
 import org.wpcleaner.api.hook.login.LoginHook;
 import org.wpcleaner.api.hook.login.WPCleanerConfigurationExpectations;
 import org.wpcleaner.api.progress.ProgressTracker;
@@ -152,6 +155,15 @@ public final class ApplicationLogin {
             ? null
             : "check_wiki_translation_page=%s END".formatted(CHECK_WIKI_TRANSLATION_PAGE),
         data.userConfiguration());
+    if (!data.linterCategories().isEmpty()) {
+      new MockApiAllMessages(mediaWikiServer)
+          .givenRetrieveMessages(
+              wiki,
+              AllMessagesQuery.emptyBuilder()
+                  .prefix(LinterCategoryLabelLoader.MESSAGE_PREFIX)
+                  .build())
+          .willReturn(List.of());
+    }
     if (checkWikiConfiguration != null) {
       WPCleanerConfigurationExpectations.givenPage(
           mockApiRevisions, wiki, CHECK_WIKI_TRANSLATION_PAGE, checkWikiConfiguration);

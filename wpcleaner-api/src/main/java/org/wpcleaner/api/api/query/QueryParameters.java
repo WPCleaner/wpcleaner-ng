@@ -43,6 +43,7 @@ public enum QueryParameters {
   }
 
   public enum Meta {
+    ALL_MESSAGES("allmessages"),
     SITE_INFO("siteinfo"),
     TOKENS("tokens");
 
