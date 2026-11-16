@@ -61,6 +61,26 @@ class PageAnalysisImageTest {
                 List.of()));
   }
 
+  @DisplayName("should analyze image with a mixed-case namespace")
+  @Test
+  void analyzeImageWithMixedCaseNamespace() {
+    // GIVEN
+    final String text = "[[FIle:Exemple.jpg|thumb|Une [[légende]] liée]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getImages())
+        .extracting(
+            ImageElement::begin, ImageElement::end, ImageElement::namespace, ImageElement::title)
+        .containsExactly(
+            Assertions.tuple(0, text.length(), "FIle", new PageTitle(6, "Exemple.jpg")));
+    Assertions.assertThat(analysis.getInternalLinks())
+        .extracting(InternalLinkElement::target)
+        .containsExactly("légende");
+  }
+
   @DisplayName("should analyze image options and caption")
   @Test
   void analyzeImageParameters() {

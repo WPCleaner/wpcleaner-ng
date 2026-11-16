@@ -41,6 +41,9 @@ class NamespaceTest {
         Arguments.of("Local name", categoryNamespace, "Catégorie"),
         Arguments.of("Local name lowercase", categoryNamespace, "catégorie"),
         Arguments.of("Alias", categoryNamespace, "Cat"),
-        Arguments.of("Alias lowercase", categoryNamespace, "cat"));
+        Arguments.of("Alias lowercase", categoryNamespace, "cat"),
+        Arguments.of("Canonical mixed case", categoryNamespace, "CAtegory"),
+        Arguments.of("Local name uppercase", categoryNamespace, "CATÉGORIE"),
+        Arguments.of("Alias mixed case", categoryNamespace, "cAT"));
   }
 }

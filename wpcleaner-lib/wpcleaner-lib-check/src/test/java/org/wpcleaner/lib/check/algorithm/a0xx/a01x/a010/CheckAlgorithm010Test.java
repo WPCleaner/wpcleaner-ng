@@ -39,6 +39,19 @@ class CheckAlgorithm010Test {
     Assertions.assertThat(errors).isEmpty();
   }
 
+  @DisplayName("should not report an image with a mixed-case namespace and a link in its caption")
+  @Test
+  void ignoreImageWithMixedCaseNamespace() {
+    // GIVEN
+    final String text = "[[FIchier:A.png|thumb|a [[B]] c]] [[CAtégorie:D]]";
+
+    // WHEN
+    final List<CheckError> errors = analyze(ARTICLE, text);
+
+    // THEN
+    Assertions.assertThat(errors).isEmpty();
+  }
+
   @DisplayName("should automatically remove brackets surrounding a link in an article")
   @Test
   void removeSurroundingBrackets() {

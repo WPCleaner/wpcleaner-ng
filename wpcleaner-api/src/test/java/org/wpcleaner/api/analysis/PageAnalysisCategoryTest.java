@@ -45,6 +45,22 @@ class PageAnalysisCategoryTest {
     Assertions.assertThat(analysis.getCategories().getFirst().end()).isEqualTo(text.length());
   }
 
+  @DisplayName("should analyze category with a mixed-case namespace")
+  @Test
+  void analyzeCategoryWithMixedCaseNamespace() {
+    // GIVEN
+    final String text = "[[CAtégorie:My category]]";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getInternalLinks()).isEmpty();
+    Assertions.assertThat(analysis.getCategories())
+        .extracting(CategoryElement::begin, CategoryElement::end, CategoryElement::title)
+        .containsExactly(Assertions.tuple(0, text.length(), new PageTitle(14, "My category")));
+  }
+
   @DisplayName("should analyze category parts")
   @Test
   void analyzeCategoryParts() {
