@@ -10,7 +10,8 @@
 
   check_wiki_tool.py config <number> <wiki>...
       Check Wiki settings of the error on each wiki, the WPCleanerNG/Configuration/NNN page,
-      and a YAML draft for that page. <wiki> is a Check Wiki code like enwiki or frwiki
+      and a YAML draft for that page (lines like Template|parameter are drafted as
+      template/parameters pairs, to adapt to what the algorithm reads). <wiki> is a Check Wiki code like enwiki or frwiki
       (host <language>.wikipedia.org), or <code>=<host> for other wikis.
 """
 
@@ -28,6 +29,8 @@ TRANSLATION_PAGE_PARAMETER = "check_wiki_translation_page"
 PARAMETERS_PAGE = "Project:WPCleanerNG/Configuration/{number:03d}"
 COMMON_SETTINGS = ("prio", "head", "desc", "link", "whitelistpage", "whitelist", "bot")
 YAML_SPECIAL_START = set("-?:,[]{}#&*!|>'\"%@`")
+ELEMENT_SEPARATOR = re.compile(r"(?<!\\)\|(?![^\[\]]*\])")
+WIKITEXT_MARKERS = ("{{", "[[", "<")
 YAML_RESERVED = {"true", "false", "null", "~", ""}
 REPOSITORY_ROOT = pathlib.Path(__file__).resolve().parents[4]
 LEGACY_PARAMETER = re.compile(r'String\s+(PARAMETER_\w+)\s*=\s*"([^"]+)"')
@@ -143,33 +146,63 @@ def yaml_scalar(value, flow=False):
     return value
 
 
+def split_elements(line):
+    return [element.strip() for element in ELEMENT_SEPARATOR.split(line)]
+
+
+def yaml_flow_list(elements):
+    return f"[{', '.join(yaml_scalar(element, True) for element in elements)}]"
+
+
+def yaml_template_parameters(name, value_lines):
+    lines = [
+        f"# TODO: template parameters found in {name}, check the parameter and fields read by the algorithm",
+        f"{name}:",
+    ]
+    for line in value_lines:
+        template, *names = [element for element in split_elements(line) if element]
+        lines.append(f"  - template: {yaml_scalar(template)}")
+        if names:
+            lines.append(f"    parameters: {yaml_flow_list(names)}")
+    return lines
+
+
+def yaml_template_names(name, value_lines):
+    lines = []
+    names = [element.strip() for line in value_lines for element in line.split(",") if element.strip()]
+    templates = [element for element in names if not element.startswith("+")]
+    groups = [element[1:].strip() for element in names if element.startswith("+")]
+    if templates:
+        lines.append(f"{name}:")
+        lines += [f"  - {yaml_scalar(element)}" for element in templates]
+    if groups:
+        groups_name = name.replace("_templates", "_groups")
+        if groups_name == name:
+            lines.append(f"# TODO: groups found in {name}, choose a dedicated parameter")
+            groups_name = f"{name}_groups"
+        lines.append(f"{groups_name}:")
+        lines += [f"  - {yaml_scalar(element)}" for element in groups]
+    return lines
+
+
 def yaml_draft(parameters):
     lines = []
     for name, value in sorted(parameters.items()):
         value_lines = [line.strip() for line in value.splitlines() if line.strip()]
+        has_elements = [len([element for element in split_elements(line) if element]) > 1 for line in value_lines]
         if value.strip().lower() in ("true", "false"):
             lines.append(f"{name}: {value.strip().lower()}")
-        elif name.endswith("_groups") and value_lines and all("|" in line for line in value_lines):
+        elif name.endswith("_groups") and value_lines and all(has_elements):
             lines.append(f"{name}:")
             for line in value_lines:
-                group, *names = [element.strip() for element in re.split(r"(?<!\\)\|", line)]
-                lines.append(f"  {yaml_scalar(group, True)}: [{', '.join(yaml_scalar(element, True) for element in names)}]")
+                group, *names = split_elements(line)
+                lines.append(f"  {yaml_scalar(group, True)}: {yaml_flow_list(names)}")
+        elif len(value_lines) == 1 and any(marker in value for marker in WIKITEXT_MARKERS):
+            lines.append(f"{name}: {yaml_scalar(value_lines[0])}")
+        elif any(has_elements):
+            lines += yaml_template_parameters(name, value_lines)
         else:
-            names = [re.split(r"(?<!\\)\|", line)[0].strip() for line in value_lines]
-            names = [element for line in names for element in line.split(",") if element.strip()]
-            names = [element.strip() for element in names]
-            templates = [element for element in names if not element.startswith("+")]
-            groups = [element[1:].strip() for element in names if element.startswith("+")]
-            if templates:
-                lines.append(f"{name}:")
-                lines += [f"  - {yaml_scalar(element)}" for element in templates]
-            if groups:
-                groups_name = name.replace("_templates", "_groups")
-                if groups_name == name:
-                    lines.append(f"# TODO: groups found in {name}, choose a dedicated parameter")
-                    groups_name = f"{name}_groups"
-                lines.append(f"{groups_name}:")
-                lines += [f"  - {yaml_scalar(element)}" for element in groups]
+            lines += yaml_template_names(name, value_lines)
     return lines
 
 
