@@ -16,9 +16,9 @@ public record Namespace(
       new Namespace(CommonNamespaces.MAIN.id, "Main", "", List.of(), CaseType.FIRST_LETTER);
 
   public boolean isPossibleName(final String possible) {
-    return caseType.areEqual(possible, canonical)
-        || caseType.areEqual(possible, name)
-        || aliases.stream().anyMatch(alias -> caseType.areEqual(possible, alias));
+    return possible.equalsIgnoreCase(canonical)
+        || possible.equalsIgnoreCase(name)
+        || aliases.stream().anyMatch(possible::equalsIgnoreCase);
   }
 
   public static Optional<Namespace> findNamespace(final List<Namespace> namespaces, final int id) {
