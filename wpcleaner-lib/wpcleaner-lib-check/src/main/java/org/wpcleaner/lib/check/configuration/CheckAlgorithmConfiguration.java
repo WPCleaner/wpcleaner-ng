@@ -5,6 +5,7 @@ package org.wpcleaner.lib.check.configuration;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -194,6 +195,34 @@ public record CheckAlgorithmConfiguration(
                 TemplateDefinition.of(line.getFirst(), fields, line.subList(1, line.size()))
                     .stream())
         .toList();
+  }
+
+  public List<Map<String, String>> getFieldValues(final String name, final List<String> fields) {
+    if (parameters != null) {
+      return parameters.getObjects(name).stream()
+          .map(
+              object ->
+                  toFieldValues(
+                      fields,
+                      fields.stream()
+                          .map(field -> object.getStrings(field).stream().findFirst())
+                          .toList()))
+          .toList();
+    }
+    return getLines(name).stream()
+        .map(line -> ConfigurationParser.splitLine(line, fields.size()))
+        .map(elements -> toFieldValues(fields, elements.stream().map(Optional::of).toList()))
+        .toList();
+  }
+
+  private static Map<String, String> toFieldValues(
+      final List<String> fields, final List<Optional<String>> values) {
+    final Map<String, String> fieldValues = new LinkedHashMap<>();
+    for (int index = 0; index < Math.min(fields.size(), values.size()); index++) {
+      final String field = fields.get(index);
+      values.get(index).ifPresent(value -> fieldValues.put(field, value));
+    }
+    return Map.copyOf(fieldValues);
   }
 
   public TemplateGroups getTemplateGroups(final String name) {
