@@ -5,7 +5,8 @@
 
   check_wiki_tool.py legacy <number> [<legacy_src>]
       path of the legacy algorithm, and the parameters it declares
-      (<legacy_src> defaults to ../wpcleaner/WikipediaCleaner/src, relative to the repository)
+      (<legacy_src> defaults to ../wpcleaner/WikipediaCleaner/src, relative to the repository,
+      or to the main repository when the script runs from a git worktree)
 
   check_wiki_tool.py config <number> <wiki>...
       Check Wiki settings of the error on each wiki, the WPCleanerNG/Configuration/NNN page,
@@ -16,6 +17,7 @@
 import json
 import pathlib
 import re
+import subprocess
 import sys
 import urllib.parse
 import urllib.request
@@ -28,9 +30,27 @@ COMMON_SETTINGS = ("prio", "head", "desc", "link", "whitelistpage", "whitelist",
 YAML_SPECIAL_START = set("-?:,[]{}#&*!|>'\"%@`")
 YAML_RESERVED = {"true", "false", "null", "~", ""}
 REPOSITORY_ROOT = pathlib.Path(__file__).resolve().parents[4]
-DEFAULT_LEGACY_SRC = REPOSITORY_ROOT.parent / "wpcleaner" / "WikipediaCleaner" / "src"
 LEGACY_PARAMETER = re.compile(r'String\s+(PARAMETER_\w+)\s*=\s*"([^"]+)"')
 LEGACY_DESCRIPTION = re.compile(r'new AlgorithmParameter\(\s*(PARAMETER_\w+),\s*GT\._T\("([^"]*)"')
+
+
+def main_repository_root():
+    try:
+        git_common_dir = subprocess.run(
+            ["git", "-C", str(REPOSITORY_ROOT), "rev-parse", "--path-format=absolute", "--git-common-dir"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return REPOSITORY_ROOT
+    if pathlib.Path(git_common_dir).name != ".git":
+        return REPOSITORY_ROOT
+    return pathlib.Path(git_common_dir).parent
+
+
+def default_legacy_src():
+    return main_repository_root().parent / "wpcleaner" / "WikipediaCleaner" / "src"
 
 
 def legacy_path(legacy_src, number):
@@ -192,7 +212,7 @@ def config(number, wikis):
 
 def main(arguments):
     if len(arguments) in (2, 3) and arguments[0] == "legacy" and arguments[1].isdigit():
-        legacy_src = arguments[2] if len(arguments) == 3 else DEFAULT_LEGACY_SRC
+        legacy_src = arguments[2] if len(arguments) == 3 else default_legacy_src()
         return legacy(int(arguments[1]), legacy_src)
     if len(arguments) >= 3 and arguments[0] == "config" and arguments[1].isdigit():
         return config(int(arguments[1]), arguments[2:])
