@@ -13,11 +13,13 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -81,6 +83,40 @@ class ProjectsPanelTest extends JavaFxTest {
         .containsExactly("048 - " + NAME);
   }
 
+  @DisplayName("should group the Check Wiki algorithms sharing the same tens in a sub-menu")
+  @Test
+  void groupCheckWikiAlgorithms()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    login(
+        String.join(
+            "\n",
+            activeAlgorithm(1),
+            activeAlgorithm(9),
+            activeAlgorithm(17),
+            " error_061_prio_frwiki=0 END",
+            activeAlgorithm(64),
+            activeAlgorithm(67)));
+
+    // WHEN
+    final MenuButton button = displayCheckWikiButton();
+
+    // THEN
+    Assertions.assertThat(button.getItems())
+        .extracting(MenuItem::getText)
+        .containsExactly("Algorithms 001 to 009", "017 - Name 17", "Algorithms 064 to 067");
+    Assertions.assertThat(button.getItems().getFirst())
+        .asInstanceOf(InstanceOfAssertFactories.type(Menu.class))
+        .extracting(Menu::getItems, InstanceOfAssertFactories.list(MenuItem.class))
+        .extracting(MenuItem::getText)
+        .containsExactly("001 - Name 1", "009 - Name 9");
+    Assertions.assertThat(button.getItems().getLast())
+        .asInstanceOf(InstanceOfAssertFactories.type(Menu.class))
+        .extracting(Menu::getItems, InstanceOfAssertFactories.list(MenuItem.class))
+        .extracting(MenuItem::getText)
+        .containsExactly("064 - Name 64", "067 - Name 67");
+  }
+
   @DisplayName("should disable the Check Wiki button without active algorithm")
   @Test
   void listNoCheckWikiAlgorithm()
@@ -137,6 +173,11 @@ class ProjectsPanelTest extends JavaFxTest {
                     .map(CheckAlgorithmErrors.class::cast));
     Assertions.assertThat(selectedErrors.algorithm().number()).isEqualTo(48);
     mediaWikiServer.verify();
+  }
+
+  private static String activeAlgorithm(final int number) {
+    return " error_%1$03d_prio_frwiki=3 END\n error_%1$03d_head_frwiki=Name %1$d END"
+        .formatted(number);
   }
 
   private void login(final String checkWikiConfiguration) {

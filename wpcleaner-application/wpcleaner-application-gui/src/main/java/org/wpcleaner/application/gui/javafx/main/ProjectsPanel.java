@@ -6,9 +6,12 @@ package org.wpcleaner.application.gui.javafx.main;
  */
 
 import java.util.List;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
@@ -28,6 +31,7 @@ final class ProjectsPanel extends VBox {
   static final String CHECK_WIKI_ID = "check-wiki";
 
   private static final int MAX_CHECK_WIKI_PAGES = 100;
+  private static final int CHECK_WIKI_GROUP_SIZE = 10;
 
   private final JavaFxMainWindowServices services;
   private final JavaFxImageLoader imageLoader;
@@ -64,15 +68,42 @@ final class ProjectsPanel extends VBox {
         .ifPresent(button::setGraphic);
     final WikiDefinition wiki = services.user().getCurrentUser().wiki();
     services.checkAlgorithmRegistry().getActiveAlgorithms(wiki).stream()
-        .map(algorithm -> createCheckWikiItem(wiki, algorithm))
+        .collect(
+            Collectors.groupingBy(
+                algorithm -> algorithm.number() / CHECK_WIKI_GROUP_SIZE,
+                TreeMap::new,
+                Collectors.toList()))
+        .values()
+        .stream()
+        .map(group -> createCheckWikiGroupItem(wiki, group))
         .forEach(button.getItems()::add);
     button.setDisable(button.getItems().isEmpty());
     return button;
   }
 
+  private MenuItem createCheckWikiGroupItem(
+      final WikiDefinition wiki, final List<CheckAlgorithm> group) {
+    if (group.size() == 1) {
+      return createCheckWikiItem(wiki, group.getFirst());
+    }
+    final Menu menu =
+        new Menu(
+            GT._T(
+                "Algorithms %s to %s",
+                formatNumber(group.getFirst()), formatNumber(group.getLast())));
+    group.stream()
+        .map(algorithm -> createCheckWikiItem(wiki, algorithm))
+        .forEach(menu.getItems()::add);
+    return menu;
+  }
+
+  private static String formatNumber(final CheckAlgorithm algorithm) {
+    return "%03d".formatted(algorithm.number());
+  }
+
   private MenuItem createCheckWikiItem(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
     final String name = services.checkAlgorithmRegistry().getName(wiki, algorithm);
-    final MenuItem item = new MenuItem("%03d - %s".formatted(algorithm.number(), name));
+    final MenuItem item = new MenuItem("%s - %s".formatted(formatNumber(algorithm), name));
     item.setOnAction(
         _ ->
             services
