@@ -20,6 +20,7 @@ module org.wpcleaner.lib.check {
   opens org.wpcleaner.lib.check.algorithm.a0xx.a00x.a005;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a00x.a006;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a00x.a007;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a00x.a008;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a017;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a04x.a048;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a06x.a061;
