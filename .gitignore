@@ -37,6 +37,7 @@ gradle-app.setting
 __pycache__/
 
 # Claude Code
+.claude/worktrees
 .claude/settings.local.json
 
 # Bot output (default output folder)
