@@ -18,6 +18,7 @@ import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationReposito
 import org.wpcleaner.api.repository.configuration.WPCleanerParameter;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.algorithm.TextExclusions;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 

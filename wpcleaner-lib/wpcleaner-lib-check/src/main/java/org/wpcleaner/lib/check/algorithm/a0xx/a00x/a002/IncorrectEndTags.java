@@ -16,6 +16,7 @@ import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.algorithm.TextExclusions;
 
 record IncorrectEndTags(PageAnalysis analysis, TextExclusions exclusions) {
 

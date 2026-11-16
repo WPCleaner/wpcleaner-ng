@@ -1,4 +1,4 @@
-package org.wpcleaner.lib.check.algorithm.a0xx.a00x.a002;
+package org.wpcleaner.lib.check.algorithm;
 
 /*
  * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
@@ -10,13 +10,13 @@ import java.util.stream.Stream;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 
-record TextExclusions(List<Area> areas) {
+public record TextExclusions(List<Area> areas) {
 
-  TextExclusions {
+  public TextExclusions {
     areas = List.copyOf(areas);
   }
 
-  static TextExclusions of(final PageAnalysis analysis) {
+  public static TextExclusions of(final PageAnalysis analysis) {
     return new TextExclusions(
         Stream.concat(
                 analysis.getComments().stream()
@@ -27,7 +27,7 @@ record TextExclusions(List<Area> areas) {
             .toList());
   }
 
-  boolean contains(final int index) {
+  public boolean contains(final int index) {
     return areas.stream().anyMatch(area -> area.begin() <= index && index < area.end());
   }
 
@@ -35,7 +35,7 @@ record TextExclusions(List<Area> areas) {
     return tag.startTag().type().filter(type -> !type.hasWikiContent()).isPresent();
   }
 
-  record Area(int begin, int end) {
+  public record Area(int begin, int end) {
 
     static Area inside(final CompleteTagElement tag) {
       final int begin = tag.startTag().end();
