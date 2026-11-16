@@ -11,24 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.category.CategoryElement;
-import org.wpcleaner.api.analysis.pagetitle.PageTitle;
-import org.wpcleaner.api.analysis.template.TemplateElement;
-import org.wpcleaner.api.analysis.template.TemplateParameter;
 import org.wpcleaner.api.analysis.title.TitleElement;
-import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.algorithm.IgnoredTemplates;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
-import org.wpcleaner.lib.check.configuration.TemplateParameters;
 
 @Component
 public class CheckAlgorithm017 implements CheckAlgorithm {
@@ -82,53 +77,13 @@ public class CheckAlgorithm017 implements CheckAlgorithm {
   }
 
   private Predicate<CategoryElement> createIgnoredFilter(final PageAnalysis analysis) {
-    final TemplateParameters ignored =
+    return IgnoredTemplates.createIgnoredFilter(
+        analysis,
         checkWikiRepository
             .getConfiguration(analysis.getWiki())
             .getAlgorithm(ALGORITHM_NUMBER)
             .orElseGet(() -> new CheckAlgorithmConfiguration(ALGORITHM_NUMBER, Map.of()))
-            .getTemplateParameters(PARAMETER_IGNORE_TEMPLATES, PARAMETER_IGNORE_PARAMETERS);
-    final Set<PageTitle> templates =
-        ignored.templates().stream()
-            .flatMap(name -> normalizeTemplate(analysis, name).stream())
-            .collect(Collectors.toSet());
-    final Map<PageTitle, Set<String>> parameters = new LinkedHashMap<>();
-    ignored
-        .parameters()
-        .forEach(
-            (name, names) ->
-                normalizeTemplate(analysis, name).ifPresent(title -> parameters.put(title, names)));
-    return category ->
-        analysis.getTemplates().stream()
-            .filter(category::isInside)
-            .max(Comparator.comparingInt(TemplateElement::begin))
-            .filter(
-                template ->
-                    templates.contains(template.title())
-                        || parameters.getOrDefault(template.title(), Set.of()).stream()
-                            .anyMatch(name -> isInParameter(template, category, name)))
-            .isPresent();
-  }
-
-  private static Optional<PageTitle> normalizeTemplate(
-      final PageAnalysis analysis, final String name) {
-    return analysis.normalizeTitle(name, CommonNamespaces.TEMPLATE.id);
-  }
-
-  private static boolean isInParameter(
-      final TemplateElement template, final CategoryElement category, final String name) {
-    int position = 0;
-    for (final TemplateParameter parameter : template.parameters()) {
-      final String parameterName = parameter.name();
-      if (parameterName == null) {
-        position++;
-      }
-      if (parameter.begin() <= category.begin() && category.end() <= parameter.end()) {
-        return name.equals(
-            parameterName == null ? Integer.toString(position) : parameterName.trim());
-      }
-    }
-    return false;
+            .getTemplateParameters(PARAMETER_IGNORE_TEMPLATES, PARAMETER_IGNORE_PARAMETERS));
   }
 
   private static CategoryElement findKeptCategory(
