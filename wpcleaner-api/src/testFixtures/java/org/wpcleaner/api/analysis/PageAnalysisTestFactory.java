@@ -192,6 +192,13 @@ public final class PageAnalysisTestFactory {
             new MagicWord(
                 "redirect", List.of("#REDIRECTION", "#REDIRECT"), false, false, false, false))
         .forEach(magicWord -> magicWordRepository.addMagicWord(WIKI, magicWord));
+    Stream.of(WikipediaDefinitions.EL, WikipediaDefinitions.ES, WikipediaDefinitions.SV)
+        .forEach(
+            wiki ->
+                magicWordRepository.addMagicWord(
+                    wiki,
+                    new MagicWord(
+                        "defaultsort", List.of("DEFAULTSORT:"), true, false, true, false)));
     return magicWordRepository;
   }
 }
