@@ -41,7 +41,7 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
         analysis.getExternalLinks().stream()
             .map(ExternalLinkElement::begin)
             .collect(Collectors.toSet());
-    final List<Element> ignoredAreas = findIgnoredAreas();
+    final List<CompleteTagElement> ignoredAreas = findIgnoredAreas();
     final List<CheckError> errors = new ArrayList<>();
     int index = text.indexOf(LINK_START);
     while (index >= 0) {
@@ -50,7 +50,8 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
       if (!elements.containsKey(index)
           && !externalLinkBegins.contains(bracketsEnd - 1)
           && !exclusions.contains(index)
-          && !isInsideOne(ignoredAreas, index)) {
+          && !isInsideOne(ignoredAreas, index)
+          && !isClosed(index, bracketsEnd)) {
         final CheckError error = createError(algorithm, index, bracketsEnd, elements);
         errors.add(error);
         nextIndex = error.end();
@@ -58,6 +59,13 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
       index = text.indexOf(LINK_START, nextIndex);
     }
     return errors;
+  }
+
+  private boolean isClosed(final int begin, final int bracketsEnd) {
+    final String text = analysis.getText();
+    return bracketsEnd - begin == LINK_START.length()
+        && text.startsWith(
+            LINK_END, indexOfAny(text, bracketsEnd, LINK_BREAKERS + SingleBrackets.CLOSE));
   }
 
   private Map<Integer, Element> findSquareBracketElements() {
@@ -68,21 +76,18 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
             analysis.getLanguageLinks(),
             analysis.getInterwikiLinks())
         .<Element>flatMap(List::stream)
-        .collect(Collectors.toMap(Element::begin, element -> element, (first, second) -> first));
+        .collect(Collectors.toMap(Element::begin, element -> element, (first, _) -> first));
   }
 
-  private List<Element> findIgnoredAreas() {
-    return Stream.<Element>concat(
-            analysis.getTags().stream(),
-            analysis.getCompleteTags().stream().filter(UnclosedLinks::isCode))
-        .toList();
+  private List<CompleteTagElement> findIgnoredAreas() {
+    return analysis.getCompleteTags().stream().filter(UnclosedLinks::isCode).toList();
   }
 
   private static boolean isCode(final CompleteTagElement tag) {
     return HtmlTagType.CODE.getNormalizedName().equals(tag.startTag().normalizedName());
   }
 
-  private static boolean isInsideOne(final List<Element> areas, final int index) {
+  private static boolean isInsideOne(final List<CompleteTagElement> areas, final int index) {
     return areas.stream().anyMatch(area -> area.begin() <= index && index < area.end());
   }
 

@@ -235,14 +235,27 @@ class CheckAlgorithm010Test {
     // GIVEN
     final String text =
         "<!-- [[a --> <nowiki>[[a</nowiki> <code>[[a</code> <math>[[a</math> <pre>[[a</pre>"
-            + " <source>[[a</source> <syntaxhighlight>[[a</syntaxhighlight>"
-            + " <ref name=\"[[a\">b</ref>";
+            + " <source>[[a</source> <syntaxhighlight>[[a</syntaxhighlight>";
 
     // WHEN
     final List<CheckError> errors = analyze(ARTICLE, text);
 
     // THEN
     Assertions.assertThat(errors).isEmpty();
+  }
+
+  @DisplayName("should report an unclosed link in a tag attribute")
+  @Test
+  void reportUnclosedLinkInTagAttribute() {
+    // GIVEN
+    final String text =
+        "<ref name=\"[[a\">b</ref> <span title=\"[[C]]\">d</span> <gallery caption=\"[[E]]\"/>";
+
+    // WHEN
+    final List<CheckError> errors = analyze(ARTICLE, text);
+
+    // THEN
+    Assertions.assertThat(errors).containsExactly(new CheckError(ALGORITHM, 11, 13, List.of()));
   }
 
   @DisplayName("should report an unclosed link in a gallery")
