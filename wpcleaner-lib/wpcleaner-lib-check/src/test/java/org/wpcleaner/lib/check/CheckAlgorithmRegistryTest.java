@@ -170,6 +170,25 @@ class CheckAlgorithmRegistryTest {
     Assertions.assertThat(name).isEqualTo(HEAD);
   }
 
+  @DisplayName("should decode the HTML entities in the short description")
+  @Test
+  void getNameWithHtmlEntities() {
+    // GIVEN
+    givenConfiguration(
+        Map.of(
+            "error_048_prio_frwiki",
+            "3",
+            "error_048_head_frwiki",
+            "&lt;math&gt; &amp;amp; &quot;x&quot; &#39;y&#x27;&apos; &eacute; &#36;1 &unknown; &#1114112; & x"));
+    final CheckAlgorithm algorithm = registry.findAlgorithm(48).orElseThrow();
+
+    // WHEN
+    final String name = registry.getName(WIKI, algorithm);
+
+    // THEN
+    Assertions.assertThat(name).isEqualTo("<math> &amp; \"x\" 'y'' é $1 &unknown; &#1114112; & x");
+  }
+
   @DisplayName("should name the algorithms with their number without short description")
   @Test
   void getNameWithoutShortDescription() {

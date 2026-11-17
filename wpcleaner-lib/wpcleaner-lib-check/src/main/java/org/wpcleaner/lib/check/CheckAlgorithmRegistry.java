@@ -63,6 +63,7 @@ public class CheckAlgorithmRegistry {
   public String getName(final WikiDefinition wiki, final CheckAlgorithm algorithm) {
     return getConfiguration(wiki, algorithm)
         .flatMap(CheckAlgorithmConfiguration::shortDescription)
+        .map(HtmlEntityDecoder::decode)
         .orElseGet(algorithm::name);
   }
 
