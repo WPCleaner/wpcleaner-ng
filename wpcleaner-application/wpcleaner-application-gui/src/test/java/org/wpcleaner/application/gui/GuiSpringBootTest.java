@@ -14,6 +14,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.wpcleaner.api.api.MediaWikiServerConfiguration;
 import org.wpcleaner.application.base.ApplicationLogin;
 import org.wpcleaner.application.gui.core.desktop.DesktopService;
+import org.wpcleaner.application.gui.javafx.core.window.JavaFxFileChooser;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -24,5 +25,5 @@ import org.wpcleaner.application.gui.core.desktop.DesktopService;
       "wpcleaner.api.edit-wrapper.throttle-period-seconds=0"
     },
     webEnvironment = SpringBootTest.WebEnvironment.NONE)
-@MockitoBean(types = DesktopService.class)
+@MockitoBean(types = {DesktopService.class, JavaFxFileChooser.class})
 public @interface GuiSpringBootTest {}

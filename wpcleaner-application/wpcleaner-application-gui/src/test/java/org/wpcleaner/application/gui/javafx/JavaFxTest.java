@@ -11,6 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import javafx.application.Platform;
@@ -125,6 +126,11 @@ public class JavaFxTest {
 
   protected String closeAlert(final JavaFxWindow<?> owner)
       throws InterruptedException, ExecutionException, TimeoutException {
+    return answerDialog(owner, _ -> {});
+  }
+
+  protected String answerDialog(final JavaFxWindow<?> owner, final Consumer<DialogPane> answer)
+      throws InterruptedException, ExecutionException, TimeoutException {
     return waitForJavaFx(
         () ->
             Window.getWindows().stream()
@@ -140,6 +146,7 @@ public class JavaFxTest {
                 .map(
                     dialogPane -> {
                       final String content = dialogPane.getContentText();
+                      answer.accept(dialogPane);
                       ((Button) dialogPane.lookupButton(ButtonType.OK)).fire();
                       return content;
                     }));
