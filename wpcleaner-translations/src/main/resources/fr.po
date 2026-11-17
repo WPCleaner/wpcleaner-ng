@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-16 18:17+0100\n"
+"POT-Creation-Date: 2026-11-17 18:14+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -91,23 +91,23 @@ msgstr "Récupération des informations concernant l'utilisateur %s"
 msgid "Recent changes"
 msgstr "Modifications récentes"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:62
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:66
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:213
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:222
 msgid "Check Wiki"
 msgstr "Check Wiki"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:92
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:96
 #, java-printf-format
 msgid "Algorithms %s to %s"
 msgstr "Algorithmes %s à %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:112
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:116
 #, java-printf-format
 msgid "Check Wiki: %s"
 msgstr "Check Wiki : %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:127
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:131
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LinterMenuButton.java:119
 #, java-printf-format
 msgid "Retrieving pages for %s"
@@ -182,6 +182,37 @@ msgstr "Avertissement"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:89
 msgid "The page name cannot be empty."
 msgstr "Le nom de la page ne peut pas être vide."
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageListFileFormat.java:11
+msgid "Unformatted list of page names"
+msgstr "Liste non formatée de noms de pages"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/PageListFileFormat.java:12
+msgid "Internal links in a formatted list"
+msgstr "Liens internes dans une liste formatée"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LoadListButton.java:36
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LoadListButton.java:58
+msgid "Load list from drive"
+msgstr "Charger une liste depuis le disque"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LoadListButton.java:59
+msgid "The file must be encoded in UTF-8 to be read correctly."
+msgstr "Le fichier doit être encodé en UTF-8 pour être lu correctement."
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LoadListButton.java:60
+msgid "In which format is the file?"
+msgstr "Dans quel format est le fichier ?"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LoadListButton.java:69
+#, java-printf-format
+msgid "List: %s"
+msgstr "Liste : %s"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/LoadListButton.java:89
+#, java-printf-format
+msgid "Reading pages from %s"
+msgstr "Lecture des pages depuis %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/JavaFxMainWindow.java:69
 #, java-printf-format
@@ -536,6 +567,10 @@ msgstr "Erreur"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/window/JavaFxProgressOverlay.java:27
 msgid "Processing..."
 msgstr "Traitement en cours..."
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/window/JavaFxFileChooser.java:23
+msgid "Text files"
+msgstr "Fichiers texte"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/JavaFxNotImplementedAction.java:19
 msgid "Not implemented"

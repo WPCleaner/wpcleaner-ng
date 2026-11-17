@@ -20,6 +20,7 @@ public enum ImageCollection {
   DIFF("commons/gnome-edit-copy.png"),
   DOCUMENT_SAVE("commons/gnome-document-save.png"),
   DOCUMENT_SEND("commons/gnome-document-send.png"),
+  DRIVE_HARDDISK("commons/gnome-drive-harddisk.png"),
   EDIT("commons/gnome-document-properties.png"),
   ERROR("commons/codex-icon-error.png"),
   ERROR_ERROR("commons/codex-icon-error-color-error.png"),

@@ -55,7 +55,11 @@ final class ProjectsPanel extends VBox {
     button.setOnAction(_ -> services.recentChangesWindowFactory().displayRecentChangesWindow());
 
     getChildren()
-        .addAll(button, createCheckWikiButton(), new LinterMenuButton(services, imageLoader));
+        .addAll(
+            button,
+            createCheckWikiButton(),
+            new LinterMenuButton(services, imageLoader),
+            new LoadListButton(services, imageLoader));
   }
 
   private MenuButton createCheckWikiButton() {
