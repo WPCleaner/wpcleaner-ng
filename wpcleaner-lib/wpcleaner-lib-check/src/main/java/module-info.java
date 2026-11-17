@@ -25,8 +25,13 @@ module org.wpcleaner.lib.check {
   opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a010;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a011;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a012;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a013;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a014;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a015;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a01x.a017;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a02x.a020;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a02x.a023;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a02x.a024;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a03x.a031;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a03x.a039;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a04x.a040;
@@ -40,6 +45,9 @@ module org.wpcleaner.lib.check {
   opens org.wpcleaner.lib.check.algorithm.a0xx.a08x.a087;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a09x.a090;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a09x.a091;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a09x.a098;
+  opens org.wpcleaner.lib.check.algorithm.a0xx.a09x.a099;
+  opens org.wpcleaner.lib.check.algorithm.a1xx.a10x.a109;
   opens org.wpcleaner.lib.check.algorithm.a1xx.a11x.a110;
   opens org.wpcleaner.lib.check.algorithm.a5xx.a56x.a566;
   opens org.wpcleaner.lib.check.algorithm;
