@@ -1,0 +1,74 @@
+package org.wpcleaner.lib.check.comparison;
+
+/*
+ * SPDX-FileCopyrightText: © 2026 Nicolas Vervelle <[WPCleaner](https://github.com/WPCleaner)>
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.wpcleaner.api.analysis.PageAnalysis;
+import org.wpcleaner.api.analysis.PageAnalysisFactory;
+import org.wpcleaner.api.hook.login.LoginHook;
+import org.wpcleaner.api.hook.login.WPCleanerConfigurationLoader;
+import org.wpcleaner.api.progress.ProgressTracker;
+import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
+import org.wpcleaner.lib.check.CheckAlgorithm;
+import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
+import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.SpringBootTestConfig;
+
+@SpringBootTest(classes = SpringBootTestConfig.class)
+class HarnessAnalysisTest {
+
+  private static final Path DIRECTORY = Path.of("@HARNESS_DIR@");
+
+  @Autowired private CheckAlgorithmRegistry algorithmRegistry;
+  @Autowired private LoginHook loginHook;
+  @Autowired private PageAnalysisFactory pageAnalysisFactory;
+
+  @Test
+  void analyzeTexts() throws IOException {
+    final WikiDefinition wiki = WikipediaDefinitions.@WIKI@;
+    loginHook.executeHook(wiki, WPCleanerConfigurationLoader.GENERAL_USERNAME, ProgressTracker.NOOP);
+    final List<String> lines = new ArrayList<>();
+    final List<Path> files;
+    try (Stream<Path> stream = Files.list(DIRECTORY.resolve("in"))) {
+      files = stream.sorted().toList();
+    }
+    for (final Path file : files) {
+      final String content = Files.readString(file);
+      final int newLine = content.indexOf('\n');
+      final String fileName = file.getFileName().toString();
+      try {
+        final PageAnalysis analysis =
+            pageAnalysisFactory.analysis(
+                wiki, content.substring(0, newLine), content.substring(newLine + 1));
+        for (final CheckAlgorithm algorithm : algorithmRegistry.getAlgorithms()) {
+          if (algorithmRegistry.isWhitelisted(analysis, algorithm)) {
+            lines.add(fileName + "\t" + algorithm.number() + "\tWHITELISTED");
+            continue;
+          }
+          for (final CheckError error : algorithm.analyze(analysis)) {
+            final String text =
+                algorithm.reportedText(analysis, error).replace("\n", "↵").replace("\t", " ");
+            lines.add(
+                fileName + "\t" + algorithm.number() + "\t" + error.begin() + "\t" + error.end()
+                    + "\t" + text);
+          }
+        }
+      } catch (final RuntimeException exception) {
+        lines.add(fileName + "\tEXCEPTION\t" + exception);
+      }
+    }
+    Files.write(DIRECTORY.resolve("out.tsv"), lines);
+  }
+}

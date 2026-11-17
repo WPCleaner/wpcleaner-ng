@@ -79,3 +79,4 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 - `phabricator` – fetch and summarize a Phabricator task (`T123456`)
 - `manage-images` – fetch SVGs from Wikimedia Commons, render PNGs, update `ImageCollection`
 - `wiki-documentation` – check the user documentation on `Wikipedia:WPCleanerNG` against the code and draft wikitext
+- `bot-comparison-report` – compare the bot output with legacy WPCleaner and Check Wiki, explain the differences
