@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-17 18:14+0100\n"
+"POT-Creation-Date: 2026-11-17 20:55+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1376,6 +1376,10 @@ msgstr "Valeur vide dans %s"
 #, java-printf-format
 msgid "Value \"%s\" in %s is not a name, write it between quotes"
 msgstr "La valeur « %s » dans %s n'est pas un nom, écrivez-la entre guillemets"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/CheckAlgorithm016.java:121
+msgid "Remove all control characters"
+msgstr "Supprimer tous les caractères de contrôle"
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/CheckAlgorithm.java:17
 #, java-printf-format
