@@ -34,7 +34,7 @@ public final class PageAnalysisArea extends InlineCssTextArea {
 
   public void updateAnalysis(final PageAnalysis analysis) {
     if (!getText().equals(analysis.getText())) {
-      super.replaceText(analysis.getText());
+      replaceWrappedText(analysis.getText());
     }
     syntaxSpans = colorizer.computeStyleSpans(analysis);
     setStyleSpans(0, syntaxSpans);
@@ -52,9 +52,23 @@ public final class PageAnalysisArea extends InlineCssTextArea {
       @Nullable final String text,
       final PageAnalysisFactory factory) {
     if (text == null) {
-      super.replaceText("");
+      replaceWrappedText("");
     } else {
       updateAnalysis(factory.analysis(wiki, title, text));
     }
+  }
+
+  private void replaceWrappedText(final String text) {
+    setWrapText(!containsRightToLeft(text));
+    super.replaceText(text);
+  }
+
+  private static boolean containsRightToLeft(final String text) {
+    return text.codePoints()
+        .map(Character::getDirectionality)
+        .anyMatch(
+            directionality ->
+                directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT
+                    || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC);
   }
 }
