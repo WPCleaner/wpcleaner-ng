@@ -14,6 +14,8 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +26,10 @@ import org.wpcleaner.api.api.Limit;
 import org.wpcleaner.api.api.query.list.search.MockApiSearch;
 import org.wpcleaner.api.api.query.list.search.SearchPage;
 import org.wpcleaner.api.api.query.list.search.SearchQuery;
+import org.wpcleaner.api.api.query.prop.links.Link;
+import org.wpcleaner.api.api.query.prop.links.LinksQuery;
+import org.wpcleaner.api.api.query.prop.links.MockApiLinks;
+import org.wpcleaner.api.api.query.prop.links.Page;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
@@ -43,6 +49,7 @@ class ByPagePanelTest extends JavaFxTest {
   @Autowired private CurrentUserService currentUserService;
   @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxMainWindowFactory mainWindowFactory;
+  @Autowired private MockApiLinks mockApiLinks;
   @Autowired private MockApiSearch mockApiSearch;
   @Autowired private NamespaceRepository namespaceRepository;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
@@ -110,6 +117,112 @@ class ByPagePanelTest extends JavaFxTest {
 
     // THEN
     Assertions.assertThat(closeAlert(mainWindow)).isEqualTo("The page name cannot be empty.");
+  }
+
+  @DisplayName("should list the articles of the main namespace linked from the page")
+  @Test
+  void internalLinksInMainNamespace()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+    givenInternalLinks();
+
+    // WHEN
+    fireInternalLinks(mainWindow, "Paris", "Articles in main namespace");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> listWindow.getStage().getTitle()))
+        .isEqualTo("Internal links in Paris");
+    Assertions.assertThat(getPages(listWindow)).containsExactly("Bordeaux", "Marseille");
+  }
+
+  @DisplayName("should list the articles associated to the talk pages linked from the page")
+  @Test
+  void internalLinksWithTalkPagesConverted()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+    givenInternalLinks();
+
+    // WHEN
+    fireInternalLinks(mainWindow, "Paris", "Articles associated to talk pages");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(getPages(listWindow)).containsExactly("Bordeaux", "Lyon", "Marseille");
+  }
+
+  @DisplayName("should list the pages of all namespaces linked from the page")
+  @Test
+  void internalLinksInAllNamespaces()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+    givenInternalLinks();
+
+    // WHEN
+    fireInternalLinks(mainWindow, "Paris", "All articles");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(getPages(listWindow))
+        .containsExactly(
+            "Bordeaux", "Marseille", "Talk:Lyon", "User:Jane Doe", "User talk:John Doe");
+  }
+
+  @DisplayName("should warn when listing internal links without page name")
+  @Test
+  void internalLinksWithoutPage()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+
+    // WHEN
+    fireInternalLinks(mainWindow, " ", "All articles");
+
+    // THEN
+    Assertions.assertThat(closeAlert(mainWindow)).isEqualTo("The page name cannot be empty.");
+  }
+
+  private void givenInternalLinks() {
+    mockApiLinks
+        .givenRetrieveLinksByTitle(
+            WIKI, List.of("Paris"), LinksQuery.emptyBuilder().limit(Limit.max()).build())
+        .willReturn(
+            List.of(
+                new Page(
+                    List.of(
+                        new Link(CommonNamespaces.MAIN.id, "Marseille"),
+                        new Link(CommonNamespaces.MAIN_TALK.id, "Talk:Lyon"),
+                        new Link(CommonNamespaces.USER.id, "User:Jane Doe"),
+                        new Link(CommonNamespaces.USER_TALK.id, "User talk:John Doe"),
+                        new Link(CommonNamespaces.MAIN.id, "Bordeaux"),
+                        new Link(CommonNamespaces.MAIN.id, "Marseille")),
+                    false,
+                    CommonNamespaces.MAIN.id,
+                    681_159,
+                    "Paris")));
+  }
+
+  @SuppressWarnings("unchecked")
+  private void fireInternalLinks(
+      final JavaFxMainWindow mainWindow, final String pageName, final String itemText)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final MenuButton button =
+        waitForJavaFx(() -> find(mainWindow, ByPagePanel.INTERNAL_LINKS_ID, MenuButton.class));
+    runOnJavaFx(() -> lookup(mainWindow, PageInput.PAGE_ID, ComboBox.class).setValue(pageName));
+    final MenuItem item =
+        callOnJavaFx(
+            () ->
+                button.getItems().stream()
+                    .filter(menuItem -> itemText.equals(menuItem.getText()))
+                    .findFirst()
+                    .orElseThrow());
+    Platform.runLater(item::fire);
   }
 
   private JavaFxMainWindow displayMainWindow()

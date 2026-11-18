@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-18 18:52+0100\n"
+"POT-Creation-Date: 2026-11-18 20:11+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -86,6 +86,11 @@ msgstr "Le jeton de connexion est absent"
 #, java-printf-format
 msgid "Retrieving information about user %s"
 msgstr "Récupération des informations concernant l'utilisateur %s"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/InternalLinksTask.java:32
+#, java-printf-format
+msgid "Retrieving internal links in %s"
+msgstr "Récupération des liens internes dans %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:50
 msgid "Recent changes"
@@ -171,28 +176,49 @@ msgstr "Droits :"
 msgid "Close"
 msgstr "Fermer"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:84
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:76
 msgid "Analysis"
 msgstr "Analyse"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:92
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:84
 msgid "Search in titles"
 msgstr "Rechercher dans les titres"
 
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:92
+msgid "Internal links"
+msgstr "Liens internes"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:103
+msgid "Articles in main namespace"
+msgstr "Articles dans l'espace principal"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:106
+msgid "Articles associated to talk pages"
+msgstr "Articles associés aux pages de discussion"
+
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:108
+msgid "All articles"
+msgstr "Tous les articles"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:122
 msgid "Warning"
 msgstr "Avertissement"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:108
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:122
 msgid "The page name cannot be empty."
 msgstr "Le nom de la page ne peut pas être vide."
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:118
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:139
+#, java-printf-format
+msgid "Internal links in %s"
+msgstr "Liens internes dans %s"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:153
 #, java-printf-format
 msgid "Search results for %s"
 msgstr "Résultats de la recherche pour %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:133
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/SearchTitlesTask.java:29
 #, java-printf-format
 msgid "Searching titles containing %s"
 msgstr "Recherche des titres contenant %s"
@@ -1017,11 +1043,11 @@ msgstr "Supprimer les options sélectionnées"
 msgid "View modifications"
 msgstr "Voir les modifications"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:53
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:54
 msgid "Previous revision"
 msgstr "Version précédente"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:66
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDifferencesPanel.java:67
 msgid "New revision"
 msgstr "Nouvelle version"
 

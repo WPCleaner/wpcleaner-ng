@@ -5,24 +5,15 @@ package org.wpcleaner.application.gui.javafx.main;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import java.util.List;
-import java.util.Set;
 import java.util.function.Consumer;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.wpcleaner.api.analysis.pagetitle.PageTitle;
-import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
-import org.wpcleaner.api.api.Limit;
-import org.wpcleaner.api.api.query.list.search.ApiSearch;
-import org.wpcleaner.api.api.query.list.search.SearchPage;
-import org.wpcleaner.api.api.query.list.search.SearchQuery;
-import org.wpcleaner.api.progress.LongRunningTask;
-import org.wpcleaner.api.progress.ProgressStep;
-import org.wpcleaner.api.progress.ProgressTracker;
-import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
@@ -32,6 +23,7 @@ import org.wpcleaner.lib.image.ImageSize;
 
 final class ByPagePanel extends GridPane {
 
+  static final String INTERNAL_LINKS_ID = "internal-links";
   static final String SEARCH_TITLES_ID = "search-titles";
 
   private final JavaFxImageLoader imageLoader;
@@ -97,12 +89,31 @@ final class ByPagePanel extends GridPane {
         .ifPresent(searchTitlesButton::setGraphic);
     searchTitlesButton.setOnAction(_ -> onPage(page, this::searchTitles));
 
+    final MenuButton internalLinksButton = new MenuButton(GT._T("Internal links"));
+    internalLinksButton.setId(INTERNAL_LINKS_ID);
+    internalLinksButton.setMaxWidth(Double.MAX_VALUE);
+    internalLinksButton.setAlignment(Pos.CENTER);
+    imageLoader
+        .getImageView(ImageCollection.INTERNAL_LINK, ImageSize.BUTTON)
+        .ifPresent(internalLinksButton::setGraphic);
+    internalLinksButton
+        .getItems()
+        .addAll(
+            createInternalLinksItem(
+                page, GT._T("Articles in main namespace"), InternalLinksMode.MAIN),
+            createInternalLinksItem(
+                page,
+                GT._T("Articles associated to talk pages"),
+                InternalLinksMode.TALK_PAGES_CONVERTED),
+            createInternalLinksItem(page, GT._T("All articles"), InternalLinksMode.ALL));
+
     add(page.label, 0, 0);
     add(page.icon, 1, 0);
     add(page.comboBox, 2, 0);
     add(page.toolBar, 3, 0);
     add(analysisButton, 0, 1, 4, 1);
     add(searchTitlesButton, 0, 2, 4, 1);
+    add(internalLinksButton, 0, 3, 4, 1);
   }
 
   private void onPage(final PageInput page, final Consumer<String> pageAction) {
@@ -112,6 +123,27 @@ final class ByPagePanel extends GridPane {
     } else {
       pageAction.accept(pageName);
     }
+  }
+
+  private MenuItem createInternalLinksItem(
+      final PageInput page, final String text, final InternalLinksMode mode) {
+    final MenuItem item = new MenuItem(text);
+    item.setOnAction(_ -> onPage(page, pageName -> listInternalLinks(pageName, mode)));
+    return item;
+  }
+
+  private void listInternalLinks(final String pageName, final InternalLinksMode mode) {
+    services
+        .pageListWindowFactory()
+        .displayPageListWindow(
+            GT._T("Internal links in %s", pageName),
+            new InternalLinksTask(
+                services.apiLinks(),
+                wiki,
+                services.namespaceRepository().getNamespaces(wiki),
+                pageName,
+                mode),
+            services.analysisWindowFactory()::displayAnalysisWindow);
   }
 
   private void searchTitles(final String pageName) {
@@ -125,35 +157,5 @@ final class ByPagePanel extends GridPane {
                 services.namespaceRepository().getNamespaces(wiki),
                 pageName),
             services.analysisWindowFactory()::displayAnalysisWindow);
-  }
-
-  private record SearchTitlesTask(
-      ApiSearch apiSearch, WikiDefinition wiki, List<Namespace> namespaces, String pageName)
-      implements LongRunningTask<List<String>> {
-
-    @Override
-    public List<String> call(final ProgressTracker tracker) {
-      try (ProgressStep _ = tracker.start(GT._T("Searching titles containing %s", pageName))) {
-        final PageTitle title =
-            new PageTitleNormalizer(namespaces)
-                .normalize(pageName, Namespace.MAIN.id())
-                .orElseGet(() -> new PageTitle(Namespace.MAIN.id(), pageName));
-        final SearchQuery options =
-            SearchQuery.emptyBuilder()
-                .limit(Limit.max())
-                .namespace(
-                    Set.of(
-                        Namespace.findNamespace(namespaces, title.namespace())
-                            .orElse(Namespace.MAIN)))
-                .build();
-        return apiSearch
-            .searchPages(wiki, "intitle:\"" + title.text().replace("\"", "\\\"") + "\"", options)
-            .stream()
-            .map(SearchPage::title)
-            .distinct()
-            .sorted()
-            .toList();
-      }
-    }
   }
 }

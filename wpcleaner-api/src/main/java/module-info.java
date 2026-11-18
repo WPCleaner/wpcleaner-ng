@@ -58,6 +58,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.api.query.meta.siteinfo;
   exports org.wpcleaner.api.api.query.meta.tokens;
   exports org.wpcleaner.api.api.query.prop.langlinks;
+  exports org.wpcleaner.api.api.query.prop.links;
   exports org.wpcleaner.api.api.query.prop.revisions;
   exports org.wpcleaner.api.api.query;
   exports org.wpcleaner.api.api;
@@ -120,6 +121,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.api.query.meta.siteinfo;
   opens org.wpcleaner.api.api.query.meta.tokens;
   opens org.wpcleaner.api.api.query.prop.langlinks;
+  opens org.wpcleaner.api.api.query.prop.links;
   opens org.wpcleaner.api.api.query.prop.revisions;
   opens org.wpcleaner.api.api.query;
   opens org.wpcleaner.api.api;
