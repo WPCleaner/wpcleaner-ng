@@ -88,14 +88,7 @@ public final class JavaFxMainWindow extends JavaFxWindow<JavaFxMainWindowService
     imageLoader
         .getImageView(ImageCollection.PAGE, ImageSize.BUTTON)
         .ifPresent(byPageTab::setGraphic);
-    byPageTab.setContent(
-        new ByPagePanel(
-            this,
-            user.wiki(),
-            services.interestingSettings(),
-            imageLoader,
-            services.apiRandom(),
-            services.analysisWindowFactory()));
+    byPageTab.setContent(new ByPagePanel(this, user.wiki(), imageLoader, services));
 
     final Tab projectsTab = new Tab(GT._T("Projects"));
     projectsTab.setContent(new ProjectsPanel(services));

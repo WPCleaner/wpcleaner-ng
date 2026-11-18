@@ -76,6 +76,7 @@ public enum ImageCollection {
   RECENT_CHANGES("commons/gnome-logviewer.png"),
   REFRESH("commons/gnome-view-refresh.png"),
   REFRESH_STOP("commons/gnome-view-refresh-stop.png"),
+  SEARCH("commons/gnome-system-search.png"),
   SYSTEM_OPTIONS("commons/gnome-preferences-system.png"),
   TAG("commons/codex-icon-tag-color-progressive.png"),
   USER("commons/gnome-face-cool.png"),

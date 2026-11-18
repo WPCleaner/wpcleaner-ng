@@ -37,6 +37,7 @@ import org.wpcleaner.lib.image.ImageSize;
 public class PageInput {
 
   static final String ADD_PAGE_ID = "add-page";
+  static final String PAGE_ID = "page";
   static final String RANDOM_PAGE_ID = "random-page";
   static final String REMOVE_PAGE_ID = "remove-page";
 
@@ -64,6 +65,7 @@ public class PageInput {
         imageLoader.getImageView(ImageCollection.PAGE, ImageSize.LABEL).orElseGet(ImageView::new);
 
     comboBox = new ComboBox<>();
+    comboBox.setId(PAGE_ID);
     comboBox.setEditable(true);
     comboBox.setMaxWidth(Double.MAX_VALUE);
 
