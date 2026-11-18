@@ -5,43 +5,48 @@ package org.wpcleaner.application.gui.javafx.main;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
+import java.util.Set;
+import java.util.function.Consumer;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.wpcleaner.api.api.query.list.random.ApiRandom;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
+import org.wpcleaner.api.api.Limit;
+import org.wpcleaner.api.api.query.list.search.ApiSearch;
+import org.wpcleaner.api.api.query.list.search.SearchPage;
+import org.wpcleaner.api.api.query.list.search.SearchQuery;
+import org.wpcleaner.api.progress.LongRunningTask;
+import org.wpcleaner.api.progress.ProgressStep;
+import org.wpcleaner.api.progress.ProgressTracker;
+import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
-import org.wpcleaner.application.gui.core.factory.AnalysisWindowFactory;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindow;
-import org.wpcleaner.application.gui.settings.interesting.InterestingSettingsManager;
 import org.wpcleaner.lib.image.ImageCollection;
 import org.wpcleaner.lib.image.ImageSize;
 
 final class ByPagePanel extends GridPane {
 
-  private final AnalysisWindowFactory analysisWindowFactory;
-  private final ApiRandom apiRandom;
+  static final String SEARCH_TITLES_ID = "search-titles";
+
   private final JavaFxImageLoader imageLoader;
-  private final InterestingSettingsManager interestingSettings;
   private final JavaFxWindow<?> owner;
+  private final JavaFxMainWindowServices services;
   private final WikiDefinition wiki;
 
   ByPagePanel(
       final JavaFxWindow<?> owner,
       final WikiDefinition wiki,
-      final InterestingSettingsManager interestingSettings,
       final JavaFxImageLoader imageLoader,
-      final ApiRandom apiRandom,
-      final AnalysisWindowFactory analysisWindowFactory) {
-    this.analysisWindowFactory = analysisWindowFactory;
-    this.apiRandom = apiRandom;
+      final JavaFxMainWindowServices services) {
     this.imageLoader = imageLoader;
-    this.interestingSettings = interestingSettings;
     this.owner = owner;
+    this.services = services;
     this.wiki = wiki;
     initialize();
   }
@@ -71,7 +76,9 @@ final class ByPagePanel extends GridPane {
 
     getColumnConstraints().addAll(colLabel, colIcon, colField, colToolbar);
 
-    final PageInput page = new PageInput(owner, wiki, interestingSettings, imageLoader, apiRandom);
+    final PageInput page =
+        new PageInput(
+            owner, wiki, services.interestingSettings(), imageLoader, services.apiRandom());
     setHgrow(page.comboBox, Priority.ALWAYS);
 
     final Button analysisButton = new Button(GT._T("Analysis"));
@@ -80,23 +87,73 @@ final class ByPagePanel extends GridPane {
         .getImageView(ImageCollection.ANALYSIS, ImageSize.BUTTON)
         .ifPresent(analysisButton::setGraphic);
     analysisButton.setOnAction(
-        _ -> {
-          final String pageName = page.getPage();
-          if (pageName.isEmpty()) {
-            final Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle(GT._T("Warning"));
-            alert.setHeaderText(null);
-            alert.setContentText(GT._T("The page name cannot be empty."));
-            alert.showAndWait();
-          } else {
-            analysisWindowFactory.displayAnalysisWindow(pageName);
-          }
-        });
+        _ -> onPage(page, services.analysisWindowFactory()::displayAnalysisWindow));
+
+    final Button searchTitlesButton = new Button(GT._T("Search in titles"));
+    searchTitlesButton.setId(SEARCH_TITLES_ID);
+    searchTitlesButton.setMaxWidth(Double.MAX_VALUE);
+    imageLoader
+        .getImageView(ImageCollection.SEARCH, ImageSize.BUTTON)
+        .ifPresent(searchTitlesButton::setGraphic);
+    searchTitlesButton.setOnAction(_ -> onPage(page, this::searchTitles));
 
     add(page.label, 0, 0);
     add(page.icon, 1, 0);
     add(page.comboBox, 2, 0);
     add(page.toolBar, 3, 0);
     add(analysisButton, 0, 1, 4, 1);
+    add(searchTitlesButton, 0, 2, 4, 1);
+  }
+
+  private void onPage(final PageInput page, final Consumer<String> pageAction) {
+    final String pageName = page.getPage();
+    if (pageName.isEmpty()) {
+      owner.showWarning(GT._T("Warning"), GT._T("The page name cannot be empty."));
+    } else {
+      pageAction.accept(pageName);
+    }
+  }
+
+  private void searchTitles(final String pageName) {
+    services
+        .pageListWindowFactory()
+        .displayPageListWindow(
+            GT._T("Search results for %s", pageName),
+            new SearchTitlesTask(
+                services.apiSearch(),
+                wiki,
+                services.namespaceRepository().getNamespaces(wiki),
+                pageName),
+            services.analysisWindowFactory()::displayAnalysisWindow);
+  }
+
+  private record SearchTitlesTask(
+      ApiSearch apiSearch, WikiDefinition wiki, List<Namespace> namespaces, String pageName)
+      implements LongRunningTask<List<String>> {
+
+    @Override
+    public List<String> call(final ProgressTracker tracker) {
+      try (ProgressStep _ = tracker.start(GT._T("Searching titles containing %s", pageName))) {
+        final PageTitle title =
+            new PageTitleNormalizer(namespaces)
+                .normalize(pageName, Namespace.MAIN.id())
+                .orElseGet(() -> new PageTitle(Namespace.MAIN.id(), pageName));
+        final SearchQuery options =
+            SearchQuery.emptyBuilder()
+                .limit(Limit.max())
+                .namespace(
+                    Set.of(
+                        Namespace.findNamespace(namespaces, title.namespace())
+                            .orElse(Namespace.MAIN)))
+                .build();
+        return apiSearch
+            .searchPages(wiki, "intitle:\"" + title.text().replace("\"", "\\\"") + "\"", options)
+            .stream()
+            .map(SearchPage::title)
+            .distinct()
+            .sorted()
+            .toList();
+      }
+    }
   }
 }

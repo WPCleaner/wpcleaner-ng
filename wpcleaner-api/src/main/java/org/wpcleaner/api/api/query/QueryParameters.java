@@ -33,6 +33,7 @@ public enum QueryParameters {
     LINT_ERRORS("linterrors"),
     RANDOM("random"),
     RECENT_CHANGES("recentchanges"),
+    SEARCH("search"),
     TAGS("tags"),
     USERS("users");
 
