@@ -13,6 +13,7 @@ import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
+import org.wpcleaner.application.gui.javafx.core.control.RightToLeftTextWrapping;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyntaxColorizer;
 
 public final class PageAnalysisArea extends InlineCssTextArea {
@@ -27,14 +28,14 @@ public final class PageAnalysisArea extends InlineCssTextArea {
     this.colorizer = colorizer;
     this.syntaxSpans = getStyleSpans(0, 0);
     setId(AREA_ID);
-    setWrapText(true);
+    RightToLeftTextWrapping.wrapTextUnlessRightToLeft(this);
     setEditable(false);
     setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
   }
 
   public void updateAnalysis(final PageAnalysis analysis) {
     if (!getText().equals(analysis.getText())) {
-      replaceWrappedText(analysis.getText());
+      super.replaceText(analysis.getText());
     }
     syntaxSpans = colorizer.computeStyleSpans(analysis);
     setStyleSpans(0, syntaxSpans);
@@ -52,23 +53,9 @@ public final class PageAnalysisArea extends InlineCssTextArea {
       @Nullable final String text,
       final PageAnalysisFactory factory) {
     if (text == null) {
-      replaceWrappedText("");
+      super.replaceText("");
     } else {
       updateAnalysis(factory.analysis(wiki, title, text));
     }
-  }
-
-  private void replaceWrappedText(final String text) {
-    setWrapText(!containsRightToLeft(text));
-    super.replaceText(text);
-  }
-
-  private static boolean containsRightToLeft(final String text) {
-    return text.codePoints()
-        .map(Character::getDirectionality)
-        .anyMatch(
-            directionality ->
-                directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT
-                    || directionality == Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC);
   }
 }

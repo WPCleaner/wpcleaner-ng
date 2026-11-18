@@ -74,6 +74,28 @@ class PageAnalysisAreaTest extends JavaFxTest {
     Assertions.assertThat(area.isWrapText()).isTrue();
   }
 
+  @DisplayName("should display right-to-left text replaced directly without wrapping it")
+  @Test
+  void displayRightToLeftTextReplacedDirectly()
+      throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final PageAnalysisArea area = createArea();
+
+    // WHEN
+    runOnJavaFx(
+        () -> {
+          final Stage stage = new Stage();
+          stage.setScene(new Scene(new StackPane(area), WINDOW_SIZE, WINDOW_SIZE));
+          stage.show();
+          area.replaceText(RIGHT_TO_LEFT_TEXT);
+          stage.getScene().getRoot().layout();
+          stage.close();
+        });
+
+    // THEN
+    Assertions.assertThat(area.isWrapText()).isFalse();
+  }
+
   private PageAnalysisArea createArea()
       throws ExecutionException, InterruptedException, TimeoutException {
     return callOnJavaFx(() -> new PageAnalysisArea(colorizer));
