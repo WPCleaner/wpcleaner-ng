@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wpcleaner.api.utils.GT;
+import org.wpcleaner.application.gui.javafx.core.control.RightToLeftTextWrapping;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
 
 public final class RecentChangesDifferencesPanel extends HBox {
@@ -45,7 +46,7 @@ public final class RecentChangesDifferencesPanel extends HBox {
 
     this.oldContentArea = new InlineCssTextArea();
     this.oldContentArea.setEditable(false);
-    this.oldContentArea.setWrapText(true);
+    RightToLeftTextWrapping.wrapTextUnlessRightToLeft(oldContentArea);
     this.oldContentArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     final VirtualizedScrollPane<InlineCssTextArea> oldContentAreaScrollPane =
         new VirtualizedScrollPane<>(oldContentArea);
@@ -58,7 +59,7 @@ public final class RecentChangesDifferencesPanel extends HBox {
 
     this.newContentArea = new InlineCssTextArea();
     this.newContentArea.setEditable(false);
-    this.newContentArea.setWrapText(true);
+    RightToLeftTextWrapping.wrapTextUnlessRightToLeft(newContentArea);
     this.newContentArea.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     final VirtualizedScrollPane<InlineCssTextArea> newContentAreaScrollPane =
         new VirtualizedScrollPane<>(newContentArea);
