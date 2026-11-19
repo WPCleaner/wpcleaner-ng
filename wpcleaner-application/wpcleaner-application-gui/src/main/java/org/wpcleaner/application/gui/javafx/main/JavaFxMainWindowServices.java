@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.query.list.categorymembers.ApiCategoryMembers;
+import org.wpcleaner.api.api.query.list.embeddedin.ApiEmbeddedIn;
 import org.wpcleaner.api.api.query.list.linterrors.ApiLintErrors;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.list.search.ApiSearch;
@@ -36,6 +37,7 @@ public record JavaFxMainWindowServices(
     PageAnalysisFactory analysisFactory,
     AnalysisWindowFactory analysisWindowFactory,
     ApiCategoryMembers apiCategoryMembers,
+    ApiEmbeddedIn apiEmbeddedIn,
     ApiLinks apiLinks,
     ApiLinksHere apiLinksHere,
     ApiLintErrors apiLintErrors,

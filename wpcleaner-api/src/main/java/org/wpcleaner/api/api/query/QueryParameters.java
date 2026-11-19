@@ -31,6 +31,7 @@ public enum QueryParameters {
 
   public enum List {
     CATEGORY_MEMBERS("categorymembers"),
+    EMBEDDED_IN("embeddedin"),
     LINT_ERRORS("linterrors"),
     RANDOM("random"),
     RECENT_CHANGES("recentchanges"),

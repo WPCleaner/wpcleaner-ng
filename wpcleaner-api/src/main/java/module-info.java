@@ -49,6 +49,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.api.move;
   exports org.wpcleaner.api.api.parse;
   exports org.wpcleaner.api.api.query.list.categorymembers;
+  exports org.wpcleaner.api.api.query.list.embeddedin;
   exports org.wpcleaner.api.api.query.list.linterrors;
   exports org.wpcleaner.api.api.query.list.random;
   exports org.wpcleaner.api.api.query.list.recentchanges;
@@ -114,6 +115,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.api.move;
   opens org.wpcleaner.api.api.parse;
   opens org.wpcleaner.api.api.query.list.categorymembers;
+  opens org.wpcleaner.api.api.query.list.embeddedin;
   opens org.wpcleaner.api.api.query.list.linterrors;
   opens org.wpcleaner.api.api.query.list.random;
   opens org.wpcleaner.api.api.query.list.recentchanges;

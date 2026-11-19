@@ -15,6 +15,7 @@ import org.wpcleaner.api.api.login.MockApiLogin;
 import org.wpcleaner.api.api.move.MockApiMove;
 import org.wpcleaner.api.api.parse.MockApiParse;
 import org.wpcleaner.api.api.query.list.categorymembers.MockApiCategoryMembers;
+import org.wpcleaner.api.api.query.list.embeddedin.MockApiEmbeddedIn;
 import org.wpcleaner.api.api.query.list.linterrors.MockApiLintErrors;
 import org.wpcleaner.api.api.query.list.random.MockApiRandom;
 import org.wpcleaner.api.api.query.list.search.MockApiSearch;
@@ -30,6 +31,7 @@ import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.rest.lint.MockRestLint;
 
 @ConditionalOnProperty(MediaWikiServerConfiguration.ENABLED_PROPERTY)
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 @TestConfiguration
 public class MediaWikiServerConfiguration {
 
@@ -69,6 +71,11 @@ public class MediaWikiServerConfiguration {
   public MockApiCategoryMembers mockApiCategoryMembers(
       final MockRestServiceServer mediaWikiServer) {
     return new MockApiCategoryMembers(mediaWikiServer);
+  }
+
+  @Bean
+  public MockApiEmbeddedIn mockApiEmbeddedIn(final MockRestServiceServer mediaWikiServer) {
+    return new MockApiEmbeddedIn(mediaWikiServer);
   }
 
   @Bean
