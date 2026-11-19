@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.javafx.main;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,6 +24,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.Limit;
+import org.wpcleaner.api.api.query.list.categorymembers.CategoryMember;
+import org.wpcleaner.api.api.query.list.categorymembers.CategoryMembersParameters;
+import org.wpcleaner.api.api.query.list.categorymembers.CategoryMembersQuery;
+import org.wpcleaner.api.api.query.list.categorymembers.MockApiCategoryMembers;
 import org.wpcleaner.api.api.query.list.search.MockApiSearch;
 import org.wpcleaner.api.api.query.list.search.SearchPage;
 import org.wpcleaner.api.api.query.list.search.SearchQuery;
@@ -45,6 +50,7 @@ import org.wpcleaner.application.gui.javafx.JavaFxWindowsRegistry;
 import org.wpcleaner.application.gui.javafx.pagelist.JavaFxPageListWindow;
 
 @GuiSpringBootTest
+@SuppressWarnings("PMD.CouplingBetweenObjects")
 class ByPagePanelTest extends JavaFxTest {
 
   private static final WikiDefinition WIKI = WikipediaDefinitions.FR;
@@ -52,6 +58,7 @@ class ByPagePanelTest extends JavaFxTest {
   @Autowired private CurrentUserService currentUserService;
   @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxMainWindowFactory mainWindowFactory;
+  @Autowired private MockApiCategoryMembers mockApiCategoryMembers;
   @Autowired private MockApiLinks mockApiLinks;
   @Autowired private MockApiLinksHere mockApiLinksHere;
   @Autowired private MockApiSearch mockApiSearch;
@@ -237,6 +244,108 @@ class ByPagePanelTest extends JavaFxTest {
 
     // THEN
     Assertions.assertThat(closeAlert(mainWindow)).isEqualTo("The page name cannot be empty.");
+  }
+
+  @DisplayName("should list the sorted pages and files of the category named without prefix")
+  @Test
+  void categoryMembers() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindowWithCategoryNamespace();
+    givenCategoryMembers("Catégorie:Grenoble");
+
+    // WHEN
+    fireCategoryMembers(mainWindow, "Grenoble");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> listWindow.getStage().getTitle()))
+        .isEqualTo("Category members of Catégorie:Grenoble");
+    Assertions.assertThat(getPages(listWindow))
+        .containsExactly("Bastille", "Isère", "User:Jane Doe", "Fichier:Grenoble.jpg");
+  }
+
+  @DisplayName("should list the members of the category named with its canonical prefix")
+  @Test
+  void categoryMembersWithPrefix()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindowWithCategoryNamespace();
+    givenCategoryMembers("Catégorie:Grenoble");
+
+    // WHEN
+    fireCategoryMembers(mainWindow, "Category:grenoble");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> listWindow.getStage().getTitle()))
+        .isEqualTo("Category members of Catégorie:Grenoble");
+  }
+
+  @DisplayName("should warn when listing category members without category name")
+  @Test
+  void categoryMembersWithoutCategory()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+
+    // WHEN
+    fireCategoryMembers(mainWindow, " ");
+
+    // THEN
+    Assertions.assertThat(closeAlert(mainWindow)).isEqualTo("The page name cannot be empty.");
+  }
+
+  private void givenCategoryMembers(final String categoryTitle) {
+    mockApiCategoryMembers
+        .givenRetrieveCategoryMembersByTitle(
+            WIKI,
+            categoryTitle,
+            CategoryMembersQuery.emptyBuilder()
+                .limit(Limit.max())
+                .type(
+                    Set.of(
+                        CategoryMembersParameters.Type.FILE, CategoryMembersParameters.Type.PAGE))
+                .build())
+        .willReturn(
+            List.of(
+                categoryMember(CommonNamespaces.FILE.id, "Fichier:Grenoble.jpg"),
+                categoryMember(CommonNamespaces.USER.id, "User:Jane Doe"),
+                categoryMember(CommonNamespaces.MAIN.id, "Isère"),
+                categoryMember(CommonNamespaces.MAIN.id, "Bastille"),
+                categoryMember(CommonNamespaces.MAIN.id, "Isère")));
+  }
+
+  private static CategoryMember categoryMember(final int namespace, final String title) {
+    return new CategoryMember(namespace, title.hashCode(), null, null, null, title, null);
+  }
+
+  private JavaFxMainWindow displayMainWindowWithCategoryNamespace()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final List<org.wpcleaner.api.api.query.meta.siteinfo.Namespace> namespaces =
+        new ArrayList<>(ApplicationLogin.USER_NAMESPACES);
+    namespaces.add(
+        new org.wpcleaner.api.api.query.meta.siteinfo.Namespace(
+            "Category",
+            "first-letter",
+            false,
+            CommonNamespaces.CATEGORY.id,
+            "Catégorie",
+            "Catégorie",
+            true));
+    guiLogin.login(WIKI, "Jane Doe", ApplicationLogin.LoginData.of(namespaces));
+    mainWindowFactory.displayMainWindow();
+    return waitForWindow(windowsRegistry, JavaFxMainWindow.class);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void fireCategoryMembers(final JavaFxMainWindow mainWindow, final String pageName)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final Button button =
+        waitForJavaFx(() -> find(mainWindow, ByPagePanel.CATEGORY_MEMBERS_ID, Button.class));
+    runOnJavaFx(() -> lookup(mainWindow, PageInput.PAGE_ID, ComboBox.class).setValue(pageName));
+    Platform.runLater(button::fire);
   }
 
   private void givenInternalLinks() {

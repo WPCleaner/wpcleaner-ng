@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.javafx.main;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.List;
 import java.util.function.Consumer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -14,6 +15,10 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.analysis.pagetitle.PageTitleNormalizer;
+import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.application.gui.javafx.JavaFxImageLoader;
@@ -23,6 +28,7 @@ import org.wpcleaner.lib.image.ImageSize;
 
 final class ByPagePanel extends GridPane {
 
+  static final String CATEGORY_MEMBERS_ID = "category-members";
   static final String INTERNAL_LINKS_ID = "internal-links";
   static final String SEARCH_TITLES_ID = "search-titles";
   static final String WHAT_LINKS_HERE_ID = "what-links-here";
@@ -116,6 +122,14 @@ final class ByPagePanel extends GridPane {
         .ifPresent(whatLinksHereButton::setGraphic);
     whatLinksHereButton.setOnAction(_ -> onPage(page, this::listWhatLinksHere));
 
+    final Button categoryMembersButton = new Button(GT._T("Category members"));
+    categoryMembersButton.setId(CATEGORY_MEMBERS_ID);
+    categoryMembersButton.setMaxWidth(Double.MAX_VALUE);
+    imageLoader
+        .getImageView(ImageCollection.CATEGORY_MEMBERS, ImageSize.BUTTON)
+        .ifPresent(categoryMembersButton::setGraphic);
+    categoryMembersButton.setOnAction(_ -> onPage(page, this::listCategoryMembers));
+
     add(page.label, 0, 0);
     add(page.icon, 1, 0);
     add(page.comboBox, 2, 0);
@@ -124,6 +138,7 @@ final class ByPagePanel extends GridPane {
     add(searchTitlesButton, 0, 2, 4, 1);
     add(internalLinksButton, 0, 3, 4, 1);
     add(whatLinksHereButton, 0, 4, 4, 1);
+    add(categoryMembersButton, 0, 5, 4, 1);
   }
 
   private void onPage(final PageInput page, final Consumer<String> pageAction) {
@@ -133,6 +148,31 @@ final class ByPagePanel extends GridPane {
     } else {
       pageAction.accept(pageName);
     }
+  }
+
+  private void listCategoryMembers(final String pageName) {
+    final String categoryTitle = computeCategoryTitle(pageName);
+    services
+        .pageListWindowFactory()
+        .displayPageListWindow(
+            GT._T("Category members of %s", categoryTitle),
+            new CategoryMembersTask(services.apiCategoryMembers(), wiki, categoryTitle),
+            services.analysisWindowFactory()::displayAnalysisWindow);
+  }
+
+  private String computeCategoryTitle(final String pageName) {
+    final List<Namespace> namespaces = services.namespaceRepository().getNamespaces(wiki);
+    final String categoryName =
+        new PageTitleNormalizer(namespaces)
+            .normalize(pageName, CommonNamespaces.CATEGORY.id)
+            .filter(title -> title.namespace() == CommonNamespaces.CATEGORY.id)
+            .map(PageTitle::text)
+            .orElse(pageName);
+    final String categoryNamespace =
+        Namespace.findNamespace(namespaces, CommonNamespaces.CATEGORY.id)
+            .map(Namespace::name)
+            .orElse("Category");
+    return categoryNamespace + ":" + categoryName;
   }
 
   private MenuItem createInternalLinksItem(

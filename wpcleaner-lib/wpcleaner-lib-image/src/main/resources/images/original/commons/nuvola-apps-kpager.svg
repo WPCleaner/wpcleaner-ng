@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0" width="128" height="128">
+  <defs>
+    <linearGradient id="l1">
+      <stop style="stop-color:#d2d2d2;stop-opacity:1" offset="0"/>
+      <stop style="stop-color:white;stop-opacity:1" offset="1"/>
+    </linearGradient>
+    <linearGradient id="l2">
+      <stop style="stop-color:#036fff;stop-opacity:1" offset="0"/>
+      <stop style="stop-color:#8ec6ff;stop-opacity:1" offset="1"/>
+    </linearGradient>
+    <linearGradient id="l3">
+      <stop style="stop-color:#0037b3;stop-opacity:1" offset="0"/>
+      <stop style="stop-color:#0037b3;stop-opacity:0" offset="1"/>
+    </linearGradient>
+    <linearGradient id="l4" x1="48.103004" y1="147.66602" x2="123.94366" y2="79.834923" xlink:href="#l2" gradientUnits="userSpaceOnUse" gradientTransform="translate(0,-60)"/>
+    <linearGradient id="l5" x1="55.293175" y1="80.000015" x2="105.32492" y2="39.280434" xlink:href="#l1" gradientUnits="userSpaceOnUse"/>
+    <linearGradient id="l6" x1="86.772476" y1="-30.744043" x2="86.772476" y2="-28.523281" xlink:href="#l3" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.01893,0,0,1.344331,-1.529123,10.58335)"/>
+  </defs>
+  <use transform="translate(-32,32)" x="0" y="0" width="128" height="128" xlink:href="#g1"/>
+  <use transform="translate(-16,16)" x="0" y="0" width="128" height="128" xlink:href="#g1"/>
+  <g transform="translate(-4.063464,-2.031747)" id="g1">
+    <rect width="74.59066" height="66.5811" rx="3.3862422" ry="3.3862419" x="48.728004" y="20.459923" style="opacity:1;fill:url(#l4);fill-opacity:1;fill-rule:nonzero;stroke:#000060;stroke-width:1.875;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:12.5;stroke-opacity:1"/>
+    <rect width="64.846558" height="50.951309" x="53.600056" y="30.735994" style="opacity:1;fill:white;fill-opacity:1;fill-rule:nonzero;stroke:#0037b3;stroke-width:1.25000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:12.5;stroke-opacity:1"/>
+    <rect width="61.460316" height="47.576721" x="55.293175" y="32.42329" style="opacity:1;fill:url(#l5);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:12.5;stroke-opacity:1"/>
+    <rect width="66.074074" height="2.9746165" x="52.986298" y="-30.735998" transform="scale(1,-1)" style="opacity:1;fill:url(#l6);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.25000024;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:12.5;stroke-opacity:1"/>
+  </g>
+</svg>
