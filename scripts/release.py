@@ -375,6 +375,37 @@ def fill_contributors(release_notes_path):
         print(f"Error: Failed to update release notes.\n{e}", file=sys.stderr)
         sys.exit(1)
 
+def check_no_todo_before_release(release_notes_path, dry_run):
+    try:
+        with open(release_notes_path, "r", encoding="utf-8") as f:
+            lines = f.read().split('\n')
+    except Exception as e:
+        print(f"Error: Failed to read release notes.\n{e}", file=sys.stderr)
+        sys.exit(1)
+
+    todo_lines = []
+    in_todo_section = False
+    for line in lines:
+        if line.startswith("## "):
+            in_todo_section = "TODO before release" in line
+            if in_todo_section:
+                todo_lines.append(line)
+            continue
+        if in_todo_section and line.strip():
+            todo_lines.append(line)
+
+    if not todo_lines:
+        print("No TODO before release in the release notes.")
+        return
+
+    todo_output = '\n'.join(todo_lines)
+    message = f"The release notes still contain actions to do before the release:\n{todo_output}"
+    if dry_run:
+        print(f"WARNING: {message}")
+    else:
+        print(f"Error: {message}", file=sys.stderr)
+        sys.exit(1)
+
 def display_and_confirm_release_notes(release_notes_path):
     print(f"Release notes path: {release_notes_path}")
     print("\n" + "="*40)
@@ -497,6 +528,7 @@ def main():
     release_notes_path = check_release_notes_file(version)
     fill_dependency_upgrades(release_notes_path)
     fill_contributors(release_notes_path)
+    check_no_todo_before_release(release_notes_path, dry_run)
     display_and_confirm_release_notes(release_notes_path)
     
     confirm_proceed_with_release(dry_run)

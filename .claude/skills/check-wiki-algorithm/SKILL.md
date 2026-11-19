@@ -86,6 +86,7 @@ test class. Every change must make a test fail.
   entries in `wpcleaner-translations/src/main/resources/fr.po` (fuzzy guesses are often wrong).
 - `./gradlew -q spotlessApply`, then `./gradlew -q build --continue :wpcleaner-api:pmdApiTest`.
 - PMD must pass without suppressions: when coupling exceeds 20, extract a component.
+- Add the error number to the Check Wiki errors line of the next release notes (see `CLAUDE.md`).
 - Commit on a local branch only when the build passes. Never push, never open a pull request.
 
 ## 7. Draft the wiki pages

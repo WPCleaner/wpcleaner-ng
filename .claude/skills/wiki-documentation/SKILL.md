@@ -68,8 +68,11 @@ It writes one `.wiki` file per page and prints title, last revision timestamp an
 - `<code>` doesn't stop MediaWiki from parsing wikitext: `<code>{{X|a}}</code>` calls the template and
   a `|` breaks a table cell. Wrap literal wiki syntax (`{{`, `}}`, `|`, `[[`, `]]`, `''`, `~~~`) in
   `<nowiki>`, e.g. `<code><nowiki>{{X|a}}</nowiki></code>`. No escaping is needed inside `<syntaxhighlight>`.
-- List the screenshots the new content needs; they can't be produced from here.
+- List the screenshots the new content needs; they can't be produced from here. The maintainer takes them
+  before the release: add each missing one to the `TODO before release` section of the next release notes
+  (see `CLAUDE.md`), on the task branch if there is one, otherwise as an uncommitted change.
 
 ## Report
 
-Summarize the gaps found, where the drafts are (full absolute path), unresolved files and needed screenshots.
+Summarize the gaps found, where the drafts are (full absolute path), unresolved files and needed screenshots
+(and whether they were added to the release notes).
