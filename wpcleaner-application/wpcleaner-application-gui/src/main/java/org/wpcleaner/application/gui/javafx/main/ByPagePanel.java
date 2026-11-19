@@ -29,6 +29,7 @@ import org.wpcleaner.lib.image.ImageSize;
 final class ByPagePanel extends GridPane {
 
   static final String CATEGORY_MEMBERS_ID = "category-members";
+  static final String EMBEDDED_IN_ID = "embedded-in";
   static final String INTERNAL_LINKS_ID = "internal-links";
   static final String SEARCH_TITLES_ID = "search-titles";
   static final String WHAT_LINKS_HERE_ID = "what-links-here";
@@ -80,21 +81,17 @@ final class ByPagePanel extends GridPane {
             owner, wiki, services.interestingSettings(), imageLoader, services.apiRandom());
     setHgrow(page.comboBox, Priority.ALWAYS);
 
-    final Button analysisButton = new Button(GT._T("Analysis"));
-    analysisButton.setMaxWidth(Double.MAX_VALUE);
-    imageLoader
-        .getImageView(ImageCollection.ANALYSIS, ImageSize.BUTTON)
-        .ifPresent(analysisButton::setGraphic);
-    analysisButton.setOnAction(
-        _ -> onPage(page, services.analysisWindowFactory()::displayAnalysisWindow));
+    final Button analysisButton =
+        createPageButton(
+            page,
+            GT._T("Analysis"),
+            ImageCollection.ANALYSIS,
+            services.analysisWindowFactory()::displayAnalysisWindow);
 
-    final Button searchTitlesButton = new Button(GT._T("Search in titles"));
+    final Button searchTitlesButton =
+        createPageButton(
+            page, GT._T("Search in titles"), ImageCollection.SEARCH, this::searchTitles);
     searchTitlesButton.setId(SEARCH_TITLES_ID);
-    searchTitlesButton.setMaxWidth(Double.MAX_VALUE);
-    imageLoader
-        .getImageView(ImageCollection.SEARCH, ImageSize.BUTTON)
-        .ifPresent(searchTitlesButton::setGraphic);
-    searchTitlesButton.setOnAction(_ -> onPage(page, this::searchTitles));
 
     final MenuButton internalLinksButton = new MenuButton(GT._T("Internal links"));
     internalLinksButton.setId(INTERNAL_LINKS_ID);
@@ -114,21 +111,23 @@ final class ByPagePanel extends GridPane {
                 InternalLinksMode.TALK_PAGES_CONVERTED),
             createInternalLinksItem(page, GT._T("All articles"), InternalLinksMode.ALL));
 
-    final Button whatLinksHereButton = new Button(GT._T("What links here"));
+    final Button whatLinksHereButton =
+        createPageButton(
+            page, GT._T("What links here"), ImageCollection.INTERNAL_LINK, this::listWhatLinksHere);
     whatLinksHereButton.setId(WHAT_LINKS_HERE_ID);
-    whatLinksHereButton.setMaxWidth(Double.MAX_VALUE);
-    imageLoader
-        .getImageView(ImageCollection.INTERNAL_LINK, ImageSize.BUTTON)
-        .ifPresent(whatLinksHereButton::setGraphic);
-    whatLinksHereButton.setOnAction(_ -> onPage(page, this::listWhatLinksHere));
 
-    final Button categoryMembersButton = new Button(GT._T("Category members"));
+    final Button categoryMembersButton =
+        createPageButton(
+            page,
+            GT._T("Category members"),
+            ImageCollection.CATEGORY_MEMBERS,
+            this::listCategoryMembers);
     categoryMembersButton.setId(CATEGORY_MEMBERS_ID);
-    categoryMembersButton.setMaxWidth(Double.MAX_VALUE);
-    imageLoader
-        .getImageView(ImageCollection.CATEGORY_MEMBERS, ImageSize.BUTTON)
-        .ifPresent(categoryMembersButton::setGraphic);
-    categoryMembersButton.setOnAction(_ -> onPage(page, this::listCategoryMembers));
+
+    final Button embeddedInButton =
+        createPageButton(
+            page, GT._T("Embedded in"), ImageCollection.EMBEDDED_IN, this::listEmbeddedIn);
+    embeddedInButton.setId(EMBEDDED_IN_ID);
 
     add(page.label, 0, 0);
     add(page.icon, 1, 0);
@@ -139,6 +138,19 @@ final class ByPagePanel extends GridPane {
     add(internalLinksButton, 0, 3, 4, 1);
     add(whatLinksHereButton, 0, 4, 4, 1);
     add(categoryMembersButton, 0, 5, 4, 1);
+    add(embeddedInButton, 0, 6, 4, 1);
+  }
+
+  private Button createPageButton(
+      final PageInput page,
+      final String text,
+      final ImageCollection image,
+      final Consumer<String> pageAction) {
+    final Button button = new Button(text);
+    button.setMaxWidth(Double.MAX_VALUE);
+    imageLoader.getImageView(image, ImageSize.BUTTON).ifPresent(button::setGraphic);
+    button.setOnAction(_ -> onPage(page, pageAction));
+    return button;
   }
 
   private void onPage(final PageInput page, final Consumer<String> pageAction) {
@@ -168,11 +180,35 @@ final class ByPagePanel extends GridPane {
             .filter(title -> title.namespace() == CommonNamespaces.CATEGORY.id)
             .map(PageTitle::text)
             .orElse(pageName);
-    final String categoryNamespace =
-        Namespace.findNamespace(namespaces, CommonNamespaces.CATEGORY.id)
+    return formatTitle(
+        namespaces, new PageTitle(CommonNamespaces.CATEGORY.id, categoryName), "Category");
+  }
+
+  private void listEmbeddedIn(final String pageName) {
+    final String templateTitle = computeTemplateTitle(pageName);
+    services
+        .pageListWindowFactory()
+        .displayPageListWindow(
+            GT._T("Pages embedding %s", templateTitle),
+            new EmbeddedInTask(services.apiEmbeddedIn(), wiki, templateTitle),
+            services.analysisWindowFactory()::displayAnalysisWindow);
+  }
+
+  private String computeTemplateTitle(final String pageName) {
+    final List<Namespace> namespaces = services.namespaceRepository().getNamespaces(wiki);
+    return new PageTitleNormalizer(namespaces)
+        .normalize(pageName, CommonNamespaces.TEMPLATE.id)
+        .map(title -> formatTitle(namespaces, title, "Template"))
+        .orElse(pageName);
+  }
+
+  private static String formatTitle(
+      final List<Namespace> namespaces, final PageTitle title, final String defaultPrefix) {
+    final String prefix =
+        Namespace.findNamespace(namespaces, title.namespace())
             .map(Namespace::name)
-            .orElse("Category");
-    return categoryNamespace + ":" + categoryName;
+            .orElse(defaultPrefix);
+    return prefix.isEmpty() ? title.text() : prefix + ":" + title.text();
   }
 
   private MenuItem createInternalLinksItem(

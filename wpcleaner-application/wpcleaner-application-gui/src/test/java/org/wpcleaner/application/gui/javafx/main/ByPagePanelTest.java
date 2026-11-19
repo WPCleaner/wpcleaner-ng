@@ -28,6 +28,9 @@ import org.wpcleaner.api.api.query.list.categorymembers.CategoryMember;
 import org.wpcleaner.api.api.query.list.categorymembers.CategoryMembersParameters;
 import org.wpcleaner.api.api.query.list.categorymembers.CategoryMembersQuery;
 import org.wpcleaner.api.api.query.list.categorymembers.MockApiCategoryMembers;
+import org.wpcleaner.api.api.query.list.embeddedin.EmbeddedInQuery;
+import org.wpcleaner.api.api.query.list.embeddedin.EmbeddingPage;
+import org.wpcleaner.api.api.query.list.embeddedin.MockApiEmbeddedIn;
 import org.wpcleaner.api.api.query.list.search.MockApiSearch;
 import org.wpcleaner.api.api.query.list.search.SearchPage;
 import org.wpcleaner.api.api.query.list.search.SearchQuery;
@@ -59,6 +62,7 @@ class ByPagePanelTest extends JavaFxTest {
   @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxMainWindowFactory mainWindowFactory;
   @Autowired private MockApiCategoryMembers mockApiCategoryMembers;
+  @Autowired private MockApiEmbeddedIn mockApiEmbeddedIn;
   @Autowired private MockApiLinks mockApiLinks;
   @Autowired private MockApiLinksHere mockApiLinksHere;
   @Autowired private MockApiSearch mockApiSearch;
@@ -323,17 +327,17 @@ class ByPagePanelTest extends JavaFxTest {
 
   private JavaFxMainWindow displayMainWindowWithCategoryNamespace()
       throws InterruptedException, ExecutionException, TimeoutException {
+    return displayMainWindowWithNamespace(CommonNamespaces.CATEGORY.id, "Category", "Catégorie");
+  }
+
+  private JavaFxMainWindow displayMainWindowWithNamespace(
+      final int namespaceId, final String canonical, final String name)
+      throws InterruptedException, ExecutionException, TimeoutException {
     final List<org.wpcleaner.api.api.query.meta.siteinfo.Namespace> namespaces =
         new ArrayList<>(ApplicationLogin.USER_NAMESPACES);
     namespaces.add(
         new org.wpcleaner.api.api.query.meta.siteinfo.Namespace(
-            "Category",
-            "first-letter",
-            false,
-            CommonNamespaces.CATEGORY.id,
-            "Catégorie",
-            "Catégorie",
-            true));
+            canonical, "first-letter", false, namespaceId, name, name, true));
     guiLogin.login(WIKI, "Jane Doe", ApplicationLogin.LoginData.of(namespaces));
     mainWindowFactory.displayMainWindow();
     return waitForWindow(windowsRegistry, JavaFxMainWindow.class);
@@ -344,6 +348,105 @@ class ByPagePanelTest extends JavaFxTest {
       throws InterruptedException, ExecutionException, TimeoutException {
     final Button button =
         waitForJavaFx(() -> find(mainWindow, ByPagePanel.CATEGORY_MEMBERS_ID, Button.class));
+    runOnJavaFx(() -> lookup(mainWindow, PageInput.PAGE_ID, ComboBox.class).setValue(pageName));
+    Platform.runLater(button::fire);
+  }
+
+  @DisplayName("should list the sorted pages embedding the template named without prefix")
+  @Test
+  void embeddedIn() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindowWithTemplateNamespace();
+    givenEmbeddedIn("Modèle:Infobox");
+
+    // WHEN
+    fireEmbeddedIn(mainWindow, "Infobox");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> listWindow.getStage().getTitle()))
+        .isEqualTo("Pages embedding Modèle:Infobox");
+    Assertions.assertThat(getPages(listWindow))
+        .containsExactly("Bastille", "Isère", "User:Jane Doe", "Modèle:Infobox Ville");
+  }
+
+  @DisplayName("should list the pages embedding the template named with its canonical prefix")
+  @Test
+  void embeddedInWithPrefix() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindowWithTemplateNamespace();
+    givenEmbeddedIn("Modèle:Infobox");
+
+    // WHEN
+    fireEmbeddedIn(mainWindow, "Template:infobox");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> listWindow.getStage().getTitle()))
+        .isEqualTo("Pages embedding Modèle:Infobox");
+  }
+
+  @DisplayName("should list the pages embedding a page of another namespace")
+  @Test
+  void embeddedInOtherNamespace()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindowWithTemplateNamespace();
+    givenEmbeddedIn("User:Jane Doe/Signature");
+
+    // WHEN
+    fireEmbeddedIn(mainWindow, "User:jane Doe/Signature");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> listWindow.getStage().getTitle()))
+        .isEqualTo("Pages embedding User:Jane Doe/Signature");
+  }
+
+  @DisplayName("should warn when listing pages embedding a template without template name")
+  @Test
+  void embeddedInWithoutTemplate()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+
+    // WHEN
+    fireEmbeddedIn(mainWindow, " ");
+
+    // THEN
+    Assertions.assertThat(closeAlert(mainWindow)).isEqualTo("The page name cannot be empty.");
+  }
+
+  private void givenEmbeddedIn(final String templateTitle) {
+    mockApiEmbeddedIn
+        .givenRetrieveEmbeddedInByTitle(
+            WIKI, templateTitle, EmbeddedInQuery.emptyBuilder().limit(Limit.max()).build())
+        .willReturn(
+            List.of(
+                embeddingPage(CommonNamespaces.TEMPLATE.id, "Modèle:Infobox Ville"),
+                embeddingPage(CommonNamespaces.USER.id, "User:Jane Doe"),
+                embeddingPage(CommonNamespaces.MAIN.id, "Isère"),
+                embeddingPage(CommonNamespaces.MAIN.id, "Bastille"),
+                embeddingPage(CommonNamespaces.MAIN.id, "Isère")));
+  }
+
+  private static EmbeddingPage embeddingPage(final int namespace, final String title) {
+    return new EmbeddingPage(namespace, title.hashCode(), title);
+  }
+
+  private JavaFxMainWindow displayMainWindowWithTemplateNamespace()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    return displayMainWindowWithNamespace(CommonNamespaces.TEMPLATE.id, "Template", "Modèle");
+  }
+
+  @SuppressWarnings("unchecked")
+  private void fireEmbeddedIn(final JavaFxMainWindow mainWindow, final String pageName)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final Button button =
+        waitForJavaFx(() -> find(mainWindow, ByPagePanel.EMBEDDED_IN_ID, Button.class));
     runOnJavaFx(() -> lookup(mainWindow, PageInput.PAGE_ID, ComboBox.class).setValue(pageName));
     Platform.runLater(button::fire);
   }

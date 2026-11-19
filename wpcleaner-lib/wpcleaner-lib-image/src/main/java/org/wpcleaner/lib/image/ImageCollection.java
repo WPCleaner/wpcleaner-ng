@@ -23,6 +23,7 @@ public enum ImageCollection {
   DOCUMENT_SEND("commons/gnome-document-send.png"),
   DRIVE_HARDDISK("commons/gnome-drive-harddisk.png"),
   EDIT("commons/gnome-document-properties.png"),
+  EMBEDDED_IN("commons/curly-brackets.png"),
   ERROR("commons/codex-icon-error.png"),
   ERROR_ERROR("commons/codex-icon-error-color-error.png"),
   ERROR_PLACEHOLDER("commons/codex-icon-error-color-placeholder.png"),
