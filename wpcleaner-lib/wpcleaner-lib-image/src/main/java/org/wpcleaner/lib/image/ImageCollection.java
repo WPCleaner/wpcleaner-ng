@@ -17,6 +17,7 @@ public enum ImageCollection {
   ALERT_YELLOW("commons/codex-icon-alert-yellow.png"),
   ANALYSIS("commons/gnome-system-run.png"),
   AUTOMATIC_FIXES("commons/nuvola-apps-kcmsystem.png"),
+  CATEGORY_MEMBERS("commons/nuvola-apps-kpager.png"),
   DIFF("commons/gnome-edit-copy.png"),
   DOCUMENT_SAVE("commons/gnome-document-save.png"),
   DOCUMENT_SEND("commons/gnome-document-send.png"),

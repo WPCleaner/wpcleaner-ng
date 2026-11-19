@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-19 12:10+0100\n"
+"POT-Creation-Date: 2026-11-19 19:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,6 +97,11 @@ msgstr ""
 msgid "Retrieving internal links in %s"
 msgstr ""
 
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/CategoryMembersTask.java:29
+#, java-printf-format
+msgid "Retrieving members of %s"
+msgstr ""
+
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ProjectsPanel.java:50
 msgid "Recent changes"
 msgstr ""
@@ -181,53 +186,62 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:77
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:83
 msgid "Analysis"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:85
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:91
 msgid "Search in titles"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:93
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:99
 msgid "Internal links"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:104
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:110
 msgid "Articles in main namespace"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:107
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:113
 msgid "Articles associated to talk pages"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:109
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:115
 msgid "All articles"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:111
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:117
 msgid "What links here"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:132
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:125
+msgid "Category members"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:147
 msgid "Warning"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:132
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:147
 msgid "The page name cannot be empty."
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:149
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:158
+#, java-printf-format
+msgid "Category members of %s"
+msgstr ""
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:189
 #, java-printf-format
 msgid "Internal links in %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:163
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:203
 #, java-printf-format
 msgid "Links to %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:172
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/main/ByPagePanel.java:212
 #, java-printf-format
 msgid "Search results for %s"
 msgstr ""
