@@ -59,6 +59,7 @@ public enum QueryParameters {
   public enum Properties {
     LANGLINKS("langlinks"),
     LINKS("links"),
+    LINKS_HERE("linkshere"),
     REVISIONS("revisions");
 
     public final String value;

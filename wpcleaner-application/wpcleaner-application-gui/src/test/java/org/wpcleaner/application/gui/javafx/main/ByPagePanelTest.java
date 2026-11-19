@@ -30,6 +30,9 @@ import org.wpcleaner.api.api.query.prop.links.Link;
 import org.wpcleaner.api.api.query.prop.links.LinksQuery;
 import org.wpcleaner.api.api.query.prop.links.MockApiLinks;
 import org.wpcleaner.api.api.query.prop.links.Page;
+import org.wpcleaner.api.api.query.prop.linkshere.LinkHere;
+import org.wpcleaner.api.api.query.prop.linkshere.LinksHereQuery;
+import org.wpcleaner.api.api.query.prop.linkshere.MockApiLinksHere;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
@@ -50,6 +53,7 @@ class ByPagePanelTest extends JavaFxTest {
   @Autowired private ApplicationLogin guiLogin;
   @Autowired private JavaFxMainWindowFactory mainWindowFactory;
   @Autowired private MockApiLinks mockApiLinks;
+  @Autowired private MockApiLinksHere mockApiLinksHere;
   @Autowired private MockApiSearch mockApiSearch;
   @Autowired private NamespaceRepository namespaceRepository;
   @Autowired private JavaFxWindowsRegistry windowsRegistry;
@@ -188,6 +192,53 @@ class ByPagePanelTest extends JavaFxTest {
     Assertions.assertThat(closeAlert(mainWindow)).isEqualTo("The page name cannot be empty.");
   }
 
+  @DisplayName("should list the sorted pages of all namespaces linking to the page")
+  @Test
+  void whatLinksHere() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+    mockApiLinksHere
+        .givenRetrieveLinksHereByTitle(
+            WIKI, List.of("Paris"), LinksHereQuery.emptyBuilder().limit(Limit.max()).build())
+        .willReturn(
+            List.of(
+                new org.wpcleaner.api.api.query.prop.linkshere.Page(
+                    List.of(
+                        new LinkHere(CommonNamespaces.USER.id, 3, false, "User:Jane Doe"),
+                        new LinkHere(CommonNamespaces.MAIN.id, 1, false, "Marseille"),
+                        new LinkHere(CommonNamespaces.MAIN_TALK.id, 4, false, "Talk:Lyon"),
+                        new LinkHere(CommonNamespaces.MAIN.id, 2, true, "Bordeaux")),
+                    false,
+                    CommonNamespaces.MAIN.id,
+                    681_159,
+                    "Paris")));
+
+    // WHEN
+    fireWhatLinksHere(mainWindow, "Paris");
+    final JavaFxPageListWindow listWindow =
+        waitForWindow(windowsRegistry, JavaFxPageListWindow.class);
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> listWindow.getStage().getTitle()))
+        .isEqualTo("Links to Paris");
+    Assertions.assertThat(getPages(listWindow))
+        .containsExactly("Bordeaux", "Marseille", "Talk:Lyon", "User:Jane Doe");
+  }
+
+  @DisplayName("should warn when listing what links here without page name")
+  @Test
+  void whatLinksHereWithoutPage()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    final JavaFxMainWindow mainWindow = displayMainWindow();
+
+    // WHEN
+    fireWhatLinksHere(mainWindow, " ");
+
+    // THEN
+    Assertions.assertThat(closeAlert(mainWindow)).isEqualTo("The page name cannot be empty.");
+  }
+
   private void givenInternalLinks() {
     mockApiLinks
         .givenRetrieveLinksByTitle(
@@ -239,6 +290,15 @@ class ByPagePanelTest extends JavaFxTest {
     final Button button =
         waitForJavaFx(() -> find(mainWindow, ByPagePanel.SEARCH_TITLES_ID, Button.class));
     runOnJavaFx(() -> lookup(mainWindow, PageInput.PAGE_ID, ComboBox.class).setValue(text));
+    Platform.runLater(button::fire);
+  }
+
+  @SuppressWarnings("unchecked")
+  private void fireWhatLinksHere(final JavaFxMainWindow mainWindow, final String pageName)
+      throws InterruptedException, ExecutionException, TimeoutException {
+    final Button button =
+        waitForJavaFx(() -> find(mainWindow, ByPagePanel.WHAT_LINKS_HERE_ID, Button.class));
+    runOnJavaFx(() -> lookup(mainWindow, PageInput.PAGE_ID, ComboBox.class).setValue(pageName));
     Platform.runLater(button::fire);
   }
 

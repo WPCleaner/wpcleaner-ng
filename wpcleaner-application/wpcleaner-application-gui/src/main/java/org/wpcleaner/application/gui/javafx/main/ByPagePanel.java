@@ -25,6 +25,7 @@ final class ByPagePanel extends GridPane {
 
   static final String INTERNAL_LINKS_ID = "internal-links";
   static final String SEARCH_TITLES_ID = "search-titles";
+  static final String WHAT_LINKS_HERE_ID = "what-links-here";
 
   private final JavaFxImageLoader imageLoader;
   private final JavaFxWindow<?> owner;
@@ -107,6 +108,14 @@ final class ByPagePanel extends GridPane {
                 InternalLinksMode.TALK_PAGES_CONVERTED),
             createInternalLinksItem(page, GT._T("All articles"), InternalLinksMode.ALL));
 
+    final Button whatLinksHereButton = new Button(GT._T("What links here"));
+    whatLinksHereButton.setId(WHAT_LINKS_HERE_ID);
+    whatLinksHereButton.setMaxWidth(Double.MAX_VALUE);
+    imageLoader
+        .getImageView(ImageCollection.INTERNAL_LINK, ImageSize.BUTTON)
+        .ifPresent(whatLinksHereButton::setGraphic);
+    whatLinksHereButton.setOnAction(_ -> onPage(page, this::listWhatLinksHere));
+
     add(page.label, 0, 0);
     add(page.icon, 1, 0);
     add(page.comboBox, 2, 0);
@@ -114,6 +123,7 @@ final class ByPagePanel extends GridPane {
     add(analysisButton, 0, 1, 4, 1);
     add(searchTitlesButton, 0, 2, 4, 1);
     add(internalLinksButton, 0, 3, 4, 1);
+    add(whatLinksHereButton, 0, 4, 4, 1);
   }
 
   private void onPage(final PageInput page, final Consumer<String> pageAction) {
@@ -143,6 +153,15 @@ final class ByPagePanel extends GridPane {
                 services.namespaceRepository().getNamespaces(wiki),
                 pageName,
                 mode),
+            services.analysisWindowFactory()::displayAnalysisWindow);
+  }
+
+  private void listWhatLinksHere(final String pageName) {
+    services
+        .pageListWindowFactory()
+        .displayPageListWindow(
+            GT._T("Links to %s", pageName),
+            new WhatLinksHereTask(services.apiLinksHere(), wiki, pageName),
             services.analysisWindowFactory()::displayAnalysisWindow);
   }
 
