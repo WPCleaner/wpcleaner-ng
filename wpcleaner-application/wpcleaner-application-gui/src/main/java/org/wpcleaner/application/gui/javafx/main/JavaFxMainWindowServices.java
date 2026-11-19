@@ -12,6 +12,7 @@ import org.wpcleaner.api.api.query.list.linterrors.ApiLintErrors;
 import org.wpcleaner.api.api.query.list.random.ApiRandom;
 import org.wpcleaner.api.api.query.list.search.ApiSearch;
 import org.wpcleaner.api.api.query.prop.links.ApiLinks;
+import org.wpcleaner.api.api.query.prop.linkshere.ApiLinksHere;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.repository.linter.LinterCategoryRepository;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
@@ -34,6 +35,7 @@ public record JavaFxMainWindowServices(
     PageAnalysisFactory analysisFactory,
     AnalysisWindowFactory analysisWindowFactory,
     ApiLinks apiLinks,
+    ApiLinksHere apiLinksHere,
     ApiLintErrors apiLintErrors,
     ApiRandom apiRandom,
     ApiRevisions apiRevisions,
