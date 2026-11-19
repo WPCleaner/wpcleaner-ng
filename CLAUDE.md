@@ -67,6 +67,17 @@ If Gradle reports "ambiguous matches", the error lists the valid module names.
 - Shared beans keep state (tokens, tags, current user): log out or reset in `@BeforeEach`.
 - Share test data across modules with `testFixtures(project(...))`.
 
+## Release notes
+
+- One file per version in `releases/`: `vX.Y.Z.md`. The next release is the file whose date is still `$date`;
+  if there is none, create `releases/v<next version>.md` by copying `releases/_template.md` and replacing `$version`.
+- Every change of interest for the user (new feature, visible change, bug fix) adds a line to the right section
+  of the next release notes, in the same commit. Internal changes (refactoring, tests, tooling) don't.
+- Actions the maintainer must do before publishing the release (screenshots to add or retake on the wiki,
+  checks to run…) go in an optional last section `## :clipboard: TODO before release`, one bullet per action.
+  Add it when needed, remove an item when it is done and the section when it is empty:
+  `scripts/release.py` refuses to release while the section exists.
+
 ## Git
 
 - Committing is allowed only on a local branch you create for the task, never on `main`.
