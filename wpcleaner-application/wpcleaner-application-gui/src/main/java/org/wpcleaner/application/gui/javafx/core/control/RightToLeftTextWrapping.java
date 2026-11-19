@@ -7,6 +7,7 @@ package org.wpcleaner.application.gui.javafx.core.control;
 
 import org.fxmisc.richtext.GenericStyledArea;
 
+// NOTE: This hack is due to bypass JDK bug: JDK-8397805, JDK-8397506
 public final class RightToLeftTextWrapping {
 
   private RightToLeftTextWrapping() {}
