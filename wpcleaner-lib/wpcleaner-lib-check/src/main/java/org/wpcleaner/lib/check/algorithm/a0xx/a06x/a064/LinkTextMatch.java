@@ -28,6 +28,8 @@ record LinkTextMatch(String before, String text, String after, boolean automatic
   private static final String ONLY_AFTER_IGNORED = "'";
   private static final String LINK_END = "]]";
   private static final char ANCHOR = '#';
+  private static final String ITALIC = "''";
+  private static final String BOLD = "'''";
 
   static Optional<LinkTextMatch> find(final PageAnalysis analysis, final InternalLinkElement link) {
     final String linkText = link.text();
@@ -105,7 +107,7 @@ record LinkTextMatch(String before, String text, String after, boolean automatic
     }
     final boolean risk = isApostropheRisk(analysis.getText(), link, paddingBefore, paddingAfter);
     final boolean automatic =
-        !risk
+        (!risk || isBoldAndItalic(analysis.getText(), link, paddingBefore, paddingAfter))
             && linkText.indexOf(UNDERSCORE) < 0
             && analysis.getPageTitle().namespace() == CommonNamespaces.MAIN.id;
     return Optional.of(new LinkTextMatch(paddingBefore, linkText, paddingAfter, automatic, risk));
@@ -152,6 +154,44 @@ record LinkTextMatch(String before, String text, String after, boolean automatic
             && !paddingAfter.isEmpty()
             && paddingAfter.charAt(paddingAfter.length() - 1) == APOSTROPHE;
     return riskBefore || riskAfter || paddingAfter.indexOf(OPENING_QUOTE) == 0;
+  }
+
+  private static boolean isBoldAndItalic(
+      final String pageText,
+      final InternalLinkElement link,
+      final String paddingBefore,
+      final String paddingAfter) {
+    final String apostrophesBefore =
+        pageText.substring(skipApostrophesBackward(pageText, link.begin()), link.begin());
+    final String apostrophesAfter =
+        pageText.substring(link.end(), skipApostrophesForward(pageText, link.end()));
+    final long apostrophesInLink =
+        pageText
+            .substring(link.begin(), link.end())
+            .chars()
+            .filter(character -> character == APOSTROPHE)
+            .count();
+    return apostrophesBefore.equals(apostrophesAfter)
+        && paddingBefore.equals(paddingAfter)
+        && ((BOLD.equals(apostrophesBefore) && ITALIC.equals(paddingBefore))
+            || (ITALIC.equals(apostrophesBefore) && BOLD.equals(paddingBefore)))
+        && apostrophesInLink == paddingBefore.length() + paddingAfter.length();
+  }
+
+  static int skipApostrophesBackward(final String text, final int index) {
+    int begin = index;
+    while (begin > 0 && text.charAt(begin - 1) == APOSTROPHE) {
+      begin--;
+    }
+    return begin;
+  }
+
+  static int skipApostrophesForward(final String text, final int index) {
+    int end = index;
+    while (end < text.length() && text.charAt(end) == APOSTROPHE) {
+      end++;
+    }
+    return end;
   }
 
   private static boolean isSameTitle(

@@ -236,6 +236,47 @@ class CheckAlgorithm064Test {
                     new Replacement("{{'}}[[Paris]]", false))));
   }
 
+  @DisplayName("should automatically fix links combining bold and italic around and inside")
+  @Test
+  void fixLinksWithBoldAndItalic() {
+    // GIVEN
+    final String first = "'''[[Paris|''paris'']]'''";
+    final String second = "''[[Paris|'''Paris''']]''";
+    final String text = first + " " + second;
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .extracting(CheckError::begin, CheckError::end, error -> error.replacements().getFirst())
+        .containsExactly(
+            Assertions.tuple(0, first.length(), new Replacement("'''''[[paris]]'''''", true)),
+            Assertions.tuple(
+                first.length() + 1, text.length(), new Replacement("'''''[[Paris]]'''''", true)));
+  }
+
+  @DisplayName("should fix manually links combining bold and italic with other apostrophes")
+  @Test
+  void fixLinksWithBoldAndItalicAndOtherApostrophes() {
+    // GIVEN
+    final String text =
+        "'''[[L'Oréal|''L'Oréal'']]''' '''[[Paris|''Paris'']]'' "
+            + "''''[[Paris|''Paris'']]'''' '''[[Paris|'''Paris''']]'''";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .hasSize(4)
+        .allSatisfy(
+            error ->
+                Assertions.assertThat(error.replacements())
+                    .extracting(Replacement::automatic)
+                    .containsOnly(false));
+  }
+
   private List<CheckError> analyze(final String title, final String text) {
     return algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis(title, text));
   }

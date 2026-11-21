@@ -91,8 +91,10 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
       final InternalLinkElement link,
       final LinkTextMatch match,
       @Nullable final String apostropheTemplate) {
-    final int begin = match.risk() ? skipApostrophesBackward(text, link.begin()) : link.begin();
-    final int end = match.risk() ? skipApostrophesForward(text, link.end()) : link.end();
+    final int begin =
+        match.risk() ? LinkTextMatch.skipApostrophesBackward(text, link.begin()) : link.begin();
+    final int end =
+        match.risk() ? LinkTextMatch.skipApostrophesForward(text, link.end()) : link.end();
     final Set<String> replacements =
         createReplacements(
             link,
@@ -111,22 +113,6 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
                     new Replacement(
                         replacement, match.automatic() && replacement.equals(automaticReplacement)))
             .toList());
-  }
-
-  private static int skipApostrophesBackward(final String text, final int index) {
-    int begin = index;
-    while (begin > 0 && text.charAt(begin - 1) == APOSTROPHE) {
-      begin--;
-    }
-    return begin;
-  }
-
-  private static int skipApostrophesForward(final String text, final int index) {
-    int end = index;
-    while (end < text.length() && text.charAt(end) == APOSTROPHE) {
-      end++;
-    }
-    return end;
   }
 
   private static Set<String> createReplacements(
