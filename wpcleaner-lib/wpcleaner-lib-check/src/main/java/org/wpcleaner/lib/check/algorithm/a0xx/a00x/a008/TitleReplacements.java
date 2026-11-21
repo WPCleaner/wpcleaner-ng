@@ -7,12 +7,12 @@ package org.wpcleaner.lib.check.algorithm.a0xx.a00x.a008;
 
 import java.util.List;
 import java.util.stream.Stream;
+import org.wpcleaner.api.analysis.title.TitleBuilder;
 import org.wpcleaner.lib.check.Replacement;
 
 final class TitleReplacements {
 
   static final char EQUAL = '=';
-  private static final String EQUALS = "=";
   private static final String SPACE = " ";
   private static final String NEW_LINE = "\n";
 
@@ -57,8 +57,6 @@ final class TitleReplacements {
   }
 
   private static String buildTitle(final int level, final String title) {
-    final String equals = EQUALS.repeat(level);
-    final String trimmedTitle = title.strip();
-    return equals + SPACE + trimmedTitle + (trimmedTitle.isEmpty() ? "" : SPACE) + equals;
+    return TitleBuilder.from(level, title).build();
   }
 }

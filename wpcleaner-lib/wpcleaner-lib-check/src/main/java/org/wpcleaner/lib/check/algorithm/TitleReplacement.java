@@ -6,6 +6,7 @@ package org.wpcleaner.lib.check.algorithm;
  */
 
 import org.wpcleaner.api.analysis.PageAnalysis;
+import org.wpcleaner.api.analysis.title.TitleBuilder;
 import org.wpcleaner.api.analysis.title.TitleElement;
 import org.wpcleaner.lib.check.Replacement;
 
@@ -17,9 +18,8 @@ public final class TitleReplacement {
 
   public static Replacement withLevel(
       final PageAnalysis analysis, final TitleElement title, final int level) {
-    final String marker = String.valueOf(EQUAL).repeat(level);
-    final String text = title.title().isEmpty() ? " " : " " + title.title() + " ";
-    return new Replacement(marker + text + marker, isReliable(analysis, title));
+    return new Replacement(
+        TitleBuilder.from(level, title.title()).build(), isReliable(analysis, title));
   }
 
   public static boolean isReliable(final PageAnalysis analysis, final TitleElement title) {
