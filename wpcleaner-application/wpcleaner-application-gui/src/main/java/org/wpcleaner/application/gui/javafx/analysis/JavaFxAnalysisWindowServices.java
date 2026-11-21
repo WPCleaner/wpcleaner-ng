@@ -19,6 +19,7 @@ import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegi
 import org.wpcleaner.application.gui.javafx.core.window.JavaFxWindowServices;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.CheckWikiSummary;
+import org.wpcleaner.lib.check.formatting.AutomaticFormatter;
 import org.wpcleaner.lib.check.server.CheckWikiServer;
 import org.wpcleaner.lib.image.ImageLoader;
 
@@ -27,6 +28,7 @@ public record JavaFxAnalysisWindowServices(
     JavaFxActionServices actionServices,
     ApiEditWrapper apiEdit,
     ApiRevisions apiRevisions,
+    AutomaticFormatter automaticFormatter,
     CheckAlgorithmRegistry checkAlgorithmRegistry,
     CheckWikiServer checkWikiServer,
     CheckWikiSummary checkWikiSummary,

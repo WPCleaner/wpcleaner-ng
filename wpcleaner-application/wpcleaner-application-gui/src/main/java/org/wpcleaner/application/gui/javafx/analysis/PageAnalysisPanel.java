@@ -173,8 +173,22 @@ public final class PageAnalysisPanel extends StackPane {
     checkPane.updateAnalysis(
         services.pageAnalysisFactory().analysis(getWiki(), pageName, slot.content()));
     resetInitialErrors();
+    checkPane.applyAutomaticFixes();
+    applyAutomaticFormatting();
     if (algorithmNumber != null) {
       checkPane.selectAlgorithm(algorithmNumber);
+    }
+  }
+
+  private void applyAutomaticFormatting() {
+    checkPane.refreshAnalysis();
+    final PageAnalysis analysis = checkPane.getAnalysis();
+    if (analysis != null) {
+      final String text = services.automaticFormatter().tidyArticle(analysis);
+      if (!text.equals(analysis.getText())) {
+        checkPane.getArea().replaceText(text);
+        checkPane.refreshAnalysis();
+      }
     }
   }
 

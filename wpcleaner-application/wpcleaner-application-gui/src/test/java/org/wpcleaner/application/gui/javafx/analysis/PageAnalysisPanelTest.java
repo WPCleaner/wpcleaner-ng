@@ -43,6 +43,7 @@ import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsPane;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsToolBar;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 import org.wpcleaner.lib.check.server.MockCheckWikiServer;
@@ -109,7 +110,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
         .givenEdit(WIKI, createEdit(SUMMARY))
         .willReturn(new Edit(Edit.RESULT_SUCCESS, 1, TITLE, null, TIMESTAMP.plusSeconds(60)));
     new MockCheckWikiServer(mediaWikiServer).givenMarkAsFixed(WIKI, 48, TITLE);
-    final JavaFxAnalysisWindow analysisWindow = openAndFixPage();
+    final JavaFxAnalysisWindow analysisWindow = openPage();
     Assertions.assertThat(callOnJavaFx(() -> getSummaryField(analysisWindow).getText()))
         .isEqualTo(SUMMARY);
 
@@ -216,7 +217,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
             List.of(
                 Map.of("type", "obsolete-tag", "dsr", List.of(0, 18, 8, 9)),
                 Map.of("type", "large-tables", "dsr", List.of(0, 18, 0, 0))));
-    final JavaFxAnalysisWindow analysisWindow = openAndFixPage();
+    final JavaFxAnalysisWindow analysisWindow = openPage();
 
     // WHEN
     runOnJavaFx(() -> getLinterErrorsButton(analysisWindow).fire());
@@ -236,7 +237,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
     // GIVEN
     givenPageContent();
     new MockRestLint(mediaWikiServer)
-        .givenLint(WIKI, TITLE, TEXT)
+        .givenLint(WIKI, TITLE, FIXED_TEXT)
         .willReturn(List.of(Map.of("type", "large-tables", "dsr", List.of(0, 18, 0, 0))));
     final JavaFxAnalysisWindow analysisWindow = openPage();
 
@@ -249,6 +250,29 @@ class PageAnalysisPanelTest extends JavaFxTest {
     mediaWikiServer.verify();
   }
 
+  @DisplayName("should apply automatic fixes and automatic formatting when the page is loaded")
+  @Test
+  void fixPageWhenLoaded() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    wpcleanerRepository.setConfiguration(
+        WIKI,
+        new WPCleanerConfiguration(
+            Map.of(
+                "check_wiki_comment", COMMENT,
+                "auto_active", "true",
+                "auto_space_around_title", "1"),
+            Map.of()));
+    AnalysisPageExpectations.givenPageContent(
+        mockApiRevisions, WIKI, TITLE, "==Histoire==\n[[Paris]] est une ville.  ", TIMESTAMP);
+
+    // WHEN
+    final JavaFxAnalysisWindow analysisWindow = openPage();
+
+    // THEN
+    Assertions.assertThat(callOnJavaFx(() -> getSummaryField(analysisWindow).getText()))
+        .isEqualTo(SUMMARY);
+  }
+
   @DisplayName("should keep the summary written by the user")
   @Test
   void keepUserSummary() throws InterruptedException, ExecutionException, TimeoutException {
@@ -256,6 +280,11 @@ class PageAnalysisPanelTest extends JavaFxTest {
     givenPageContent();
     final JavaFxAnalysisWindow analysisWindow = openPage();
     runOnJavaFx(() -> getSummaryField(analysisWindow).setText("Mon résumé"));
+    runOnJavaFx(() -> getArea(analysisWindow).replaceText(TEXT));
+    waitForJavaFx(
+        () ->
+            find(analysisWindow, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class)
+                .filter(button -> !button.isDisable()));
 
     // WHEN
     runOnJavaFx(() -> getAutomaticFixesButton(analysisWindow).fire());
@@ -274,7 +303,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
     mockApiEdit
         .givenEdit(WIKI, createEdit(SUMMARY))
         .willReturnErrors(List.of(new ApiError("editconflict", "main", "Edit conflict.")));
-    final JavaFxAnalysisWindow analysisWindow = openAndFixPage();
+    final JavaFxAnalysisWindow analysisWindow = openPage();
 
     // WHEN
     runOnJavaFx(() -> getSaveButton(analysisWindow).fire());
@@ -313,13 +342,6 @@ class PageAnalysisPanelTest extends JavaFxTest {
             "frwiki"));
   }
 
-  private JavaFxAnalysisWindow openAndFixPage()
-      throws InterruptedException, ExecutionException, TimeoutException {
-    final JavaFxAnalysisWindow analysisWindow = openPage();
-    runOnJavaFx(() -> getAutomaticFixesButton(analysisWindow).fire());
-    return analysisWindow;
-  }
-
   private void givenPageContent() {
     AnalysisPageExpectations.givenPageContent(mockApiRevisions, WIKI, TITLE, TEXT, TIMESTAMP);
   }
@@ -336,8 +358,8 @@ class PageAnalysisPanelTest extends JavaFxTest {
     window = analysisWindow;
     waitForJavaFx(
         () ->
-            find(analysisWindow, CheckErrorsPane.AUTOMATIC_FIXES_ID, Button.class)
-                .filter(button -> !button.isDisable()));
+            find(analysisWindow, PageAnalysisArea.AREA_ID, PageAnalysisArea.class)
+                .filter(area -> FIXED_TEXT.equals(area.getText())));
     return analysisWindow;
   }
 
@@ -351,6 +373,10 @@ class PageAnalysisPanelTest extends JavaFxTest {
             .noCreate(true)
             .token(CSRF_TOKEN)
             .build());
+  }
+
+  private static PageAnalysisArea getArea(final JavaFxAnalysisWindow analysisWindow) {
+    return lookup(analysisWindow, PageAnalysisArea.AREA_ID, PageAnalysisArea.class);
   }
 
   private static Button getAutomaticFixesButton(final JavaFxAnalysisWindow analysisWindow) {

@@ -23,6 +23,10 @@ public record WPCleanerConfiguration(
     return parameter.getString(generalProperties, userProperties);
   }
 
+  public boolean getBoolean(final WPCleanerParameter parameter) {
+    return getString(parameter).map(Boolean::parseBoolean).orElse(false);
+  }
+
   public List<String> getLines(final WPCleanerParameter parameter) {
     return parameter.getLines(generalProperties, userProperties);
   }
