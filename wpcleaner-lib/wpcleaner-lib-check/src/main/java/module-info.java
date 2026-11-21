@@ -11,6 +11,7 @@ module org.wpcleaner.lib.check {
   requires org.yaml.snakeyaml;
   exports org.wpcleaner.lib.check.algorithm;
   exports org.wpcleaner.lib.check.configuration;
+  exports org.wpcleaner.lib.check.formatting;
   exports org.wpcleaner.lib.check.server;
   exports org.wpcleaner.lib.check;
   opens org.wpcleaner.lib.check.algorithm.a0xx.a00x.a001;
@@ -53,6 +54,7 @@ module org.wpcleaner.lib.check {
   opens org.wpcleaner.lib.check.algorithm.a5xx.a56x.a566;
   opens org.wpcleaner.lib.check.algorithm;
   opens org.wpcleaner.lib.check.configuration;
+  opens org.wpcleaner.lib.check.formatting;
   opens org.wpcleaner.lib.check.server;
   opens org.wpcleaner.lib.check;
 }

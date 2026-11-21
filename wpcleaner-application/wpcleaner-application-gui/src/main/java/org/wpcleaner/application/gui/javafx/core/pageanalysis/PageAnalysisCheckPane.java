@@ -158,7 +158,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
     refreshAnalysis();
   }
 
-  private void applyAutomaticFixes() {
+  public void applyAutomaticFixes() {
     refreshAnalysis();
     int limit = getArea().getLength();
     for (final AutomaticFix fix : errorsPane.findAutomaticFixes()) {
