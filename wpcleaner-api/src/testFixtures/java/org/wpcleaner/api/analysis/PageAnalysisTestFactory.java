@@ -28,6 +28,7 @@ import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 public final class PageAnalysisTestFactory {
 
   public static final WikiDefinition WIKI = WikipediaDefinitions.FR;
+  public static final WikiDefinition CASE_SENSITIVE_WIKI = WikipediaDefinitions.DE;
   private static final String DEFAULT_TITLE = "Title";
 
   private PageAnalysisTestFactory() {}
@@ -113,6 +114,14 @@ public final class PageAnalysisTestFactory {
         WIKI,
         new Namespace(
             CommonNamespaces.TEMPLATE.id, "Template", "Modèle", List.of(), CaseType.FIRST_LETTER));
+    namespaceRepository.addNamespace(
+        CASE_SENSITIVE_WIKI,
+        new Namespace(
+            CommonNamespaces.CATEGORY.id,
+            "Category",
+            "Catégorie",
+            List.of(),
+            CaseType.CASE_SENSITIVE));
     return namespaceRepository;
   }
 

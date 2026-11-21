@@ -43,6 +43,7 @@ import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.repository.namespace.Namespace;
 import org.wpcleaner.api.repository.namespace.NamespaceRepository;
 import org.wpcleaner.api.repository.protocol.Protocol;
 import org.wpcleaner.api.repository.protocol.ProtocolRepository;
@@ -58,6 +59,7 @@ public final class PageAnalysis {
   private final String title;
   private final PageTitle pageTitle;
   private final PageTitleNormalizer titleNormalizer;
+  private final List<Namespace> namespaces;
   private final String text;
   private final PreprocessorContainer preprocessor;
   private final TagContainer tags;
@@ -79,7 +81,8 @@ public final class PageAnalysis {
       final ProtocolRepository protocolRepository) {
     this.wiki = wiki;
     this.title = title;
-    this.titleNormalizer = new PageTitleNormalizer(namespaceRepository.getNamespaces(wiki));
+    this.namespaces = namespaceRepository.getNamespaces(wiki);
+    this.titleNormalizer = new PageTitleNormalizer(namespaces);
     this.pageTitle =
         titleNormalizer
             .normalize(title, CommonNamespaces.MAIN.id)
@@ -139,6 +142,10 @@ public final class PageAnalysis {
 
   public PageTitle getPageTitle() {
     return pageTitle;
+  }
+
+  public Optional<Namespace> getNamespace(final int namespace) {
+    return Namespace.findNamespace(namespaces, namespace);
   }
 
   public Optional<PageTitle> normalizeTitle(final String name, final int defaultNamespace) {
