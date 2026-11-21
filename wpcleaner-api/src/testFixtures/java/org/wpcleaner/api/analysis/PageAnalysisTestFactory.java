@@ -29,6 +29,7 @@ public final class PageAnalysisTestFactory {
 
   public static final WikiDefinition WIKI = WikipediaDefinitions.FR;
   public static final WikiDefinition CASE_SENSITIVE_WIKI = WikipediaDefinitions.DE;
+  public static final WikiDefinition ENGLISH_WIKI = WikipediaDefinitions.EN;
   private static final String DEFAULT_TITLE = "Title";
 
   private PageAnalysisTestFactory() {}
@@ -122,6 +123,14 @@ public final class PageAnalysisTestFactory {
             "Catégorie",
             List.of(),
             CaseType.CASE_SENSITIVE));
+    namespaceRepository.addNamespace(
+        ENGLISH_WIKI,
+        new Namespace(
+            CommonNamespaces.CATEGORY.id,
+            "Category",
+            "Category",
+            List.of(),
+            CaseType.FIRST_LETTER));
     return namespaceRepository;
   }
 
