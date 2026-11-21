@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.category.CategoryBuilder;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.analysis.comment.CommentBuilder;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -39,7 +41,7 @@ public class CheckAlgorithm021 implements CheckAlgorithm {
     final List<String> localNamespaces = getLocalNamespaces(categoryNamespace.get());
     return analysis.getCategories().stream()
         .filter(category -> category.title() != null && isEnglish(category.namespace()))
-        .map(category -> createError(category, localNamespaces))
+        .map(category -> createError(analysis, category, localNamespaces))
         .toList();
   }
 
@@ -52,11 +54,10 @@ public class CheckAlgorithm021 implements CheckAlgorithm {
   }
 
   private static CheckError createError(
-      final CategoryElement category, final List<String> localNamespaces) {
-    return new CheckError(
-        ALGORITHM_NUMBER,
-        category.begin(),
-        category.end(),
+      final PageAnalysis analysis,
+      final CategoryElement category,
+      final List<String> localNamespaces) {
+    final Stream<Replacement> localized =
         localNamespaces.stream()
             .map(
                 namespace ->
@@ -64,7 +65,17 @@ public class CheckAlgorithm021 implements CheckAlgorithm {
                         CategoryBuilder.to(namespace, category.name())
                             .withSortKey(category.sortKey())
                             .build(),
-                        false))
-            .toList());
+                        false));
+    final Replacement commentedOut =
+        new Replacement(
+            CommentBuilder.from(analysis.getText().substring(category.begin(), category.end()))
+                .build(),
+            GT._T("Comment category out"),
+            false);
+    return new CheckError(
+        ALGORITHM_NUMBER,
+        category.begin(),
+        category.end(),
+        Stream.concat(localized, Stream.of(commentedOut)).toList());
   }
 }

@@ -22,7 +22,7 @@ class CheckAlgorithm021Test {
 
   @Autowired private CheckAlgorithm021 algorithm;
 
-  @DisplayName("should offer the local namespace names for an English category")
+  @DisplayName("should offer the local namespace names and a comment for an English category")
   @Test
   void englishCategory() {
     // GIVEN
@@ -42,7 +42,9 @@ class CheckAlgorithm021Test {
                 begin + category.length(),
                 List.of(
                     new Replacement("[[Catégorie:Paris]]", false),
-                    new Replacement("[[Catégories:Paris]]", false))));
+                    new Replacement("[[Catégories:Paris]]", false),
+                    new Replacement(
+                        "<!-- [[Category:Paris]] -->", "Comment category out", false))));
   }
 
   @DisplayName("should keep the sort key and remove spaces around namespace and name")
@@ -60,6 +62,21 @@ class CheckAlgorithm021Test {
         .containsExactly(
             new Replacement("[[Catégorie:Élysée| Élysée ]]", false),
             new Replacement("[[Catégorie:Lyon|]]", false));
+  }
+
+  @DisplayName("should comment out the category as written")
+  @Test
+  void commentCategoryOut() {
+    // GIVEN
+    final String text = "[[ category : Élysée | Élysée ]]";
+
+    // WHEN
+    final List<CheckError> errors = analyze(text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .extracting(error -> error.replacements().getLast().text())
+        .containsExactly("<!-- [[ category : Élysée | Élysée ]] -->");
   }
 
   @DisplayName("should not report local categories, links to categories and invalid names")
