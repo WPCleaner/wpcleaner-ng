@@ -15,6 +15,7 @@ import java.util.stream.IntStream;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
+import org.wpcleaner.api.analysis.title.TitleBuilder;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -31,7 +32,6 @@ record ReferencesInsertion(
   private static final char LINE_END = '\n';
   private static final char SPACE = ' ';
   private static final char CLOSING_BRACE = '}';
-  private static final String TITLE_SIGN = "=";
   private static final String PARAGRAPH_END = "\n\n";
 
   ReferencesInsertion {
@@ -97,14 +97,7 @@ record ReferencesInsertion(
     final boolean lineEndBefore =
         element.begin() == 0 || text.charAt(element.begin() - 1) == LINE_END;
     final String title =
-        titles.isEmpty()
-            ? ""
-            : TITLE_SIGN.repeat(titleLevel)
-                + SPACE
-                + titles.getFirst().trim()
-                + SPACE
-                + TITLE_SIGN.repeat(titleLevel)
-                + LINE_END;
+        titles.isEmpty() ? "" : TitleBuilder.from(titleLevel, titles.getFirst()).build() + LINE_END;
     return new Suggestion(
         element,
         (lineEndBefore ? "" : PARAGRAPH_END)
