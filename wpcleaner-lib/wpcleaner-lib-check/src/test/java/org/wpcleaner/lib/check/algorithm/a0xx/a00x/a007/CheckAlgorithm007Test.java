@@ -40,6 +40,14 @@ class CheckAlgorithm007Test {
     Assertions.assertThat(analyze("=== a ===\nb\n= c =\nd")).isEmpty();
   }
 
+  @DisplayName("should not report a title of level 2 split over several lines by a math tag")
+  @Test
+  void ignoreLevelTwoTitleSplitByMathTag() {
+    Assertions.assertThat(
+            analyze("== <math>\\mathcal{N} = (2,2)\n</math> algebra ==\na\n=== b ==="))
+        .isEmpty();
+  }
+
   @DisplayName("should fix automatically a single title of level 3")
   @Test
   void fixSingleTitle() {
