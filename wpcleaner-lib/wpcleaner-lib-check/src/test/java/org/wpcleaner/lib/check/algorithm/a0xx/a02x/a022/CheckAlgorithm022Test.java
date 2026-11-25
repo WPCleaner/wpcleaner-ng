@@ -68,7 +68,7 @@ class CheckAlgorithm022Test {
   @Test
   void trailingSpacesInSortKey() {
     // GIVEN
-    final String text = "[[Catégorie:Paris| Paris ]] [[Catégorie:Lyon|  ]]";
+    final String text = "[[Catégorie:Paris| Paris ]] [[Catégorie:Lyon|Lyon\t]]";
 
     // WHEN
     final List<CheckError> errors = analyze(text);
@@ -78,7 +78,23 @@ class CheckAlgorithm022Test {
         .flatExtracting(CheckError::replacements)
         .containsExactly(
             new Replacement("[[Catégorie:Paris| Paris]]", true),
-            new Replacement("[[Catégorie:Lyon|]]", true));
+            new Replacement("[[Catégorie:Lyon|Lyon]]", true));
+  }
+
+  @DisplayName("should keep a sort key made only of spaces")
+  @Test
+  void blankSortKey() {
+    // GIVEN
+    final String text =
+        "[[Catégorie:Paris| ]] [[Catégorie:Lyon|  ]] [[Catégorie: Nice | ]] [[Catégorie:Caen|\t]]";
+
+    // WHEN
+    final List<CheckError> errors = analyze(text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .flatExtracting(CheckError::replacements)
+        .containsExactly(new Replacement("[[Catégorie:Nice| ]]", true));
   }
 
   @DisplayName("should keep the namespace as written and offer the local namespace manually")

@@ -69,8 +69,8 @@ public class CheckAlgorithm022 implements CheckAlgorithm {
 
   @Nullable
   private static String stripTrailingWhitespace(@Nullable final String sortKey) {
-    if (sortKey == null) {
-      return null;
+    if (sortKey == null || sortKey.isBlank()) {
+      return sortKey;
     }
     int end = sortKey.length();
     while (end > 0 && Character.isWhitespace(sortKey.charAt(end - 1))) {
