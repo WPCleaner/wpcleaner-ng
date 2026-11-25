@@ -121,6 +121,19 @@ class CheckAlgorithm013Test {
     Assertions.assertThat(errors).isEmpty();
   }
 
+  @DisplayName("should not report text looking like a <math> tag, such as <math.h>")
+  @Test
+  void ignoreMathHeader() {
+    // GIVEN
+    final String text = "#include <math.h>\nint main();";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Paris", text);
+
+    // THEN
+    Assertions.assertThat(errors).isEmpty();
+  }
+
   private List<CheckError> analyze(final String title, final String text) {
     return algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis(title, text));
   }
