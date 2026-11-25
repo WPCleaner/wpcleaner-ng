@@ -33,8 +33,8 @@ class CheckAlgorithm008Test {
         "== a == <!-- c -->\nb",
         "== a == <!-- c\nd -->\nb",
         "== a = b ==",
-        "==== a ==",
-        "a\n=====\nb"
+        "a\n=====\nb",
+        "a\n======\nb"
       })
   void ignoreTitles(final String text) {
     Assertions.assertThat(analyze(text)).isEmpty();
@@ -129,6 +129,33 @@ class CheckAlgorithm008Test {
   void emptyTitleBeforeSecondRun() {
     Assertions.assertThat(analyze("== == b").getFirst().replacements())
         .containsExactly(new Replacement("== ==\nb", false), new Replacement("== b ==", false));
+  }
+
+  @DisplayName("should offer each title level when the title ends with fewer equal signs")
+  @Test
+  void shorterClosingRun() {
+    Assertions.assertThat(analyze("a\n=== Notes ==\nb\n== Histoire = <!-- c -->\nd"))
+        .containsExactly(
+            new CheckError(
+                ALGORITHM,
+                2,
+                14,
+                List.of(
+                    new Replacement("=== Notes ===", false),
+                    new Replacement("== Notes ==", false))),
+            new CheckError(
+                ALGORITHM,
+                17,
+                30,
+                List.of(
+                    new Replacement("== Histoire ==", false),
+                    new Replacement("= Histoire =", false))));
+  }
+
+  @DisplayName("should not report a title ending with more equal signs")
+  @Test
+  void ignoreLongerClosingRun() {
+    Assertions.assertThat(analyze("== a ===\nb")).isEmpty();
   }
 
   @DisplayName("should not report lines inside comments")

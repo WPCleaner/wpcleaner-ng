@@ -36,6 +36,9 @@ final class TitleReplacements {
       return toReplacements(
           Stream.of(titleThenText, buildTitle(equalsCount, title.strip() + SPACE + afterTitle)));
     }
+    if (afterTitle.isEmpty()) {
+      return toReplacements(Stream.of(titleAlone, buildTitle(secondEqualsCount, title)));
+    }
     return toReplacements(
         Stream.of(
             buildTitle(equalsCount, afterEquals),

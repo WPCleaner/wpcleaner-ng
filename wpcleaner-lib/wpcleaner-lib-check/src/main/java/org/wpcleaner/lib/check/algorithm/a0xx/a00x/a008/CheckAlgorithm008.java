@@ -51,7 +51,10 @@ public class CheckAlgorithm008 implements CheckAlgorithm {
     final List<Element> ignoredAreas = findIgnoredAreas(analysis);
     final List<Element> argumentContainers = findArgumentContainers(analysis);
     final Set<Integer> titleBegins =
-        analysis.getTitles().stream().map(TitleElement::begin).collect(Collectors.toSet());
+        analysis.getTitles().stream()
+            .filter(title -> !hasShorterClosing(text, title))
+            .map(TitleElement::begin)
+            .collect(Collectors.toSet());
     final List<CheckError> errors = new ArrayList<>();
     int lineBegin = 0;
     while (lineBegin < text.length()) {
@@ -67,6 +70,11 @@ public class CheckAlgorithm008 implements CheckAlgorithm {
       lineBegin = lineEnd + 1;
     }
     return errors;
+  }
+
+  private static boolean hasShorterClosing(final String text, final TitleElement title) {
+    return TitleReplacements.countEquals(text, title.begin()) > title.level()
+        && !title.title().chars().allMatch(character -> character == TitleReplacements.EQUAL);
   }
 
   private static List<Element> findArgumentContainers(final PageAnalysis analysis) {
@@ -103,7 +111,7 @@ public class CheckAlgorithm008 implements CheckAlgorithm {
     final int titleEnd = findTitleEnd(text, comments, lineBegin, lineEnd);
     final String line = text.substring(lineBegin, titleEnd);
     final int equalsCount = TitleReplacements.countEquals(line, 0);
-    if (equalsCount < line.length() && line.charAt(line.length() - 1) == TitleReplacements.EQUAL) {
+    if (equalsCount < line.length() && countEqualsBefore(line, line.length()) >= equalsCount) {
       return Optional.empty();
     }
     return Optional.of(
@@ -128,6 +136,14 @@ public class CheckAlgorithm008 implements CheckAlgorithm {
       }
     }
     return titleEnd;
+  }
+
+  private static int countEqualsBefore(final String line, final int end) {
+    int index = end;
+    while (index > 0 && line.charAt(index - 1) == TitleReplacements.EQUAL) {
+      index--;
+    }
+    return end - index;
   }
 
   private static int skipWhitespaceBefore(final String text, final int begin, final int end) {
