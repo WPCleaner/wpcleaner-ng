@@ -242,6 +242,24 @@ class CheckAlgorithm010Test {
             new CheckError(ALGORITHM, 34, 36, List.of()));
   }
 
+  @DisplayName("should report without replacement a link with a template in its target")
+  @Test
+  void reportTemplateInLinkTarget() {
+    // GIVEN
+    final String template = "[[Lee Enfield {{n°|4}}|a]]";
+    final String startingTemplate = "[[{{1er|régiment}} b]]";
+    final String parameter = "[[C{{{1}}}]]";
+    final String text = String.join(" ", template, startingTemplate, parameter, "[[D|{{e}}]]");
+
+    // WHEN
+    final List<CheckError> errors = analyze(ARTICLE, text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            unclosed(text, template), unclosed(text, startingTemplate), unclosed(text, parameter));
+  }
+
   @DisplayName("should not report brackets in comments, tags, code and content which is not wiki")
   @Test
   void ignoreAreasWithoutWikiText() {
@@ -394,6 +412,11 @@ class CheckAlgorithm010Test {
 
   private List<CheckError> analyze(final String title, final String text) {
     return algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis(title, text));
+  }
+
+  private static CheckError unclosed(final String text, final String element) {
+    final int begin = text.indexOf(element);
+    return new CheckError(ALGORITHM, begin, begin + 2, List.of());
   }
 
   private static CheckError error(

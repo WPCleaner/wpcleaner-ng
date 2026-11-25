@@ -15,6 +15,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.HtmlTagType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
@@ -31,6 +32,7 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
   private static final char CURLY_CLOSE = '}';
   private static final char LINE_END = '\n';
   private static final char NAMESPACE_SEPARATOR = ':';
+  private static final char PIPE = '|';
   private static final String LINK_BREAKERS = "\n[{";
   private static final String LINK_ENDS = "]}";
 
@@ -69,14 +71,37 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
   }
 
   private Map<Integer, Element> findSquareBracketElements() {
+    final List<Element> curlyBracketElements = findCurlyBracketElements();
     return Stream.<List<? extends Element>>of(
-            analysis.getInternalLinks(),
+            analysis.getInternalLinks().stream()
+                .filter(link -> !hasCurlyBracketElementInTarget(link, curlyBracketElements))
+                .toList(),
             analysis.getImages(),
             analysis.getCategories(),
             analysis.getLanguageLinks(),
             analysis.getInterwikiLinks())
         .<Element>flatMap(List::stream)
         .collect(Collectors.toMap(Element::begin, element -> element, (first, _) -> first));
+  }
+
+  private List<Element> findCurlyBracketElements() {
+    return Stream.<List<? extends Element>>of(
+            analysis.getTemplates(), analysis.getFunctions(), analysis.getParameters())
+        .<Element>flatMap(List::stream)
+        .toList();
+  }
+
+  private boolean hasCurlyBracketElementInTarget(
+      final InternalLinkElement link, final List<Element> curlyBracketElements) {
+    final String text = analysis.getText();
+    final int targetBegin = link.begin() + LINK_START.length();
+    return curlyBracketElements.stream()
+        .filter(element -> targetBegin <= element.begin() && element.begin() < link.end())
+        .min(Element.COMPARATOR)
+        .filter(first -> text.indexOf(PIPE, targetBegin, first.begin()) < 0)
+        .filter(
+            first -> first.begin() != targetBegin || first.end() != link.end() - LINK_END.length())
+        .isPresent();
   }
 
   private List<CompleteTagElement> findIgnoredAreas() {
