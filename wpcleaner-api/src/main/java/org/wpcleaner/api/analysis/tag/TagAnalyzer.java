@@ -122,10 +122,20 @@ final class TagAnalyzer {
         && cursor.samePart()) {
       cursor.moveNext();
     }
-    if (!cursor.samePart()) {
+    if (!cursor.samePart() || !isAfterName(cursor.getIndex())) {
       return null;
     }
     return text.substring(startName, cursor.getIndex());
+  }
+
+  private boolean isAfterName(final int index) {
+    if (index >= text.length()) {
+      return true;
+    }
+    final char current = text.charAt(index);
+    return Character.isWhitespace(current)
+        || current == TagElement.TOKEN_SLASH
+        || current == TagElement.TOKEN_END;
   }
 
   private boolean passOptionalSlash(final TextBrowser.Cursor cursor) {

@@ -132,6 +132,19 @@ class PageAnalysisTagTest {
     Assertions.assertThat(analysis.getTags()).isEmpty();
   }
 
+  @DisplayName("should not analyze tag when name is followed by another character")
+  @Test
+  void analyzeTagNameFollowedByOtherCharacter() {
+    // GIVEN
+    final String text = "#include <math.h> and <A, B>";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTags()).isEmpty();
+  }
+
   @DisplayName("should match start and end tags")
   @Test
   void analyzeCompleteTags() {
