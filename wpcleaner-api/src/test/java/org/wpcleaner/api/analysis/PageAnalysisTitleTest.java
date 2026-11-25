@@ -86,6 +86,19 @@ class PageAnalysisTitleTest {
         .containsExactly(new TitleElement(0, 11, 2, "Title"));
   }
 
+  @DisplayName("should analyze title preceded only by comments on its line")
+  @Test
+  void analyzeTitlePrecededByComment() {
+    // GIVEN
+    final String text = "Intro\n<!-- a --><!-- b -->=== Sub ===\nx<!-- c -->== Not ==";
+
+    // WHEN
+    final PageAnalysis analysis = PageAnalysisTestFactory.createPageAnalysis(text);
+
+    // THEN
+    Assertions.assertThat(analysis.getTitles()).containsExactly(new TitleElement(26, 37, 3, "Sub"));
+  }
+
   @DisplayName("should analyze a line made only of equal signs")
   @Test
   void analyzeTitleOnlyEqualSigns() {

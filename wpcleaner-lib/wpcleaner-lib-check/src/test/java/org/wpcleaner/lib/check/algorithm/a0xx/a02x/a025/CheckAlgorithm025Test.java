@@ -28,6 +28,12 @@ class CheckAlgorithm025Test {
     Assertions.assertThat(analyze("== a ==\n=== b ===\n==== c ====\n== d ==\n=== e ===")).isEmpty();
   }
 
+  @DisplayName("should not report a heading after a heading preceded by a comment")
+  @Test
+  void ignoreHeadingPrecededByComment() {
+    Assertions.assertThat(analyze("== a ==\n<!-- x -->=== b ===\n==== c ====")).isEmpty();
+  }
+
   @DisplayName("should not report a first heading of a deep level")
   @Test
   void ignoreFirstHeading() {
