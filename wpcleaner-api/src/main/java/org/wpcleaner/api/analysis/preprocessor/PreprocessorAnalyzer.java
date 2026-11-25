@@ -118,7 +118,8 @@ final class PreprocessorAnalyzer {
             text,
             end,
             curlyBrackets -> curlyBracketElementFactory.persist(curlyBrackets, comments),
-            titleLine -> titleElementFactory.persist(titleLine, comments));
+            titleLine -> titleElementFactory.persist(titleLine, comments),
+            comments);
     int index = begin;
     while (index < end) {
       if (text.charAt(index) == TagElement.TOKEN_START) {

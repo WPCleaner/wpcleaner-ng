@@ -11,6 +11,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.function.Consumer;
 import org.jspecify.annotations.Nullable;
+import org.wpcleaner.api.analysis.comment.CommentElement;
 
 final class BracketStack {
 
@@ -29,17 +30,20 @@ final class BracketStack {
   private final int end;
   private final Consumer<CurlyBrackets> curlyBracketsConsumer;
   private final Consumer<TitleLine> titleLineConsumer;
+  private final List<CommentElement> comments;
   private final Deque<Piece> pieces;
 
   BracketStack(
       final String text,
       final int end,
       final Consumer<CurlyBrackets> curlyBracketsConsumer,
-      final Consumer<TitleLine> titleLineConsumer) {
+      final Consumer<TitleLine> titleLineConsumer,
+      final List<CommentElement> comments) {
     this.text = text;
     this.end = end;
     this.curlyBracketsConsumer = curlyBracketsConsumer;
     this.titleLineConsumer = titleLineConsumer;
+    this.comments = comments;
     this.pieces = new ArrayDeque<>();
   }
 
@@ -79,7 +83,28 @@ final class BracketStack {
   }
 
   private boolean isLineStart(final int index) {
-    return index == 0 || text.charAt(index - 1) == NEW_LINE;
+    int lineContentBegin = index;
+    while (lineContentBegin > 0 && text.charAt(lineContentBegin - 1) != NEW_LINE) {
+      final int commentBegin = findCommentBeginEndingAt(lineContentBegin);
+      if (commentBegin < 0) {
+        return false;
+      }
+      lineContentBegin = commentBegin;
+    }
+    return true;
+  }
+
+  private int findCommentBeginEndingAt(final int commentEnd) {
+    if (!text.startsWith(
+        CommentElement.TOKEN_END, commentEnd - CommentElement.TOKEN_END.length())) {
+      return -1;
+    }
+    for (final CommentElement comment : comments.reversed()) {
+      if (comment.end() == commentEnd) {
+        return comment.begin();
+      }
+    }
+    return -1;
   }
 
   private int openTitle(final int index, @Nullable final Piece top) {
