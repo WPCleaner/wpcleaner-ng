@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.image.ImageParameter;
+import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 
@@ -27,7 +28,7 @@ public class CheckAlgorithm030 implements CheckAlgorithm {
 
   @Override
   public List<CheckError> analyze(final PageAnalysis analysis) {
-    if (analysis.getPageTitle().namespace() % 2 != 0) {
+    if (analysis.getPageTitle().namespace() != CommonNamespaces.MAIN.id) {
       return List.of();
     }
     return analysis.getImages().stream()

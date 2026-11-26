@@ -64,19 +64,21 @@ class CheckAlgorithm030Test {
     Assertions.assertThat(errors).isEmpty();
   }
 
-  @DisplayName("should not report images in talk namespaces, but in other namespaces")
+  @DisplayName("should report images only in the main namespace")
   @Test
-  void ignoreTalkNamespaces() {
+  void ignoreOtherNamespaces() {
     // GIVEN
     final String text = "a [[File:A.jpg]]";
 
     // WHEN
     final List<CheckError> talkErrors = analyze("Discussion utilisateur:Paris", text);
     final List<CheckError> templateErrors = analyze("Modèle:Paris", text);
+    final List<CheckError> categoryErrors = analyze("Catégorie:Paris", text);
 
     // THEN
     Assertions.assertThat(talkErrors).isEmpty();
-    Assertions.assertThat(templateErrors).hasSize(1);
+    Assertions.assertThat(templateErrors).isEmpty();
+    Assertions.assertThat(categoryErrors).isEmpty();
   }
 
   @DisplayName(
