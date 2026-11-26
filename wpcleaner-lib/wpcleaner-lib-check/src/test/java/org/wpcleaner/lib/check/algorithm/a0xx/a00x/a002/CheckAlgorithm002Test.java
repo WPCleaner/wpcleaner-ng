@@ -29,6 +29,8 @@ class CheckAlgorithm002Test {
   private static final Replacement DELETE = new Replacement("", false);
   private static final Replacement BR_FULL = new Replacement("<br />", false);
   private static final Replacement BR_OPEN = new Replacement("<br>", false);
+  private static final Replacement HR_FULL = new Replacement("<hr />", false);
+  private static final Replacement HR_OPEN = new Replacement("<hr>", false);
 
   @Autowired private CheckAlgorithm002 algorithm;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
@@ -166,6 +168,24 @@ class CheckAlgorithm002Test {
             error(text, "<br class=\"x\">", BR_FULL, BR_OPEN),
             error(text, "<br style=\"float: left\">", BR_FULL, BR_OPEN));
     Assertions.assertThat(otherErrors.getFirst().replacements().getFirst().automatic()).isFalse();
+  }
+
+  @DisplayName("should report hr tags with attributes, without suggesting clear templates")
+  @Test
+  void fixHrTagAttributes() {
+    // GIVEN
+    givenLegacyConfiguration(Map.of("error_002_clear_all_frwiki", "{{Clr}}"));
+    final String text = "a <hr width=\"100\"> b <hr clear=\"all\" /> c <<hr>";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Paris", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(text, "<hr width=\"100\">", HR_FULL, HR_OPEN),
+            error(text, "<hr clear=\"all\" />", HR_FULL, HR_OPEN),
+            error(text, "<<hr>", HR_FULL, HR_OPEN));
   }
 
   @DisplayName("should suggest replacements for tags that cannot be self-closing")
