@@ -179,7 +179,25 @@ public final class PageAnalysisTestFactory {
                 "currentyear", List.of("ANNEEACTUELLE", "CURRENTYEAR"), true, false, false, true),
             new MagicWord(
                 "defaultsort", List.of("CLEFDETRI:", "DEFAULTSORT:"), true, false, true, false),
+            new MagicWord(
+                "displaytitle", List.of("AFFICHERTITRE", "DISPLAYTITLE"), true, false, true, false),
+            new MagicWord(
+                "forcetoc",
+                List.of("__FORCERSOMMAIRE__", "__FORCETOC__"),
+                false,
+                true,
+                false,
+                false),
+            new MagicWord(
+                "formatnum", List.of("formatnombre", "formatnum"), false, false, true, false),
             new MagicWord("if", List.of("si", "if"), false, false, true, false),
+            new MagicWord("ifexpr", List.of("siexpr", "ifexpr"), false, false, true, false),
+            new MagicWord("index", List.of("__INDEX__"), false, true, false, false),
+            new MagicWord("invoke", List.of("invoke"), false, false, true, false),
+            new MagicWord("noindex", List.of("__NOINDEX__"), false, true, false, false),
+            new MagicWord(
+                "nonewsectionlink", List.of("__NONEWSECTIONLINK__"), false, true, false, false),
+            new MagicWord("tag", List.of("tag"), false, false, true, false),
             new MagicWord("img_alt", List.of("alt=$1"), true, false, false, false),
             new MagicWord("img_link", List.of("lien=$1", "link=$1"), true, false, false, false),
             new MagicWord("img_right", List.of("droite", "right"), true, false, false, false),
