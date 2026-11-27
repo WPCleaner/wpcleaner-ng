@@ -45,6 +45,7 @@ module org.wpcleaner.api {
   exports org.wpcleaner.api.analysis.title;
   exports org.wpcleaner.api.analysis;
   exports org.wpcleaner.api.api.edit;
+  exports org.wpcleaner.api.api.expandtemplates;
   exports org.wpcleaner.api.api.login;
   exports org.wpcleaner.api.api.move;
   exports org.wpcleaner.api.api.parse;
@@ -111,6 +112,7 @@ module org.wpcleaner.api {
   opens org.wpcleaner.api.analysis.title;
   opens org.wpcleaner.api.analysis;
   opens org.wpcleaner.api.api.edit;
+  opens org.wpcleaner.api.api.expandtemplates;
   opens org.wpcleaner.api.api.login;
   opens org.wpcleaner.api.api.move;
   opens org.wpcleaner.api.api.parse;

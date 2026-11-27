@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -41,35 +40,35 @@ public class ApiEdit {
     final MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
 
     if (query instanceof EditQueryByTitle byTitle) {
-      addParameter(body, "title", byTitle.title());
+      ApiUtils.addBodyParameter(body, "title", byTitle.title());
     } else if (query instanceof EditQueryByPageId byPageId) {
-      addParameter(body, "pageid", byPageId.pageId());
+      ApiUtils.addBodyParameter(body, "pageid", byPageId.pageId());
     }
 
     final EditQueryCommon common = query.common();
-    addParameter(body, "appendtext", common.appendText());
-    addParameter(body, "basetimestamp", common.baseTimestamp());
-    addParameter(body, "bot", common.bot());
-    addParameter(body, "contentformat", common.contentFormat());
-    addParameter(body, "contentmodel", common.contentModel());
-    addParameter(body, "createonly", common.createOnly());
-    addParameter(body, "md5", common.md5());
-    addParameter(body, "minor", common.minor());
-    addParameter(body, "prependtext", common.prependText());
-    addParameter(body, "nocreate", common.noCreate());
-    addParameter(body, "notminor", common.notMinor());
-    addParameter(body, "recreate", common.recreate());
-    addParameter(body, "redirect", common.redirect());
-    addParameter(body, "section", common.section());
-    addParameter(body, "sectiontitle", common.sectionTitle());
-    addParameter(body, "starttimestamp", common.startTimestamp());
-    addParameter(body, "summary", common.summary());
-    addParameter(body, "tags", common.tags());
-    addParameter(body, "text", common.text());
-    addParameter(body, "undo", common.undo());
-    addParameter(body, "undoafter", common.undoAfter());
-    addParameter(body, "watchlist", common.watchlist());
-    addParameter(body, "token", common.token()); // Must be last
+    ApiUtils.addBodyParameter(body, "appendtext", common.appendText());
+    ApiUtils.addBodyParameter(body, "basetimestamp", common.baseTimestamp());
+    ApiUtils.addBodyParameter(body, "bot", common.bot());
+    ApiUtils.addBodyParameter(body, "contentformat", common.contentFormat());
+    ApiUtils.addBodyParameter(body, "contentmodel", common.contentModel());
+    ApiUtils.addBodyParameter(body, "createonly", common.createOnly());
+    ApiUtils.addBodyParameter(body, "md5", common.md5());
+    ApiUtils.addBodyParameter(body, "minor", common.minor());
+    ApiUtils.addBodyParameter(body, "prependtext", common.prependText());
+    ApiUtils.addBodyParameter(body, "nocreate", common.noCreate());
+    ApiUtils.addBodyParameter(body, "notminor", common.notMinor());
+    ApiUtils.addBodyParameter(body, "recreate", common.recreate());
+    ApiUtils.addBodyParameter(body, "redirect", common.redirect());
+    ApiUtils.addBodyParameter(body, "section", common.section());
+    ApiUtils.addBodyParameter(body, "sectiontitle", common.sectionTitle());
+    ApiUtils.addBodyParameter(body, "starttimestamp", common.startTimestamp());
+    ApiUtils.addBodyParameter(body, "summary", common.summary());
+    ApiUtils.addBodyParameter(body, "tags", common.tags());
+    ApiUtils.addBodyParameter(body, "text", common.text());
+    ApiUtils.addBodyParameter(body, "undo", common.undo());
+    ApiUtils.addBodyParameter(body, "undoafter", common.undoAfter());
+    ApiUtils.addBodyParameter(body, "watchlist", common.watchlist());
+    ApiUtils.addBodyParameter(body, "token", common.token()); // Must be last
     return restClient
         .getRestClient(wiki)
         .post()
@@ -78,24 +77,6 @@ public class ApiEdit {
         .body(body)
         .retrieve()
         .body(Response.class);
-  }
-
-  private void addParameter(
-      final MultiValueMap<String, Object> body, final String key, @Nullable final Object value) {
-    switch (value) {
-      case null -> {}
-      case Boolean _ -> {
-        if (Boolean.TRUE.equals(value)) {
-          body.add(key, "1");
-        }
-      }
-      case List<?> list -> {
-        if (!list.isEmpty()) {
-          body.add(key, list.stream().map(Object::toString).collect(Collectors.joining("|")));
-        }
-      }
-      default -> body.add(key, value.toString());
-    }
   }
 
   private record Response(
