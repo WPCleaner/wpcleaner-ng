@@ -19,12 +19,11 @@ import org.wpcleaner.lib.check.Replacement;
 
 record VoidTagAttributes(PageAnalysis analysis, ClearReplacements clearReplacements) {
 
-  private static final String BR = HtmlTagType.BR.getNormalizedName();
-  private static final List<String> TAG_NAMES = List.of(BR, HtmlTagType.HR.getNormalizedName());
+  private static final String TAG_NAME = HtmlTagType.BR.getNormalizedName();
 
   List<CheckError> analyze(final int algorithm) {
     return analysis.getTags().stream()
-        .filter(tag -> TAG_NAMES.contains(tag.normalizedName()))
+        .filter(tag -> TAG_NAME.equals(tag.normalizedName()))
         .flatMap(tag -> analyzeTag(algorithm, tag).stream())
         .toList();
   }
@@ -41,9 +40,7 @@ record VoidTagAttributes(PageAnalysis analysis, ClearReplacements clearReplaceme
 
   private List<Replacement> createReplacements(final TagElement tag) {
     final List<Replacement> replacements = new ArrayList<>();
-    final String tagName = tag.normalizedName();
     ClearReplacements.findValue(tag)
-        .filter(_ -> BR.equals(tagName))
         .flatMap(clearReplacements::findReplacement)
         .ifPresent(
             replacement ->
@@ -52,7 +49,7 @@ record VoidTagAttributes(PageAnalysis analysis, ClearReplacements clearReplaceme
                         replacement,
                         !replacement.isEmpty()
                             && analysis.getPageTitle().namespace() == CommonNamespaces.MAIN.id)));
-    final TagBuilder builder = TagBuilder.from(tagName);
+    final TagBuilder builder = TagBuilder.from(TAG_NAME);
     replacements.add(new Replacement(builder.withKind(TagKind.SELF_CLOSING).build(), false));
     replacements.add(new Replacement(builder.build(), false));
     return replacements;
