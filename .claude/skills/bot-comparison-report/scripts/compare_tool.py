@@ -37,6 +37,7 @@ import urllib.request
 
 USER_AGENT = "WPCleanerNG-compare/1.0 (https://github.com/WPCleaner/wpcleaner-ng)"
 CHECKWIKI = "https://checkwiki.toolforge.org/cgi-bin/checkwiki_bots.cgi"
+CHECKWIKI_LAST_ALGORITHM = 500
 WIKIS = {
     "frwiki": ("https://fr.wikipedia.org/w/api.php", "Projet:Correction syntaxique/Analyse {}", "FR"),
     "enwiki": ("https://en.wikipedia.org/w/api.php", "Wikipedia:CHECKWIKI/WPC {} dump", "EN"),
@@ -131,13 +132,15 @@ def fetch(work):
             kept.append({"timestamp": revision["timestamp"], "revid": revision["revid"],
                          "pages": parse_list(content[begin:end])})
         save(work, f"legacy/{algo}.json", kept)
-        checkwiki = post(CHECKWIKI, {"project": config["wiki"], "action": "list", "id": int(algo),
-                                     "offset": 0, "limit": 100000}, as_json=False)
-        cw_titles = sorted(line.strip()[6:].replace("_", " ") for line in checkwiki.splitlines()
-                           if line.startswith("title="))
+        cw_titles = None
+        if int(algo) <= CHECKWIKI_LAST_ALGORITHM:
+            checkwiki = post(CHECKWIKI, {"project": config["wiki"], "action": "list", "id": int(algo),
+                                         "offset": 0, "limit": 100000}, as_json=False)
+            cw_titles = sorted(line.strip()[6:].replace("_", " ") for line in checkwiki.splitlines()
+                               if line.startswith("title="))
         save(work, f"cw/{algo}.json", cw_titles)
         print(algo, "legacy revisions:", [(r["timestamp"][:10], len(r["pages"])) for r in kept],
-              "check wiki:", len(cw_titles))
+              "check wiki:", "unknown algorithm" if cw_titles is None else len(cw_titles))
         time.sleep(1)
 
 
@@ -156,7 +159,8 @@ def compare(work):
         revisions = load(work, f"legacy/{algo}.json")
         legacy = revisions[-1]["pages"] if revisions else None
         first = revisions[0]["pages"] if revisions else None
-        cw = set(load(work, f"cw/{algo}.json"))
+        cw_titles = load(work, f"cw/{algo}.json")
+        cw = set(cw_titles or [])
         data[algo] = {"ng": ng, "lg": legacy, "lg0": first, "cw": sorted(cw)}
         row = [algo, len(ng)]
         if legacy is None:
@@ -164,7 +168,10 @@ def compare(work):
         else:
             row += [len(legacy), len(ng.keys() & legacy.keys()), len(ng.keys() - legacy.keys()),
                     len(legacy.keys() - ng.keys()), len(first)]
-        row += [len(cw), len(cw & ng.keys()), len(cw - ng.keys())]
+        if cw_titles is None:
+            row += ["–"] * 3
+        else:
+            row += [len(cw), len(cw & ng.keys()), len(cw - ng.keys())]
         print("| " + " | ".join(str(v) for v in row) + " |")
     save(work, "compare.json", data)
     save(work, "namespaces.json", namespaces)
