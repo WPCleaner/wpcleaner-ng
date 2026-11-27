@@ -425,6 +425,48 @@ class CheckAlgorithm010Test {
             text.lastIndexOf(unclosed));
   }
 
+  @DisplayName("should suggest the link parameter for an image inside a link")
+  @Test
+  void suggestImageLinkParameter() {
+    // GIVEN
+    final String simple = "[[Paris|[[Fichier:A.jpg|20px]]]]";
+    final String spaces = "[[ B |\t[[Fichier:C.jpg]]]]";
+    final String text = simple + " " + spaces;
+
+    // WHEN
+    final List<CheckError> errors = analyze(ARTICLE, text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(text, simple, "[[Fichier:A.jpg|20px|lien=Paris]]", false),
+            error(text, spaces, "[[Fichier:C.jpg|lien=B]]", false));
+  }
+
+  @DisplayName("should not suggest the link parameter when the image is not the whole link text")
+  @Test
+  void ignoreImageNotAloneInLink() {
+    // GIVEN
+    final String noPipe = "[[Paris [[Fichier:A.jpg]]]]";
+    final String textBefore = "[[Paris|b [[Fichier:A.jpg]]]]";
+    final String textAfter = "[[Paris|[[Fichier:A.jpg]] b]]";
+    final String emptyTarget = "[[ |[[Fichier:A.jpg]]]]";
+    final String withLink = "[[Paris|[[Fichier:A.jpg|link=Lyon]]]]";
+    final String text = String.join(" ", noPipe, textBefore, textAfter, emptyTarget, withLink);
+
+    // WHEN
+    final List<CheckError> errors = analyze(ARTICLE, text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            unclosed(text, noPipe),
+            unclosed(text, textBefore),
+            unclosed(text, textAfter),
+            unclosed(text, emptyTarget),
+            unclosed(text, withLink));
+  }
+
   private List<CheckError> analyze(final String title, final String text) {
     return algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis(title, text));
   }

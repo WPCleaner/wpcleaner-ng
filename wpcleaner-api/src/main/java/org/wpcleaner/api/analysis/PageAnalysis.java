@@ -41,6 +41,7 @@ import org.wpcleaner.api.repository.extensiontag.ExtensionTagRepository;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
 import org.wpcleaner.api.repository.interwiki.InterwikiRepository;
 import org.wpcleaner.api.repository.magiclink.MagicLinkRepository;
+import org.wpcleaner.api.repository.magicword.MagicWord;
 import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
@@ -66,6 +67,7 @@ public final class PageAnalysis {
   private final WikiContainer wikiElements;
   private final TimelineContainer timelines;
   private final List<Interwiki> interwikis;
+  private final List<MagicWord> magicWords;
   private final List<Protocol> protocols;
   private final Function<String, PageAnalysis> otherTextAnalyzer;
 
@@ -105,6 +107,7 @@ public final class PageAnalysis {
             protocolRepository);
     this.timelines = new TimelineContainer(this.text, preprocessor);
     this.interwikis = interwikiRepository.getInterwikis(wiki);
+    this.magicWords = magicWordRepository.getMagicWords(wiki);
     this.protocols = protocolRepository.getProtocols(wiki);
     this.otherTextAnalyzer =
         otherText ->
@@ -126,6 +129,10 @@ public final class PageAnalysis {
 
   public List<Interwiki> getInterwikis() {
     return interwikis;
+  }
+
+  public Optional<MagicWord> getMagicWord(final String name) {
+    return magicWords.stream().filter(magicWord -> magicWord.name().equals(name)).findFirst();
   }
 
   public List<Protocol> getProtocols() {
