@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.wpcleaner.api.analysis.PageAnalysisFactory;
 import org.wpcleaner.api.api.CurrentUserService;
 import org.wpcleaner.api.api.edit.ApiEditWrapper;
+import org.wpcleaner.api.api.expandtemplates.ApiExpandTemplates;
 import org.wpcleaner.api.api.query.prop.revisions.ApiRevisions;
 import org.wpcleaner.api.repository.linter.LinterCategoryRepository;
 import org.wpcleaner.api.rest.lint.RestLint;
@@ -27,6 +28,7 @@ import org.wpcleaner.lib.image.ImageLoader;
 public record JavaFxAnalysisWindowServices(
     JavaFxActionServices actionServices,
     ApiEditWrapper apiEdit,
+    ApiExpandTemplates apiExpandTemplates,
     ApiRevisions apiRevisions,
     AutomaticFormatter automaticFormatter,
     CheckAlgorithmRegistry checkAlgorithmRegistry,

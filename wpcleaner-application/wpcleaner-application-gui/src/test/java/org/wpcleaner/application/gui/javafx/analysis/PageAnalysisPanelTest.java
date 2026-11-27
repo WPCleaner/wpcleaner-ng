@@ -31,10 +31,12 @@ import org.wpcleaner.api.api.edit.Edit;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
 import org.wpcleaner.api.api.edit.EditQueryCommon;
 import org.wpcleaner.api.api.edit.MockApiEdit;
+import org.wpcleaner.api.api.expandtemplates.MockApiExpandTemplates;
 import org.wpcleaner.api.api.query.meta.tokens.MockApiTokens;
 import org.wpcleaner.api.api.query.prop.revisions.MockApiRevisions;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfiguration;
 import org.wpcleaner.api.repository.configuration.WPCleanerConfigurationRepository;
+import org.wpcleaner.api.repository.magicword.MagicWordRepository;
 import org.wpcleaner.api.rest.lint.MockRestLint;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
@@ -44,6 +46,7 @@ import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsPane;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.CheckErrorsToolBar;
 import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisArea;
+import org.wpcleaner.application.gui.javafx.core.pageanalysis.PageAnalysisCheckPaneFactory;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 import org.wpcleaner.lib.check.server.MockCheckWikiServer;
@@ -60,6 +63,9 @@ class PageAnalysisPanelTest extends JavaFxTest {
   private static final String CSRF_TOKEN = "csrf-token+\\";
   private static final String COMMENT = "[[P:CS|Correction syntaxique]]";
   private static final String SUMMARY = COMMENT + " (Lien vers l’article)";
+  private static final String FUNCTION = "{{#if:x|une}}";
+  private static final String FUNCTION_TEXT = "== Histoire ==\nParis est " + FUNCTION + " ville.";
+  private static final String EXPANDED_TEXT = "== Histoire ==\nParis est une ville.";
   private static final Duration MARK_TIMEOUT = Duration.ofSeconds(5);
 
   @Autowired private CurrentUserService currentUserService;
@@ -67,9 +73,11 @@ class PageAnalysisPanelTest extends JavaFxTest {
   @Autowired private JavaFxAnalysisWindowServices services;
   @Autowired private WPCleanerConfigurationRepository wpcleanerRepository;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
+  @Autowired private MagicWordRepository magicWordRepository;
   @Autowired private MockApiRevisions mockApiRevisions;
   @Autowired private MockApiTokens mockApiTokens;
   @Autowired private MockApiEdit mockApiEdit;
+  @Autowired private MockApiExpandTemplates mockApiExpandTemplates;
   @Autowired private MockRestServiceServer mediaWikiServer;
 
   @Value("${version.prefix}")
@@ -331,6 +339,88 @@ class PageAnalysisPanelTest extends JavaFxTest {
     Assertions.assertThat(callOnJavaFx(() -> getSaveButton(analysisWindow).isDisable())).isTrue();
   }
 
+  @DisplayName("should expand a parser function and replace it with the expanded text")
+  @Test
+  void expandFunction() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    givenFunctionPage();
+    ExpandTemplatesExpectations.givenExpandedText(
+        mockApiExpandTemplates, WIKI, TITLE, FUNCTION, "une");
+    final JavaFxAnalysisWindow analysisWindow = openPage(FUNCTION_TEXT);
+
+    // WHEN
+    runOnJavaFx(() -> expand(analysisWindow));
+
+    // THEN
+    waitForJavaFx(
+        () ->
+            find(analysisWindow, PageAnalysisArea.AREA_ID, PageAnalysisArea.class)
+                .filter(area -> EXPANDED_TEXT.equals(area.getText())));
+    mediaWikiServer.verify();
+  }
+
+  @DisplayName("should report an error during the expansion and keep the text")
+  @Test
+  void expandFunctionWithError() throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    givenFunctionPage();
+    ExpandTemplatesExpectations.givenExpansionErrors(
+        mockApiExpandTemplates,
+        WIKI,
+        TITLE,
+        FUNCTION,
+        List.of(new ApiError("internal_api_error", "main", "Failure.")));
+    final JavaFxAnalysisWindow analysisWindow = openPage(FUNCTION_TEXT);
+
+    // WHEN
+    runOnJavaFx(() -> expand(analysisWindow));
+
+    // THEN
+    Assertions.assertThat(closeAlert(analysisWindow)).contains("internal_api_error: Failure.");
+    Assertions.assertThat(callOnJavaFx(() -> getArea(analysisWindow).getText()))
+        .isEqualTo(FUNCTION_TEXT);
+    mediaWikiServer.verify();
+  }
+
+  @DisplayName("should report an expansion without text and keep the text")
+  @Test
+  void expandFunctionWithoutText()
+      throws InterruptedException, ExecutionException, TimeoutException {
+    // GIVEN
+    givenFunctionPage();
+    ExpandTemplatesExpectations.givenExpandedText(
+        mockApiExpandTemplates, WIKI, TITLE, FUNCTION, null);
+    final JavaFxAnalysisWindow analysisWindow = openPage(FUNCTION_TEXT);
+
+    // WHEN
+    runOnJavaFx(() -> expand(analysisWindow));
+
+    // THEN
+    Assertions.assertThat(closeAlert(analysisWindow))
+        .isEqualTo("No text returned by the expansion.");
+    Assertions.assertThat(callOnJavaFx(() -> getArea(analysisWindow).getText()))
+        .isEqualTo(FUNCTION_TEXT);
+    mediaWikiServer.verify();
+  }
+
+  private void givenFunctionPage() {
+    ExpandTemplatesExpectations.givenIfFunction(magicWordRepository, WIKI);
+    checkWikiRepository.setConfiguration(
+        WIKI, CheckWikiConfiguration.of(Map.of("error_034_prio_frwiki", "3"), Map.of(), "frwiki"));
+    AnalysisPageExpectations.givenPageContent(
+        mockApiRevisions, WIKI, TITLE, FUNCTION_TEXT, TIMESTAMP);
+  }
+
+  private static void expand(final JavaFxAnalysisWindow analysisWindow) {
+    final PageAnalysisArea area = getArea(analysisWindow);
+    PageAnalysisCheckPaneFactory.requestContextMenu(area, FUNCTION_TEXT.indexOf(FUNCTION) + 1);
+    area.getContextMenu().getItems().stream()
+        .filter(item -> "Expand".equals(item.getText()))
+        .findFirst()
+        .orElseThrow()
+        .fire();
+  }
+
   private void givenConfiguration() {
     wpcleanerRepository.setConfiguration(
         WIKI, new WPCleanerConfiguration(Map.of("check_wiki_comment", COMMENT), Map.of()));
@@ -348,6 +438,11 @@ class PageAnalysisPanelTest extends JavaFxTest {
 
   private JavaFxAnalysisWindow openPage()
       throws InterruptedException, ExecutionException, TimeoutException {
+    return openPage(FIXED_TEXT);
+  }
+
+  private JavaFxAnalysisWindow openPage(final String expectedText)
+      throws InterruptedException, ExecutionException, TimeoutException {
     final JavaFxAnalysisWindow analysisWindow =
         callOnJavaFx(
             () -> {
@@ -359,7 +454,7 @@ class PageAnalysisPanelTest extends JavaFxTest {
     waitForJavaFx(
         () ->
             find(analysisWindow, PageAnalysisArea.AREA_ID, PageAnalysisArea.class)
-                .filter(area -> FIXED_TEXT.equals(area.getText())));
+                .filter(area -> expectedText.equals(area.getText())));
     return analysisWindow;
   }
 

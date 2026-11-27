@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Labeled;
+import javafx.scene.input.ContextMenuEvent;
 import org.springframework.boot.test.context.TestComponent;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
@@ -63,6 +66,27 @@ public final class PageAnalysisCheckPaneFactory {
         .map(Labeled.class::cast)
         .filter(cell -> Objects.nonNull(cell.getText()))
         .toList();
+  }
+
+  public static Point2D characterCenter(final PageAnalysisArea area, final int position) {
+    final Bounds bounds =
+        area.screenToLocal(area.getCharacterBoundsOnScreen(position, position + 1).orElseThrow());
+    return new Point2D(bounds.getCenterX(), bounds.getCenterY());
+  }
+
+  public static void requestContextMenu(final PageAnalysisArea area, final int position) {
+    final Point2D local = characterCenter(area, position);
+    final Point2D scene = area.localToScene(local);
+    final Point2D screen = area.localToScreen(local);
+    area.fireEvent(
+        new ContextMenuEvent(
+            ContextMenuEvent.CONTEXT_MENU_REQUESTED,
+            scene.getX(),
+            scene.getY(),
+            screen.getX(),
+            screen.getY(),
+            false,
+            null));
   }
 
   public PageAnalysisCheckPane createPane() {

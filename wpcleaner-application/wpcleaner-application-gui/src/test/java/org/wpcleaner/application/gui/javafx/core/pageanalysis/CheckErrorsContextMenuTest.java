@@ -5,6 +5,7 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -17,6 +18,7 @@ import org.wpcleaner.application.gui.GuiSpringBootTest;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.ExpandedReplacement;
 import org.wpcleaner.lib.check.Replacement;
 
 @GuiSpringBootTest
@@ -47,11 +49,49 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
     // WHEN
     final List<MenuItem> items =
         callOnJavaFx(
-            () -> new CheckErrorsContextMenu(List.of(algorithmErrors), (_, _) -> {}).getItems());
+            () ->
+                new CheckErrorsContextMenu(List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {})
+                    .getItems());
 
     // THEN
     Assertions.assertThat(items)
         .extracting(MenuItem::getText)
         .containsExactly(NAME, "Label", "text", "Remove the line", "Delete");
+  }
+
+  @DisplayName("should display the label of an expansion and call the expansion action")
+  @Test
+  void expand() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final ExpandedReplacement expandedReplacement = new ExpandedReplacement("{{X}}", "Expand");
+    final CheckError error =
+        new CheckError(
+            34, 0, 5, List.of(new Replacement("{{subst:X}}", false), expandedReplacement));
+    final CheckAlgorithmErrors algorithmErrors =
+        new CheckAlgorithmErrors(
+            algorithmRegistry.getAlgorithms().getFirst(), NAME, null, null, List.of(error));
+    final List<CheckError> replacedErrors = new ArrayList<>();
+    final List<ExpandedReplacement> expansions = new ArrayList<>();
+    final List<MenuItem> items =
+        callOnJavaFx(
+            () ->
+                new CheckErrorsContextMenu(
+                        List.of(algorithmErrors),
+                        (_, _) -> replacedErrors.add(error),
+                        (expandedError, expansion) -> {
+                          replacedErrors.add(expandedError);
+                          expansions.add(expansion);
+                        })
+                    .getItems());
+
+    // WHEN
+    runOnJavaFx(items.get(2)::fire);
+
+    // THEN
+    Assertions.assertThat(items)
+        .extracting(MenuItem::getText)
+        .containsExactly(NAME, "{{subst:X}}", "Expand");
+    Assertions.assertThat(replacedErrors).containsExactly(error);
+    Assertions.assertThat(expansions).containsExactly(expandedReplacement);
   }
 }

@@ -19,7 +19,6 @@ import org.wpcleaner.application.gui.javafx.core.pageanalysis.coloration.PageSyn
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.CheckError;
-import org.wpcleaner.lib.check.Replacement;
 
 public final class PageAnalysisCheckPane extends SplitPane {
 
@@ -32,6 +31,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
   private final PageAnalysisAreaPane areaPane;
   @Nullable private PageAnalysis analysis;
   private Runnable analysisListener = () -> {};
+  private ExpansionAction expansionAction = (_, _) -> {};
 
   public PageAnalysisCheckPane(
       final PageSyntaxColorizer colorizer,
@@ -86,6 +86,10 @@ public final class PageAnalysisCheckPane extends SplitPane {
     analysisListener = listener;
   }
 
+  public void setExpansionAction(final ExpansionAction action) {
+    expansionAction = action;
+  }
+
   public void selectAlgorithm(final int algorithmNumber) {
     errorsPane.selectAlgorithm(algorithmNumber);
   }
@@ -114,7 +118,8 @@ public final class PageAnalysisCheckPane extends SplitPane {
             .map(algorithmErrors -> algorithmErrors.atPosition(position))
             .filter(algorithmErrors -> !algorithmErrors.errors().isEmpty())
             .toList(),
-        this::applyReplacement);
+        this::replaceError,
+        expansionAction);
   }
 
   private void showErrors(@Nullable final CheckAlgorithmErrors selectedErrors) {
@@ -153,8 +158,8 @@ public final class PageAnalysisCheckPane extends SplitPane {
             .orElse(null));
   }
 
-  private void applyReplacement(final CheckError error, final Replacement replacement) {
-    getArea().replaceText(error.begin(), error.end(), replacement.text());
+  public void replaceError(final CheckError error, final String text) {
+    getArea().replaceText(error.begin(), error.end(), text);
     refreshAnalysis();
   }
 

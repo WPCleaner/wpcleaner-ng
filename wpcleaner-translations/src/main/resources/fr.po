@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-21 21:06+0100\n"
+"POT-Creation-Date: 2026-11-27 23:11+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -547,7 +547,7 @@ msgstr "Êtes vous sûr de vouloir supprimer le wiki \"%s\" ?"
 msgid "Warning for %s"
 msgstr "Avertissement pour %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:56
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:82
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -735,13 +735,13 @@ msgstr "Récupération de l'URL d'aide"
 msgid "Save the page"
 msgstr "Enregistrer la page"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:86
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:85
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesDetailsToolBar.java:63
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/recentchanges/RecentChangesTableView.java:90
 msgid "Open page in browser"
 msgstr "Afficher la page dans le navigateur"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:92
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:91
 msgid "Open page history in browser"
 msgstr "Afficher l'historique de la page dans le navigateur"
 
@@ -752,7 +752,7 @@ msgstr "Récupération du contenu du la page"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:154
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:161
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:168
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:379
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:373
 msgid "Error loading the page"
 msgstr "Erreur au chargement de la page"
 
@@ -799,7 +799,7 @@ msgid "Saving page"
 msgstr "Enregistrement de la page"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:329
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:369
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:368
 msgid "Error saving the page"
 msgstr "Erreur à l'enregistrement de la page"
 
@@ -821,12 +821,12 @@ msgstr "Erreur au marquage des erreurs comme corrigées"
 msgid "Error marking errors as fixed: %s"
 msgstr "Erreur au marquage des erreurs comme corrigées : %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:371
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:368
 #, java-printf-format
 msgid "Error saving the page: %s"
 msgstr "Erreur à l'enregistrement de la page : %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:380
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/PageAnalysisPanel.java:374
 #, java-printf-format
 msgid "Error retrieving page content: %s"
 msgstr "Erreur à la récupération du contenu de la page : %s"
@@ -834,6 +834,29 @@ msgstr "Erreur à la récupération du contenu de la page : %s"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/CheckWikiDetectionsButton.java:28
 msgid "Retrieve the errors still detected by Check Wiki"
 msgstr "Récupérer les erreurs encore détectées par Check Wiki"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/ExpandTemplatesAction.java:59
+msgid "Expanding templates"
+msgstr "Développement des modèles"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/ExpandTemplatesAction.java:78
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/ExpandTemplatesAction.java:83
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/ExpandTemplatesAction.java:92
+msgid "Error expanding templates"
+msgstr "Erreur au développement des modèles"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/ExpandTemplatesAction.java:78
+msgid "No text returned by the expansion."
+msgstr "Aucun texte renvoyé par le développement."
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/ExpandTemplatesAction.java:84
+msgid "The text has been modified during the expansion."
+msgstr "Le texte a été modifié pendant le développement."
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/ExpandTemplatesAction.java:93
+#, java-printf-format
+msgid "Error expanding templates: %s"
+msgstr "Erreur au développement des modèles : %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/analysis/LinterErrorsWindow.java:49
 #, java-printf-format
@@ -1462,6 +1485,10 @@ msgstr "La valeur « %s » dans %s n'est pas un nom, écrivez-la entre guillemet
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a02x/a021/CheckAlgorithm021.java:73
 msgid "Comment category out"
 msgstr "Mettre la catégorie en commentaire"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a034/CheckAlgorithm034.java:169
+msgid "Expand"
+msgstr "Développer"
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/CheckAlgorithm016.java:121
 msgid "Remove all control characters"

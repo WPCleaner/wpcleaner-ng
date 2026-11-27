@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -21,7 +20,6 @@ import javafx.scene.control.Labeled;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -476,7 +474,10 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     final PageAnalysisCheckPane pane = createPane();
     final Stage stage = callOnJavaFx(() -> showInStage(pane));
     try {
-      runOnJavaFx(() -> requestContextMenu(pane, SECOND_LINK_BEGIN + 1));
+      runOnJavaFx(
+          () ->
+              PageAnalysisCheckPaneFactory.requestContextMenu(
+                  pane.getArea(), SECOND_LINK_BEGIN + 1));
       Assertions.assertThat(callOnJavaFx(PageAnalysisCheckPaneTest::showingContextMenus))
           .hasSize(1);
 
@@ -497,7 +498,10 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     final PageAnalysisCheckPane pane = createPane();
     final Stage stage = callOnJavaFx(() -> showInStage(pane));
     try {
-      runOnJavaFx(() -> requestContextMenu(pane, SECOND_LINK_BEGIN + 1));
+      runOnJavaFx(
+          () ->
+              PageAnalysisCheckPaneFactory.requestContextMenu(
+                  pane.getArea(), SECOND_LINK_BEGIN + 1));
       Assertions.assertThat(callOnJavaFx(PageAnalysisCheckPaneTest::showingContextMenus))
           .hasSize(1);
 
@@ -745,31 +749,9 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     return stage;
   }
 
-  private static Point2D characterCenter(final PageAnalysisArea area, final int position) {
-    final Bounds bounds =
-        area.screenToLocal(area.getCharacterBoundsOnScreen(position, position + 1).orElseThrow());
-    return new Point2D(bounds.getCenterX(), bounds.getCenterY());
-  }
-
-  private static void requestContextMenu(final PageAnalysisCheckPane pane, final int position) {
-    final PageAnalysisArea area = pane.getArea();
-    final Point2D local = characterCenter(area, position);
-    final Point2D scene = area.localToScene(local);
-    final Point2D screen = area.localToScreen(local);
-    area.fireEvent(
-        new ContextMenuEvent(
-            ContextMenuEvent.CONTEXT_MENU_REQUESTED,
-            scene.getX(),
-            scene.getY(),
-            screen.getX(),
-            screen.getY(),
-            false,
-            null));
-  }
-
   private static void pressMouse(final PageAnalysisCheckPane pane, final int position) {
     final PageAnalysisArea area = pane.getArea();
-    final Point2D local = characterCenter(area, position);
+    final Point2D local = PageAnalysisCheckPaneFactory.characterCenter(area, position);
     final Point2D scene = area.localToScene(local);
     final Point2D screen = area.localToScreen(local);
     area.fireEvent(

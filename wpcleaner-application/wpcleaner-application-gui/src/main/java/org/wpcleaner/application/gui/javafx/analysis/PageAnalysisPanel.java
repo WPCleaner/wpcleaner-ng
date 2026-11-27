@@ -16,7 +16,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.PageAnalysis;
-import org.wpcleaner.api.api.ApiException;
 import org.wpcleaner.api.api.edit.Edit;
 import org.wpcleaner.api.api.edit.EditQueryByTitle;
 import org.wpcleaner.api.api.edit.EditQueryCommon;
@@ -112,6 +111,7 @@ public final class PageAnalysisPanel extends StackPane {
   private void initialize() {
     checkPane.getArea().setEditable(true);
     checkPane.setAnalysisListener(this::updateSummary);
+    checkPane.setExpansionAction(new ExpandTemplatesAction(owner, services, pageName, checkPane));
     final VBox mainContainer = new VBox();
     VBox.setVgrow(checkPane, Priority.ALWAYS);
     mainContainer.getChildren().addAll(summaryPane, checkPane);
@@ -364,14 +364,8 @@ public final class PageAnalysisPanel extends StackPane {
   }
 
   private void pageSavedWithError(final Exception e) {
-    final String message = String.valueOf(e.getMessage());
     owner.showWarning(
-        GT._T("Error saving the page"),
-        GT._T(
-            "Error saving the page: %s",
-            e instanceof ApiException apiException
-                ? "%s%n%s".formatted(message, apiException.getDetails())
-                : message));
+        GT._T("Error saving the page"), GT._T("Error saving the page: %s", ErrorMessage.of(e)));
   }
 
   private void updateAnalysisAreaWithError(final Exception e) {
