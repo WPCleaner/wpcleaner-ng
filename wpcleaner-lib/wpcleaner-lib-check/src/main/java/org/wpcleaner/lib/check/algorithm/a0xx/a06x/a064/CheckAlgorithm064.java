@@ -32,6 +32,7 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
   private static final char UNDERSCORE = '_';
   private static final char SPACE = ' ';
   private static final char PIPE = '|';
+  private static final String PUNCTUATION = " ,.:";
 
   private final WPCleanerConfigurationRepository wpcleanerRepository;
 
@@ -93,14 +94,16 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
       @Nullable final String apostropheTemplate) {
     final int begin =
         match.risk() ? LinkTextMatch.skipApostrophesBackward(text, link.begin()) : link.begin();
+    final int punctuationEnd = findPunctuationBetweenApostrophes(text, link.end());
     final int end =
-        match.risk() ? LinkTextMatch.skipApostrophesForward(text, link.end()) : link.end();
+        match.risk() ? LinkTextMatch.skipApostrophesForward(text, punctuationEnd) : punctuationEnd;
     final Set<String> replacements =
         createReplacements(
             link,
             match,
             text.substring(begin, link.begin()),
-            text.substring(link.end(), end),
+            createTrailingTexts(text.substring(link.end(), punctuationEnd), match.automatic()),
+            text.substring(punctuationEnd, end),
             apostropheTemplate);
     final String automaticReplacement = replacements.iterator().next();
     return new CheckError(
@@ -115,10 +118,33 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
             .toList());
   }
 
+  private static int findPunctuationBetweenApostrophes(final String text, final int linkEnd) {
+    final int punctuationBegin = LinkTextMatch.skipApostrophesForward(text, linkEnd);
+    int punctuationEnd = punctuationBegin;
+    while (punctuationEnd < text.length()
+        && PUNCTUATION.indexOf(text.charAt(punctuationEnd)) >= 0) {
+      punctuationEnd++;
+    }
+    final int end = LinkTextMatch.skipApostrophesForward(text, punctuationEnd);
+    final boolean balanced =
+        punctuationBegin > linkEnd && end - punctuationEnd == punctuationBegin - linkEnd;
+    return balanced ? end : linkEnd;
+  }
+
+  private static List<String> createTrailingTexts(
+      final String trailingText, final boolean automatic) {
+    if (trailingText.isEmpty()) {
+      return List.of(trailingText);
+    }
+    final String punctuation = trailingText.replace(String.valueOf(APOSTROPHE), "");
+    return automatic ? List.of(trailingText, punctuation) : List.of(punctuation, trailingText);
+  }
+
   private static Set<String> createReplacements(
       final InternalLinkElement link,
       final LinkTextMatch match,
       final String prefix,
+      final List<String> trailingTexts,
       final String suffix,
       @Nullable final String apostropheTemplate) {
     final List<String> linkTexts = List.of(match.text(), match.text().replace(UNDERSCORE, SPACE));
@@ -126,11 +152,14 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
     for (final String before : withoutApostrophes(match.before())) {
       for (final String after : withoutApostrophes(match.after())) {
         for (final String linkText : linkTexts) {
-          final String replacement =
-              before
-                  + InternalLinkBuilder.to(linkText).withColon(link.leadingColon()).build()
-                  + after;
-          addReplacements(replacements, prefix, replacement, suffix, apostropheTemplate);
+          for (final String trailingText : trailingTexts) {
+            final String replacement =
+                before
+                    + InternalLinkBuilder.to(linkText).withColon(link.leadingColon()).build()
+                    + after
+                    + trailingText;
+            addReplacements(replacements, prefix, replacement, suffix, apostropheTemplate);
+          }
         }
       }
     }
