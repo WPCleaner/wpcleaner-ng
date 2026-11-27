@@ -13,8 +13,10 @@ import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.category.CategoryBuilder;
 import org.wpcleaner.api.analysis.category.CategoryElement;
+import org.wpcleaner.api.repository.CaseType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
 import org.wpcleaner.api.repository.namespace.Namespace;
+import org.wpcleaner.api.utils.StringUtils;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -31,11 +33,11 @@ public class CheckAlgorithm022 implements CheckAlgorithm {
 
   @Override
   public List<CheckError> analyze(final PageAnalysis analysis) {
-    final Optional<String> localNamespace =
-        analysis.getNamespace(CommonNamespaces.CATEGORY.id).map(Namespace::name);
+    final Optional<Namespace> categoryNamespace =
+        analysis.getNamespace(CommonNamespaces.CATEGORY.id);
     return analysis.getCategories().stream()
         .filter(category -> category.title() != null && !containsComment(analysis, category))
-        .map(category -> createError(analysis, category, localNamespace))
+        .map(category -> createError(analysis, category, categoryNamespace))
         .flatMap(Optional::stream)
         .toList();
   }
@@ -49,22 +51,35 @@ public class CheckAlgorithm022 implements CheckAlgorithm {
   private static Optional<CheckError> createError(
       final PageAnalysis analysis,
       final CategoryElement category,
-      final Optional<String> localNamespace) {
+      final Optional<Namespace> categoryNamespace) {
     final String sortKey = stripTrailingWhitespace(category.sortKey());
-    final String fixed = createCategory(category.namespace(), category, sortKey);
+    final String fixed = createCategory(category.namespace(), category.name(), sortKey);
     if (fixed.equals(analysis.getText().substring(category.begin(), category.end()))) {
       return Optional.empty();
     }
-    final Stream<Replacement> automatic = Stream.of(new Replacement(fixed, true));
+    final String name = normalizeFirstLetter(category.name(), categoryNamespace);
+    final Stream<Replacement> automatic =
+        Stream.of(new Replacement(createCategory(category.namespace(), name, sortKey), true));
     final Stream<Replacement> localized =
-        localNamespace.filter(local -> !local.equals(category.namespace())).stream()
-            .map(local -> new Replacement(createCategory(local, category, sortKey), false));
+        categoryNamespace
+            .map(Namespace::name)
+            .filter(local -> !local.equals(category.namespace()))
+            .stream()
+            .map(local -> new Replacement(createCategory(local, name, sortKey), false));
     return Optional.of(
         new CheckError(
             ALGORITHM_NUMBER,
             category.begin(),
             category.end(),
             Stream.concat(automatic, localized).toList()));
+  }
+
+  private static String normalizeFirstLetter(
+      final String name, final Optional<Namespace> categoryNamespace) {
+    return categoryNamespace.map(Namespace::caseType).orElse(CaseType.FIRST_LETTER)
+            == CaseType.FIRST_LETTER
+        ? StringUtils.firstLetterTitleCase(name)
+        : name;
   }
 
   @Nullable
@@ -80,7 +95,7 @@ public class CheckAlgorithm022 implements CheckAlgorithm {
   }
 
   private static String createCategory(
-      final String namespace, final CategoryElement category, @Nullable final String sortKey) {
-    return CategoryBuilder.to(namespace, category.name()).withSortKey(sortKey).build();
+      final String namespace, final String name, @Nullable final String sortKey) {
+    return CategoryBuilder.to(namespace, name).withSortKey(sortKey).build();
   }
 }
