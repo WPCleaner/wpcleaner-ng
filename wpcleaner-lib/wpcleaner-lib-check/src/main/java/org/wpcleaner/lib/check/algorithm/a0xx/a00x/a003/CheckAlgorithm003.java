@@ -19,6 +19,7 @@ import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.analysis.tag.TagKind;
 import org.wpcleaner.api.analysis.tag.WikiTagType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -99,7 +100,7 @@ public class CheckAlgorithm003 implements CheckAlgorithm {
                     tag.begin(),
                     tag.end(),
                     referencesTags.size() == 1
-                        ? List.of(new Replacement(REFERENCES_TAG, false))
+                        ? List.of(new Replacement(REFERENCES_TAG, GT._T("Close tag"), false))
                         : List.of())));
     if (referencesTags.size() == 1) {
       findIncorrectEndTag(analysis, referencesTags.getFirst(), references).ifPresent(errors::add);

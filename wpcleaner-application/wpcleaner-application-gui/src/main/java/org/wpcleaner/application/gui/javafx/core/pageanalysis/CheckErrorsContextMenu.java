@@ -19,6 +19,11 @@ import org.wpcleaner.lib.check.Suggestion;
 public final class CheckErrorsContextMenu extends ContextMenu {
 
   private static final String AUTOMATIC_STYLE = "-fx-font-weight: bold;";
+  private static final int MAX_DISPLAYED_LENGTH = 60;
+  private static final int DISPLAYED_EDGE_LENGTH = 25;
+  private static final String NEW_LINE = "\n";
+  private static final String DISPLAYED_NEW_LINE = "↵";
+  private static final String ELLIPSIS = "…";
 
   public CheckErrorsContextMenu(
       final List<CheckAlgorithmErrors> algorithmsErrors,
@@ -76,9 +81,21 @@ public final class CheckErrorsContextMenu extends ContextMenu {
   }
 
   private static String getDisplayedLabel(final Replacement replacement) {
-    if (!replacement.label().isEmpty()) {
+    if (!replacement.label().isEmpty() && !replacement.label().equals(replacement.text())) {
       return replacement.label();
     }
-    return replacement.text().isEmpty() ? GT._T("Delete") : replacement.text();
+    return replacement.text().isEmpty()
+        ? GT._T("Delete")
+        : GT._T("Replace with %s", getDisplayedText(replacement.text()));
+  }
+
+  private static String getDisplayedText(final String text) {
+    final String displayedText = text.replace(NEW_LINE, DISPLAYED_NEW_LINE);
+    if (displayedText.length() <= MAX_DISPLAYED_LENGTH) {
+      return displayedText;
+    }
+    return displayedText.substring(0, DISPLAYED_EDGE_LENGTH)
+        + ELLIPSIS
+        + displayedText.substring(displayedText.length() - DISPLAYED_EDGE_LENGTH);
   }
 }

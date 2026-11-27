@@ -40,6 +40,12 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
             List.of(
                 new Replacement("text", "Label", false),
                 new Replacement("text", "", false),
+                new Replacement("text", false),
+                new Replacement("a\nb", false),
+                new Replacement(
+                    "123456789012345678901234567890123456789012345678901234567890", false),
+                new Replacement(
+                    "1234567890123456789012345678901234567890123456789012345678901", false),
                 new Replacement("", "Remove the line", false),
                 new Replacement("", "", false)));
     final CheckAlgorithmErrors algorithmErrors =
@@ -56,7 +62,16 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
     // THEN
     Assertions.assertThat(items)
         .extracting(MenuItem::getText)
-        .containsExactly(NAME, "Label", "text", "Remove the line", "Delete");
+        .containsExactly(
+            NAME,
+            "Label",
+            "Replace with text",
+            "Replace with text",
+            "Replace with a↵b",
+            "Replace with 123456789012345678901234567890123456789012345678901234567890",
+            "Replace with 1234567890123456789012345…7890123456789012345678901",
+            "Remove the line",
+            "Delete");
   }
 
   @DisplayName("should display the label of an expansion and call the expansion action")
@@ -90,7 +105,7 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
     // THEN
     Assertions.assertThat(items)
         .extracting(MenuItem::getText)
-        .containsExactly(NAME, "{{subst:X}}", "Expand");
+        .containsExactly(NAME, "Replace with {{subst:X}}", "Expand");
     Assertions.assertThat(replacedErrors).containsExactly(error);
     Assertions.assertThat(expansions).containsExactly(expandedReplacement);
   }

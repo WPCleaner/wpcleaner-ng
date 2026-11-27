@@ -67,9 +67,9 @@ class CheckAlgorithm010Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text, link, "[[B]]", true),
-            error(text, category, "[[Catégorie:C]]", true),
-            error(text, manyBrackets, "[[D|e]]", true));
+            surroundingBracketsError(text, link, "[[B]]", true),
+            surroundingBracketsError(text, category, "[[Catégorie:C]]", true),
+            surroundingBracketsError(text, manyBrackets, "[[D|e]]", true));
   }
 
   @DisplayName("should not remove automatically surrounding brackets outside articles")
@@ -82,7 +82,8 @@ class CheckAlgorithm010Test {
     final List<CheckError> errors = analyze(USER_PAGE, text);
 
     // THEN
-    Assertions.assertThat(errors).containsExactly(error(text, text, "[[B]]", false));
+    Assertions.assertThat(errors)
+        .containsExactly(surroundingBracketsError(text, text, "[[B]]", false));
   }
 
   @DisplayName("should suggest two brackets when extra brackets don't surround a link")
@@ -484,5 +485,15 @@ class CheckAlgorithm010Test {
         begin,
         begin + element.length(),
         List.of(new Replacement(replacement, automatic)));
+  }
+
+  private static CheckError surroundingBracketsError(
+      final String text, final String element, final String replacement, final boolean automatic) {
+    final int begin = text.indexOf(element);
+    return new CheckError(
+        ALGORITHM,
+        begin,
+        begin + element.length(),
+        List.of(new Replacement(replacement, "Remove surrounding brackets", automatic)));
   }
 }
