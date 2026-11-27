@@ -12,7 +12,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.ExpandedReplacement;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.Suggestion;
 
 public final class CheckErrorsContextMenu extends ContextMenu {
 
@@ -20,7 +22,8 @@ public final class CheckErrorsContextMenu extends ContextMenu {
 
   public CheckErrorsContextMenu(
       final List<CheckAlgorithmErrors> algorithmsErrors,
-      final BiConsumer<CheckError, Replacement> replacementAction) {
+      final BiConsumer<CheckError, String> replacementAction,
+      final ExpansionAction expansionAction) {
     super();
     for (final CheckAlgorithmErrors algorithmErrors : algorithmsErrors) {
       for (final CheckError error : algorithmErrors.errors()) {
@@ -30,22 +33,45 @@ public final class CheckErrorsContextMenu extends ContextMenu {
         final MenuItem algorithmItem = new MenuItem(algorithmErrors.name());
         algorithmItem.setDisable(true);
         getItems().add(algorithmItem);
-        error.replacements().stream()
-            .map(replacement -> createReplacementItem(error, replacement, replacementAction))
+        error.suggestions().stream()
+            .map(
+                suggestion ->
+                    createSuggestionItem(error, suggestion, replacementAction, expansionAction))
             .forEach(getItems()::add);
       }
     }
   }
 
+  private static MenuItem createSuggestionItem(
+      final CheckError error,
+      final Suggestion suggestion,
+      final BiConsumer<CheckError, String> replacementAction,
+      final ExpansionAction expansionAction) {
+    return switch (suggestion) {
+      case Replacement replacement -> createReplacementItem(error, replacement, replacementAction);
+      case ExpandedReplacement expandedReplacement ->
+          createExpansionItem(error, expandedReplacement, expansionAction);
+    };
+  }
+
+  private static MenuItem createExpansionItem(
+      final CheckError error,
+      final ExpandedReplacement expandedReplacement,
+      final ExpansionAction expansionAction) {
+    final MenuItem item = new MenuItem(expandedReplacement.label());
+    item.setOnAction(_ -> expansionAction.expand(error, expandedReplacement));
+    return item;
+  }
+
   private static MenuItem createReplacementItem(
       final CheckError error,
       final Replacement replacement,
-      final BiConsumer<CheckError, Replacement> replacementAction) {
+      final BiConsumer<CheckError, String> replacementAction) {
     final MenuItem item = new MenuItem(getDisplayedLabel(replacement));
     if (replacement.automatic()) {
       item.setStyle(AUTOMATIC_STYLE);
     }
-    item.setOnAction(_ -> replacementAction.accept(error, replacement));
+    item.setOnAction(_ -> replacementAction.accept(error, replacement.text()));
     return item;
   }
 

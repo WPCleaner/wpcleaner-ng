@@ -21,9 +21,12 @@ import org.wpcleaner.api.analysis.tag.WikiTagType;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.ExpandedReplacement;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.Suggestion;
 
 @Component
 public class CheckAlgorithm034 implements CheckAlgorithm {
@@ -119,7 +122,7 @@ public class CheckAlgorithm034 implements CheckAlgorithm {
                     ALGORITHM_NUMBER,
                     function.begin(),
                     function.end(),
-                    createFunctionReplacements(analysis, function, substProtectedAreas)))
+                    createFunctionSuggestions(analysis, function, substProtectedAreas)))
         .toList();
   }
 
@@ -137,31 +140,35 @@ public class CheckAlgorithm034 implements CheckAlgorithm {
                 .isPresent());
   }
 
-  private static List<Replacement> createFunctionReplacements(
+  private static List<Suggestion> createFunctionSuggestions(
       final PageAnalysis analysis,
       final FunctionElement function,
       final List<Element> substProtectedAreas) {
     if (isSubst(function.modifiers())) {
       return List.of();
     }
-    final List<Replacement> replacements = new ArrayList<>();
+    final List<Suggestion> suggestions = new ArrayList<>();
     if (FUNCTION_PAGE_NAME.equals(function.magicWord())) {
-      replacements.add(new Replacement(analysis.getPageTitle().text(), false));
+      suggestions.add(new Replacement(analysis.getPageTitle().text(), false));
     }
     if (FUNCTION_IF_EXPR.equals(function.magicWord())) {
       function.parameters().stream()
           .skip(1)
           .map(parameter -> new Replacement(parameter.value(), false))
-          .forEach(replacements::add);
+          .forEach(suggestions::add);
     }
-    if (!FUNCTION_INVOKE.equals(function.magicWord())
-        && !function.isInsideOne(substProtectedAreas)) {
-      replacements.add(
-          new Replacement(
-              SUBST_BEGIN + analysis.getText().substring(function.begin() + 2, function.end()),
-              false));
+    if (!function.isInsideOne(substProtectedAreas)) {
+      if (!FUNCTION_INVOKE.equals(function.magicWord())) {
+        suggestions.add(
+            new Replacement(
+                SUBST_BEGIN + analysis.getText().substring(function.begin() + 2, function.end()),
+                false));
+      }
+      suggestions.add(
+          new ExpandedReplacement(
+              analysis.getText().substring(function.begin(), function.end()), GT._T("Expand")));
     }
-    return List.copyOf(replacements);
+    return List.copyOf(suggestions);
   }
 
   private static List<CheckError> findSubstTemplates(final PageAnalysis analysis) {

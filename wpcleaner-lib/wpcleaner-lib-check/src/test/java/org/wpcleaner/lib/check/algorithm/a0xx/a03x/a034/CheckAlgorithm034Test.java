@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
+import org.wpcleaner.lib.check.ExpandedReplacement;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.Suggestion;
 
 @CheckSpringBootTest
 class CheckAlgorithm034Test {
@@ -93,7 +95,8 @@ class CheckAlgorithm034Test {
     Assertions.assertThat(errors).isEmpty();
   }
 
-  @DisplayName("should report parser functions with a subst replacement, ignoring their contents")
+  @DisplayName(
+      "should suggest substituting and expanding parser functions, ignoring their contents")
   @Test
   void reportFunctions() {
     // GIVEN
@@ -108,11 +111,15 @@ class CheckAlgorithm034Test {
             error(
                 text,
                 "{{#if:{{{1|}}}|b|c}}",
-                List.of(new Replacement("{{subst:#if:{{{1|}}}|b|c}}", false))),
+                List.of(
+                    new Replacement("{{subst:#if:{{{1|}}}|b|c}}", false),
+                    expand("{{#if:{{{1|}}}|b|c}}"))),
             error(
                 text,
                 "{{#tag:nowiki|e}}",
-                List.of(new Replacement("{{subst:#tag:nowiki|e}}", false))));
+                List.of(
+                    new Replacement("{{subst:#tag:nowiki|e}}", false),
+                    expand("{{#tag:nowiki|e}}"))));
   }
 
   @DisplayName("should not report sort keys, displayed titles, formatted numbers and tag refs")
@@ -147,7 +154,8 @@ class CheckAlgorithm034Test {
                 "{{PAGENAME}}",
                 List.of(
                     new Replacement("Paris", false),
-                    new Replacement("{{subst:PAGENAME}}", false))));
+                    new Replacement("{{subst:PAGENAME}}", false),
+                    expand("{{PAGENAME}}"))));
   }
 
   @DisplayName("should suggest each result of an expression test")
@@ -168,10 +176,11 @@ class CheckAlgorithm034Test {
                 List.of(
                     new Replacement("yes", false),
                     new Replacement("no", false),
-                    new Replacement("{{subst:#ifexpr:1>2|yes|no}}", false))));
+                    new Replacement("{{subst:#ifexpr:1>2|yes|no}}", false),
+                    expand("{{#ifexpr:1>2|yes|no}}"))));
   }
 
-  @DisplayName("should report module invocations without replacement")
+  @DisplayName("should suggest expanding module invocations, without substitution")
   @Test
   void reportInvoke() {
     // GIVEN
@@ -182,7 +191,8 @@ class CheckAlgorithm034Test {
 
     // THEN
     Assertions.assertThat(errors)
-        .containsExactly(error(text, "{{#invoke:Module|main}}", List.of()));
+        .containsExactly(
+            error(text, "{{#invoke:Module|main}}", List.of(expand("{{#invoke:Module|main}}"))));
   }
 
   @DisplayName("should report substitutions without replacement, even of ignored functions")
@@ -203,7 +213,9 @@ class CheckAlgorithm034Test {
             error(text, "{{subst:DEFAULTSORT:d}}", List.of()));
   }
 
-  @DisplayName("should not suggest a substitution inside references, galleries and include only")
+  @DisplayName(
+      "should not suggest a substitution nor an expansion inside references, galleries and include"
+          + " only")
   @Test
   void noSubstitutionInsideProtectedAreas() {
     // GIVEN
@@ -246,8 +258,12 @@ class CheckAlgorithm034Test {
   }
 
   private static CheckError error(
-      final String text, final String found, final List<Replacement> replacements) {
+      final String text, final String found, final List<? extends Suggestion> suggestions) {
     final int begin = text.lastIndexOf(found);
-    return new CheckError(ALGORITHM, begin, begin + found.length(), replacements);
+    return new CheckError(ALGORITHM, begin, begin + found.length(), suggestions);
+  }
+
+  private static ExpandedReplacement expand(final String text) {
+    return new ExpandedReplacement(text, "Expand");
   }
 }
