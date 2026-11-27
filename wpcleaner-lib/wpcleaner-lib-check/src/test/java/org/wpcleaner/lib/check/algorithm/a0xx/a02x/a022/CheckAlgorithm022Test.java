@@ -110,8 +110,28 @@ class CheckAlgorithm022Test {
     Assertions.assertThat(errors)
         .flatExtracting(CheckError::replacements)
         .containsExactly(
-            new Replacement("[[Category:paris|Paris]]", true),
-            new Replacement("[[Catégorie:paris|Paris]]", false));
+            new Replacement("[[Category:Paris|Paris]]", true),
+            new Replacement("[[Catégorie:Paris|Paris]]", false));
+  }
+
+  @DisplayName("should keep the first letter of the name on a case sensitive wiki")
+  @Test
+  void caseSensitiveWiki() {
+    // GIVEN
+    final String text = "[[Category: paris]]";
+
+    // WHEN
+    final List<CheckError> errors =
+        algorithm.analyze(
+            PageAnalysisTestFactory.createPageAnalysis(
+                PageAnalysisTestFactory.CASE_SENSITIVE_WIKI, text));
+
+    // THEN
+    Assertions.assertThat(errors)
+        .flatExtracting(CheckError::replacements)
+        .containsExactly(
+            new Replacement("[[Category:paris]]", true),
+            new Replacement("[[Catégorie:paris]]", false));
   }
 
   @DisplayName("should not report categories without spaces to remove")
@@ -119,7 +139,7 @@ class CheckAlgorithm022Test {
   void ignoreCategoriesWithoutSpaces() {
     // GIVEN
     final String text =
-        "[[Catégorie:Paris]] [[Catégorie:Paris| Paris]] [[Catégorie:Lyon|]]"
+        "[[Catégorie:Paris]] [[Catégorie:Paris| Paris]] [[Catégorie:Lyon|]] [[Catégorie:nice]]"
             + " [[Catégorie:Élysée Palace]] [[:Catégorie: Paris ]] [[ Paris ]] [[Catégorie: ]]";
 
     // WHEN

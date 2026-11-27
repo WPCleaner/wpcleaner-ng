@@ -166,7 +166,7 @@ public class CheckAlgorithm048 implements CheckAlgorithm {
       return List.of();
     }
     final String linkText = link.text();
-    if (linkText == null) {
+    if (linkText == null || linkText.isBlank()) {
       return List.of(
           new Replacement(createAnchorLink(anchor, anchor), false),
           new Replacement(createAnchorLink(anchor, link.displayedText()), false));

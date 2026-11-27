@@ -106,11 +106,12 @@ class CheckAlgorithm048Test {
     Assertions.assertThat(userErrors).isEmpty();
   }
 
-  @DisplayName("should not fix automatically links to footnotes or without text")
+  @DisplayName("should not fix automatically links to footnotes or with blank text")
   @Test
   void fixLinksToSectionManually() {
     // GIVEN
-    final String text = "[[Paris#cite_note-1|1]] [[Paris#Histoire]] [[Paris#]]";
+    final String text =
+        "[[Paris#cite_note-1|1]] [[Paris#Histoire]] [[Paris#]] [[Paris#Géographie| ]]";
 
     // WHEN
     final List<CheckError> errors =
@@ -127,7 +128,14 @@ class CheckAlgorithm048Test {
                 List.of(
                     new Replacement("[[#Histoire|Histoire]]", false),
                     new Replacement("[[#Histoire|Paris#Histoire]]", false))),
-            new CheckError(ALGORITHM, 43, 53, List.of()));
+            new CheckError(ALGORITHM, 43, 53, List.of()),
+            new CheckError(
+                ALGORITHM,
+                54,
+                76,
+                List.of(
+                    new Replacement("[[#Géographie|Géographie]]", false),
+                    new Replacement("[[#Géographie| ]]", false))));
   }
 
   @DisplayName("should not report links in ignored areas")
