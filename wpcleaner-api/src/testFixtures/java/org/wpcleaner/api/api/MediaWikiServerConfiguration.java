@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 import org.wpcleaner.api.api.edit.MockApiEdit;
+import org.wpcleaner.api.api.expandtemplates.MockApiExpandTemplates;
 import org.wpcleaner.api.api.login.MockApiLogin;
 import org.wpcleaner.api.api.move.MockApiMove;
 import org.wpcleaner.api.api.parse.MockApiParse;
@@ -50,6 +51,12 @@ public class MediaWikiServerConfiguration {
   @Bean
   public MockApiEdit mockApiEdit(final MockRestServiceServer mediaWikiServer) {
     return new MockApiEdit(mediaWikiServer);
+  }
+
+  @Bean
+  public MockApiExpandTemplates mockApiExpandTemplates(
+      final MockRestServiceServer mediaWikiServer) {
+    return new MockApiExpandTemplates(mediaWikiServer);
   }
 
   @Bean

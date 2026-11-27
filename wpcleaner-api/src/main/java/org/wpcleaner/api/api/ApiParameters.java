@@ -37,6 +37,7 @@ public enum ApiParameters {
 
   public enum Action {
     EDIT("edit"),
+    EXPAND_TEMPLATES("expandtemplates"),
     LOGIN("login"),
     MOVE("move"),
     PARSE("parse"),
