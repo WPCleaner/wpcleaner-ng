@@ -150,10 +150,11 @@ public class CheckAlgorithm064 implements CheckAlgorithm {
     replacements.add(prefix + replacement + suffix);
     if (apostropheTemplate != null && !(prefix + suffix).isEmpty()) {
       final String apostrophe = TemplateBuilder.from(apostropheTemplate).build();
-      replacements.add(
-          prefix.replace(String.valueOf(APOSTROPHE), apostrophe)
-              + replacement
-              + suffix.replace(String.valueOf(APOSTROPHE), apostrophe));
+      final String replacedPrefix = prefix.replace(String.valueOf(APOSTROPHE), apostrophe);
+      final String replacedSuffix = suffix.replace(String.valueOf(APOSTROPHE), apostrophe);
+      replacements.add(replacedPrefix + replacement + replacedSuffix);
+      replacements.add(replacedPrefix + replacement + suffix);
+      replacements.add(prefix + replacement + replacedSuffix);
     }
   }
 }
