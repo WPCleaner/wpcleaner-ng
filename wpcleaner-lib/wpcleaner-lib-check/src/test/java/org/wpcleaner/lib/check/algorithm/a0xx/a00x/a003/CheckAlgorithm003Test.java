@@ -191,7 +191,8 @@ class CheckAlgorithm003Test {
     Assertions.assertThat(singleErrors)
         .containsExactly(
             new CheckError(ALGORITHM, 1, 13, List.of()),
-            new CheckError(ALGORITHM, 14, 26, List.of(new Replacement("<references />", false))));
+            new CheckError(
+                ALGORITHM, 14, 26, List.of(new Replacement("<references />", "Close tag", false))));
     Assertions.assertThat(twiceErrors)
         .containsExactly(
             new CheckError(ALGORITHM, 1, 13, List.of()),
@@ -215,7 +216,8 @@ class CheckAlgorithm003Test {
     Assertions.assertThat(errors)
         .containsExactly(
             new CheckError(ALGORITHM, lastReference, lastReference + 21, List.of()),
-            new CheckError(ALGORITHM, 18, 30, List.of(new Replacement("<references />", false))),
+            new CheckError(
+                ALGORITHM, 18, 30, List.of(new Replacement("<references />", "Close tag", false))),
             new CheckError(
                 ALGORITHM, endTag, endTag + 14, List.of(new Replacement("</references>", true))));
   }

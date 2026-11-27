@@ -421,7 +421,8 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     // THEN
     Assertions.assertThat(items)
         .extracting(MenuItem::getText)
-        .containsExactly("Error No. 48", TITLE, "'''" + TITLE + "'''");
+        .containsExactly(
+            "Error No. 48", "Replace with " + TITLE, "Replace with '''" + TITLE + "'''");
     Assertions.assertThat(items)
         .extracting(MenuItem::isDisable)
         .containsExactly(true, false, false);

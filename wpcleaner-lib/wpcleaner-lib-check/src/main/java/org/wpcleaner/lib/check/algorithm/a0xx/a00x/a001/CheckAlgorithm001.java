@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -66,6 +67,9 @@ public class CheckAlgorithm001 implements CheckAlgorithm {
             List.of(
                 new Replacement(
                     replacement,
+                    GT._T(
+                        "Remove %s namespace from template name",
+                        namespace.substring(0, namespace.length() - 1).strip()),
                     analysis.getPageTitle().namespace() == CommonNamespaces.MAIN.id))));
   }
 

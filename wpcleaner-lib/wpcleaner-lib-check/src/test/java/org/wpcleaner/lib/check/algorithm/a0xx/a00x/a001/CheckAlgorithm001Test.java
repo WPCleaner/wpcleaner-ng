@@ -38,10 +38,10 @@ class CheckAlgorithm001Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text.indexOf(first), first, "{{Infobox}}", true),
-            error(text.indexOf(second), second, "{{Ébauche|x}}", true),
-            error(text.indexOf(third), third, "{{ lien |a}}", true),
-            error(text.indexOf(fourth), fourth, "{{subst:Date}}", true));
+            error(text.indexOf(first), first, "{{Infobox}}", "Modèle", true),
+            error(text.indexOf(second), second, "{{Ébauche|x}}", "Template", true),
+            error(text.indexOf(third), third, "{{ lien |a}}", "modèle", true),
+            error(text.indexOf(fourth), fourth, "{{subst:Date}}", "Modèle", true));
   }
 
   @DisplayName("should fix manually outside the main namespace")
@@ -54,7 +54,7 @@ class CheckAlgorithm001Test {
     final List<CheckError> errors = analyze("Utilisateur:Paris", text);
 
     // THEN
-    Assertions.assertThat(errors).containsExactly(error(0, text, "{{Infobox}}", false));
+    Assertions.assertThat(errors).containsExactly(error(0, text, "{{Infobox}}", "Modèle", false));
   }
 
   @DisplayName("should not report templates without namespace, or whose name is a magic word")
@@ -78,11 +78,17 @@ class CheckAlgorithm001Test {
   }
 
   private static CheckError error(
-      final int begin, final String template, final String replacement, final boolean automatic) {
+      final int begin,
+      final String template,
+      final String replacement,
+      final String namespace,
+      final boolean automatic) {
     return new CheckError(
         ALGORITHM,
         begin,
         begin + template.length(),
-        List.of(new Replacement(replacement, automatic)));
+        List.of(
+            new Replacement(
+                replacement, "Remove " + namespace + " namespace from template name", automatic)));
   }
 }

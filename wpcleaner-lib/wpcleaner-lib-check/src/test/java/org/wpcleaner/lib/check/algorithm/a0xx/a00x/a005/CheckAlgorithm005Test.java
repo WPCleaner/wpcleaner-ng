@@ -34,7 +34,8 @@ class CheckAlgorithm005Test {
     final List<CheckError> errors = analyze("a <!--  b c");
 
     Assertions.assertThat(errors)
-        .containsExactly(new CheckError(ALGORITHM, 2, 8, List.of(new Replacement("", false))));
+        .containsExactly(
+            new CheckError(ALGORITHM, 2, 8, List.of(new Replacement("", "Uncomment", false))));
   }
 
   @DisplayName("should offer to fix a malformed end")
@@ -44,7 +45,11 @@ class CheckAlgorithm005Test {
 
     Assertions.assertThat(errors)
         .containsExactly(
-            new CheckError(ALGORITHM, 2, 11, List.of(new Replacement("<!-- b -->", false))));
+            new CheckError(
+                ALGORITHM,
+                2,
+                11,
+                List.of(new Replacement("<!-- b -->", "Properly end the comment", false))));
   }
 
   @DisplayName("should ignore a malformed end located after the next comment start")
@@ -72,10 +77,14 @@ class CheckAlgorithm005Test {
                 0,
                 13,
                 List.of(
-                    new Replacement("<!-- a-->\nb <!--", false),
-                    new Replacement("<!-- a\nb--> <!--", false),
-                    new Replacement("<!-- a\nb ", false),
-                    new Replacement("a\nb <!--", false))));
+                    new Replacement(
+                        "<!-- a-->\nb <!--", "End the comment at the end of the line", false),
+                    new Replacement(
+                        "<!-- a\nb--> <!--",
+                        "End the comment just before the next one begins",
+                        false),
+                    new Replacement("<!-- a\nb ", "Merge comments", false),
+                    new Replacement("a\nb <!--", "Uncomment", false))));
   }
 
   @DisplayName("should report each comment start not closed")

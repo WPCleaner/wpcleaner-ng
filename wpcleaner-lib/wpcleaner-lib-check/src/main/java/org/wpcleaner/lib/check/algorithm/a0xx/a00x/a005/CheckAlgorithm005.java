@@ -11,6 +11,7 @@ import java.util.stream.IntStream;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.comment.CommentElement;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
@@ -76,12 +77,17 @@ public class CheckAlgorithm005 implements CheckAlgorithm {
           malformedEnd + MALFORMED_END.length(),
           List.of(
               new Replacement(
-                  text.substring(begin, malformedEnd) + CommentElement.TOKEN_END, false)));
+                  text.substring(begin, malformedEnd) + CommentElement.TOKEN_END,
+                  GT._T("Properly end the comment"),
+                  false)));
     }
     final int contentBegin = skipSpaces(text, begin + START_LENGTH);
     if (nextBegin < 0) {
       return new CheckError(
-          ALGORITHM_NUMBER, begin, contentBegin, List.of(new Replacement("", false)));
+          ALGORITHM_NUMBER,
+          begin,
+          contentBegin,
+          List.of(new Replacement("", GT._T("Uncomment"), false)));
     }
     final int end = nextBegin + START_LENGTH;
     return new CheckError(
@@ -100,6 +106,7 @@ public class CheckAlgorithm005 implements CheckAlgorithm {
               text.substring(begin, lineEnd)
                   + CommentElement.TOKEN_END
                   + text.substring(lineEnd, end),
+              GT._T("End the comment at the end of the line"),
               false));
     }
     replacements.add(
@@ -107,9 +114,11 @@ public class CheckAlgorithm005 implements CheckAlgorithm {
             text.substring(begin, endBeforeNext)
                 + CommentElement.TOKEN_END
                 + text.substring(endBeforeNext, end),
+            GT._T("End the comment just before the next one begins"),
             false));
-    replacements.add(new Replacement(text.substring(begin, nextBegin), false));
-    replacements.add(new Replacement(text.substring(contentBegin, end), false));
+    replacements.add(
+        new Replacement(text.substring(begin, nextBegin), GT._T("Merge comments"), false));
+    replacements.add(new Replacement(text.substring(contentBegin, end), GT._T("Uncomment"), false));
     return replacements;
   }
 

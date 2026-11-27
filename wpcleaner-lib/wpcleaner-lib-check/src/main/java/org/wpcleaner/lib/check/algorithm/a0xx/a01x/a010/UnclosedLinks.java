@@ -21,6 +21,7 @@ import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.HtmlTagType;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.algorithm.TextExclusions;
@@ -203,7 +204,11 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
         algorithm,
         begin,
         SingleBrackets.skipForward(text, element.end(), SingleBrackets.CLOSE),
-        List.of(new Replacement(text.substring(element.begin(), element.end()), isArticle())));
+        List.of(
+            new Replacement(
+                text.substring(element.begin(), element.end()),
+                GT._T("Remove surrounding brackets"),
+                isArticle())));
   }
 
   private CheckError createSingleBracketError(
