@@ -236,6 +236,26 @@ class CheckAlgorithm064Test {
                     new Replacement("{{'}}[[Paris]]", false))));
   }
 
+  @DisplayName("should suggest the apostrophe template on each side of the link")
+  @Test
+  void fixLinksWithApostrophesOnBothSides() {
+    // GIVEN
+    givenApostropheTemplate("'");
+    final String text = "l'[[Paris|''Paris'']]'s";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .flatExtracting(CheckError::replacements)
+        .startsWith(
+            new Replacement("'''[[Paris]]'''", false),
+            new Replacement("{{'}}''[[Paris]]''{{'}}", false),
+            new Replacement("{{'}}''[[Paris]]'''", false),
+            new Replacement("'''[[Paris]]''{{'}}", false));
+  }
+
   @DisplayName("should automatically fix links combining bold and italic around and inside")
   @Test
   void fixLinksWithBoldAndItalic() {
