@@ -194,6 +194,46 @@ class CheckAlgorithm064Test {
             error(text.lastIndexOf("[["), "[[Paris|Paris»]]", new Replacement("[[Paris]]»", true)));
   }
 
+  @DisplayName("should suggest removing apostrophes around punctuation after the link")
+  @Test
+  void fixLinksFollowedByPunctuationBetweenApostrophes() {
+    // GIVEN
+    final String first = "''[[Paris|Paris]]'', ''Lyon'' ";
+    final String text = first + "''[[Paris|Paris]]''. '''Lyon'''";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Lyon", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(
+                2,
+                "[[Paris|Paris]]'', ''",
+                new Replacement("[[Paris]]'', ''", true),
+                new Replacement("[[Paris]], ", false)),
+            error(first.length() + 2, "[[Paris|Paris]]", new Replacement("[[Paris]]", true)));
+  }
+
+  @DisplayName("should first suggest removing apostrophes around punctuation for manual fixes")
+  @Test
+  void fixManuallyLinksFollowedByPunctuationBetweenApostrophes() {
+    // GIVEN
+    final String text = "''[[Paris|«Paris»]]''. ''Lyon''";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Utilisateur:Bob", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(
+                2,
+                "[[Paris|«Paris»]]''. ''",
+                new Replacement("«[[Paris]]». ", false),
+                new Replacement("«[[Paris]]»''. ''", false)));
+  }
+
   @DisplayName("should fix manually links with padding outside the main namespace")
   @Test
   void fixLinksWithPaddingOutsideMainNamespace() {
