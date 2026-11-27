@@ -15,7 +15,8 @@ Format: `algo – pattern` → classification, how to recognize it, first seen.
 - 008 – FIXED (#237, longer closing run left to T446240): unbalanced title `=== Notes ==`, `== Histoire =` not reported (NG skips any line MediaWiki parses as a heading; legacy reports closing level < opening level) → NG miss. frwiki 2026-11.
 - 010 – FIXED: mixed-case file namespace `[[FIchier:…]]`, `[[IMage:…]]` not recognized as image → false unclosed `[[`. frwiki 2026-11.
 - 010 – FIXED (#238): template in a link target `[[Lee Enfield {{n°|4}}|…]]`, `[[{{1er|régiment}} …]]` accepted by NG, reported by legacy → NG miss (legacy "only" pages with text `[[`). frwiki 2026-11.
-- 002 – FIXED (#240): `<hr width="100">` not reported (NG checked attributes on `<br>` only). Still open: `<hr width="100" / >` reported with truncated text `<hr ` → NG miss / bad text. frwiki 2026-11.
+- 002 – FIXED (#242, revert of #240): `<hr width="100">`, `<hr width=100>`, `<hr width="100" />` reported, ~5,550 NG-only pages. `<hr>` attributes are valid; legacy checks attributes only inside `if (HtmlTagType.BR.equals(tagType))`. The legacy page that motivated #240 (*Tobias Salmelainen*) has curly quotes `<hr width=“100”>`, reported as `<hr ` because the tag is malformed → NG false positive. frwiki 2026-11 (3rd run).
+- 010 – FIXED (#243, functions excluded from the target check), side effect of #238: magic word in a link target `[[Festival X {{CURRENTYEAR}}]]`, `[[Wikipédia:Le Bistro/{{CURRENTDAY}}_…]]`, `[[{{TALKPAGENAME}}|…]]` reported (`findCurlyBracketElements` includes functions); MediaWiki expands them before parsing links, legacy does not report them → NG false positive, ~51 pages. frwiki 2026-11 (3rd run).
 - 064 – `&nbsp;`, thin or narrow space in link text treated as a space (`[[12 mars|12&nbsp;mars]]`), replacement drops it → NG false positive. frwiki 2026-11.
 - 090 – revision link `index.php?oldid=…` without title not reported → NG miss. frwiki 2026-11.
 - 091 – piped external link `[https://en.wikipedia.org/wiki/X|Text]`, `lien=https://de.wikipedia.org/…` in gallery, URL without protocol not reported → NG miss. frwiki 2026-11.
@@ -26,6 +27,10 @@ Format: `algo – pattern` → classification, how to recognize it, first seen.
 - 005 – `<!--->`, `<!-->` do not close the comment (MediaWiki searches `-->` after `<!--`) → NG only.
 - 014 – broken attribute quote `<syntaxhighlight lang="cpp>`…`</syntaxhighlight>` renders as paired tags; legacy reports the closing tag → legacy only. frwiki 2026-11 (2nd run).
 - 010 – line break inside a link target `[[Altair 8800⏎|Altair]]` → NG only (bulk of NG-only 010).
+- 010 – brackets inside `<math>`/`{{math}}` in link or image text (`[[#…|<math>k \in ]0;1[</math>]]`), or inside a broken template in link text → legacy only (inferred). frwiki 2026-11 (3rd run).
+- 008 – heading followed by two comments `=== X ===<!-- a --><!-- b -->`: legacy accepts only one comment reaching the end of the line (`analyzeLine`) → legacy only. frwiki 2026-11 (3rd run).
+- 008 – attribute quote never closed earlier in the page (`<ref name ="X/>`, `<gallery mode="packed>`): legacy no longer sees the following headings as titles and reports them → legacy only (inferred). frwiki 2026-11 (3rd run).
+- 008 – `=== Liens externes= ==` (level-2 heading for MediaWiki) → NG only. frwiki 2026-11 (3rd run).
 - 017 – duplicate category written with an entity (`R&amp;B` vs `R&B`) → NG only.
 - 018 – category starting with a letter without uppercase form (`[[Catégorie:ɮ]]`, `ʕ`) reported by legacy and Check Wiki → legacy only (inferred). frwiki 2026-11 (2nd run).
 - 048 – self-link with leading colon on category pages `[[:Catégorie:X|…]]` (legacy compares with the colon) → NG only, namespace 14.
@@ -49,7 +54,6 @@ Format: `algo – pattern` → classification, how to recognize it, first seen.
 - Check Wiki 011 – entity inside a URL; NG and legacy both ignore URLs. frwiki 2026-11.
 - Check Wiki 027 – partial list (15 pages for 2,000+ NG detections of numeric entities `&#x2013;`, `&#201;`…). frwiki 2026-11 (2nd run).
 - Check Wiki 028 – tables closed by templates (`{{Boîte déroulante/fin}}`, `{{Col-fin}}`, `{{…/fin}}`) counted as unclosed: Check Wiki false positives, ~1,800 pages. frwiki 2026-11 (2nd run).
-- Check Wiki 566 – `action=list` returns HTTP 500 "invalid error id": write `[]` to `cw/566.json`. frwiki 2026-11 (2nd run).
 - 003 – legacy reports the `<ref>` text, so a page fixed by adding `{{Références}}` after the legacy re-check is classified "NG DOES NOT DETECT": check the page history. frwiki 2026-11 (2nd run).
 - "page edited after NG run", "no error at all in content file (never re-checked)", "page absent from content file", "fixed since", "legacy listed it first, removed at a later re-check", "error introduced after the dump" → timing, no investigation needed.
 

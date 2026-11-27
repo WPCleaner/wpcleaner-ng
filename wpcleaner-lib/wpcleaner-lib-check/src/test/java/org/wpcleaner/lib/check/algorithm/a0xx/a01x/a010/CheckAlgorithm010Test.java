@@ -260,6 +260,21 @@ class CheckAlgorithm010Test {
             unclosed(text, template), unclosed(text, startingTemplate), unclosed(text, parameter));
   }
 
+  @DisplayName("should not report a link with a magic word in its target")
+  @Test
+  void ignoreMagicWordInLinkTarget() {
+    // GIVEN
+    final String text =
+        "[[Festival {{CURRENTYEAR}}]] [[Wikipédia:Le Bistro/{{ANNEEACTUELLE}} x]]"
+            + " [[{{PAGENAME}}|a]]";
+
+    // WHEN
+    final List<CheckError> errors = analyze(ARTICLE, text);
+
+    // THEN
+    Assertions.assertThat(errors).isEmpty();
+  }
+
   @DisplayName("should not report brackets in comments, tags, code and content which is not wiki")
   @Test
   void ignoreAreasWithoutWikiText() {

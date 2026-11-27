@@ -85,8 +85,7 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
   }
 
   private List<Element> findCurlyBracketElements() {
-    return Stream.<List<? extends Element>>of(
-            analysis.getTemplates(), analysis.getFunctions(), analysis.getParameters())
+    return Stream.<List<? extends Element>>of(analysis.getTemplates(), analysis.getParameters())
         .<Element>flatMap(List::stream)
         .toList();
   }
