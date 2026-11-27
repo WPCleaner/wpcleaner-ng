@@ -20,7 +20,7 @@ Never edit the wiki. The only repository change is the temporary harness test, r
 
 - NG output: `wpcleaner-bot-output/<wiki>-<date>-error-NNN.txt` and `<wiki>-<date>-errors.jsonl`
   (namespaces of the pages). The algorithms compared are the files present.
-- Content files: `/home/nvervelle/Perso/dev/mediawik_content_files/mediawiki_content_current/<wiki>/<date>/*.xml.bz2`
+- Content files: `/home/nvervelle/Perso/dev/mediawiki_content_files/mediawiki_content_current/<wiki>/<date>/*.xml.bz2`
   (ask if missing).
 - `$ARGUMENTS` may restrict the wiki, date or algorithms; otherwise use the most recent output files.
 
