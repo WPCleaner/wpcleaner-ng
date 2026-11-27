@@ -32,6 +32,7 @@ Never edit the wiki. The only repository change is the temporary harness test, r
 - No legacy page for an algorithm → compare with Check Wiki only, and sample NG-only detections.
 - An empty or small Check Wiki list says nothing about NG: it is often stale or partial.
 - Check Wiki returns at most 10,000 pages (seen on enwiki 064): a list of exactly 10,000 is truncated, say so.
+- Check Wiki knows only algorithms up to 500: above (e.g. 566), the tool skips it and shows `–` in its columns.
 - Legacy lists on enwiki are large (18,000+ pages for 064): `fetch-current` and the harness scale with the
   number of differing pages, so restrict the algorithms or lower the sample if it gets too big.
 

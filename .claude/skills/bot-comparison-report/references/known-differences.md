@@ -15,7 +15,7 @@ Format: `algo – pattern` → classification, how to recognize it, first seen.
 - 008 – FIXED (#237, longer closing run left to T446240): unbalanced title `=== Notes ==`, `== Histoire =` not reported (NG skips any line MediaWiki parses as a heading; legacy reports closing level < opening level) → NG miss. frwiki 2026-11.
 - 010 – FIXED: mixed-case file namespace `[[FIchier:…]]`, `[[IMage:…]]` not recognized as image → false unclosed `[[`. frwiki 2026-11.
 - 010 – FIXED (#238): template in a link target `[[Lee Enfield {{n°|4}}|…]]`, `[[{{1er|régiment}} …]]` accepted by NG, reported by legacy → NG miss (legacy "only" pages with text `[[`). frwiki 2026-11.
-- 002 – FIXED (branch `improve-002-hr-attributes`): `<hr width="100">` not reported (NG checked attributes on `<br>` only). Still open: `<hr width="100" / >` reported with truncated text `<hr ` → NG miss / bad text. frwiki 2026-11.
+- 002 – FIXED (#240): `<hr width="100">` not reported (NG checked attributes on `<br>` only). Still open: `<hr width="100" / >` reported with truncated text `<hr ` → NG miss / bad text. frwiki 2026-11.
 - 064 – `&nbsp;`, thin or narrow space in link text treated as a space (`[[12 mars|12&nbsp;mars]]`), replacement drops it → NG false positive. frwiki 2026-11.
 - 090 – revision link `index.php?oldid=…` without title not reported → NG miss. frwiki 2026-11.
 - 091 – piped external link `[https://en.wikipedia.org/wiki/X|Text]`, `lien=https://de.wikipedia.org/…` in gallery, URL without protocol not reported → NG miss. frwiki 2026-11.
