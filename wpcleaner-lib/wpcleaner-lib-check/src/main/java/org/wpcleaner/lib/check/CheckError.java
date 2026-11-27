@@ -8,10 +8,17 @@ package org.wpcleaner.lib.check;
 import java.util.List;
 import org.wpcleaner.api.analysis.Element;
 
-public record CheckError(int algorithm, int begin, int end, List<Replacement> replacements)
+public record CheckError(int algorithm, int begin, int end, List<? extends Suggestion> suggestions)
     implements Element {
 
   public CheckError {
-    replacements = List.copyOf(replacements);
+    suggestions = List.copyOf(suggestions);
+  }
+
+  public List<Replacement> replacements() {
+    return suggestions.stream()
+        .filter(Replacement.class::isInstance)
+        .map(Replacement.class::cast)
+        .toList();
   }
 }
