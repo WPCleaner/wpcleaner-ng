@@ -8,6 +8,7 @@ package org.wpcleaner.lib.check.algorithm.a0xx.a01x.a010;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -15,6 +16,7 @@ import org.jspecify.annotations.Nullable;
 import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
+import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkElement;
 import org.wpcleaner.api.analysis.tag.CompleteTagElement;
 import org.wpcleaner.api.analysis.tag.HtmlTagType;
@@ -35,6 +37,9 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
   private static final char PIPE = '|';
   private static final String LINK_BREAKERS = "\n[{";
   private static final String LINK_ENDS = "]}";
+  private static final String IMAGE_LINK = "img_link";
+  private static final String DEFAULT_IMAGE_LINK = "link=$1";
+  private static final String MAGIC_WORD_VALUE = "$1";
 
   List<CheckError> analyze(final int algorithm) {
     final String text = analysis.getText();
@@ -126,6 +131,13 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
           algorithm, begin, bracketsEnd, elements.get(bracketsEnd - LINK_START.length()));
     }
     final int breaker = indexOfAny(text, bracketsEnd, LINK_BREAKERS + LINK_ENDS);
+    if (elements.get(breaker) instanceof final ImageElement image) {
+      final Optional<CheckError> imageError =
+          createImageInLinkError(algorithm, begin, bracketsEnd, image);
+      if (imageError.isPresent()) {
+        return imageError.get();
+      }
+    }
     if (breaker >= text.length() || LINK_ENDS.indexOf(text.charAt(breaker)) < 0) {
       return new CheckError(algorithm, begin, bracketsEnd, List.of());
     }
@@ -141,6 +153,40 @@ record UnclosedLinks(PageAnalysis analysis, TextExclusions exclusions) {
                   TEMPLATE_START + text.substring(bracketsEnd, breaker) + TEMPLATE_END, false)));
     }
     return createSingleBracketError(algorithm, begin, breaker);
+  }
+
+  private Optional<CheckError> createImageInLinkError(
+      final int algorithm, final int begin, final int bracketsEnd, final ImageElement image) {
+    final String text = analysis.getText();
+    final int pipe = text.indexOf(PIPE, bracketsEnd, image.begin());
+    if (pipe < 0
+        || !text.substring(pipe + 1, image.begin()).isBlank()
+        || !text.startsWith(LINK_END, image.end())
+        || image.findParameter(IMAGE_LINK).isPresent()) {
+      return Optional.empty();
+    }
+    final String target = text.substring(bracketsEnd, pipe).trim();
+    if (target.isEmpty()) {
+      return Optional.empty();
+    }
+    final String imageLink =
+        analysis
+            .getMagicWord(IMAGE_LINK)
+            .flatMap(magicWord -> magicWord.aliases().stream().findFirst())
+            .orElse(DEFAULT_IMAGE_LINK)
+            .replace(MAGIC_WORD_VALUE, target);
+    return Optional.of(
+        new CheckError(
+            algorithm,
+            begin,
+            image.end() + LINK_END.length(),
+            List.of(
+                new Replacement(
+                    text.substring(image.begin(), image.end() - LINK_END.length())
+                        + PIPE
+                        + imageLink
+                        + LINK_END,
+                    false))));
   }
 
   private CheckError createExtraBracketsError(
