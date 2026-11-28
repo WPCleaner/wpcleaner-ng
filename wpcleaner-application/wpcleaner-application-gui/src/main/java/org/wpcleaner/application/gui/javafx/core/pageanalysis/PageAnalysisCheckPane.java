@@ -122,6 +122,9 @@ public final class PageAnalysisCheckPane extends SplitPane {
             .toList(),
         this::replaceError,
         expansionAction,
+        (error, textInput) ->
+            TextInputSuggestionDialog.input(
+                getScene().getWindow(), error, textInput, this::replaceError),
         browseAction);
   }
 

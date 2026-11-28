@@ -22,6 +22,7 @@ import org.wpcleaner.lib.check.ExpandedReplacement;
 import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.TextInput;
 
 @GuiSpringBootTest
 class CheckErrorsContextMenuTest extends JavaFxTest {
@@ -59,7 +60,7 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
         callOnJavaFx(
             () ->
                 new CheckErrorsContextMenu(
-                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, _ -> {})
+                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, (_, _) -> {}, _ -> {})
                     .getItems());
 
     // THEN
@@ -100,6 +101,7 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
                           replacedErrors.add(expandedError);
                           expansions.add(expansion);
                         },
+                        (_, _) -> {},
                         _ -> {})
                     .getItems());
 
@@ -133,7 +135,7 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
         callOnJavaFx(
             () ->
                 new CheckErrorsContextMenu(
-                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, _ -> {})
+                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, (_, _) -> {}, _ -> {})
                     .getItems());
 
     // THEN
@@ -160,7 +162,11 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
         callOnJavaFx(
             () ->
                 new CheckErrorsContextMenu(
-                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, browsedUrls::add)
+                        List.of(algorithmErrors),
+                        (_, _) -> {},
+                        (_, _) -> {},
+                        (_, _) -> {},
+                        browsedUrls::add)
                     .getItems());
 
     // WHEN
@@ -169,5 +175,42 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
     // THEN
     Assertions.assertThat(items).extracting(MenuItem::getText).containsExactly(NAME, "View image");
     Assertions.assertThat(browsedUrls).containsExactly(url);
+  }
+
+  @DisplayName("should display the label of a text input and call the text input action")
+  @Test
+  void inputText() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final TextInput textInput =
+        new TextInput("Add a description...", "Description?", "[[File:A.jpg|", "]]", "[]|=");
+    final CheckError error = new CheckError(30, 0, 14, List.of(textInput));
+    final CheckAlgorithmErrors algorithmErrors =
+        new CheckAlgorithmErrors(
+            algorithmRegistry.getAlgorithms().getFirst(), NAME, null, null, List.of(error));
+    final List<CheckError> inputErrors = new ArrayList<>();
+    final List<TextInput> textInputs = new ArrayList<>();
+    final List<MenuItem> items =
+        callOnJavaFx(
+            () ->
+                new CheckErrorsContextMenu(
+                        List.of(algorithmErrors),
+                        (_, _) -> {},
+                        (_, _) -> {},
+                        (inputError, input) -> {
+                          inputErrors.add(inputError);
+                          textInputs.add(input);
+                        },
+                        _ -> {})
+                    .getItems());
+
+    // WHEN
+    runOnJavaFx(items.get(1)::fire);
+
+    // THEN
+    Assertions.assertThat(items)
+        .extracting(MenuItem::getText)
+        .containsExactly(NAME, "Add a description...");
+    Assertions.assertThat(inputErrors).containsExactly(error);
+    Assertions.assertThat(textInputs).containsExactly(textInput);
   }
 }

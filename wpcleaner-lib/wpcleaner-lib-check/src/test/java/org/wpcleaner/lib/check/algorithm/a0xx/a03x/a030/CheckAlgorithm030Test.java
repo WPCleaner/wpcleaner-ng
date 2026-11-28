@@ -14,6 +14,7 @@ import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
 import org.wpcleaner.lib.check.ExternalView;
+import org.wpcleaner.lib.check.TextInput;
 
 @CheckSpringBootTest
 class CheckAlgorithm030Test {
@@ -23,7 +24,8 @@ class CheckAlgorithm030Test {
 
   @Autowired private CheckAlgorithm030 algorithm;
 
-  @DisplayName("should report images without description and suggest to view the image")
+  @DisplayName(
+      "should report images without description and suggest to add a description or view the image")
   @Test
   void reportImageWithoutDescription() {
     // GIVEN
@@ -35,8 +37,13 @@ class CheckAlgorithm030Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text, "[[File:A.jpg]]", "File:A.jpg"),
-            error(text, "[[Fichier:B.jpg|thumb|200px|droite]]", "Fichier:B.jpg"));
+            error(text, "[[File:A.jpg]]", "File:A.jpg", "[[File:A.jpg|", "[[File:A.jpg|"),
+            error(
+                text,
+                "[[Fichier:B.jpg|thumb|200px|droite]]",
+                "Fichier:B.jpg",
+                "[[Fichier:B.jpg|thumb|200px|droite|",
+                "[[Fichier:B.jpg|thumb|200px|droite|"));
   }
 
   @DisplayName("should report images with a blank description or a blank alternate description")
@@ -51,8 +58,38 @@ class CheckAlgorithm030Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text, "[[File:A.jpg|thumb| ]]", "File:A.jpg"),
-            error(text, "[[File:B.jpg|thumb|alt= ]]", "File:B.jpg"));
+            error(
+                text,
+                "[[File:A.jpg|thumb| ]]",
+                "File:A.jpg",
+                "[[File:A.jpg|thumb|",
+                "[[File:A.jpg|thumb|"),
+            error(
+                text,
+                "[[File:B.jpg|thumb|alt= ]]",
+                "File:B.jpg",
+                "[[File:B.jpg|thumb|alt= |",
+                "[[File:B.jpg|thumb|"));
+  }
+
+  @DisplayName("should keep the other parameters and drop the empty alternate description")
+  @Test
+  void keepOtherParameters() {
+    // GIVEN
+    final String text = "a [[File:C.jpg|alt=|upright]] b";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Paris", text);
+
+    // THEN
+    Assertions.assertThat(errors)
+        .containsExactly(
+            error(
+                text,
+                "[[File:C.jpg|alt=|upright]]",
+                "File:C.jpg",
+                "[[File:C.jpg|alt=|upright|",
+                "[[File:C.jpg|upright|"));
   }
 
   @DisplayName("should not report images with a description or an alternate description")
@@ -105,12 +142,30 @@ class CheckAlgorithm030Test {
     return algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis(title, text));
   }
 
-  private static CheckError error(final String text, final String found, final String image) {
+  private static CheckError error(
+      final String text,
+      final String found,
+      final String image,
+      final String descriptionPrefix,
+      final String alternateDescriptionPrefix) {
     final int begin = text.indexOf(found);
     return new CheckError(
         ALGORITHM,
         begin,
         begin + found.length(),
-        List.of(new ExternalView("View image", WIKI_URL + image)));
+        List.of(
+            new TextInput(
+                "Add a description...",
+                "What description would you like to use for the image?",
+                descriptionPrefix,
+                "]]",
+                "[]|="),
+            new TextInput(
+                "Add an alternate description...",
+                "What alternate description would you like to use for the image?",
+                alternateDescriptionPrefix + "alt=",
+                "]]",
+                "[]|="),
+            new ExternalView("View image", WIKI_URL + image)));
   }
 }

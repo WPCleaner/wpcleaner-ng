@@ -6,7 +6,7 @@ package org.wpcleaner.lib.check;
  */
 
 public sealed interface Suggestion
-    permits ExpandedReplacement, ExternalView, Information, Replacement {
+    permits ExpandedReplacement, ExternalView, Information, Replacement, TextInput {
 
   String label();
 }

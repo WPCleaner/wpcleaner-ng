@@ -476,6 +476,39 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
         .browse("https://fr.wikipedia.org/wiki/File:A.jpg");
   }
 
+  @DisplayName("should apply the text typed for a text input suggested by an error")
+  @Test
+  void applyTextInput() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    paneFactory.givenCheckWikiConfiguration(Map.of("error_030_prio_frwiki", "3"));
+    final PageAnalysisCheckPane pane = createPane();
+    final Stage stage = callOnJavaFx(() -> showInStage(pane));
+    try {
+      final String text = "Voir [[File:A.jpg|thumb]].";
+      runOnJavaFx(
+          () -> pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, text)));
+      final MenuItem item =
+          callOnJavaFx(() -> pane.createContextMenu(text.indexOf("File")).getItems().get(1));
+
+      // WHEN
+      runLaterOnJavaFx(item::fire);
+      answerDialog(
+          stage,
+          dialogPane -> typeText(dialogPane, TextInputSuggestionDialog.VALUE_ID, "Une ville"));
+
+      // THEN
+      Assertions.assertThat(item.getText()).isEqualTo("Add a description...");
+      Assertions.assertThat(
+              waitForJavaFx(
+                  () ->
+                      Optional.of(pane.getArea().getText())
+                          .filter(areaText -> !text.equals(areaText))))
+          .isEqualTo("Voir [[File:A.jpg|thumb|Une ville]].");
+    } finally {
+      runOnJavaFx(stage::close);
+    }
+  }
+
   @DisplayName("should suggest nothing outside of the errors")
   @Test
   void createContextMenuOutsideErrors()
