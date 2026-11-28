@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-27 23:38+0100\n"
+"POT-Creation-Date: 2026-11-28 09:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -547,11 +547,11 @@ msgstr ""
 msgid "Warning for %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:88
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:96
 msgid "Delete"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:89
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:97
 #, java-printf-format
 msgid "Replace with %s"
 msgstr ""
@@ -1481,6 +1481,11 @@ msgstr ""
 msgid "Expand"
 msgstr ""
 
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a00x/a006/CheckAlgorithm006.java:87
+#, java-printf-format
+msgid "Unable to replace the characters [%s]"
+msgstr ""
+
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a00x/a005/CheckAlgorithm005.java:81
 msgid "Properly end the comment"
 msgstr ""
@@ -1511,7 +1516,95 @@ msgstr ""
 msgid "Remove %s namespace from template name"
 msgstr ""
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/CheckAlgorithm016.java:121
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:17
+msgid "Delete character"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:23
+msgid "Non-breaking space"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:24
+msgid "Soft hyphen"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:30
+msgid "Three-per-em space"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:36
+msgid "Four-per-em space"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:42
+msgid "Six-per-em space"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:48
+msgid "Figure space"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:49
+msgid "Punctuation space"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:51
+msgid "Zero-width space"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:57
+msgid "Left-to-right mark"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:63
+msgid "Right-to-left mark"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:64
+msgid "Line separator"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:66
+msgid "Left-to-right embedding"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:68
+msgid "Right-to-left embedding"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:70
+msgid "Pop directional formatting"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:72
+msgid "Left-to-right override"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:74
+msgid "Right-to-left override"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:75
+msgid "Byte order mark"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:81
+msgid "Object replacement character"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:82
+msgid "Private use area"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:84
+msgid "Private use area A"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/ControlCharacter.java:86
+msgid "Private use area B"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a01x/a016/CheckAlgorithm016.java:125
 msgid "Remove all control characters"
 msgstr ""
 

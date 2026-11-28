@@ -6,8 +6,11 @@ package org.wpcleaner.lib.check.algorithm.a0xx.a00x.a006;
  */
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
@@ -15,10 +18,13 @@ import org.wpcleaner.api.analysis.Element;
 import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.function.FunctionElement;
 import org.wpcleaner.api.analysis.template.TemplateParameter;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.Suggestion;
 
 @Component
 public class CheckAlgorithm006 implements CheckAlgorithm {
@@ -59,15 +65,7 @@ public class CheckAlgorithm006 implements CheckAlgorithm {
               ALGORITHM_NUMBER,
               function.begin(),
               function.end(),
-              Stream.ofNullable(scan.replacement())
-                  .map(
-                      replacement ->
-                          new Replacement(
-                              text.substring(function.begin(), sortKey.begin())
-                                  + replacement
-                                  + FUNCTION_END,
-                              true))
-                  .toList()));
+              List.of(createSuggestion(text, function, sortKey, scan))));
     }
     return function.parameters().stream()
         .skip(1)
@@ -78,6 +76,20 @@ public class CheckAlgorithm006 implements CheckAlgorithm {
                     ALGORITHM_NUMBER, parameter.begin() - 1, parameter.begin(), List.of()));
   }
 
+  private static Suggestion createSuggestion(
+      final String text,
+      final FunctionElement function,
+      final TemplateParameter sortKey,
+      final SortKeyScan scan) {
+    final String replacement = scan.replacement();
+    if (replacement == null) {
+      return new Information(
+          GT._T("Unable to replace the characters [%s]", scan.unknownCharacters()));
+    }
+    return new Replacement(
+        text.substring(function.begin(), sortKey.begin()) + replacement + FUNCTION_END, true);
+  }
+
   private static SortKeyScan scan(final PageAnalysis analysis, final TemplateParameter sortKey) {
     final String text = analysis.getText();
     final WikiDefinition wiki = analysis.getWiki();
@@ -86,6 +98,7 @@ public class CheckAlgorithm006 implements CheckAlgorithm {
     final int end = begin + value.length();
     final List<Element> skippedElements = findSkippedElements(analysis);
     final StringBuilder fixedValue = new StringBuilder();
+    final Set<Character> unknownCharacters = new LinkedHashSet<>();
     boolean specialCharacters = false;
     boolean replaced = false;
     int index = begin;
@@ -102,12 +115,20 @@ public class CheckAlgorithm006 implements CheckAlgorithm {
           final Optional<String> replacement = SpecialCharacters.findReplacement(character, wiki);
           specialCharacters = true;
           replaced |= replacement.isPresent();
-          fixedValue.append(replacement.orElse(String.valueOf(character)));
+          replacement.ifPresentOrElse(
+              fixedValue::append,
+              () -> {
+                unknownCharacters.add(character);
+                fixedValue.append(character);
+              });
         }
         index++;
       }
     }
-    return new SortKeyScan(specialCharacters, replaced ? fixedValue.toString().trim() : null);
+    return new SortKeyScan(
+        specialCharacters,
+        replaced ? fixedValue.toString().trim() : null,
+        unknownCharacters.stream().map(String::valueOf).collect(Collectors.joining()));
   }
 
   private static List<Element> findSkippedElements(final PageAnalysis analysis) {
@@ -129,5 +150,6 @@ public class CheckAlgorithm006 implements CheckAlgorithm {
         .orElse(index);
   }
 
-  private record SortKeyScan(boolean specialCharacters, @Nullable String replacement) {}
+  private record SortKeyScan(
+      boolean specialCharacters, @Nullable String replacement, String unknownCharacters) {}
 }
