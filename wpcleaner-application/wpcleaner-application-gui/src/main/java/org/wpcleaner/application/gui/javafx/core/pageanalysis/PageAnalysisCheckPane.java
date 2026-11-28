@@ -29,6 +29,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
   private final PauseTransition analysisDelay;
   private final CheckErrorsPane errorsPane;
   private final PageAnalysisAreaPane areaPane;
+  private final Consumer<String> browseAction;
   @Nullable private PageAnalysis analysis;
   private Runnable analysisListener = () -> {};
   private ExpansionAction expansionAction = (_, _) -> {};
@@ -43,6 +44,7 @@ public final class PageAnalysisCheckPane extends SplitPane {
     this.algorithmRegistry = algorithmRegistry;
     this.analysisFactory = analysisFactory;
     this.analysisDelay = new PauseTransition(ANALYSIS_DELAY);
+    this.browseAction = browseAction;
     this.errorsPane =
         new CheckErrorsPane(imageLoader, this::showErrors, this::applyAutomaticFixes, browseAction);
     this.areaPane = new PageAnalysisAreaPane(colorizer, imageLoader);
@@ -119,7 +121,8 @@ public final class PageAnalysisCheckPane extends SplitPane {
             .filter(algorithmErrors -> !algorithmErrors.errors().isEmpty())
             .toList(),
         this::replaceError,
-        expansionAction);
+        expansionAction,
+        browseAction);
   }
 
   private void showErrors(@Nullable final CheckAlgorithmErrors selectedErrors) {

@@ -5,7 +5,8 @@ package org.wpcleaner.lib.check;
  * SPDX-License-Identifier: Apache-2.0
  */
 
-public sealed interface Suggestion permits ExpandedReplacement, Information, Replacement {
+public sealed interface Suggestion
+    permits ExpandedReplacement, ExternalView, Information, Replacement {
 
   String label();
 }

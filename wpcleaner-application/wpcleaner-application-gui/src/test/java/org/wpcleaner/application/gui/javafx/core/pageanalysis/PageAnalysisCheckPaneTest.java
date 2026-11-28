@@ -33,11 +33,14 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.api.analysis.pagetitle.PageTitle;
 import org.wpcleaner.application.gui.GuiSpringBootTest;
+import org.wpcleaner.application.gui.core.desktop.DesktopService;
 import org.wpcleaner.application.gui.core.style.PageAnalysisStylePropertiesInitializer;
 import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.application.gui.javafx.core.style.JavaFxStylePropertiesRegistry;
@@ -60,6 +63,7 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
 
   @Autowired private PageAnalysisCheckPaneFactory paneFactory;
   @Autowired private JavaFxStylePropertiesRegistry styleRegistry;
+  @Autowired private DesktopService desktopService;
 
   @BeforeEach
   void setUp() {
@@ -449,6 +453,27 @@ class PageAnalysisCheckPaneTest extends JavaFxTest {
     Assertions.assertThat(items)
         .extracting(MenuItem::getText)
         .containsExactly("Error No. 48", "Delete");
+  }
+
+  @DisplayName("should open the external view suggested by an error")
+  @Test
+  void browseExternalView() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    paneFactory.givenCheckWikiConfiguration(Map.of("error_030_prio_frwiki", "3"));
+    final PageAnalysisCheckPane pane = createPane();
+    final String text = "Voir [[File:A.jpg]].";
+    runOnJavaFx(() -> pane.updateAnalysis(PageAnalysisTestFactory.createPageAnalysis(TITLE, text)));
+    final List<MenuItem> items =
+        callOnJavaFx(() -> pane.createContextMenu(text.indexOf("File")).getItems());
+
+    // WHEN
+    runOnJavaFx(items.getLast()::fire);
+
+    // THEN
+    Assertions.assertThat(items).extracting(MenuItem::getText).endsWith("View image");
+    BDDMockito.then(desktopService)
+        .should(Mockito.timeout(5000))
+        .browse("https://fr.wikipedia.org/wiki/File:A.jpg");
   }
 
   @DisplayName("should suggest nothing outside of the errors")

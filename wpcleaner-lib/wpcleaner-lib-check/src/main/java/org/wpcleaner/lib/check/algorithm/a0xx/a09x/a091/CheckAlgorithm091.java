@@ -15,9 +15,11 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.externallink.ExternalLinkElement;
 import org.wpcleaner.api.analysis.internallink.InternalLinkBuilder;
 import org.wpcleaner.api.repository.interwiki.Interwiki;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.algorithm.ArticleLink;
 import org.wpcleaner.lib.check.algorithm.ArticleUrl;
@@ -32,6 +34,7 @@ public class CheckAlgorithm091 implements CheckAlgorithm {
   private static final String PARAMETER_LINK_TEMPLATES = "link_templates";
   private static final String PARAMETER_ONLY_LANGUAGE = "only_language";
   private static final String PARAMETER_ONLY_LOCAL = "only_local";
+  private static final String PROTOCOL_RELATIVE_PREFIX = "//";
 
   private final CheckWikiConfigurationRepository checkWikiRepository;
 
@@ -117,7 +120,13 @@ public class CheckAlgorithm091 implements CheckAlgorithm {
         ALGORITHM_NUMBER,
         articleLink.begin(),
         articleLink.end(),
-        List.of(new Replacement(replacement, automatic)));
+        List.of(
+            new Replacement(replacement, automatic),
+            new ExternalView(GT._T("External Viewer"), toViewedUrl(link.target()))));
+  }
+
+  private static String toViewedUrl(final String target) {
+    return target.startsWith(PROTOCOL_RELATIVE_PREFIX) ? "https:" + target : target;
   }
 
   private record InterwikiUrl(Interwiki interwiki, ArticleUrl url) {}

@@ -7,12 +7,14 @@ package org.wpcleaner.application.gui.javafx.core.pageanalysis;
 
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.ExpandedReplacement;
+import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.Suggestion;
@@ -29,7 +31,8 @@ public final class CheckErrorsContextMenu extends ContextMenu {
   public CheckErrorsContextMenu(
       final List<CheckAlgorithmErrors> algorithmsErrors,
       final BiConsumer<CheckError, String> replacementAction,
-      final ExpansionAction expansionAction) {
+      final ExpansionAction expansionAction,
+      final Consumer<String> browseAction) {
     super();
     for (final CheckAlgorithmErrors algorithmErrors : algorithmsErrors) {
       for (final CheckError error : algorithmErrors.errors()) {
@@ -42,7 +45,8 @@ public final class CheckErrorsContextMenu extends ContextMenu {
         error.suggestions().stream()
             .map(
                 suggestion ->
-                    createSuggestionItem(error, suggestion, replacementAction, expansionAction))
+                    createSuggestionItem(
+                        error, suggestion, replacementAction, expansionAction, browseAction))
             .forEach(getItems()::add);
       }
     }
@@ -52,13 +56,22 @@ public final class CheckErrorsContextMenu extends ContextMenu {
       final CheckError error,
       final Suggestion suggestion,
       final BiConsumer<CheckError, String> replacementAction,
-      final ExpansionAction expansionAction) {
+      final ExpansionAction expansionAction,
+      final Consumer<String> browseAction) {
     return switch (suggestion) {
       case Replacement replacement -> createReplacementItem(error, replacement, replacementAction);
       case ExpandedReplacement expandedReplacement ->
           createExpansionItem(error, expandedReplacement, expansionAction);
+      case ExternalView externalView -> createExternalViewItem(externalView, browseAction);
       case Information information -> createInformationItem(information);
     };
+  }
+
+  private static MenuItem createExternalViewItem(
+      final ExternalView externalView, final Consumer<String> browseAction) {
+    final MenuItem item = new MenuItem(externalView.label());
+    item.setOnAction(_ -> browseAction.accept(externalView.url()));
+    return item;
   }
 
   private static MenuItem createInformationItem(final Information information) {

@@ -13,15 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
+import org.wpcleaner.lib.check.ExternalView;
 
 @CheckSpringBootTest
 class CheckAlgorithm030Test {
 
   private static final int ALGORITHM = 30;
+  private static final String WIKI_URL = "https://fr.wikipedia.org/wiki/";
 
   @Autowired private CheckAlgorithm030 algorithm;
 
-  @DisplayName("should report images without description, without suggesting a replacement")
+  @DisplayName("should report images without description and suggest to view the image")
   @Test
   void reportImageWithoutDescription() {
     // GIVEN
@@ -33,7 +35,8 @@ class CheckAlgorithm030Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text, "[[File:A.jpg]]"), error(text, "[[Fichier:B.jpg|thumb|200px|droite]]"));
+            error(text, "[[File:A.jpg]]", "File:A.jpg"),
+            error(text, "[[Fichier:B.jpg|thumb|200px|droite]]", "Fichier:B.jpg"));
   }
 
   @DisplayName("should report images with a blank description or a blank alternate description")
@@ -48,7 +51,8 @@ class CheckAlgorithm030Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text, "[[File:A.jpg|thumb| ]]"), error(text, "[[File:B.jpg|thumb|alt= ]]"));
+            error(text, "[[File:A.jpg|thumb| ]]", "File:A.jpg"),
+            error(text, "[[File:B.jpg|thumb|alt= ]]", "File:B.jpg"));
   }
 
   @DisplayName("should not report images with a description or an alternate description")
@@ -101,8 +105,12 @@ class CheckAlgorithm030Test {
     return algorithm.analyze(PageAnalysisTestFactory.createPageAnalysis(title, text));
   }
 
-  private static CheckError error(final String text, final String found) {
+  private static CheckError error(final String text, final String found, final String image) {
     final int begin = text.indexOf(found);
-    return new CheckError(ALGORITHM, begin, begin + found.length(), List.of());
+    return new CheckError(
+        ALGORITHM,
+        begin,
+        begin + found.length(),
+        List.of(new ExternalView("View image", WIKI_URL + image)));
   }
 }

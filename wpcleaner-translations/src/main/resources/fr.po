@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-28 09:33+0100\n"
+"POT-Creation-Date: 2026-11-28 09:51+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -547,11 +547,11 @@ msgstr "Êtes vous sûr de vouloir supprimer le wiki \"%s\" ?"
 msgid "Warning for %s"
 msgstr "Avertissement pour %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:96
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:109
 msgid "Delete"
 msgstr "Supprimer"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:97
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:110
 #, java-printf-format
 msgid "Replace with %s"
 msgstr "Remplacer par %s"
@@ -1487,9 +1487,18 @@ msgstr "Valeur vide dans %s"
 msgid "Value \"%s\" in %s is not a name, write it between quotes"
 msgstr "La valeur « %s » dans %s n'est pas un nom, écrivez-la entre guillemets"
 
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a5xx/a56x/a566/CheckAlgorithm566.java:103
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a09x/a091/CheckAlgorithm091.java:125
+msgid "External Viewer"
+msgstr "Visionneuse externe"
+
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a02x/a021/CheckAlgorithm021.java:73
 msgid "Comment category out"
 msgstr "Mettre la catégorie en commentaire"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:56
+msgid "View image"
+msgstr "Ouvrir l’image"
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a034/CheckAlgorithm034.java:169
 msgid "Expand"
