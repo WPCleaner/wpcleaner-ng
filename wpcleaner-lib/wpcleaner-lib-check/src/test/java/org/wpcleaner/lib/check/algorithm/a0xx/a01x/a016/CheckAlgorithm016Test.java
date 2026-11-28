@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
+import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmParameters;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
@@ -33,6 +34,10 @@ class CheckAlgorithm016Test {
   private static final String NON_BREAKING_SPACE = " ";
   private static final String SOFT_HYPHEN = "­";
   private static final String CYRILLIC = "ж";
+  private static final Information LEFT_TO_RIGHT_MARK_INFORMATION =
+      new Information("U+200E – Left-to-right mark");
+  private static final Information NON_BREAKING_SPACE_INFORMATION =
+      new Information("U+00A0 – Non-breaking space");
 
   @Autowired private CheckAlgorithm016 algorithm;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
@@ -62,9 +67,18 @@ class CheckAlgorithm016Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            new CheckError(ALGORITHM, 0, 2, List.of(remove("a", true))),
-            new CheckError(ALGORITHM, 4, 8, List.of(remove("cd", true))),
-            new CheckError(ALGORITHM, 9, 13, List.of(remove("ef", true))));
+            new CheckError(
+                ALGORITHM, 0, 2, List.of(LEFT_TO_RIGHT_MARK_INFORMATION, remove("a", true))),
+            new CheckError(
+                ALGORITHM,
+                4,
+                8,
+                List.of(
+                    LEFT_TO_RIGHT_MARK_INFORMATION,
+                    new Information("U+200F – Right-to-left mark"),
+                    remove("cd", true))),
+            new CheckError(
+                ALGORITHM, 9, 13, List.of(LEFT_TO_RIGHT_MARK_INFORMATION, remove("ef", true))));
   }
 
   @DisplayName("should report control characters outside the basic multilingual plane")
@@ -77,7 +91,10 @@ class CheckAlgorithm016Test {
     final List<CheckError> errors = analyze(text);
 
     // THEN
-    Assertions.assertThat(errors).containsExactly(new CheckError(ALGORITHM, 0, 4, List.of()));
+    Assertions.assertThat(errors)
+        .containsExactly(
+            new CheckError(
+                ALGORITHM, 0, 4, List.of(new Information("U+F0000 – Private use area A"))));
   }
 
   @DisplayName("should fix automatically only if characters around or control characters are safe")
@@ -129,9 +146,14 @@ class CheckAlgorithm016Test {
                 ALGORITHM,
                 0,
                 3,
-                List.of(new Replacement("a b", false), new Replacement("a&nbsp;b", false))),
-            new CheckError(ALGORITHM, 4, 7, List.of(remove("« c", true))),
-            new CheckError(ALGORITHM, 8, 11, List.of(remove("d :", true))));
+                List.of(
+                    NON_BREAKING_SPACE_INFORMATION,
+                    new Replacement("a b", false),
+                    new Replacement("a&nbsp;b", false))),
+            new CheckError(
+                ALGORITHM, 4, 7, List.of(NON_BREAKING_SPACE_INFORMATION, remove("« c", true))),
+            new CheckError(
+                ALGORITHM, 8, 11, List.of(NON_BREAKING_SPACE_INFORMATION, remove("d :", true))));
   }
 
   @DisplayName("should not fix automatically non-breaking spaces kept among unsafe characters")

@@ -13,6 +13,7 @@ import javafx.scene.control.SeparatorMenuItem;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.ExpandedReplacement;
+import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.Suggestion;
 
@@ -56,7 +57,14 @@ public final class CheckErrorsContextMenu extends ContextMenu {
       case Replacement replacement -> createReplacementItem(error, replacement, replacementAction);
       case ExpandedReplacement expandedReplacement ->
           createExpansionItem(error, expandedReplacement, expansionAction);
+      case Information information -> createInformationItem(information);
     };
+  }
+
+  private static MenuItem createInformationItem(final Information information) {
+    final MenuItem item = new MenuItem(information.label());
+    item.setDisable(true);
+    return item;
   }
 
   private static MenuItem createExpansionItem(

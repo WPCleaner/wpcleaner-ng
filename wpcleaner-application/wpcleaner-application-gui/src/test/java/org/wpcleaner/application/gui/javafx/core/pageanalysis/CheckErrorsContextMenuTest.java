@@ -19,6 +19,7 @@ import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.ExpandedReplacement;
+import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
 
 @GuiSpringBootTest
@@ -108,5 +109,35 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
         .containsExactly(NAME, "Replace with {{subst:X}}", "Expand");
     Assertions.assertThat(replacedErrors).containsExactly(error);
     Assertions.assertThat(expansions).containsExactly(expandedReplacement);
+  }
+
+  @DisplayName("should display an information as a disabled item")
+  @Test
+  void displayInformation() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final CheckError error =
+        new CheckError(
+            16,
+            0,
+            2,
+            List.of(new Information("U+200E – Left-to-right mark"), new Replacement("a", false)));
+    final CheckAlgorithmErrors algorithmErrors =
+        new CheckAlgorithmErrors(
+            algorithmRegistry.getAlgorithms().getFirst(), NAME, null, null, List.of(error));
+
+    // WHEN
+    final List<MenuItem> items =
+        callOnJavaFx(
+            () ->
+                new CheckErrorsContextMenu(List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {})
+                    .getItems());
+
+    // THEN
+    Assertions.assertThat(items)
+        .extracting(MenuItem::getText, MenuItem::isDisable)
+        .containsExactly(
+            Assertions.tuple(NAME, true),
+            Assertions.tuple("U+200E – Left-to-right mark", true),
+            Assertions.tuple("Replace with a", false));
   }
 }

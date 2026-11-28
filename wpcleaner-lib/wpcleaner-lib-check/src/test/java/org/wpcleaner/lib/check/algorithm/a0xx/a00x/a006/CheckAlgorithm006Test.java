@@ -15,6 +15,7 @@ import org.wpcleaner.api.wiki.definition.WikiDefinition;
 import org.wpcleaner.api.wiki.definition.WikipediaDefinitions;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
+import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
 
 @CheckSpringBootTest
@@ -54,15 +55,20 @@ class CheckAlgorithm006Test {
             new CheckError(ALGORITHM, 36, 52, List.of(new Replacement("{{CLEFDETRI:Ca}}", true))));
   }
 
-  @DisplayName("should report without replacement when no special character can be replaced")
+  @DisplayName("should list the special characters when none of them can be replaced")
   @Test
   void reportUnknownSpecialCharacters() {
-    final List<CheckError> errors = analyze("{{DEFAULTSORT:A_B}}{{DEFAULTSORT:A&B}}");
+    final List<CheckError> errors = analyze("{{DEFAULTSORT:A_B}}{{DEFAULTSORT:A&B_C&}}");
 
     Assertions.assertThat(errors)
         .containsExactly(
-            new CheckError(ALGORITHM, 0, 19, List.of()),
-            new CheckError(ALGORITHM, 19, 38, List.of()));
+            new CheckError(
+                ALGORITHM, 0, 19, List.of(new Information("Unable to replace the characters [_]"))),
+            new CheckError(
+                ALGORITHM,
+                19,
+                41,
+                List.of(new Information("Unable to replace the characters [&_]"))));
   }
 
   @DisplayName("should keep the special characters that can't be replaced")

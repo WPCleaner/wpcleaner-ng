@@ -7,6 +7,7 @@ package org.wpcleaner.lib.check.algorithm.a0xx.a01x.a016;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.Element;
@@ -16,7 +17,9 @@ import org.wpcleaner.api.analysis.template.TemplateElement;
 import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
+import org.wpcleaner.lib.check.Suggestion;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfigurationRepository;
 
@@ -115,17 +118,27 @@ public class CheckAlgorithm016 implements CheckAlgorithm {
             && !isInLinkTarget(analysis, firstControl);
     final String original = range.original();
     final String replacement = range.replacement();
-    final List<Replacement> replacements = new ArrayList<>();
+    final List<Suggestion> suggestions = new ArrayList<>();
+    range.controls().stream().map(CheckAlgorithm016::createInformation).forEach(suggestions::add);
     if (!replacement.equals(original)) {
-      replacements.add(
+      suggestions.add(
           new Replacement(replacement, GT._T("Remove all control characters"), automatic));
     }
     if (!automatic || replacement.equals(original)) {
       range.alternatives().stream()
           .filter(alternative -> !alternative.equals(original) && !alternative.equals(replacement))
-          .forEach(alternative -> replacements.add(new Replacement(alternative, false)));
+          .forEach(alternative -> suggestions.add(new Replacement(alternative, false)));
     }
-    return new CheckError(ALGORITHM_NUMBER, begin, end, replacements);
+    return new CheckError(ALGORITHM_NUMBER, begin, end, suggestions);
+  }
+
+  private static Information createInformation(final int codePoint) {
+    return new Information(
+        String.format(
+            Locale.ROOT,
+            "U+%04X – %s",
+            codePoint,
+            ControlCharacter.of(codePoint).map(ControlCharacter::description).orElse("")));
   }
 
   private static boolean isFixableInRedirect(

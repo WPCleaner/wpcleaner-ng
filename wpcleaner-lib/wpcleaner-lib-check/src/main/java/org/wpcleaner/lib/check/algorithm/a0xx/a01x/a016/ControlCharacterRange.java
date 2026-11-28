@@ -14,7 +14,7 @@ record ControlCharacterRange(
     String original,
     String replacement,
     List<String> alternatives,
-    Set<Integer> controls,
+    List<Integer> controls,
     boolean automatic,
     boolean safeInRedirect) {
 
@@ -30,7 +30,7 @@ record ControlCharacterRange(
 
   ControlCharacterRange {
     alternatives = List.copyOf(alternatives);
-    controls = Set.copyOf(controls);
+    controls = List.copyOf(controls);
   }
 
   static ControlCharacterRange of(
@@ -69,7 +69,7 @@ record ControlCharacterRange(
         original,
         replacement.toString(),
         List.copyOf(alternatives),
-        controls,
+        List.copyOf(controls),
         !unsafeCharacter || !unsafeControl,
         safeInRedirect);
   }
