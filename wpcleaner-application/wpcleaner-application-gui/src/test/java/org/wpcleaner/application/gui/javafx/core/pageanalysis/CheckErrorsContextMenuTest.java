@@ -19,6 +19,7 @@ import org.wpcleaner.application.gui.javafx.JavaFxTest;
 import org.wpcleaner.lib.check.CheckAlgorithmRegistry;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.ExpandedReplacement;
+import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
 
@@ -57,7 +58,8 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
     final List<MenuItem> items =
         callOnJavaFx(
             () ->
-                new CheckErrorsContextMenu(List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {})
+                new CheckErrorsContextMenu(
+                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, _ -> {})
                     .getItems());
 
     // THEN
@@ -97,7 +99,8 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
                         (expandedError, expansion) -> {
                           replacedErrors.add(expandedError);
                           expansions.add(expansion);
-                        })
+                        },
+                        _ -> {})
                     .getItems());
 
     // WHEN
@@ -129,7 +132,8 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
     final List<MenuItem> items =
         callOnJavaFx(
             () ->
-                new CheckErrorsContextMenu(List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {})
+                new CheckErrorsContextMenu(
+                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, _ -> {})
                     .getItems());
 
     // THEN
@@ -139,5 +143,31 @@ class CheckErrorsContextMenuTest extends JavaFxTest {
             Assertions.tuple(NAME, true),
             Assertions.tuple("U+200E – Left-to-right mark", true),
             Assertions.tuple("Replace with a", false));
+  }
+
+  @DisplayName("should display the label of an external view and browse its URL")
+  @Test
+  void browseExternalView() throws ExecutionException, InterruptedException, TimeoutException {
+    // GIVEN
+    final String url = "https://fr.wikipedia.org/wiki/File:A.jpg";
+    final CheckError error =
+        new CheckError(30, 0, 14, List.of(new ExternalView("View image", url)));
+    final CheckAlgorithmErrors algorithmErrors =
+        new CheckAlgorithmErrors(
+            algorithmRegistry.getAlgorithms().getFirst(), NAME, null, null, List.of(error));
+    final List<String> browsedUrls = new ArrayList<>();
+    final List<MenuItem> items =
+        callOnJavaFx(
+            () ->
+                new CheckErrorsContextMenu(
+                        List.of(algorithmErrors), (_, _) -> {}, (_, _) -> {}, browsedUrls::add)
+                    .getItems());
+
+    // WHEN
+    runOnJavaFx(items.get(1)::fire);
+
+    // THEN
+    Assertions.assertThat(items).extracting(MenuItem::getText).containsExactly(NAME, "View image");
+    Assertions.assertThat(browsedUrls).containsExactly(url);
   }
 }

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import org.wpcleaner.api.analysis.Element;
@@ -20,8 +21,10 @@ import org.wpcleaner.api.analysis.tag.HtmlTagType;
 import org.wpcleaner.api.analysis.tag.TagAttribute;
 import org.wpcleaner.api.analysis.tag.TagElement;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.algorithm.UnwantedTags;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmConfiguration;
@@ -33,6 +36,8 @@ public class CheckAlgorithm566 implements CheckAlgorithm {
   private static final int ALGORITHM_NUMBER = 566;
   private static final UnwantedTags UNWANTED_TAGS = new UnwantedTags(Set.of(HtmlTagType.ABBR));
   private static final String ATTRIBUTE_TITLE = "title";
+  private static final String PARAMETER_CATEGORIES = "categories";
+  private static final String CATEGORY_PREFIX = "Category:";
   private static final Set<String> AUTOMATIC_ATTRIBUTES = Set.of(ATTRIBUTE_TITLE, "class");
   private static final Pattern SURROUNDING_SPACES =
       Pattern.compile("^((?:&nbsp;| )*)(.*?)((?:&nbsp;| )*)$", Pattern.DOTALL);
@@ -63,6 +68,7 @@ public class CheckAlgorithm566 implements CheckAlgorithm {
             analysis.getText(),
             ReplacementConfiguration.of(configuration),
             TemplateConfiguration.of(configuration),
+            createCategoryViews(analysis, configuration),
             analysis.getPageTitle().namespace() == CommonNamespaces.MAIN.id);
     return UNWANTED_TAGS.findComplete(analysis).stream()
         .map(tag -> createError(context, tag))
@@ -79,9 +85,24 @@ public class CheckAlgorithm566 implements CheckAlgorithm {
         ALGORITHM_NUMBER,
         begin,
         end,
-        tag instanceof CompleteTagElement completeTag
-            ? createReplacements(context, completeTag, prefix, suffix)
-            : List.of(new Replacement(prefix + suffix, false)));
+        Stream.concat(
+                tag instanceof CompleteTagElement completeTag
+                    ? createReplacements(context, completeTag, prefix, suffix).stream()
+                    : Stream.of(new Replacement(prefix + suffix, false)),
+                context.categoryViews().stream())
+            .toList());
+  }
+
+  private static List<ExternalView> createCategoryViews(
+      final PageAnalysis analysis, final CheckAlgorithmConfiguration configuration) {
+    return configuration.getUnsplitStrings(PARAMETER_CATEGORIES).stream()
+        .map(category -> CATEGORY_PREFIX + category)
+        .map(
+            categoryTitle ->
+                new ExternalView(
+                    GT._T("External Viewer") + " - " + categoryTitle,
+                    analysis.getWiki().pageUrl(categoryTitle)))
+        .toList();
   }
 
   private static List<Replacement> createReplacements(
@@ -164,5 +185,6 @@ public class CheckAlgorithm566 implements CheckAlgorithm {
       String text,
       ReplacementConfiguration replacementConfiguration,
       List<TemplateConfiguration> templates,
+      List<ExternalView> categoryViews,
       boolean automaticAllowed) {}
 }

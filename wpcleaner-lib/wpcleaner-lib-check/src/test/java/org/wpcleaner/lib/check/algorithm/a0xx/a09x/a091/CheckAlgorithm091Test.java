@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
+import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmParameters;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
@@ -26,8 +27,10 @@ class CheckAlgorithm091Test {
 
   private static final int ALGORITHM = 91;
   private static final String EN_URL = "https://en.wikipedia.org/wiki/";
-  private static final String WIKTIONARY_LINK = "[https://fr.wiktionary.org/wiki/chat chat]";
-  private static final String GOOGLE_LINK = "[https://www.google.com/search?q=chat&hl=fr chat]";
+  private static final String WIKTIONARY_URL = "https://fr.wiktionary.org/wiki/chat";
+  private static final String WIKTIONARY_LINK = "[" + WIKTIONARY_URL + " chat]";
+  private static final String GOOGLE_URL = "https://www.google.com/search?q=chat&hl=fr";
+  private static final String GOOGLE_LINK = "[" + GOOGLE_URL + " chat]";
 
   @Autowired private CheckAlgorithm091 algorithm;
   @Autowired private CheckWikiConfigurationRepository checkWikiRepository;
@@ -47,6 +50,7 @@ class CheckAlgorithm091Test {
     final String fragment = "[" + EN_URL + "Rome#History Rome]";
     final String attributes = "[" + EN_URL + "Oslo?oldid=1 Oslo]";
     final String mobile = "[https://en.m.wikipedia.org/wiki/Nantes Nantes]";
+    final String protocolRelative = "[//en.wikipedia.org/wiki/Nice Nice]";
     final String text =
         String.join(
             " ",
@@ -56,6 +60,7 @@ class CheckAlgorithm091Test {
             fragment,
             attributes,
             mobile,
+            protocolRelative,
             "[https://en.x.wikipedia.org/wiki/Nice Nice]",
             "[https://m.en.wikipedia.org/wiki/Nice Nice]",
             "[https://en.wikipedia.org/w/index.php?title=Nice Nice]",
@@ -69,12 +74,24 @@ class CheckAlgorithm091Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text, withText, "[[:en:Tour Eiffel|Eiffel tower]]", false),
-            error(text, bare, "[[:de:Paris|Paris]]", false),
-            error(text, doubled, "[[:en:London|London]]", false),
-            error(text, fragment, "[[:en:Rome#History|Rome]]", false),
-            error(text, attributes, "[[:en:Oslo|Oslo]]", false),
-            error(text, mobile, "[[:en:Nantes|Nantes]]", false));
+            error(
+                text, withText, "[[:en:Tour Eiffel|Eiffel tower]]", false, EN_URL + "Tour_Eiffel"),
+            error(text, bare, "[[:de:Paris|Paris]]", false, bare),
+            error(text, doubled, "[[:en:London|London]]", false, EN_URL + "London"),
+            error(text, fragment, "[[:en:Rome#History|Rome]]", false, EN_URL + "Rome#History"),
+            error(text, attributes, "[[:en:Oslo|Oslo]]", false, EN_URL + "Oslo?oldid=1"),
+            error(
+                text,
+                mobile,
+                "[[:en:Nantes|Nantes]]",
+                false,
+                "https://en.m.wikipedia.org/wiki/Nantes"),
+            error(
+                text,
+                protocolRelative,
+                "[[:en:Nice|Nice]]",
+                false,
+                "https://en.wikipedia.org/wiki/Nice"));
   }
 
   @DisplayName("should report only articles, not talk pages")
@@ -90,7 +107,7 @@ class CheckAlgorithm091Test {
     // THEN
     Assertions.assertThat(talkErrors).isEmpty();
     Assertions.assertThat(userErrors)
-        .containsExactly(error(link, link, "[[:en:Paris|Paris]]", false));
+        .containsExactly(error(link, link, "[[:en:Paris|Paris]]", false, EN_URL + "Paris"));
   }
 
   @DisplayName("should report links to wikis without language when only_language is false")
@@ -125,11 +142,21 @@ class CheckAlgorithm091Test {
     // THEN
     Assertions.assertThat(errors)
         .containsExactly(
-            error(text, WIKTIONARY_LINK, "[[:wikt:chat|chat]]", true),
-            error(text, bare, "[[:wikt:chien|chien]]", false),
-            error(text, withoutText, "[[:wikt:rat|rat]]", false),
-            error(text, template, "[[:wikt:loup|Loup]]", false),
-            error(text, english, "[[:en:Paris|Paris]]", false));
+            error(text, WIKTIONARY_LINK, "[[:wikt:chat|chat]]", true, WIKTIONARY_URL),
+            error(text, bare, "[[:wikt:chien|chien]]", false, bare),
+            error(
+                text,
+                withoutText,
+                "[[:wikt:rat|rat]]",
+                false,
+                "https://fr.wiktionary.org/wiki/rat"),
+            error(
+                text,
+                template,
+                "[[:wikt:loup|Loup]]",
+                false,
+                "https://fr.wiktionary.org/wiki/loup"),
+            error(text, english, "[[:en:Paris|Paris]]", false, EN_URL + "Paris"));
   }
 
   @DisplayName("should report links to non local wikis when only_local is false")
@@ -145,7 +172,7 @@ class CheckAlgorithm091Test {
 
     // THEN
     Assertions.assertThat(errors)
-        .containsExactly(error(text, GOOGLE_LINK, "[[:google:chat|chat]]", false));
+        .containsExactly(error(text, GOOGLE_LINK, "[[:google:chat|chat]]", false, GOOGLE_URL));
   }
 
   @DisplayName("should use only the YAML configuration when it exists")
@@ -180,7 +207,8 @@ class CheckAlgorithm091Test {
 
     // THEN
     Assertions.assertThat(errors)
-        .containsExactly(error(text, template, "[[:en:Berlin|Berlin city]]", false));
+        .containsExactly(
+            error(text, template, "[[:en:Berlin|Berlin city]]", false, EN_URL + "Berlin"));
   }
 
   @DisplayName("should replace the whole link template, with the YAML configuration")
@@ -196,7 +224,8 @@ class CheckAlgorithm091Test {
 
     // THEN
     Assertions.assertThat(errors)
-        .containsExactly(error(template, template, "[[:en:Berlin|Berlin city]]", false));
+        .containsExactly(
+            error(template, template, "[[:en:Berlin|Berlin city]]", false, EN_URL + "Berlin"));
   }
 
   private List<CheckError> analyze(final String title, final String text) {
@@ -204,10 +233,17 @@ class CheckAlgorithm091Test {
   }
 
   private static CheckError error(
-      final String text, final String link, final String replacement, final boolean automatic) {
+      final String text,
+      final String link,
+      final String replacement,
+      final boolean automatic,
+      final String url) {
     final int begin = text.indexOf(link);
     return new CheckError(
-        ALGORITHM, begin, begin + link.length(), List.of(new Replacement(replacement, automatic)));
+        ALGORITHM,
+        begin,
+        begin + link.length(),
+        List.of(new Replacement(replacement, automatic), new ExternalView("External Viewer", url)));
   }
 
   private void givenLegacyConfiguration(final Map<String, String> parameters) {

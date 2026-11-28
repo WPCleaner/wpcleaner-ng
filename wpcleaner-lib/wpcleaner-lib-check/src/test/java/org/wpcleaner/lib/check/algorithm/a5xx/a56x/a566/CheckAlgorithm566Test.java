@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.wpcleaner.api.analysis.PageAnalysisTestFactory;
 import org.wpcleaner.lib.check.CheckError;
 import org.wpcleaner.lib.check.CheckSpringBootTest;
+import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.configuration.CheckAlgorithmParameters;
 import org.wpcleaner.lib.check.configuration.CheckWikiConfiguration;
@@ -110,6 +111,33 @@ class CheckAlgorithm566Test {
                 "<abbr> </abbr>",
                 new Replacement(" {{Abréviation||}}", false),
                 new Replacement(" ", false)));
+  }
+
+  @DisplayName("should suggest to view the categories of abbreviation templates")
+  @Test
+  void viewCategories() {
+    // GIVEN
+    givenLegacyConfiguration(
+        Map.of("error_566_categories_frwiki", "Modèle d'abréviation\nAbréviation"));
+    final String text = "a <abbr>b</abbr> c</abbr>";
+
+    // WHEN
+    final List<CheckError> errors = analyze("Paris", text);
+
+    // THEN
+    final ExternalView templateView =
+        new ExternalView(
+            "External Viewer - Category:Modèle d'abréviation",
+            "https://fr.wikipedia.org/wiki/Category:Modèle_d'abréviation");
+    final ExternalView abbreviationView =
+        new ExternalView(
+            "External Viewer - Category:Abréviation",
+            "https://fr.wikipedia.org/wiki/Category:Abréviation");
+    Assertions.assertThat(errors)
+        .extracting(CheckError::suggestions)
+        .containsExactly(
+            List.of(new Replacement("b", false), templateView, abbreviationView),
+            List.of(new Replacement("c", false), templateView, abbreviationView));
   }
 
   @DisplayName("should suggest replacements based on the abbreviation value")

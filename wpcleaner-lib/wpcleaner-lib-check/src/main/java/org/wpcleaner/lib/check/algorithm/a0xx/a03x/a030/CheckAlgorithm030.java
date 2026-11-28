@@ -12,8 +12,10 @@ import org.wpcleaner.api.analysis.PageAnalysis;
 import org.wpcleaner.api.analysis.image.ImageElement;
 import org.wpcleaner.api.analysis.image.ImageParameter;
 import org.wpcleaner.api.repository.namespace.CommonNamespaces;
+import org.wpcleaner.api.utils.GT;
 import org.wpcleaner.lib.check.CheckAlgorithm;
 import org.wpcleaner.lib.check.CheckError;
+import org.wpcleaner.lib.check.ExternalView;
 
 @Component
 public class CheckAlgorithm030 implements CheckAlgorithm {
@@ -36,7 +38,7 @@ public class CheckAlgorithm030 implements CheckAlgorithm {
         .filter(
             image ->
                 isBlank(image.findParameter(ALTERNATE_DESCRIPTION).map(ImageParameter::argument)))
-        .map(CheckAlgorithm030::createError)
+        .map(image -> createError(analysis, image))
         .toList();
   }
 
@@ -44,7 +46,14 @@ public class CheckAlgorithm030 implements CheckAlgorithm {
     return description.filter(text -> !text.isBlank()).isEmpty();
   }
 
-  private static CheckError createError(final ImageElement image) {
-    return new CheckError(ALGORITHM_NUMBER, image.begin(), image.end(), List.of());
+  private static CheckError createError(final PageAnalysis analysis, final ImageElement image) {
+    return new CheckError(
+        ALGORITHM_NUMBER,
+        image.begin(),
+        image.end(),
+        List.of(
+            new ExternalView(
+                GT._T("View image"),
+                analysis.getWiki().pageUrl(image.namespace() + ":" + image.name()))));
   }
 }

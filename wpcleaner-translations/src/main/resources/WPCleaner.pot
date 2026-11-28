@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPCleaner NG\n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-28 09:33+0100\n"
+"POT-Creation-Date: 2026-11-28 09:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -547,11 +547,11 @@ msgstr ""
 msgid "Warning for %s"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:96
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:109
 msgid "Delete"
 msgstr ""
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:97
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:110
 #, java-printf-format
 msgid "Replace with %s"
 msgstr ""
@@ -1473,8 +1473,17 @@ msgstr ""
 msgid "Value \"%s\" in %s is not a name, write it between quotes"
 msgstr ""
 
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a5xx/a56x/a566/CheckAlgorithm566.java:103
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a09x/a091/CheckAlgorithm091.java:125
+msgid "External Viewer"
+msgstr ""
+
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a02x/a021/CheckAlgorithm021.java:73
 msgid "Comment category out"
+msgstr ""
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:56
+msgid "View image"
 msgstr ""
 
 #: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a034/CheckAlgorithm034.java:169
