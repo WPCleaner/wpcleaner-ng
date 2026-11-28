@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://phabricator.wikimedia.org/project/board/4842/\n"
-"POT-Creation-Date: 2026-11-28 09:51+0100\n"
+"POT-Creation-Date: 2026-11-28 10:19+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -547,11 +547,11 @@ msgstr "Êtes vous sûr de vouloir supprimer le wiki \"%s\" ?"
 msgid "Warning for %s"
 msgstr "Avertissement pour %s"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:109
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:127
 msgid "Delete"
 msgstr "Supprimer"
 
-#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:110
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsContextMenu.java:128
 #, java-printf-format
 msgid "Replace with %s"
 msgstr "Remplacer par %s"
@@ -583,6 +583,11 @@ msgstr "Aller à l'erreur suivante"
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/CheckErrorsToolBar.java:63
 msgid "Go to last error"
 msgstr "Aller à la dernière erreur"
+
+#: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/pageanalysis/TextInputSuggestionDialog.java:55
+#, java-printf-format
+msgid "The value cannot contain any of these characters: %s"
+msgstr "La valeur ne peut contenir aucun des caractères suivants : %s"
 
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/control/MoveLastButton.java:25
 #: wpcleaner-application/wpcleaner-application-gui/src/main/java/org/wpcleaner/application/gui/javafx/core/action/content/append/ContentAppendConfigurationPane.java:213
@@ -1496,7 +1501,23 @@ msgstr "Visionneuse externe"
 msgid "Comment category out"
 msgstr "Mettre la catégorie en commentaire"
 
-#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:56
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:64
+msgid "Add a description..."
+msgstr "Ajouter une description..."
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:65
+msgid "What description would you like to use for the image?"
+msgstr "Quelle description souhaitez-vous utiliser pour l’image ?"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:70
+msgid "Add an alternate description..."
+msgstr "Ajouter une description alternative..."
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:71
+msgid "What alternate description would you like to use for the image?"
+msgstr "Quelle description alternative souhaitez-vous utiliser pour l’image ?"
+
+#: wpcleaner-lib/wpcleaner-lib-check/src/main/java/org/wpcleaner/lib/check/algorithm/a0xx/a03x/a030/CheckAlgorithm030.java:81
 msgid "View image"
 msgstr "Ouvrir l’image"
 

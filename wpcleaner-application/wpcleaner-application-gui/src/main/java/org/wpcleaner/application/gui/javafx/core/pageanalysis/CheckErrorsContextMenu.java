@@ -18,6 +18,7 @@ import org.wpcleaner.lib.check.ExternalView;
 import org.wpcleaner.lib.check.Information;
 import org.wpcleaner.lib.check.Replacement;
 import org.wpcleaner.lib.check.Suggestion;
+import org.wpcleaner.lib.check.TextInput;
 
 public final class CheckErrorsContextMenu extends ContextMenu {
 
@@ -32,6 +33,7 @@ public final class CheckErrorsContextMenu extends ContextMenu {
       final List<CheckAlgorithmErrors> algorithmsErrors,
       final BiConsumer<CheckError, String> replacementAction,
       final ExpansionAction expansionAction,
+      final BiConsumer<CheckError, TextInput> textInputAction,
       final Consumer<String> browseAction) {
     super();
     for (final CheckAlgorithmErrors algorithmErrors : algorithmsErrors) {
@@ -46,7 +48,12 @@ public final class CheckErrorsContextMenu extends ContextMenu {
             .map(
                 suggestion ->
                     createSuggestionItem(
-                        error, suggestion, replacementAction, expansionAction, browseAction))
+                        error,
+                        suggestion,
+                        replacementAction,
+                        expansionAction,
+                        textInputAction,
+                        browseAction))
             .forEach(getItems()::add);
       }
     }
@@ -57,6 +64,7 @@ public final class CheckErrorsContextMenu extends ContextMenu {
       final Suggestion suggestion,
       final BiConsumer<CheckError, String> replacementAction,
       final ExpansionAction expansionAction,
+      final BiConsumer<CheckError, TextInput> textInputAction,
       final Consumer<String> browseAction) {
     return switch (suggestion) {
       case Replacement replacement -> createReplacementItem(error, replacement, replacementAction);
@@ -64,7 +72,17 @@ public final class CheckErrorsContextMenu extends ContextMenu {
           createExpansionItem(error, expandedReplacement, expansionAction);
       case ExternalView externalView -> createExternalViewItem(externalView, browseAction);
       case Information information -> createInformationItem(information);
+      case TextInput textInput -> createTextInputItem(error, textInput, textInputAction);
     };
+  }
+
+  private static MenuItem createTextInputItem(
+      final CheckError error,
+      final TextInput textInput,
+      final BiConsumer<CheckError, TextInput> textInputAction) {
+    final MenuItem item = new MenuItem(textInput.label());
+    item.setOnAction(_ -> textInputAction.accept(error, textInput));
+    return item;
   }
 
   private static MenuItem createExternalViewItem(

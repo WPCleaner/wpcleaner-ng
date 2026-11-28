@@ -22,6 +22,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.stage.Stage;
@@ -46,6 +47,10 @@ public class JavaFxTest {
           runnable.run();
           return Boolean.TRUE;
         });
+  }
+
+  protected static void runLaterOnJavaFx(final Runnable runnable) {
+    Platform.runLater(runnable);
   }
 
   @SuppressWarnings("PMD.AvoidCatchingGenericException")
@@ -86,6 +91,10 @@ public class JavaFxTest {
     return findById(root, id)
         .map(type::cast)
         .orElseThrow(() -> new AssertionError("No node with id " + id));
+  }
+
+  protected static void typeText(final Node root, final String id, final String text) {
+    lookup(root, id, TextInputControl.class).setText(text);
   }
 
   protected static <T extends Node> Optional<T> find(
@@ -131,12 +140,17 @@ public class JavaFxTest {
 
   protected String answerDialog(final JavaFxWindow<?> owner, final Consumer<DialogPane> answer)
       throws InterruptedException, ExecutionException, TimeoutException {
+    return answerDialog(owner.getStage(), answer);
+  }
+
+  protected String answerDialog(final Window owner, final Consumer<DialogPane> answer)
+      throws InterruptedException, ExecutionException, TimeoutException {
     return waitForJavaFx(
         () ->
             Window.getWindows().stream()
                 .filter(Stage.class::isInstance)
                 .map(Stage.class::cast)
-                .filter(stage -> Objects.equals(stage.getOwner(), owner.getStage()))
+                .filter(stage -> Objects.equals(stage.getOwner(), owner))
                 .map(Window::getScene)
                 .filter(Objects::nonNull)
                 .map(Scene::getRoot)
@@ -145,7 +159,7 @@ public class JavaFxTest {
                 .findFirst()
                 .map(
                     dialogPane -> {
-                      final String content = dialogPane.getContentText();
+                      final String content = Objects.toString(dialogPane.getContentText(), "");
                       answer.accept(dialogPane);
                       ((Button) dialogPane.lookupButton(ButtonType.OK)).fire();
                       return content;
